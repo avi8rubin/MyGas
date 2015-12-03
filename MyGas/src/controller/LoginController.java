@@ -85,7 +85,7 @@ public class LoginController implements ActionListener{
 		        System.exit(0);		        
 		    }
 		};
-		LoginScreen.addWindowListener(exitListener);
+		LoginScreen.addWindowListener(exitListener);			
 		
 	}
 	
