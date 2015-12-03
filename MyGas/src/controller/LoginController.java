@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
 
 import GUI.*;
 import callback.CallBack;
@@ -17,12 +18,14 @@ import client.QuerySender;
 public class LoginController implements ActionListener{
 	
 //Instance variables **********************************************
-
+	/**
+	 * The default port to connect on.
+	 */
+	 final public static int DEFAULT_PORT = 5555;
 	/**
 	 * This buffer will allows the transfer of the callback, back to the application
 	 */
 	private callbackBuffer CommonBuffer = null;
-	
 	/**
 	 * The login GUI screen
 	 */
@@ -36,7 +39,7 @@ public class LoginController implements ActionListener{
 	/**
 	 * The server connection to send queries and receive callback's
 	 */
-	private final Client Server;
+	private static Client Server;
 	
 	/**
 	 * The Query builder
@@ -47,6 +50,10 @@ public class LoginController implements ActionListener{
 	 * The login user
 	 */
 	private static callbackUser EnteredUser;
+	/**
+	 * Set connection Flag
+	 */
+	private boolean ConnectionFlag = false;
 	
 //Constructors ****************************************************
 
@@ -56,12 +63,11 @@ public class LoginController implements ActionListener{
 	* @param Server The server connection.
 	* @param CommonBuffer The buffer to transfer callback's
 	*/
-	public LoginController(Login_GUI LoginScreen, Client Server, callbackBuffer CommonBuffer){
+	public LoginController(Login_GUI LoginScreen, callbackBuffer CommonBuffer){
 		/*------- initialize common variables-------*/
-		this.LoginScreen=LoginScreen; 									// Login GUI
-		this.Server=Server;												// Server connection
+		this.LoginScreen=LoginScreen; 									// Login GUI											// Server connection
 		this.CommonBuffer=CommonBuffer;									// CallBack buffer
-		SendQuery = new QuerySender(Server);							// Query sender
+
 		
 		/*----- Create gui button handlers -----*/
 		LoginButton = LoginScreen.getLoginButton(); 					//Login Button on the main GUI
@@ -89,6 +95,8 @@ public class LoginController implements ActionListener{
 	private void LoginButtonHandler(){
 		CallBack LocalUserCallBack = null;
 		EnteredUser = null;
+		setConnectionToServer();										//Start the connection to server
+
 		
 		/*------ Read fields from gui ------*/
 		String UserName = LoginScreen.getUserName();
@@ -155,6 +163,22 @@ public class LoginController implements ActionListener{
 			ChangeUserPasswordHandler();
 		}
 		
+	}
+	
+	private void setConnectionToServer(){
+		if (!ConnectionFlag){	
+			/*----- Create Server Connection -----*/
+			try {
+				Server = new Client (LoginScreen.getServerIP(),DEFAULT_PORT,CommonBuffer);
+				Server.openConnection();
+				SendQuery = new QuerySender(Server);								// Query sender
+				ConnectionFlag = true;												//Connection already set
+			} catch (IOException e1) {
+				LoginScreen.NoConnectionToServer(); 								//Set label on gui
+				ConnectionFlag = false;												//Can't succeed to make a connection
+				e1.printStackTrace();
+			}													
+		}
 	}
 	
 }

@@ -34,7 +34,7 @@ public Client(String host, int port, callbackBuffer CommonBuffer) throws IOExcep
 	 super(host, port); 									//Call the superclass constructor
 	 this.CommonBuffer=CommonBuffer;
 	 BufferInUse = CommonBuffer.getBufferInUse(); 			//Common synchronized send/receive flag
-	 openConnection();
+	 
 	 
 }
 

@@ -18,6 +18,8 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import java.awt.Color;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 public class Login_GUI extends JFrame {
 /**
@@ -36,6 +38,7 @@ public class Login_GUI extends JFrame {
 	private JPasswordField NewPasswordTextField;
 	private boolean DisplayScreen = true;
 	private JLabel WelcomUserLabel = new JLabel("Welcom First+Last");
+	private JTextField ServerIPField;
 	/**
 	 * Create the frame.
 	 */
@@ -105,6 +108,14 @@ public class Login_GUI extends JFrame {
 		ErrorMassage.setBounds(92, 520, 242, 32);
 		FirstLoginScreen.add(ErrorMassage);
 		
+		// Server IP
+		ServerIPField = new JTextField("127.0.0.1");
+		ServerIPField.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		ServerIPField.setHorizontalAlignment(SwingConstants.CENTER);
+		ServerIPField.setBounds(322, 0, 116, 22);
+		FirstLoginScreen.add(ServerIPField);
+		ServerIPField.setColumns(10);
+		
 		FirstLoginScreen.setVisible(true);								//See the first login screen
 			
 		
@@ -154,7 +165,7 @@ public class Login_GUI extends JFrame {
 		SecondLoginScreen.add(SecondErrorMassage);	
 		
 		SecondLoginScreen.setVisible(false);								//See the second login screen	
-		
+	
 	}
 	
 	
@@ -166,6 +177,9 @@ public class Login_GUI extends JFrame {
 	}
 	public String getNewPassword(){
 		return String.valueOf(NewPasswordTextField.getPassword());
+	}
+	public String getServerIP(){
+		return String.valueOf(ServerIPField.getText().trim());
 	}
 	public JPanel getcontentPane(){
 		return contantPane;

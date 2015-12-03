@@ -11,7 +11,10 @@ import javax.swing.text.BadLocationException;
 import server.EchoServer;
 import server.QueryIO;
 public class ServerController {
-	
+	/**
+	 * This represent if server is up or not
+	 */
+	public boolean ServerStatus=false;
 	/**
 	 * Global server GUI
 	 */
@@ -45,6 +48,7 @@ public class ServerController {
 		server_GUI.btnStart.addActionListener(new ActionListener() { //add Handler for Start button	
 		public void actionPerformed(ActionEvent arg0) {
 		    	ClearConsol();
+		    	ServerStatus=true;
 				printToConsol("Server listening for connections on port: "+server_GUI.GetPort());
 				//Create Server Handler//
 				initServer(server_GUI.GetPort());
@@ -59,9 +63,11 @@ public class ServerController {
 		server_GUI.btnStop.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-			printToConsol("Server is Terminate connction");
-			Server.stopListening();
-			//QueryServer.s
+				if(ServerStatus==true){
+					ServerStatus=false;
+					printToConsol("Server is Terminate connction");
+					Server.stopListening();
+				}
 			}
 		});
 	}
