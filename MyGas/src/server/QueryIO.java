@@ -72,7 +72,7 @@ public class QueryIO  {
 				break;
 				
 			case "updateUserLogout":
-				AnswerVector = updateUserLogin(QueryStructure.get(1));				
+				AnswerVector = updateUserLogout(QueryStructure.get(1));				
 				break;
 				
 		} // END switch
