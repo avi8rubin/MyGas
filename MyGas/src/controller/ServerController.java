@@ -7,12 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-
 import javax.swing.text.BadLocationException;
-
-import org.omg.CORBA.INTERNAL;
-
-import ocsf.server.*;
 import server.EchoServer;
 import server.QueryIO;
 public class ServerController {
@@ -91,6 +86,13 @@ public class ServerController {
 		 
 		return null;
 	}//public CreateSever
+	
+	/**
+	 * This function create connection to sql server
+	 * @param Url
+	 * @param User
+	 * @param Password
+	 */
 	public void initMySqlConnection(String Url,String User,String Password){
 		String msg=null;
 		msg=QueryServer.SetDriver();
@@ -99,10 +101,10 @@ public class ServerController {
 		printToConsol(msg);
 		msg=QueryServer.setStatement();
 		printToConsol(msg);
-		
 	}
+	
 	/**
-	 * print to consol 
+	 * print to console 
 	 * @param str -What to print
 	 */
 	public void printToConsol(String str){
@@ -116,7 +118,7 @@ public class ServerController {
 		}
 	}
 	/**
-	 * Clear Consol screen
+	 * Clear Console screen
 	 */
 	public void ClearConsol(){
 		this.server_GUI.textPane.setText("");

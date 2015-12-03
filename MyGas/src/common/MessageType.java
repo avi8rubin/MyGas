@@ -7,6 +7,9 @@ public enum MessageType {
 	Driver_Succeded,
 	statement_Succeded,
 	Statement_Not_succeded,
-	getCheckExistsUserPass
+	getCheckExistsUserPass,
+	Connection_To_Server_Lost,
+	Cant_Create_Connection_To_Server,
+	Lost_Connection_With_Client
 
 }

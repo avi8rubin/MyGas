@@ -42,7 +42,7 @@ public class LoginController implements ActionListener{
 	/**
 	 * The login user
 	 */
-	private static callbackUser EnteredUser = null;
+	private static callbackUser EnteredUser;
 	
 //Constructors ****************************************************
 
@@ -53,56 +53,79 @@ public class LoginController implements ActionListener{
 	* @param CommonBuffer The buffer to transfer callback's
 	*/
 	public LoginController(Login_GUI LoginScreen, Client Server, callbackBuffer CommonBuffer){
+		/*------- initialize common variables-------*/
+		this.LoginScreen=LoginScreen; 									// Login GUI
+		this.Server=Server;												// Server connection
+		this.CommonBuffer=CommonBuffer;									// CallBack buffer
+		SendQuery = new QuerySender(Server);							// Query sender
 		
-		this.LoginScreen=LoginScreen; 						// Login GUI
-		this.Server=Server;									// Server connection
-		this.CommonBuffer=CommonBuffer;						// CallBack buffer
-		SendQuery = new QuerySender(Server);				// Query sender
-			
-		LoginButton = LoginScreen.getLoginButton(); 		//Login Button on the main GUI
-		LoginButton.addActionListener(this);				//Add action listener
+		/*----- Create gui button handlers -----*/
+		LoginButton = LoginScreen.getLoginButton(); 					//Login Button on the main GUI
+		LoginButton.addActionListener(this);							//Add action listener
 		ChangePasswordButton = LoginScreen.getChangePasswordButton();
-		ChangePasswordButton.addActionListener(this);		//Add action listener	
+		ChangePasswordButton.addActionListener(this);					//Add action listener
+
+		
 	}
 	
 /**
  * Login button handler
  */
 	private void LoginButtonHandler(){
+		CallBack LocalUserCallBack = null;
+		EnteredUser = null;
+		
+		/*------ Read fields from gui ------*/
 		String UserName = LoginScreen.getUserName();
 		String Password = LoginScreen.getPassword();
-		CallBack LocalUserCallBack = null;
 		
-		SendQuery.getCheckExistsUserPass(UserName, Password); 	//Send query to DB
+		/*------Send user name and password query ------*/
+		SendQuery.getCheckExistsUserPass(UserName, Password); 			//Send query to DB
 
-		
-		LocalUserCallBack = getCallBackFromBuffer();			//Get from the common buffer new callback
-		EnteredUser = (callbackUser) LocalUserCallBack;	
-		
-		if (LocalUserCallBack instanceof callback_Error){		//If the query back empty or the entered values not illegal
+		/*------Waiting for callback ------*/
+		LocalUserCallBack = getCallBackFromBuffer();					//Get from the common buffer new callback
+			
+		/*------ User not exists ------*/
+		if (LocalUserCallBack instanceof callback_Error){				//If the query back empty or the entered values not illegal
 			LoginScreen.IllegalUserName();	
 		}
-		else if (Password.equals(EnteredUser.getPassword())){	//Password & username correct	
-			if (EnteredUser.getLoggedIn().equals("Yes")){		//User Already Connected
-				LoginScreen.AlreadyConnected();
+		/*------ User exists, check the reset parameters ------*/
+		else if (LocalUserCallBack instanceof callbackUser){
+			EnteredUser = (callbackUser) LocalUserCallBack;				//Casting to callbackUser
+			if (Password.equals(EnteredUser.getPassword())){			//Check if Password	correct
+				if (EnteredUser.getLoggedIn().equals("Yes")){			//Check if User Already Connected
+					LoginScreen.AlreadyConnected();
+				}
+		/*------ Move to the next screen ------*/
+				else{
+					SendQuery.updateUserLogin(EnteredUser.getUserID());	//Update user is logged in, in the DB
+					getCallBackFromBuffer();							//Emptying buffer					
+					LoginScreen.setWelcomUserLabel(EnteredUser.getFirstName(), EnteredUser.getLastName());
+					LoginScreen.SwitchScreen();
+				}
 			}
-			else{
-				LoginScreen.setWelcomUserLabel(EnteredUser.getFirstName(), EnteredUser.getLastName());
-				LoginScreen.SwitchScreen();
-			}
+			else LoginScreen.IllegalPassword();							//Display password error message
 		}
-		else LoginScreen.IllegalPassword();	
 	}
 	
 	private void ChangeUserPasswordHandler(){
-		LoginScreen.SwitchScreen();
+		CallBack LocalUserCallBack = null;
+		/*------Send query ------*/
+		SendQuery.updateChangeUserPassword(EnteredUser.getUserID(),LoginScreen.getNewPassword());
+		/*------Waiting for callback ------*/
+		LocalUserCallBack = getCallBackFromBuffer();					//Get from the common buffer new callback
+		if (LocalUserCallBack instanceof callback_Error)				//An error has occurred
+			LoginScreen.ChangePasswordError();
+		else {															//Password change successfully
+			LoginScreen.ClearErrorMessage();
+			LoginScreen.SwitchScreen();
+		}
+		
 	}
 	
 	private CallBack getCallBackFromBuffer(){
-		callbackUser ReturnCallBack;
-		while (CommonBuffer.HasNewCallBackAndBufferFree() == false); 		//Waits for new callback
-		ReturnCallBack = (callbackUser) CommonBuffer.getBufferCallBack();	//Get the new callback
-		return (ReturnCallBack);		
+		while (CommonBuffer.getHaveNewCallBack() == false); 			//Waits for new callback		
+		return  CommonBuffer.getBufferCallBack();						//Get the new callback	
 	}
 
 	@Override

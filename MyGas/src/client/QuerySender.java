@@ -11,20 +11,7 @@ public class QuerySender  {
 	}
 
 	public void SendMessageToServer(Vector<String> Message){
-		
-		
-		
-		Server.handleMessageFromClient(Message,Thread.currentThread() );
-		
-		//	Thread.currentThread().wait();
-	
-		// System.out.println(Thread.currentThread().getId());
-		/*
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}*/
+		Server.handleMessageFromClient(Message);
 	}
 	
 	public void getCheckExistsUserPass(String UserName, String Password){
@@ -32,6 +19,18 @@ public class QuerySender  {
 				Arrays.asList("getCheckExistsUserPass", UserName, Password));
 		SendMessageToServer(Query);
 	} 
+	
+	public void updateChangeUserPassword(int UserID, String NewPassword){
+		Vector<String> Query = new Vector<String>(
+				Arrays.asList("updateChangeUserPassword", Integer.toString(UserID), NewPassword));
+		SendMessageToServer(Query);
+	}
+	
+	public void updateUserLogin(int UserID){
+		Vector<String> Query = new Vector<String>(
+				Arrays.asList("updateUserLogin", Integer.toString(UserID)));
+		SendMessageToServer(Query);
+	}
 	
 	
 }

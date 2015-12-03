@@ -26,6 +26,7 @@ public class Login_GUI extends JFrame {
 	private JButton LoginButton = new JButton("Login");
 	private JLayeredPane FirstLoginScreen = new JLayeredPane();
 	private JLabel ErrorMassage = new JLabel("");
+	private JLabel SecondErrorMassage = new JLabel("");
 	private JLayeredPane SecondLoginScreen = new JLayeredPane();
 	private JButton ChangePasswordButton = new JButton("Change Password");
 	private JPasswordField NewPasswordTextField;
@@ -56,7 +57,7 @@ public class Login_GUI extends JFrame {
 		
 		//MyGas Icon
 		JLabel MyGasIcon = new JLabel("");
-		MyGasIcon.setIcon(new ImageIcon(Login2_GUI.class.getResource("/images/Main_Login_empty.jpg")));
+		MyGasIcon.setIcon(new ImageIcon(Login2_GUI.class.getResource("/images/Main_Login_empty.png")));
 		MyGasIcon.setBounds(63, 13, 294, 303);
 		FirstLoginScreen.add(MyGasIcon);
 		
@@ -112,7 +113,7 @@ public class Login_GUI extends JFrame {
 		
 		//MyGas Icon
 		JLabel label = new JLabel("");
-		label.setIcon(new ImageIcon(Login2_GUI.class.getResource("/images/Main_Login_empty.jpg")));
+		label.setIcon(new ImageIcon(Login_GUI.class.getResource("/images/Main_Login_empty.png")));
 		label.setBounds(63, 13, 294, 303);
 		SecondLoginScreen.add(label);
 		
@@ -139,19 +140,16 @@ public class Login_GUI extends JFrame {
 		ChangePasswordButton.setBounds(118, 462, 196, 46);
 		SecondLoginScreen.add(ChangePasswordButton);	
 		
-		SecondLoginScreen.setVisible(false);								//See the second login screen
+		// Password Screen error Massage
+		SecondErrorMassage.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		SecondErrorMassage.setForeground(Color.RED);
+		SecondErrorMassage.setBounds(92, 520, 242, 32);
+		SecondLoginScreen.add(SecondErrorMassage);	
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		SecondLoginScreen.setVisible(false);								//See the second login screen	
 		
 	}
+	
 	
 	public String getUserName(){
 		return UserNameTextField.getText().trim();
@@ -176,6 +174,12 @@ public class Login_GUI extends JFrame {
 	}
 	public void AlreadyConnected(){
 		ErrorMassage.setText("*User Already Connected.");
+	}
+	public void ChangePasswordError(){
+		SecondErrorMassage.setText("*An Error Has Occurred.");
+	}
+	public void NoConnectionToServer(){
+		ErrorMassage.setText("*No Connection To The Server.");
 	}
 	public JButton getLoginButton(){
 		return LoginButton;
