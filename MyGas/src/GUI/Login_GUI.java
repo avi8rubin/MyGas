@@ -10,6 +10,10 @@ import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
 import javax.swing.JFormattedTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
@@ -36,7 +40,6 @@ public class Login_GUI extends JFrame {
 	 * Create the frame.
 	 */
 	public Login_GUI() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds (100, 100, 454, 609);
 		contantPane = new JPanel();
 		contantPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -44,6 +47,10 @@ public class Login_GUI extends JFrame {
 		setContentPane(contantPane);
 		this.setResizable(false);
 		this.setVisible(true);
+		
+
+
+		
 		
 	/**
 	 * Create the First screen of login GUI

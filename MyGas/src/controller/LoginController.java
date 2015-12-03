@@ -2,6 +2,10 @@ package controller;
 import javax.swing.JButton;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
 import GUI.*;
 import callback.CallBack;
 import callback.callbackBuffer;
@@ -65,6 +69,17 @@ public class LoginController implements ActionListener{
 		ChangePasswordButton = LoginScreen.getChangePasswordButton();
 		ChangePasswordButton.addActionListener(this);					//Add action listener
 
+		/**
+		 * Set the exit (X) button to performed a organized logout
+		 */
+		WindowListener exitListener = new WindowAdapter() {
+		    @Override
+		    public void windowClosing(WindowEvent e) {	    	
+		    	SendQuery.updateUserLogout(EnteredUser.getUserID());
+		        System.exit(0);		        
+		    }
+		};
+		LoginScreen.addWindowListener(exitListener);
 		
 	}
 	
