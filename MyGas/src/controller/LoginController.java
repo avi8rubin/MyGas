@@ -112,11 +112,14 @@ public class LoginController implements ActionListener{
 		CallBack LocalUserCallBack = null;
 		/*------Send query ------*/
 		SendQuery.updateChangeUserPassword(EnteredUser.getUserID(),LoginScreen.getNewPassword());
+		
 		/*------Waiting for callback ------*/
 		LocalUserCallBack = getCallBackFromBuffer();					//Get from the common buffer new callback
 		if (LocalUserCallBack instanceof callback_Error)				//An error has occurred
 			LoginScreen.ChangePasswordError();
 		else {															//Password change successfully
+			SendQuery.updateUserLogout(EnteredUser.getUserID());		//Update user is logged out, in the DB
+			getCallBackFromBuffer();									//Emptying buffer
 			LoginScreen.ClearErrorMessage();
 			LoginScreen.SwitchScreen();
 		}

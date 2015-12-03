@@ -32,6 +32,12 @@ public class QuerySender  {
 		SendMessageToServer(Query);
 	}
 	
+	public void updateUserLogout(int UserID){
+		Vector<String> Query = new Vector<String>(
+				Arrays.asList("updateUserLogout", Integer.toString(UserID)));
+		SendMessageToServer(Query);
+	}
+	
 	
 }
 	

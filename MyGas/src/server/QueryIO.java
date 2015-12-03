@@ -71,6 +71,10 @@ public class QueryIO  {
 				AnswerVector = updateUserLogin(QueryStructure.get(1));				
 				break;
 				
+			case "updateUserLogout":
+				AnswerVector = updateUserLogin(QueryStructure.get(1));				
+				break;
+				
 		} // END switch
 
 		
@@ -160,6 +164,27 @@ public class QueryIO  {
 		return LocalVector;
 	}
 	
+	private Vector<?> updateUserLogout(String UserID){
+		// Set variables ---------------------------------------------------------
+			Vector <CallBack> LocalVector = new Vector <CallBack>();
+				
+		// Build query -----------------------------------------------------------
+		try {
+			PreparedStatement ps=conn.prepareStatement("UPDATE Users SET Logged_In='No' WHERE User_ID=(?);");
+			
+		// Send query to DB  -----------------------------------------------------
+			ps.setInt(1, Integer.valueOf(UserID));			
+			ps.executeUpdate();
+			
+		} catch (SQLException e) {
+			LocalVector.add(new callback_Error());					// If query not succeed
+			e.printStackTrace();
+		}
+		if(LocalVector.size()==0)
+			LocalVector.add(new callbackSuccess());					// 	Query not succeed
+		
+		return LocalVector;
+	}
 	
 	private void printQueryResult(ResultSet Result){
 		try {
