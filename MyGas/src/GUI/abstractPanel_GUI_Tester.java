@@ -7,6 +7,9 @@ import javax.swing.border.EmptyBorder;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JLayeredPane;
 import javax.swing.border.LineBorder;
 import javax.swing.JLabel;
@@ -15,7 +18,7 @@ import javax.swing.SwingConstants;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-public class abstructPanel_GUI extends JFrame {
+public class abstractPanel_GUI_Tester extends JFrame {
 
 	/**
 	 * 
@@ -34,7 +37,7 @@ public class abstructPanel_GUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					abstructPanel_GUI frame = new abstructPanel_GUI();
+					abstractPanel_GUI_Tester frame = new abstractPanel_GUI_Tester();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -46,7 +49,7 @@ public class abstructPanel_GUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public abstructPanel_GUI() {
+	public abstractPanel_GUI_Tester() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1300, 900);
 		contentPane = new JPanel();
@@ -76,6 +79,12 @@ public class abstructPanel_GUI extends JFrame {
 		LogoutButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		LogoutButton.setBounds(1148, 13, 112, 38);
 		TopPanel.add(LogoutButton);
+		LogoutButton.addActionListener(new ActionListener() { 				//Add action listener
+			public void actionPerformed(ActionEvent e) {
+		        System.exit(0);
+			}
+		});
+		
 		
 		JButton ContactsButton = new JButton("Contacts");
 		ContactsButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
@@ -90,7 +99,7 @@ public class abstructPanel_GUI extends JFrame {
 		contentPane.add(LeftPanel, BorderLayout.WEST);
 		
 		JLabel LogoImage = new JLabel("");
-		LogoImage.setIcon(new ImageIcon(abstructPanel_GUI.class.getResource("/images/Left_Panel_Logo22.jpg")));
+		LogoImage.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Left_Panel_Logo22.jpg")));
 		LogoImage.setBounds(37, 400, 239, 242);
 		LeftPanel.add(LogoImage);
 		

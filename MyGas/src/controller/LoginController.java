@@ -78,9 +78,9 @@ public class LoginController implements ActionListener{
 		ChangePasswordButton = LoginScreen.getChangePasswordButton();
 		ChangePasswordButton.addActionListener(this);					//Add action listener
 		
-		/**
-		 * Set the exit (X) button to performed a organized logout
-		 */
+	/**
+	 * Set the exit (X) button to performed a organized logout
+	 */
 		WindowListener exitListener = new WindowAdapter() {
 		    @Override
 		    public void windowClosing(WindowEvent e) {	    	
@@ -133,7 +133,9 @@ public class LoginController implements ActionListener{
 			else LoginScreen.IllegalPassword();							//Display password error message
 		}
 	}
-	
+	/**
+	 * Send query to DB that change the user password
+	 */
 	private void ChangeUserPasswordHandler(){
 		CallBack LocalUserCallBack = null;
 		/*------Send query ------*/
@@ -151,12 +153,17 @@ public class LoginController implements ActionListener{
 		}
 		
 	}
-	
+	/**
+	 * @return The callback from the buffer
+	 */
 	private CallBack getCallBackFromBuffer(){
 		while (CommonBuffer.getHaveNewCallBack() == false); 			//Waits for new callback		
 		return  CommonBuffer.getBufferCallBack();						//Get the new callback	
 	}
 
+	/**
+	 * All buttons function handler
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == LoginButton){
@@ -168,6 +175,9 @@ public class LoginController implements ActionListener{
 		
 	}
 	
+	/**
+	 * Initiate the connection to server 
+	 */
 	private void setConnectionToServer(){
 		if (!ConnectionFlag){	
 			/*----- Create Server Connection -----*/
