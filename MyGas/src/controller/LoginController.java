@@ -6,6 +6,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import GUI.*;
 import callback.CallBack;
@@ -74,14 +77,14 @@ public class LoginController implements ActionListener{
 		LoginButton.addActionListener(this);							//Add action listener
 		ChangePasswordButton = LoginScreen.getChangePasswordButton();
 		ChangePasswordButton.addActionListener(this);					//Add action listener
-
+		
 		/**
 		 * Set the exit (X) button to performed a organized logout
 		 */
 		WindowListener exitListener = new WindowAdapter() {
 		    @Override
 		    public void windowClosing(WindowEvent e) {	    	
-		    	SendQuery.updateUserLogout(EnteredUser.getUserID());
+		    	if(ConnectionFlag) SendQuery.updateUserLogout(EnteredUser.getUserID());
 		        System.exit(0);		        
 		    }
 		};
@@ -170,7 +173,7 @@ public class LoginController implements ActionListener{
 			/*----- Create Server Connection -----*/
 			try {
 				Server = new Client (LoginScreen.getServerIP(),DEFAULT_PORT,CommonBuffer);
-				Server.openConnection();
+				Server.openConnection();											//Try open connection to server
 				SendQuery = new QuerySender(Server);								// Query sender
 				ConnectionFlag = true;												//Connection already set
 			} catch (IOException e1) {
@@ -180,5 +183,4 @@ public class LoginController implements ActionListener{
 			}													
 		}
 	}
-	
 }
