@@ -9,12 +9,11 @@ import java.awt.Dimension;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JLayeredPane;
 import javax.swing.border.LineBorder;
-
 import callback.callbackUser;
-import client.QuerySender;
+import client.Client;
+import common.MessageType;
 
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -29,15 +28,17 @@ public class abstractPanel_GUI extends JFrame {
 	//Instance variables ********************************************** 
 
 	private static final long serialVersionUID = 1L;
-	/**
-	 * The Query builder
-	 */
-	private static QuerySender SendQuery;
+
 	
 	/**
 	 * The login user
 	 */
 	private static callbackUser User;
+	private Login_GUI LoginScreen;
+	/**
+	 * Server
+	 */
+	private Client Server;
 	
 	//GUI variables ***************************************************
 	private JPanel contentPane;
@@ -55,7 +56,7 @@ public class abstractPanel_GUI extends JFrame {
 	/**
 	 * Create the abstract GUI panel.
 	 */
-	public abstractPanel_GUI(QuerySender SendQuery, callbackUser EnteredUser) {
+	public abstractPanel_GUI(callbackUser EnteredUser, Client Server, Login_GUI LoginScreen) {
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1300, 900);
 		contentPane = new JPanel();
@@ -64,11 +65,12 @@ public class abstractPanel_GUI extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		this.setResizable(false);
 		this.setVisible(true);
-		this.SendQuery = SendQuery;
 		this.User = EnteredUser;
+		this.Server = Server;
+		this.LoginScreen = LoginScreen;
 		setWelcomeLabel(User.getFirstName(),User.getLastName()); 		// Set welcome label
 		setRoleLabel(User.getUserPrivilege());							// Set user role
-		
+		LoginScreen.GoToLoginWindow();
 		
 	
 	/**
@@ -97,8 +99,8 @@ public class abstractPanel_GUI extends JFrame {
 		TopPanel.add(LogoutButton);
 		LogoutButton.addActionListener(new ActionListener() { 				//Add action listener
 			public void actionPerformed(ActionEvent e) {
-				SendQuery.updateUserLogout(User.getUserID());
-		        System.exit(0);
+				User.setWhatToDo(MessageType.updateUserLogout);
+				Server.handleMessageFromClient(User);
 			}
 		});
 

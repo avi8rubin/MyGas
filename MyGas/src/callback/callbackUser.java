@@ -1,6 +1,8 @@
 package callback;
 import java.io.Serializable;
 
+import common.MessageType;
+
 public class callbackUser extends CallBack implements Serializable {
 	
 	/**
@@ -18,9 +20,16 @@ public class callbackUser extends CallBack implements Serializable {
 	private String Email;
 	
 	public callbackUser(){}    		//Empty constructor
+	
 	public callbackUser(String UserName, String Password){
 		this.Password = Password;
 		this.UserName = UserName;
+	}
+	
+	public callbackUser(MessageType WhatToDo, String UserName, String Password){
+		this.Password = Password;
+		this.UserName = UserName;
+		this.WhatToDo = WhatToDo;
 	}
 	
 	public void setFirstName(String FirstName){

@@ -6,6 +6,7 @@ import java.awt.Color;
 import javax.swing.JTextField;
 import javax.swing.Scrollable;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultCaret;
 import javax.swing.JButton;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
@@ -76,6 +77,8 @@ private void initialize() {
 		scrollPane.setBounds(12, 76, 720, 296);
 		frame.getContentPane().add(scrollPane);
 		scrollPane.setViewportView(textPane);
+		DefaultCaret caret = (DefaultCaret)textPane.getCaret();			//Always see the bottom of the text area
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);				//Always see the bottom of the text area
 		
 		textPassword = new JTextField();
 		textPassword.setText("1234");

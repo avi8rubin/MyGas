@@ -9,6 +9,8 @@ import java.util.Calendar;
 import java.util.Vector;
 import javax.swing.text.BadLocationException;
 import GUI.Server_GUI;
+import callback.CallBack;
+import callback.callback_Error;
 import common.MessageType;
 import ocsf.server.*;
 
@@ -25,6 +27,12 @@ public class EchoServer extends AbstractServer
   public static  String URL="";
   public static  String User="";
   public static  String Password="";
+ 
+  /**
+   * Time for text field.
+   */
+  private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+  private Calendar cal;
   
   /**
    * The Global QueryIO - all the query sent by this variable.
@@ -51,22 +59,29 @@ public class EchoServer extends AbstractServer
    * @param msg The message received from the client.
    * @param client The connection from which the message originated.
    */
-  @SuppressWarnings("unchecked")
-public void handleMessageFromClient (Object msg, ConnectionToClient client)
+  public void handleMessageFromClient (Object msg, ConnectionToClient client)
   {
-	  Vector<?> Answer = new Vector<>()  ;
-	  Vector<String> NewQuery =(Vector<String>) msg;
+	  cal = Calendar.getInstance();								//Current time  
+	  Object Answer;
+	  if (msg instanceof CallBack){
+		  Answer = QueryAsk.CallbackResolver(msg);
+		  
+		  /*------ Print to console panel -------*/
+		  printToConsol(dateFormat.format(cal.getTime())+": Client "+client+", Send: "+((CallBack)msg).getWhatToDo().toString());
+		  printToConsol(dateFormat.format(cal.getTime())+": Server answer: "+((CallBack)Answer).getClass().toString());
+	  }
+	  else if(msg instanceof Vector){
+		  Answer = QueryAsk.VectorResolver(msg);
+	  }
+	  else {
+		  Answer = new callback_Error("Can't determine which object was sent to server.");
+	  }
+
 	  
-	  /*This part send query to DB and return to client the result*/
-	  Answer = (Vector<?>) QueryAsk.QueriesResolver(NewQuery);
+
 	  
-	  /*This part print to console panel*/
-	  DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-	  Calendar cal = Calendar.getInstance();
-	  printToConsol(dateFormat.format(cal.getTime())+": Client send: "+msg.toString()+" Client: "+client);
-	  printToConsol(dateFormat.format(cal.getTime())+": Server send: "+Answer.toString());
 	  
-	  /*This part send to client*/
+	  /*------- Send to client ---------*/
 	  try {
 			client.sendToClient(Answer);
 		} catch (IOException e) {

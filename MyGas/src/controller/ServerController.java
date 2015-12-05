@@ -1,5 +1,6 @@
 package controller;
 import GUI.*;
+import callback.callbackLostConnection;
 import common.MessageType;
 
 import java.awt.event.ActionEvent;
@@ -65,8 +66,16 @@ public class ServerController {
 			public void mouseClicked(MouseEvent e) {
 				if(ServerStatus==true){
 					ServerStatus=false;
-					printToConsol("Server is Terminate connction");
-					Server.stopListening();
+					printToConsol("Server is Terminate connction.");
+					QueryServer.ServerStopLogoutAllUsers();
+					Server.sendToAllClients(new callbackLostConnection());
+					
+					try {
+						Server.close();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			}
 		});
@@ -74,10 +83,10 @@ public class ServerController {
 	
 /**
  * 
- * @param Port for mysql
- * @param Url for mysql
- * @param User for mysql
- * @param Password for mysql 
+ * @param Port for jdbc connection
+ * @param Url for jdbc connection
+ * @param User for jdbc connection
+ * @param Password for jdbc connection 
  * @return Message Error if server connection failed
  */
 	public MessageType initServer(int Port){

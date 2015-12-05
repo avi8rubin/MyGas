@@ -1,9 +1,11 @@
 package callback;
 
+import java.util.Vector;
+
 public class callbackBuffer extends CallBack{
 	
 	private static final long serialVersionUID = 1L;
-	private CallBack CallBack = null;
+	private Object CallBack = null;
 	private boolean HaveNewCallBack = false;
 	public boolean BufferInUse;
 	
@@ -34,9 +36,15 @@ public class callbackBuffer extends CallBack{
 		if (HaveNewCallBack == false) 		//The callback buffer is empty
 			return (null);
 		HaveNewCallBack = false;			//Update empty buffer & wait for new callback
-		return (CallBack);
+		return ((CallBack) CallBack);
 	}
 	
+	public Vector<?> getBufferCallBackVector(){
+		if (HaveNewCallBack == false) 		//The callback buffer is empty
+			return (null);
+		HaveNewCallBack = false;			//Update empty buffer & wait for new callback vector
+		return ((Vector<?>) CallBack);
+	}
 	
 	public boolean getHaveNewCallBack(){
 		return (HaveNewCallBack);

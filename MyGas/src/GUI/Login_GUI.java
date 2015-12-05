@@ -217,4 +217,9 @@ public class Login_GUI extends JFrame {
 		FirstLoginScreen.setVisible(DisplayScreen);
 		SecondLoginScreen.setVisible(!DisplayScreen);	
 	}
+	public void GoToLoginWindow(){
+		if (DisplayScreen == false){
+			SwitchScreen();
+		}
+	}
 }

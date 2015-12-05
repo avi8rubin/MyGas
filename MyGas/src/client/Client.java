@@ -70,32 +70,50 @@ public void handleMessageFromClient(Object message)
 		try {
 			sendToServer(message);
 		} catch (IOException e) {
-			System.out.println(MessageType.Connection_To_Server_Lost.toString()+" | Class: Client | Function: handleMessageFromClient.");
+			System.out.println(MessageType.Connection_To_Server_Lost.toString()
+					+" | Class: Client | Function: handleMessageFromClient.");			
+			LostConnection();														//Close connection
 			e.printStackTrace();
 		}
+		
 		/*---- Wait until callback arrived from server -----*/
 		while(!BufferInUse && ReleaseCounter!=0){	
-			if(--ReleaseCounter == 0) 
-				System.out.println(MessageType.Connection_To_Server_Lost.toString()+" | Class: Client | Function: handleMessageFromClient.");
+			if(--ReleaseCounter == 0){ 												//Stop connection after long delay
+				System.out.println(MessageType.Connection_To_Server_Lost.toString()
+						+" | Class: Client | Function: handleMessageFromClient.");
+				LostConnection();													//Close connection
+			}
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
+		/*Force exit program and go back to login screen*/
+		if(ReleaseCounter == 0) {													//Enter to common buffer lostconnection callback
+			CommonBuffer.getBufferCallBack();
+			CommonBuffer.setNewCallBack(new callbackLostConnection());
+		}
 }
 
 	/**
 	* This method terminates the client.
 	*/
+	public void LostConnection()
+	{
+		try{
+			closeConnection();
+		}
+		catch(IOException e) {}
+	}
+	
 	public void quit()
 	{
-	 try
-	 {
-	   closeConnection();
-	 }
-	 catch(IOException e) {}
-	 System.exit(0);
+		try{
+			closeConnection();
+		}
+		catch(IOException e) {}
+		System.exit(0);
 	}
 
 }
