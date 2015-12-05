@@ -67,7 +67,7 @@ public class Login_GUI extends JFrame {
 		
 		//MyGas Icon
 		JLabel MyGasIcon = new JLabel("");
-		MyGasIcon.setIcon(new ImageIcon(Login2_GUI.class.getResource("/images/Main_Login_empty.png")));
+		MyGasIcon.setIcon(new ImageIcon(Login_GUI.class.getResource("/images/Main_Login_empty.png")));
 		MyGasIcon.setBounds(63, 13, 294, 303);
 		FirstLoginScreen.add(MyGasIcon);
 		
