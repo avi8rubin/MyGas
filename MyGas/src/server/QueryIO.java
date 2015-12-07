@@ -58,6 +58,7 @@ public class QueryIO  {
 		
 		switch(((CallBack) SwitchCallback).getWhatToDo()){
 		
+/*Global Queries*/
 			case getCheckExistsUserPass:
 				AnswerObject = getCheckExistsUserPass((callbackUser)SwitchCallback);				
 				break;
@@ -73,6 +74,15 @@ public class QueryIO  {
 			case updateUserLogout:
 				AnswerObject = updateUserLogout((callbackUser)SwitchCallback);				
 				break;
+				
+			case getContacts:
+				AnswerObject = getContacts((callbackWorkersDetailes)SwitchCallback);				
+				break;
+				
+/*Marketing Manager*/
+			case getCommentsForMarketionCampaign:
+				AnswerObject = getCommentsForMarketionCampaign((callbackCommentsForMarketionCampaign)SwitchCallback);				
+				break;	
 				
 		default:
 			AnswerObject = new callback_Error("Not a callback object, send legal callback.");
@@ -90,6 +100,10 @@ public class QueryIO  {
 		return AnswerVector;
 		
 	}
+	
+/**
+ * Global queries 	
+ */
 	
 	private CallBack getCheckExistsUserPass(callbackUser User){
 		// Set variables ---------------------------------------------------------
@@ -183,6 +197,86 @@ public class QueryIO  {
 		}
 			return (new callbackSuccess());					// 	Query not succeed
 	}
+	
+	private Vector<?> getContacts(callbackWorkersDetailes WorkersDetailes){
+		// Set variables ---------------------------------------------------------
+		Vector <CallBack> LocalVector = new Vector <CallBack>();	
+		
+		// Build query -----------------------------------------------------------
+		String SqlQuery = "SELECT * FROM Workers";
+		
+		// Send query to DB and get result ---------------------------------------
+		try {
+			AnswerResult = st.executeQuery(SqlQuery);
+			/**
+			 * Create the report callback structure
+			 */
+					while (AnswerResult.next()) { 					
+						callbackWorkersDetailes callback_Obj = new callbackWorkersDetailes();
+						callback_Obj.setWorkerID(AnswerResult.getInt("Worker_ID"));
+						callback_Obj.setWorkerFirstName(AnswerResult.getString("Worker_First_Name"));
+						callback_Obj.setWorkerLastName(AnswerResult.getString("Worker_Last_Name"));
+						callback_Obj.setEmail(AnswerResult.getString("Email"));
+						callback_Obj.setOrganization(AnswerResult.getString("Organization"));
+						callback_Obj.setUserId(AnswerResult.getInt("User_Id"));
+						LocalVector.add(callback_Obj);
+					}
+				
+					} catch (SQLException e) {
+						LocalVector.add(new callback_Error("Problem has occurred, query not valid or not connection to DB."));					
+				e.printStackTrace();
+			}
+		return LocalVector;
+		
+	}
+	
+/**
+ * Marketing Manager 	
+ */	
+	private Vector<?> getCommentsForMarketionCampaign(callbackCommentsForMarketionCampaign Report){
+		// Set variables ---------------------------------------------------------
+		Vector <CallBack> LocalVector = new Vector <CallBack>();	
+		
+		// Build query -----------------------------------------------------------
+		String SqlQuery = 
+				"SELECT A.Campaign_ID "+
+				",DATE_FORMAT(A.Start_Campaign,'%d/%m/%Y') AS Start_Campaign "+
+				",DATE_FORMAT(A.End_Campaign,'%d/%m/%Y') AS End_Campaign "+
+				",CONCAT(A.Campaign_Description,' (',CAST(DATE_FORMAT(A.Start_Campaign,'%d/%m/%Y') AS CHAR),' - ',CAST(DATE_FORMAT(A.End_Campaign,'%d/%m/%Y') AS CHAR),')') AS Campaign_Description "+ 
+				",COUNT(*) AS NumberOfCoustomer "+
+				",SUM(B.Payment) AS TotalProfit "+
+				",SUM(B.Fuel_Amount) AS TotalFuelAmount "+
+				"FROM All_Campaign_On_System A "+
+				"LEFT OUTER JOIN All_Gas_Stations_Sales B ON A.Campaign_ID=B.Campaign_ID "+
+				"WHERE IS_Active = 'Yes' "+
+				"GROUP BY A.Campaign_ID "	;
+		
+		// Send query to DB and get result ---------------------------------------
+		try {
+			AnswerResult = st.executeQuery(SqlQuery);
+			/**
+			 * Create the report callback structure
+			 */
+					while (AnswerResult.next()) { 					
+						callbackCommentsForMarketionCampaign callback_Obj = new callbackCommentsForMarketionCampaign();
+						callback_Obj.setCampaignID(AnswerResult.getInt("Campaign_ID"));
+						callback_Obj.setStartCampaign(AnswerResult.getDate("Start_Campaign").toString());
+						callback_Obj.setEndCampaign(AnswerResult.getDate("End_Campaign").toString());
+						callback_Obj.setCampaignDescription(AnswerResult.getString("Campaign_Description"));
+						callback_Obj.setNumberOfCoustomer(AnswerResult.getInt("NumberOfCoustomer"));
+						callback_Obj.setTotalProfit(AnswerResult.getFloat("TotalProfit"));
+						callback_Obj.setTotalFuelAmount(AnswerResult.getFloat("TotalFuelAmount"));
+						LocalVector.add(callback_Obj);
+					}
+				
+					} catch (SQLException e) {
+						LocalVector.add(new callback_Error("Problem has occurred, query not valid or not connection to DB."));					
+				e.printStackTrace();
+			}
+		return LocalVector;
+		
+	}
+	
 	
 	
 	

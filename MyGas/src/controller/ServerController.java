@@ -54,6 +54,7 @@ public class ServerController {
 				//Create Server Handler//
 				initServer(server_GUI.GetPort());
 				initMySqlConnection(server_GUI.GetURL(), server_GUI.GetUser(), server_GUI.GetPassword());
+				QueryServer.ServerStopLogoutAllUsers();
 		}});
 	}
 	/**
