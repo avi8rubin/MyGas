@@ -2,7 +2,9 @@ package GUI;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -17,6 +19,7 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JTable;
 
 public class abstractPanel_GUI_Tester extends JFrame {
 
@@ -30,6 +33,9 @@ public class abstractPanel_GUI_Tester extends JFrame {
 	private JLabel WelcomLabel = new JLabel("Welcom First + Last Name");
 	private JLayeredPane LeftPanel = new JLayeredPane();
 	private JLayeredPane CenterPanel = new JLayeredPane();
+	private final JTable ContactTable = new JTable();
+	private boolean ShowContacts = false;
+	private JInternalFrame ContactFrame = new JInternalFrame("Contact List");
 	/**
 	 * Launch the application.
 	 */
@@ -87,6 +93,12 @@ public class abstractPanel_GUI_Tester extends JFrame {
 		
 		
 		JButton ContactsButton = new JButton("Contacts");
+		ContactsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ShowContacts = !ShowContacts;
+				ContactFrame.setVisible(ShowContacts);	
+			}
+		});
 		ContactsButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		ContactsButton.setBounds(1148, 64, 112, 38);
 		TopPanel.add(ContactsButton);
@@ -112,6 +124,18 @@ public class abstractPanel_GUI_Tester extends JFrame {
 		lblDisplaySubPanelLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
 		lblDisplaySubPanelLabel.setBounds(164, 13, 608, 42);
 		CenterPanel.add(lblDisplaySubPanelLabel);
+		
+		// Contact list frame
+		
+		ContactFrame.setBounds(0, 0, 984, 655);
+		ContactFrame.setVisible(false);
+		CenterPanel.add(ContactFrame);
+		ContactFrame.getContentPane().setLayout(null);
+		ContactTable.setBounds(12, 13, 944, 593);
+		
+		ContactFrame.getContentPane().add(ContactTable);
+		ContactFrame.getContentPane().add(new JScrollPane(ContactTable));
+		
 	}
 	public void setWelcomLabel(String FirstName, String LastName){
 		WelcomLabel.setText("Welcom "+FirstName+" "+LastName);
@@ -120,5 +144,4 @@ public class abstractPanel_GUI_Tester extends JFrame {
 	public void setRoleLabel(String Role){
 		RoleLabel.setText(Role+" Panel");
 	}
-	
 }

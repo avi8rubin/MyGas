@@ -3,9 +3,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
+
+
 import callback.*;
 import common.MessageType;
 
@@ -76,7 +79,10 @@ public class QueryIO  {
 				break;
 				
 			case getContacts:
-				AnswerObject = getContacts((callbackWorkersDetailes)SwitchCallback);				
+				if(SwitchCallback instanceof callbackWorkersDetailes)
+					AnswerObject = getContacts((callbackWorkersDetailes)SwitchCallback);	
+				else if (SwitchCallback instanceof callbackStringArray)
+					AnswerObject = getContacts((callbackStringArray)SwitchCallback);
 				break;
 				
 /*Marketing Manager*/
@@ -227,6 +233,50 @@ public class QueryIO  {
 				e.printStackTrace();
 			}
 		return LocalVector;
+		
+	}
+	
+	private CallBack getContacts(callbackStringArray WorkersDetailes){
+		// Set variables ---------------------------------------------------------	
+		ResultSetMetaData LocalResult;
+		String[][] Data;
+		String[] Headers;
+		int ColNum;
+		int RowNum =0;
+		// Build query -----------------------------------------------------------
+		String SqlQuery = "SELECT * FROM Workers";
+		
+		// Send query to DB and get result ---------------------------------------
+		try {
+			AnswerResult = st.executeQuery(SqlQuery);
+			LocalResult = AnswerResult.getMetaData();
+			WorkersDetailes.setColCount(ColNum = LocalResult.getColumnCount());
+			
+			AnswerResult.last();
+			WorkersDetailes.setRowCount(AnswerResult.getRow());
+			AnswerResult.beforeFirst();
+			Data = new String[WorkersDetailes.getRowCount()][ColNum];
+			Headers = new String[ColNum];
+			
+			for(int i=0;i<ColNum;i++)
+				Headers[i] = LocalResult.getColumnName(i+1);
+			WorkersDetailes.setColHeaders(Headers);
+			
+			
+			/**
+			 * Create the report callback structure
+			 */
+			while (AnswerResult.next()) { 
+					
+				for (int i = 0; i < ColNum; i++) 
+					Data[RowNum][i] = AnswerResult.getString(i + 1);
+				RowNum++;
+			}
+			WorkersDetailes.setData(Data);
+			} catch (SQLException e) {
+				return new callback_Error("Problem has occurred, query not valid or not connection to DB.");
+				}
+		return WorkersDetailes;
 		
 	}
 	

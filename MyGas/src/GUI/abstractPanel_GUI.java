@@ -3,6 +3,8 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,9 +13,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JLayeredPane;
 import javax.swing.border.LineBorder;
+
+import callback.CallBack;
+import callback.callbackBuffer;
+import callback.callbackLostConnection;
+import callback.callbackStringArray;
 import callback.callbackUser;
+import callback.callback_Error;
 import client.Client;
 import common.MessageType;
+import controller.LoginController;
 
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -39,6 +48,7 @@ public class abstractPanel_GUI extends JFrame {
 	 * Server
 	 */
 	private Client Server;
+	private callbackBuffer CommonBuffer;
 	
 	//GUI variables ***************************************************
 	private JPanel contentPane;
@@ -51,12 +61,14 @@ public class abstractPanel_GUI extends JFrame {
 	private JLabel SubPanelLabel = new JLabel("");
 	private JButton LogoutButton = new JButton("Logout");
 	private JButton ContactsButton = new JButton("Contacts");
-
+	private callbackStringArray ContactList;
+	private boolean ShowContacts = false;
+	private final JTable ContactTable;
 
 	/**
 	 * Create the abstract GUI panel.
 	 */
-	public abstractPanel_GUI(callbackUser EnteredUser, Client Server, Login_GUI LoginScreen) {
+	public abstractPanel_GUI(callbackUser EnteredUser, Client Server,callbackBuffer CommonBuffer, Login_GUI LoginScreen) {
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1300, 900);
 		contentPane = new JPanel();
@@ -67,6 +79,7 @@ public class abstractPanel_GUI extends JFrame {
 		this.setVisible(true);
 		this.User = EnteredUser;
 		this.Server = Server;
+		this.CommonBuffer = CommonBuffer;
 		this.LoginScreen = LoginScreen;
 		setWelcomeLabel(User.getFirstName(),User.getLastName()); 		// Set welcome label
 		setRoleLabel(User.getUserPrivilege());							// Set user role
@@ -104,6 +117,13 @@ public class abstractPanel_GUI extends JFrame {
 			}
 		});
 
+		// Get Contact List - Send query and create the JTable
+		ContactList = new callbackStringArray();							//-----------------------------------
+		ContactList.setWhatToDo(MessageType.getContacts);					//		get contact list
+		Server.handleMessageFromClient(ContactList);						//----------------------------------- 
+		ContactList = (callbackStringArray) getCallBackFromBuffer();
+		ContactTable = new JTable(ContactList.getData(),ContactList.getColHeaders()); //create jtable with all the data of the workers
+		
 		
 		// Contact button
 		ContactsButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
@@ -111,7 +131,8 @@ public class abstractPanel_GUI extends JFrame {
 		TopPanel.add(ContactsButton);
 		ContactsButton.addActionListener(new ActionListener() {				//Add action listener
 			public void actionPerformed(ActionEvent e) {
-				/*need to add query send to DB to get all the contact list*/
+				ShowContacts = !ShowContacts;
+				ContactFrame.setVisible(ShowContacts);						//Display and hide the contact list
 			}
 		});
 		
@@ -145,9 +166,12 @@ public class abstractPanel_GUI extends JFrame {
 		
 		// Contact list frame
 		ContactFrame.setBounds(0, 0, 984, 655);
-		ContactFrame.setVisible(true);
+		ContactFrame.setVisible(false);
 		CenterPanel.add(ContactFrame);
 		ContactFrame.getContentPane().setLayout(null);
+		ContactTable.setBounds(12, 13, 944, 593);		
+		ContactFrame.getContentPane().add(ContactTable);
+		ContactFrame.add(new JScrollPane(ContactTable));
 		
 	}
 	
@@ -165,5 +189,24 @@ public class abstractPanel_GUI extends JFrame {
 	}
 	public void setCenterPanelLabel(String NewString){
 		SubPanelLabel.setText(NewString);
+	}
+	/**
+	 * @return The callback from the buffer
+	 */
+	private CallBack getCallBackFromBuffer(){
+		CallBack ReturnCallback;
+		while (CommonBuffer.getHaveNewCallBack() == false); 			//Waits for new callback		
+		ReturnCallback = CommonBuffer.getBufferCallBack();				//Get the new callback	
+		if (ReturnCallback instanceof callback_Error){				//If the query back empty or the entered values not illegal
+			System.out.println(((callback_Error) ReturnCallback).getErrorMassage());	
+		}	
+		if (ReturnCallback instanceof callbackLostConnection){
+			Login_GUI frame = new Login_GUI();
+			frame.GoToLoginWindow();
+			frame.NoConnectionToServer();
+			frame.setVisible(true);
+			new LoginController(frame,CommonBuffer);
+		}
+		return ReturnCallback; 	
 	}
 }
