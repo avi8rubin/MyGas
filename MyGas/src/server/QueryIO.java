@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
 
+import javax.swing.JComboBox;
 
 import callback.*;
 import common.MessageType;
@@ -88,6 +89,10 @@ public class QueryIO  {
 /*Marketing Manager*/
 			case getCommentsForMarketionCampaign:
 				AnswerObject = getCommentsForMarketionCampaign((callbackCommentsForMarketionCampaign)SwitchCallback);				
+				break;	
+/*CEO*/
+			case getWaitingTariff:
+				AnswerObject = getWaitingTariff((callbackStringArray)SwitchCallback);				
 				break;	
 				
 		default:
@@ -326,7 +331,63 @@ public class QueryIO  {
 		return LocalVector;
 		
 	}
-	
+
+/**
+ * CEO
+ */
+	private CallBack getWaitingTariff(callbackStringArray Tarrif){
+		// Set variables ---------------------------------------------------------	
+		ResultSetMetaData LocalResult;
+		Object[][] Data;
+		String[] Headers;
+		int ColNum;
+		int RowNum =0;
+		Object[] Confirm = {"Waiting","Yes","No"};
+		// Build query -----------------------------------------------------------
+		String SqlQuery = 
+				"SELECT A.Tariff_Update_ID "+
+				", DATE_FORMAT(A.Tariff_Update_Date,'%d/%m/%Y') AS Tariff_Update_Date "+
+				", A.Fuel_ID "+
+				", B.Fuel_Description "+
+				", A.Wanted_Price "+
+				", A.Current_Price "+
+				", A.CEO_Confirmation "+
+				"FROM Tariff_Update A "+
+				"LEFT OUTER  JOIN Fuels B ON A.Fuel_ID=B.Fuel_ID "+
+				"WHERE A.CEO_Confirmation = 'Waiting' ";
+		
+		// Send query to DB and get result ---------------------------------------
+		try {
+			AnswerResult = st.executeQuery(SqlQuery);
+			LocalResult = AnswerResult.getMetaData();
+			Tarrif.setColCount(ColNum = LocalResult.getColumnCount());
+			
+			AnswerResult.last();
+			Tarrif.setRowCount(AnswerResult.getRow());
+			AnswerResult.beforeFirst();
+			Data = new String[Tarrif.getRowCount()][ColNum+1];
+			Headers = new String[ColNum];
+			
+			for(int i=0;i<ColNum;i++)
+				Headers[i] = LocalResult.getColumnName(i+1);
+			Tarrif.setColHeaders(Headers);
+			/**
+			 * Create the report callback structure
+			 */
+			while (AnswerResult.next()) { 
+				
+				for (int i = 0; i < ColNum; i++) 
+					if(i<ColNum-1) Data[RowNum][i] = AnswerResult.getString(i + 1);
+					else Data[RowNum][i] = new JComboBox(Confirm);
+				RowNum++;
+			}
+			Tarrif.setData(Data);
+			} catch (SQLException e) {
+				return new callback_Error("Problem has occurred, query not valid or not connection to DB.");
+				}
+		return Tarrif;
+		
+	}
 	
 	
 	

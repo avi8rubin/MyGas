@@ -60,11 +60,11 @@ public class abstractPanel_GUI extends JFrame {
 	
 	//GUI variables ***************************************************
 	private JPanel contentPane;
-	private JLayeredPane TopPanel = new JLayeredPane();
+	protected JLayeredPane TopPanel = new JLayeredPane();
 	private JLabel RoleLabel = new JLabel("<Role> Panel");
 	private JLabel WelcomLabel = new JLabel("Welcome First + Last Name");
-	private JLayeredPane LeftPanel = new JLayeredPane();
-	private JLayeredPane CenterPanel = new JLayeredPane();
+	protected JLayeredPane LeftPanel = new JLayeredPane();
+	protected JLayeredPane CenterPanel = new JLayeredPane();
 	private final JInternalFrame ContactFrame = new JInternalFrame("Contact List");
 	private JLabel SubPanelLabel = new JLabel("");
 	private JButton LogoutButton = new JButton("Logout");
