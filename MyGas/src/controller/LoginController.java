@@ -126,9 +126,12 @@ public class LoginController implements ActionListener{
 					else{
 						EnteredUser.setWhatToDo(MessageType.updateUserLogin);
 						Server.handleMessageFromClient(EnteredUser);		//Update user is logged in, in the DB	
-						getCallBackFromBuffer();							//Emptying buffer					
-						LoginScreen.setWelcomUserLabel(EnteredUser.getFirstName(), EnteredUser.getLastName());
-						LoginScreen.SwitchScreen();
+						getCallBackFromBuffer();							//Emptying buffer		
+						NextScreenByRole();									// go to the next gui screen by user role
+						
+						
+						//LoginScreen.setWelcomUserLabel(EnteredUser.getFirstName(), EnteredUser.getLastName());
+						//LoginScreen.SwitchScreen();
 					}
 				}
 				else LoginScreen.IllegalPassword();							//Display password error message
@@ -195,6 +198,40 @@ public class LoginController implements ActionListener{
 		}
 		
 	}
+	
+	/**
+	 * Go to the right screen base on the entered user
+	 */
+	private void NextScreenByRole(){
+		switch(EnteredUser.getUserTypeId()){
+		case 1: 
+			new CustomerController(Server, CommonBuffer,
+					new CustomerGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+			break;
+		case 2: 
+			new StationsController(Server, CommonBuffer,
+					new StationsGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+			break;
+		case 3: 
+			new StationManagerController(Server, CommonBuffer,
+					new StationManagerGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+			break;
+		case 4: 
+			new CEOController(Server, CommonBuffer,
+					new CEOGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+			break;
+		case 5: 
+			new MarketingManagerController(Server, CommonBuffer,
+					new MarketingManagerGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+			break;
+		case 6: 
+			new MarketingRepresentativeController(Server, CommonBuffer,
+					new MarketingRepresentativeGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+			break;
+		}
+		
+	}
+	
 	
 	/**
 	 * Initiate the connection to server 

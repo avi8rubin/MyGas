@@ -351,7 +351,7 @@ public class QueryIO  {
 
 		// Send query to DB  -----------------------------------------------------
 			try {
-				st.executeQuery("UPDATE Users SET Logged_In='No' where User_Type_Id<>2;");
+				st.executeUpdate("UPDATE Users SET Logged_In='No' where User_Type_Id<>2;");
 			} catch (SQLException e) {
 				
 				e.printStackTrace();

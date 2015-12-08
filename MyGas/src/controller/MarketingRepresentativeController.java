@@ -2,13 +2,19 @@ package controller;
 
 import java.awt.event.ActionEvent;
 
+import GUI.CEOGUI;
+import GUI.MarketingRepresentativeGUI;
 import callback.callbackBuffer;
 import client.Client;
 
 public class MarketingRepresentativeController extends Controller{
 
-	public MarketingRepresentativeController(Client Server, callbackBuffer CommonBuffer) {
+	private MarketingRepresentativeGUI GuiScreen;
+	
+	public MarketingRepresentativeController(Client Server, callbackBuffer CommonBuffer, MarketingRepresentativeGUI GuiScreen) {
 		super(Server, CommonBuffer);
+		this.GuiScreen = GuiScreen;
+		GuiScreen.setVisible(true);
 		// TODO Auto-generated constructor stub
 	}
 

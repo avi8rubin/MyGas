@@ -2,13 +2,19 @@ package controller;
 
 import java.awt.event.ActionEvent;
 
+import GUI.CEOGUI;
+import GUI.StationManagerGUI;
 import callback.callbackBuffer;
 import client.Client;
 
 public class StationManagerController extends Controller{
 
-	public StationManagerController(Client Server, callbackBuffer CommonBuffer) {
+	private StationManagerGUI GuiScreen;
+	
+	public StationManagerController(Client Server, callbackBuffer CommonBuffer, StationManagerGUI GuiScreen) {
 		super(Server, CommonBuffer);
+		this.GuiScreen = GuiScreen;
+		GuiScreen.setVisible(true);
 		// TODO Auto-generated constructor stub
 	}
 
