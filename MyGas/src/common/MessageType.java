@@ -17,6 +17,9 @@ public enum MessageType {
 	getCheckExistsUserPass,
 	getContacts,
 /*Marketing Manager*/	
-	getCommentsForMarketionCampaign
+	getCommentsForMarketionCampaign,
+/*CEO*/
+	getWaitingTariff,
+	setWaitingTariff
 
 }
