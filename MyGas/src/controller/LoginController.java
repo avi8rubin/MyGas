@@ -182,6 +182,7 @@ public class LoginController implements ActionListener{
 		if (ReturnCallback instanceof callbackLostConnection){
 			LoginScreen.GoToLoginWindow();
 			LoginScreen.NoConnectionToServer();
+			ConnectionFlag=false;
 		}
 		return ReturnCallback; 						
 	}

@@ -244,7 +244,7 @@ public class QueryIO  {
 		int ColNum;
 		int RowNum =0;
 		// Build query -----------------------------------------------------------
-		String SqlQuery = "SELECT * FROM Workers";
+		String SqlQuery = "SELECT Worker_First_Name, Worker_Last_Name, Email, Organization FROM Workers";
 		
 		// Send query to DB and get result ---------------------------------------
 		try {

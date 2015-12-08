@@ -134,7 +134,9 @@ public class abstractPanel_GUI_Tester extends JFrame {
 		ContactTable.setBounds(12, 13, 944, 593);
 		
 		ContactFrame.getContentPane().add(ContactTable);
-		ContactFrame.getContentPane().add(new JScrollPane(ContactTable));
+		JScrollPane scrollPane = new JScrollPane(ContactTable);
+		scrollPane.setBounds(0, 612, 962, -612);
+		ContactFrame.getContentPane().add(scrollPane);
 		
 	}
 	public void setWelcomLabel(String FirstName, String LastName){

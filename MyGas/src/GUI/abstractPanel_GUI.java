@@ -16,6 +16,7 @@ import java.awt.event.WindowListener;
 
 import javax.swing.JLayeredPane;
 import javax.swing.border.LineBorder;
+import javax.swing.table.JTableHeader;
 
 import callback.CallBack;
 import callback.callbackBuffer;
@@ -185,11 +186,14 @@ public class abstractPanel_GUI extends JFrame {
 	
 		//Contact list table
 		ContactTable = new JTable(ContactList.getData(),ContactList.getColHeaders());
+		ContactTable.setRowHeight(30);
 		ContactTable.setBackground(new Color(230, 230, 250));
 		ContactTable.setFillsViewportHeight(true);
 		ContactssSrollPane.setViewportView(ContactTable);
 		ContactTable.setFont(new Font("Tahoma", Font.PLAIN, 18));
 
+		JTableHeader header = ContactTable.getTableHeader();
+		header.setBackground(Color.lightGray);
 		
 	/**
 	 * Set the exit (X) button to performed a organized logout
