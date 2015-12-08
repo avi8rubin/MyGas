@@ -235,8 +235,7 @@ public class LoginController implements ActionListener{
 		}
 		
 	}
-	
-	
+		
 	/**
 	 * Initiate the connection to server 
 	 */

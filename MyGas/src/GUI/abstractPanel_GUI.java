@@ -1,6 +1,5 @@
 package GUI;
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -11,6 +10,10 @@ import java.awt.Dimension;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
 import javax.swing.JLayeredPane;
 import javax.swing.border.LineBorder;
 
@@ -22,14 +25,13 @@ import callback.callbackUser;
 import callback.callback_Error;
 import client.Client;
 import common.MessageType;
-import controller.LoginController;
-
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
+import java.awt.Component;
 
 public class abstractPanel_GUI extends JFrame {
 
@@ -42,9 +44,13 @@ public class abstractPanel_GUI extends JFrame {
 	/**
 	 * The login user
 	 */
-	private static callbackUser User;
-	private Login_GUI LoginScreen;
-	private abstractPanel_GUI ThisScreen;
+	private static callbackUser User;				// Current user details
+	/**
+	 * Gui screens
+	 */
+	private Login_GUI LoginScreen;					//The login screen to go back when user press logout
+	private abstractPanel_GUI ThisScreen;			//The current gui screen
+	
 	/**
 	 * Server
 	 */
@@ -65,6 +71,7 @@ public class abstractPanel_GUI extends JFrame {
 	private callbackStringArray ContactList;
 	private boolean ShowContacts = false;
 	private JTable ContactTable;
+	private final JScrollPane ContactssSrollPane = new JScrollPane();
 
 	/**
 	 * Create the abstract GUI panel.
@@ -85,7 +92,7 @@ public class abstractPanel_GUI extends JFrame {
 		ThisScreen = this;
 		setWelcomeLabel(User.getFirstName(),User.getLastName()); 		// Set welcome label
 		setRoleLabel(User.getUserPrivilege());							// Set user role
-		LoginScreen.GoToLoginWindow();
+		//LoginScreen.GoToLoginWindow();
 		
 	
 	/**
@@ -173,16 +180,33 @@ public class abstractPanel_GUI extends JFrame {
 		ContactFrame.setVisible(false);
 		CenterPanel.add(ContactFrame);
 		ContactFrame.getContentPane().setLayout(null);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(12, 605, 944, -590);
-		ContactFrame.getContentPane().add(scrollPane);
-		
-		ContactTable = new JTable(ContactList.getData(),(Object[])ContactList.getColHeaders());
+		ContactssSrollPane.setBounds(12, 13, 944, 593);		
+		ContactFrame.getContentPane().add(ContactssSrollPane);
+	
+		//Contact list table
+		ContactTable = new JTable(ContactList.getData(),ContactList.getColHeaders());
+		ContactTable.setBackground(new Color(230, 230, 250));
+		ContactTable.setFillsViewportHeight(true);
+		ContactssSrollPane.setViewportView(ContactTable);
 		ContactTable.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		ContactTable.setBounds(12, 13, 944, 593);
-		ContactFrame.getContentPane().add(ContactTable);
 
+		
+	/**
+	 * Set the exit (X) button to performed a organized logout
+	 */
+		WindowListener exitListener = new WindowAdapter() {
+		    @Override
+		    public void windowClosing(WindowEvent e) {	    	
+		    	
+	    		User.setWhatToDo(MessageType.updateUserLogout);
+	    		Server.handleMessageFromClient(User);
+				getCallBackFromBuffer();
+				LoginScreen.setVisible(true);
+				ThisScreen.setVisible(false);
+	       // System.exit(0);		        
+		    }
+		};
+		this.addWindowListener(exitListener);
 		
 	}
 	
@@ -215,7 +239,6 @@ public class abstractPanel_GUI extends JFrame {
 			LoginScreen.NoConnectionToServer();
 			LoginScreen.setVisible(true);
 			this.setVisible(false);
-
 		}
 		return ReturnCallback; 	
 	}

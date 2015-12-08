@@ -209,7 +209,7 @@ public class Login_GUI extends JFrame {
 		return ChangePasswordButton;
 	}
 	public void setWelcomUserLabel(String FirstName, String LastName){
-		WelcomUserLabel.setText("Welcom "+FirstName+" "+LastName);
+		WelcomUserLabel.setText("Welcome "+FirstName+" "+LastName);
 	}
 	
 	public void SwitchScreen(){
