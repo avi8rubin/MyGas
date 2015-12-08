@@ -90,7 +90,7 @@ public void handleMessageFromClient(Object message)
 			}
 		}
 		/*Force exit program and go back to login screen*/
-		if(ReleaseCounter == 0) {													//Enter to common buffer lostconnection callback
+		if(ReleaseCounter == 0) {													//Enter to common buffer lost connection callback
 			CommonBuffer.getBufferCallBack();
 			CommonBuffer.setNewCallBack(new callbackLostConnection());
 		}

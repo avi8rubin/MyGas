@@ -127,6 +127,7 @@ public class LoginController implements ActionListener{
 						EnteredUser.setWhatToDo(MessageType.updateUserLogin);
 						Server.handleMessageFromClient(EnteredUser);		//Update user is logged in, in the DB	
 						getCallBackFromBuffer();							//Emptying buffer		
+						LoginScreen.ClearErrorMessage(); 					//Clear the error message if exists
 						NextScreenByRole();									// go to the next gui screen by user role
 						
 						
@@ -203,6 +204,9 @@ public class LoginController implements ActionListener{
 	 * Go to the right screen base on the entered user
 	 */
 	private void NextScreenByRole(){
+		
+		LoginScreen.setVisible(false);
+		
 		switch(EnteredUser.getUserTypeId()){
 		case 1: 
 			new CustomerController(Server, CommonBuffer,

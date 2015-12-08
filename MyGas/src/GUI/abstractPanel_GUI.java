@@ -44,6 +44,7 @@ public class abstractPanel_GUI extends JFrame {
 	 */
 	private static callbackUser User;
 	private Login_GUI LoginScreen;
+	private abstractPanel_GUI ThisScreen;
 	/**
 	 * Server
 	 */
@@ -63,7 +64,7 @@ public class abstractPanel_GUI extends JFrame {
 	private JButton ContactsButton = new JButton("Contacts");
 	private callbackStringArray ContactList;
 	private boolean ShowContacts = false;
-	private final JTable ContactTable;
+	private JTable ContactTable;
 
 	/**
 	 * Create the abstract GUI panel.
@@ -81,6 +82,7 @@ public class abstractPanel_GUI extends JFrame {
 		this.Server = Server;
 		this.CommonBuffer = CommonBuffer;
 		this.LoginScreen = LoginScreen;
+		ThisScreen = this;
 		setWelcomeLabel(User.getFirstName(),User.getLastName()); 		// Set welcome label
 		setRoleLabel(User.getUserPrivilege());							// Set user role
 		LoginScreen.GoToLoginWindow();
@@ -114,6 +116,9 @@ public class abstractPanel_GUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				User.setWhatToDo(MessageType.updateUserLogout);
 				Server.handleMessageFromClient(User);
+				getCallBackFromBuffer();
+				LoginScreen.setVisible(true);
+				ThisScreen.setVisible(false);
 			}
 		});
 
@@ -122,7 +127,6 @@ public class abstractPanel_GUI extends JFrame {
 		ContactList.setWhatToDo(MessageType.getContacts);					//		get contact list
 		Server.handleMessageFromClient(ContactList);						//----------------------------------- 
 		ContactList = (callbackStringArray) getCallBackFromBuffer();
-		ContactTable = new JTable(ContactList.getData(),ContactList.getColHeaders()); //create jtable with all the data of the workers
 		
 		
 		// Contact button
@@ -169,9 +173,16 @@ public class abstractPanel_GUI extends JFrame {
 		ContactFrame.setVisible(false);
 		CenterPanel.add(ContactFrame);
 		ContactFrame.getContentPane().setLayout(null);
-		ContactTable.setBounds(12, 13, 944, 593);		
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(12, 605, 944, -590);
+		ContactFrame.getContentPane().add(scrollPane);
+		
+		ContactTable = new JTable(ContactList.getData(),(Object[])ContactList.getColHeaders());
+		ContactTable.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		ContactTable.setBounds(12, 13, 944, 593);
 		ContactFrame.getContentPane().add(ContactTable);
-		ContactFrame.add(new JScrollPane(ContactTable));
+
 		
 	}
 	
@@ -201,11 +212,10 @@ public class abstractPanel_GUI extends JFrame {
 			System.out.println(((callback_Error) ReturnCallback).getErrorMassage());	
 		}	
 		if (ReturnCallback instanceof callbackLostConnection){
-			Login_GUI frame = new Login_GUI();
-			frame.GoToLoginWindow();
-			frame.NoConnectionToServer();
-			frame.setVisible(true);
-			new LoginController(frame,CommonBuffer);
+			LoginScreen.NoConnectionToServer();
+			LoginScreen.setVisible(true);
+			this.setVisible(false);
+
 		}
 		return ReturnCallback; 	
 	}
