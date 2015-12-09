@@ -13,6 +13,9 @@ public abstract class CallBack implements Serializable{
 	 * Empty constructor
 	 */
 	public CallBack(){};
+	public CallBack(MessageType WhatToDo){
+		this.WhatToDo = WhatToDo;
+	}
 	
 	public void setWhatToDo(MessageType WhatToDo){
 		this.WhatToDo = WhatToDo;

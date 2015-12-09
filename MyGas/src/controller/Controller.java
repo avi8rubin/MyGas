@@ -14,7 +14,7 @@ public abstract class Controller implements ActionListener{
 	/**
 	 * The server connection to send queries and receive callback's
 	 */
-	private static Client Server;
+	protected static Client Server;
 	/**
 	 * This buffer will allows the transfer of the callback, back to the application
 	 */
@@ -30,7 +30,7 @@ public abstract class Controller implements ActionListener{
 	/**
 	 * @return The callback from the buffer
 	 */
-	private CallBack getCallBackFromBuffer(){
+	protected CallBack getCallBackFromBuffer(){
 		CallBack ReturnCallback;
 		while (CommonBuffer.getHaveNewCallBack() == false); 			//Waits for new callback		
 		ReturnCallback = CommonBuffer.getBufferCallBack();				//Get the new callback	

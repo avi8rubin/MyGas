@@ -32,7 +32,6 @@ import javax.swing.SwingConstants;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
-import java.awt.Component;
 
 public class abstractPanel_GUI extends JFrame {
 
@@ -59,7 +58,7 @@ public class abstractPanel_GUI extends JFrame {
 	private callbackBuffer CommonBuffer;
 	
 	//GUI variables ***************************************************
-	private JPanel contentPane;
+	protected JPanel contentPane;
 	protected JLayeredPane TopPanel = new JLayeredPane();
 	private JLabel RoleLabel = new JLabel("<Role> Panel");
 	private JLabel WelcomLabel = new JLabel("Welcome First + Last Name");
@@ -77,8 +76,8 @@ public class abstractPanel_GUI extends JFrame {
 	/**
 	 * Create the abstract GUI panel.
 	 */
+
 	public abstractPanel_GUI(callbackUser EnteredUser, Client Server,callbackBuffer CommonBuffer, Login_GUI LoginScreen) {
-		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1300, 900);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -165,7 +164,7 @@ public class abstractPanel_GUI extends JFrame {
 		LeftPanel.add(LogoImage);
 		
 	/**
-	 * Create Set Panel
+	 * Create Center Panel
 	 */		
 		CenterPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		contentPane.add(CenterPanel, BorderLayout.CENTER);

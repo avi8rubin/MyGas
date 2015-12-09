@@ -39,8 +39,9 @@ public class Login_GUI extends JFrame {
 	private boolean DisplayScreen = true;
 	private JLabel WelcomUserLabel = new JLabel("Welcom First+Last");
 	private JTextField ServerIPField;
+	
 	/**
-	 * Create the frame.
+	 * Constructor - Create the frame.
 	 */
 	public Login_GUI() {
 		setBounds (100, 100, 454, 609);
@@ -50,10 +51,7 @@ public class Login_GUI extends JFrame {
 		setContentPane(contantPane);
 		this.setResizable(false);
 		this.setVisible(true);
-		
 
-
-		
 		
 	/**
 	 * Create the First screen of login GUI
