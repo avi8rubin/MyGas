@@ -264,7 +264,7 @@ public class QueryIO  {
 			Headers = new String[ColNum];
 			
 			for(int i=0;i<ColNum;i++)
-				Headers[i] = LocalResult.getColumnName(i+1);
+				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
 			WorkersDetailes.setColHeaders(Headers);
 			
 			
@@ -342,7 +342,8 @@ public class QueryIO  {
 		String[] Headers;
 		int ColNum;
 		int RowNum =0;
-		Object[] Confirm = {"Waiting","Yes","No"};
+	//	JComboBox Confirm = new JComboBox
+		//String[] Confirm = {"Waiting","Yes","No"};
 		// Build query -----------------------------------------------------------
 		String SqlQuery = 
 				"SELECT A.Tariff_Update_ID "+
@@ -369,7 +370,7 @@ public class QueryIO  {
 			Headers = new String[ColNum];
 			
 			for(int i=0;i<ColNum;i++)
-				Headers[i] = LocalResult.getColumnName(i+1);
+				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
 			Tarrif.setColHeaders(Headers);
 			/**
 			 * Create the report callback structure
@@ -377,8 +378,8 @@ public class QueryIO  {
 			while (AnswerResult.next()) { 
 				
 				for (int i = 0; i < ColNum; i++) 
-					if(i<ColNum-1) Data[RowNum][i] = AnswerResult.getString(i + 1);
-					else Data[RowNum][i] = new JComboBox(Confirm);
+					if(i<ColNum) Data[RowNum][i] = AnswerResult.getString(i + 1);
+					//else Data[RowNum][i] = new JComboBox<String[]>(Confirm);
 				RowNum++;
 			}
 			Tarrif.setData(Data);

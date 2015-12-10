@@ -12,7 +12,7 @@ public class CustomerController extends Controller{
 	private CustomerGUI GuiScreen;
 	
 	public CustomerController(Client Server, callbackBuffer CommonBuffer, CustomerGUI GuiScreen) {
-		super(Server, CommonBuffer);
+		super(Server, CommonBuffer,GuiScreen);
 		this.GuiScreen = GuiScreen;
 		GuiScreen.setVisible(true);
 		// TODO Auto-generated constructor stub

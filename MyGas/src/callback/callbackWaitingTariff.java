@@ -1,5 +1,7 @@
 package callback;
 
+import common.MessageType;
+
 public class callbackWaitingTariff extends CallBack {
 	
 	/**
@@ -17,6 +19,10 @@ public class callbackWaitingTariff extends CallBack {
 	private float CurrentPrice;
 	private String CEOConfirmation;
 
+	public callbackWaitingTariff(MessageType WhatToDo){
+		super(WhatToDo);
+	}
+	
 	public int getTariffUpdateID(){
 		return TariffUpdateID;
 	}

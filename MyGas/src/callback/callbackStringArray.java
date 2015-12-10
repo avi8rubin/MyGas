@@ -1,5 +1,7 @@
 package callback;
 
+import common.MessageType;
+
 public class callbackStringArray extends CallBack{
 
 	/**
@@ -10,6 +12,10 @@ public class callbackStringArray extends CallBack{
 	private int rowCount;
 	private Object[][] Data;
 	private String[] colHeaders;
+	
+	public callbackStringArray(MessageType WhatToDo){
+		super(WhatToDo);
+	}
 	
 	public int getColCount(){
 		return colCount;

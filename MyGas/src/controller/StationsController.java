@@ -12,7 +12,7 @@ public class StationsController extends Controller {
 	private StationsGUI GuiScreen;
 	
 	public StationsController(Client Server, callbackBuffer CommonBuffer, StationsGUI GuiScreen) {
-		super(Server, CommonBuffer);
+		super(Server, CommonBuffer, GuiScreen);
 		this.GuiScreen = GuiScreen;
 		GuiScreen.setVisible(true);
 		// TODO Auto-generated constructor stub

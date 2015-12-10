@@ -13,7 +13,7 @@ public class MarketingManagerController extends Controller {
 	private MarketingManagerGUI GuiScreen;
 	
 	public MarketingManagerController(Client Server, callbackBuffer CommonBuffer, MarketingManagerGUI GuiScreen) {
-		super(Server, CommonBuffer);
+		super(Server, CommonBuffer, GuiScreen);
 		this.GuiScreen = GuiScreen;
 		GuiScreen.setVisible(true);
 		// TODO Auto-generated constructor stub

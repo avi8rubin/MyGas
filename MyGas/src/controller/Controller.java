@@ -1,9 +1,13 @@
 package controller;
 
+import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JPanel;
+
 import GUI.Login_GUI;
+import GUI.abstractPanel_GUI;
 import callback.CallBack;
 import callback.callbackBuffer;
 import callback.callbackLostConnection;
@@ -19,12 +23,28 @@ public abstract class Controller implements ActionListener{
 	 * This buffer will allows the transfer of the callback, back to the application
 	 */
 	private callbackBuffer CommonBuffer = null;
+	/**
+	 * GUI Panels
+	 */
+	protected JPanel CenterCardContainer;
+	protected JPanel LeftCardContainer;
+	
+	/**
+	 * The abstract controller constructor.
+	 * @param Server - The client connection to server.
+	 * @param CommonBuffer -  The callback buffer, where the query answer returns.
+	 */
 	
 	public Controller(Client Server, callbackBuffer CommonBuffer){
 		this.Server = Server;
 		this.CommonBuffer = CommonBuffer;
 	}
-	
+	public Controller(Client Server, callbackBuffer CommonBuffer,abstractPanel_GUI GUIScreen){
+		this.Server = Server;
+		this.CommonBuffer = CommonBuffer;
+		CenterCardContainer = GUIScreen.getCenterCardContainer();
+		LeftCardContainer = GUIScreen.getLeftCardContainer();
+	}
 	
 	
 	/**

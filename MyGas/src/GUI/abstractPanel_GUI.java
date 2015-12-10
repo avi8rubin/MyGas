@@ -6,6 +6,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -32,6 +33,7 @@ import javax.swing.SwingConstants;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
+import java.awt.CardLayout;
 
 public class abstractPanel_GUI extends JFrame {
 
@@ -59,20 +61,26 @@ public class abstractPanel_GUI extends JFrame {
 	
 	//GUI variables ***************************************************
 	protected JPanel contentPane;
+	protected JPanel CenterCardContainer = new JPanel(new CardLayout());
+	protected JPanel LeftCardContainer = new JPanel(new CardLayout());
 	protected JLayeredPane TopPanel = new JLayeredPane();
+	protected JLayeredPane EmptyLeftPanel = new JLayeredPane();
+	protected JLayeredPane EmptyCenterPanel = new JLayeredPane();
+	protected JLayeredPane ContactsPanel = new JLayeredPane();
 	private JLabel RoleLabel = new JLabel("<Role> Panel");
 	private JLabel WelcomLabel = new JLabel("Welcome First + Last Name");
-	protected JLayeredPane LeftPanel = new JLayeredPane();
-	protected JLayeredPane CenterPanel = new JLayeredPane();
 	private final JInternalFrame ContactFrame = new JInternalFrame("Contact List");
-	private JLabel SubPanelLabel = new JLabel("");
+	private final JScrollPane ContactsSrollPane = new JScrollPane();
+	private JTable ContactTable;
 	private JButton LogoutButton = new JButton("Logout");
 	private JButton ContactsButton = new JButton("Contacts");
+	private JLabel SubPanelLabel = new JLabel("");
+	protected CardLayout ContainerCard;
+	
+	//Other variables ***************************************************
 	private callbackStringArray ContactList;
 	private boolean ShowContacts = false;
-	private JTable ContactTable;
-	private final JScrollPane ContactssSrollPane = new JScrollPane();
-
+	private String LastCard;
 	/**
 	 * Create the abstract GUI panel.
 	 */
@@ -94,10 +102,15 @@ public class abstractPanel_GUI extends JFrame {
 		setRoleLabel(User.getUserPrivilege());							// Set user role
 		//LoginScreen.GoToLoginWindow();
 		
+/**
+ *  Attach the card containers to the frame
+ */
+		contentPane.add(CenterCardContainer, BorderLayout.CENTER);
+		contentPane.add(LeftCardContainer, BorderLayout.WEST);
 	
-	/**
-	 * Create Top Panel
-	 */
+/**
+ * Create Top Panel
+ */
 		TopPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		TopPanel.setBackground(SystemColor.activeCaption);
 		TopPanel.setOpaque(true);
@@ -123,15 +136,14 @@ public class abstractPanel_GUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				User.setWhatToDo(MessageType.updateUserLogout);
 				Server.handleMessageFromClient(User);
-				getCallBackFromBuffer();
-				LoginScreen.setVisible(true);
-				ThisScreen.setVisible(false);
+				getCallBackFromBuffer();									//Clean buffer
+				LoginScreen.setVisible(true);								//Go to login screen
+				ThisScreen.setVisible(false);								//Set invisible current screen
 			}
 		});
 
 		// Get Contact List - Send query and create the JTable
-		ContactList = new callbackStringArray();							//-----------------------------------
-		ContactList.setWhatToDo(MessageType.getContacts);					//		get contact list
+		ContactList = new callbackStringArray(MessageType.getContacts);		//--------- Get contact list --------
 		Server.handleMessageFromClient(ContactList);						//----------------------------------- 
 		ContactList = (callbackStringArray) getCallBackFromBuffer();
 		
@@ -139,64 +151,93 @@ public class abstractPanel_GUI extends JFrame {
 		// Contact button
 		ContactsButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		ContactsButton.setBounds(1148, 64, 112, 38);
+		ContactsButton.setActionCommand("Contacts"); 						//Button action command
 		TopPanel.add(ContactsButton);
 		ContactsButton.addActionListener(new ActionListener() {				//Add action listener
 			public void actionPerformed(ActionEvent e) {
 				ShowContacts = !ShowContacts;
-				ContactFrame.setVisible(ShowContacts);						//Display and hide the contact list
+		/*----- Replace Card -------*/		
+				ContainerCard = (CardLayout)(CenterCardContainer.getLayout());
+				if(!getLastComponent(CenterCardContainer.getComponents()).equals("Contacts")){
+					LastCard = getLastComponent(CenterCardContainer.getComponents());	//Set in global LastCard the current component
+					//LastCard = ContainerCard.toString();
+					ContainerCard.show(CenterCardContainer, "Contacts");	
+				}			
+				else ContainerCard.show(CenterCardContainer,LastCard);
+		/*--------------------------*/
 			}
 		});
 		
 		
-	/**
-	 * Create Left Panel
-	 */
-		LeftPanel.setBackground(new Color(169, 169, 169));
-		LeftPanel.setOpaque(true);
-		LeftPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
-		LeftPanel.setPreferredSize(new Dimension(300,200));
-		contentPane.add(LeftPanel, BorderLayout.WEST);
+/**
+ * Create Left Panel
+ */
+		EmptyLeftPanel.setBackground(new Color(169, 169, 169));
+		EmptyLeftPanel.setOpaque(true);
+		EmptyLeftPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		EmptyLeftPanel.setPreferredSize(new Dimension(300,200));
+		EmptyLeftPanel.setName("EmptyLeftPanel");
+		LeftCardContainer.add(EmptyLeftPanel, "EmptyLeftPanel");
 		
 		// Logo on left panel
 		JLabel LogoImage = new JLabel("");
 		LogoImage.setIcon(new ImageIcon(abstractPanel_GUI.class.getResource("/images/Left_Panel_Logo22.jpg")));
 		LogoImage.setBounds(37, 400, 239, 242);
-		LeftPanel.add(LogoImage);
+		EmptyLeftPanel.add(LogoImage);
 		
-	/**
-	 * Create Center Panel
-	 */		
-		CenterPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
-		contentPane.add(CenterPanel, BorderLayout.CENTER);
+/**
+ * Create empty Center Panel
+ */		
+		EmptyCenterPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		EmptyCenterPanel.setOpaque(true);
+		CenterCardContainer.add(EmptyCenterPanel, "EmptyCenterPanel");
+		EmptyCenterPanel.setLayout(new CardLayout(0, 0));
+		EmptyCenterPanel.setName("EmptyCenterPanel");
+	
 		
+/**
+ * Create Contacts Panel
+ */		
+		
+		ContactsPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		ContactsPanel.setOpaque(true);
+		CenterCardContainer.add(ContactsPanel, "Contacts");
+		ContactsPanel.setLayout(new CardLayout(0, 0));
+		ContactsPanel.setName("Contacts");
+
 		// Center panel label
 		SubPanelLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		SubPanelLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
-		SubPanelLabel.setBounds(170, 13, 608, 42);
-		CenterPanel.add(SubPanelLabel);
-		
-		// Contact list frame
-		ContactFrame.setBounds(0, 0, 984, 655);
-		ContactFrame.setVisible(false);
-		CenterPanel.add(ContactFrame);
+		ContactsPanel.add(SubPanelLabel, "name_2211558062915");
+		ContactsPanel.add(ContactFrame, "name_2211600466443");
 		ContactFrame.getContentPane().setLayout(null);
-		ContactssSrollPane.setBounds(12, 13, 944, 593);		
-		ContactFrame.getContentPane().add(ContactssSrollPane);
-	
-		//Contact list table
+		ContactsSrollPane.setBounds(12, 13, 944, 593);		
+		ContactFrame.getContentPane().add(ContactsSrollPane);
+		ContactFrame.setVisible(true);
+		
+		//Contacts list table
 		ContactTable = new JTable(ContactList.getData(),ContactList.getColHeaders());
 		ContactTable.setRowHeight(30);
 		ContactTable.setBackground(new Color(230, 230, 250));
 		ContactTable.setFillsViewportHeight(true);
-		ContactssSrollPane.setViewportView(ContactTable);
+		ContactsSrollPane.setViewportView(ContactTable);
 		ContactTable.setFont(new Font("Tahoma", Font.PLAIN, 18));
 
+		//Change contacts table header background
 		JTableHeader header = ContactTable.getTableHeader();
 		header.setBackground(Color.lightGray);
 		
-	/**
-	 * Set the exit (X) button to performed a organized logout
-	 */
+/**
+ * Set the default card as top
+ *//*
+		ContainerCard = (CardLayout)(CenterCardContainer.getLayout());
+		ContainerCard.show(CenterCardContainer, "EmptyCenterPanel");
+		ContainerCard = (CardLayout)(EmptyLeftPanel.getLayout());
+		ContainerCard.show(EmptyLeftPanel, "EmptyLeftPanel");	*/
+		
+/**
+ * Set the exit (X) button to performed a organized logout
+ */
 		WindowListener exitListener = new WindowAdapter() {
 		    @Override
 		    public void windowClosing(WindowEvent e) {	    	
@@ -205,8 +246,7 @@ public class abstractPanel_GUI extends JFrame {
 	    		Server.handleMessageFromClient(User);
 				getCallBackFromBuffer();
 				LoginScreen.setVisible(true);
-				ThisScreen.setVisible(false);
-	       // System.exit(0);		        
+				ThisScreen.setVisible(false);		        
 		    }
 		};
 		this.addWindowListener(exitListener);
@@ -228,6 +268,13 @@ public class abstractPanel_GUI extends JFrame {
 	public void setCenterPanelLabel(String NewString){
 		SubPanelLabel.setText(NewString);
 	}
+	public JPanel getCenterCardContainer(){
+		return CenterCardContainer;
+	}
+	public JPanel getLeftCardContainer(){
+		return LeftCardContainer;
+	}
+	
 	/**
 	 * @return The callback from the buffer
 	 */
@@ -235,7 +282,7 @@ public class abstractPanel_GUI extends JFrame {
 		CallBack ReturnCallback;
 		while (CommonBuffer.getHaveNewCallBack() == false); 			//Waits for new callback		
 		ReturnCallback = CommonBuffer.getBufferCallBack();				//Get the new callback	
-		if (ReturnCallback instanceof callback_Error){				//If the query back empty or the entered values not illegal
+		if (ReturnCallback instanceof callback_Error){					//If the query back empty or the entered values not illegal
 			System.out.println(((callback_Error) ReturnCallback).getErrorMassage());	
 		}	
 		if (ReturnCallback instanceof callbackLostConnection){
@@ -244,5 +291,17 @@ public class abstractPanel_GUI extends JFrame {
 			this.setVisible(false);
 		}
 		return ReturnCallback; 	
+	}
+	
+	/**
+	 * Set in global variable the current component
+	 * @param c - the components array
+	 */
+	private String getLastComponent(Component c[]){
+		int i=0;
+		for(i=0;i<c.length;i++)
+			if(c[i].isVisible())
+				break;
+		return c[i].getName();
 	}
 }
