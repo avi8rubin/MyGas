@@ -1,10 +1,7 @@
 package GUI;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -16,6 +13,7 @@ import javax.swing.border.LineBorder;
 import callback.callbackBuffer;
 import callback.callbackUser;
 import client.Client;
+import common.TableModel;
 
 public class CEOGUI extends abstractPanel_GUI{
 
@@ -27,11 +25,11 @@ public class CEOGUI extends abstractPanel_GUI{
 	 */
 	private JButton TariffApprovalButton;
 	private JLayeredPane TariffApprovalLayer;
-	private JTable TariffApprovalTable;
+	private JTable TariffApprovalTable = new JTable();
 	private JButton TariffSaveButton;
 	
 	/**
-	 * Display the CEO screen with all the function the screen contains.
+	 * Display CEO screen with all the function this screen contains.
 	 * @param EnteredUser The user entered to the system.
 	 * @param Server The client connection to server.
 	 * @param CommonBuffer The callback buffer, where the query answer returns.
@@ -46,8 +44,7 @@ public class CEOGUI extends abstractPanel_GUI{
 		TariffApprovalButton.setBounds(24, 128, 198, 47);		
 		TopPanel.add(TariffApprovalButton);
 		
-		
-		
+	
 		
 		/*------- Create new center layer and add it to container --------*/
 		TariffApprovalLayer = new JLayeredPane();												//Global variable
@@ -63,8 +60,12 @@ public class CEOGUI extends abstractPanel_GUI{
 		TariffApprovalScroll.setBounds(43, 58, 911, 518);
 		TariffApprovalLayer.add(TariffApprovalScroll);		
 		
-		//TariffApprovalTable = new JTable();														//Global variable
 		TariffApprovalScroll.setViewportView(TariffApprovalTable);		
+		TariffApprovalTable.setRowHeight(23);
+		TariffApprovalTable.setFillsViewportHeight(true);
+		TariffApprovalTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		TariffApprovalTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
+		TariffApprovalTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		
 		/*------- Create new label on the new layer --------*/
 		JLabel TariffApprovalLabel = new JLabel("Tariffs Waiting For Approval");				
@@ -94,7 +95,8 @@ public class CEOGUI extends abstractPanel_GUI{
 	public JTable getTariffApprovalTable(){
 		return TariffApprovalTable;
 	}
-	public void setTariffApprovalTable(Object[][] Data, Object[] Headers){
-		TariffApprovalTable = new JTable(Data,Headers);
+	public void setTariffApprovalTable(TableModel NewTable){
+		TariffApprovalTable.setModel(NewTable);
+		
 	}
 }

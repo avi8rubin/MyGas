@@ -2,7 +2,7 @@ package callback;
 
 import common.MessageType;
 
-public class callbackStringArray extends CallBack{
+public class callbackStringArray extends CallBack {
 
 	/**
 	 * 

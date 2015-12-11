@@ -79,7 +79,6 @@ public class abstractPanel_GUI extends JFrame {
 	
 	//Other variables ***************************************************
 	private callbackStringArray ContactList;
-	private boolean ShowContacts = false;
 	private String LastCard;
 	/**
 	 * Create the abstract GUI panel.
@@ -155,12 +154,10 @@ public class abstractPanel_GUI extends JFrame {
 		TopPanel.add(ContactsButton);
 		ContactsButton.addActionListener(new ActionListener() {				//Add action listener
 			public void actionPerformed(ActionEvent e) {
-				ShowContacts = !ShowContacts;
 		/*----- Replace Card -------*/		
 				ContainerCard = (CardLayout)(CenterCardContainer.getLayout());
 				if(!getLastComponent(CenterCardContainer.getComponents()).equals("Contacts")){
 					LastCard = getLastComponent(CenterCardContainer.getComponents());	//Set in global LastCard the current component
-					//LastCard = ContainerCard.toString();
 					ContainerCard.show(CenterCardContainer, "Contacts");	
 				}			
 				else ContainerCard.show(CenterCardContainer,LastCard);
@@ -226,15 +223,7 @@ public class abstractPanel_GUI extends JFrame {
 		//Change contacts table header background
 		JTableHeader header = ContactTable.getTableHeader();
 		header.setBackground(Color.lightGray);
-		
-/**
- * Set the default card as top
- *//*
-		ContainerCard = (CardLayout)(CenterCardContainer.getLayout());
-		ContainerCard.show(CenterCardContainer, "EmptyCenterPanel");
-		ContainerCard = (CardLayout)(EmptyLeftPanel.getLayout());
-		ContainerCard.show(EmptyLeftPanel, "EmptyLeftPanel");	*/
-		
+
 /**
  * Set the exit (X) button to performed a organized logout
  */

@@ -3,11 +3,14 @@ package controller;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import javax.swing.JButton;
+import javax.swing.JTable;
+
 import GUI.CEOGUI;
 import callback.callbackBuffer;
 import callback.callbackStringArray;
 import client.Client;
 import common.MessageType;
+import common.TableModel;
 
 public class CEOController extends Controller {
 	
@@ -17,6 +20,7 @@ public class CEOController extends Controller {
 	private CEOGUI GuiScreen;	
 	private JButton TariffApprovalButton;
 	private JButton TariffSaveButton;
+	private CardLayout ContainerCard;
 	
 	public CEOController(Client Server, callbackBuffer CommonBuffer, CEOGUI GuiScreen) {
 		super(Server, CommonBuffer,GuiScreen);
@@ -39,11 +43,11 @@ public class CEOController extends Controller {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		CardLayout check = (CardLayout)(CenterCardContainer.getLayout());
+		ContainerCard = (CardLayout)(CenterCardContainer.getLayout());
 		
 		/* -------- Check the source of the event ---------*/
 		if(e.getActionCommand().equals("Tariff Approval")){
-			check.show(CenterCardContainer, "Tariff Approval");				//The TariffApproval layer will be display
+			ContainerCard.show(CenterCardContainer, "Tariff Approval");				//The TariffApproval layer will be display
 			HandleTariffApprovalPressed();											
 		}
 		if(e.getSource() == TariffSaveButton){
@@ -55,8 +59,8 @@ public class CEOController extends Controller {
 	private void HandleTariffApprovalPressed(){
 		
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getWaitingTariff));
-		callbackStringArray TariffTable = (callbackStringArray) getCallBackFromBuffer();
-		GuiScreen.setTariffApprovalTable(TariffTable.getData(), TariffTable.getColHeaders());
+		callbackStringArray TariffTable = (callbackStringArray) getCallBackFromBuffer();		
+		GuiScreen.setTariffApprovalTable(new TableModel(TariffTable.getData(), TariffTable.getColHeaders()));
 	}
 
 
