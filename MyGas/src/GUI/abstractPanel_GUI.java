@@ -213,7 +213,12 @@ public class abstractPanel_GUI extends JFrame {
 		ContactFrame.setVisible(true);
 		
 		//Contacts list table
-		ContactTable = new JTable(ContactList.getData(),ContactList.getColHeaders());
+		ContactTable = new JTable(ContactList.getData(),ContactList.getColHeaders()){
+			private static final long serialVersionUID = 1L;
+	        public boolean isCellEditable(int row, int column) {                
+	                return false;               
+	        };
+		};
 		ContactTable.setRowHeight(30);
 		ContactTable.setBackground(new Color(230, 230, 250));
 		ContactTable.setFillsViewportHeight(true);

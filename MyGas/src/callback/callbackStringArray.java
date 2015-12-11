@@ -1,6 +1,9 @@
 package callback;
 
+import javax.swing.JTable;
+
 import common.MessageType;
+import common.TableModel;
 
 public class callbackStringArray extends CallBack {
 
@@ -15,6 +18,13 @@ public class callbackStringArray extends CallBack {
 	
 	public callbackStringArray(MessageType WhatToDo){
 		super(WhatToDo);
+	}
+	
+	public JTable getJTableObject(){
+		return new JTable(Data,colHeaders);
+	}
+	public TableModel getTableModelObject(){
+		return new TableModel(Data,colHeaders);
 	}
 	
 	public int getColCount(){

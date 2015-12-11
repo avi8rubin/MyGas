@@ -20,12 +20,21 @@ public class TableModel extends AbstractTableModel{
  * @param Date
  * @param header
  */
+	
+	public TableModel(){
+	}
+	
 	// constructor 
 	public TableModel(Object[][] Date, String[] header) {	
+		setTableModel(Date,header);
+	}
+	
+	public void setTableModel(Object[][] Date, String[] header){
 		this.header = header;									// save the header
 		Table = new ArrayList<Object[]>(); 						// and the rows
 		for(int i = 0; i < Date.length; ++i) 					// copy the rows into the ArrayList
-			Table.add(Date[i]);
+		Table.add(Date[i]);
+		fireTableDataChanged();
 	}
 	
 	// method that needs to be overload. The row count is the size of the ArrayList
@@ -38,6 +47,14 @@ public class TableModel extends AbstractTableModel{
 		return header.length;
 	}
 
+	// method that needs to be overload. The set object in the arrayList at rowIndex
+	public void setValueAt(int rowIndex, int columnIndex, Object obj) {
+		Object[] Selected = Table.get(rowIndex);
+		Selected[6] = obj;
+		Table.add(Selected);
+		fireTableDataChanged();
+	}
+	
 	// method that needs to be overload. The object is in the arrayList at rowIndex
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		return Table.get(rowIndex)[columnIndex];
@@ -47,6 +64,10 @@ public class TableModel extends AbstractTableModel{
 	public String getColumnName(int index) {
 		return header[index];
 	}
+	
+    public boolean isCellEditable(int row, int column){  
+        return false;  
+    }
 	
 	// a method to add a new line to the table, 4 columns
 	public void add(Object obj0, Object obj1, Object obj2, Object obj3) {
@@ -113,6 +134,9 @@ public class TableModel extends AbstractTableModel{
 		// inform the GUI that I have change
 		fireTableDataChanged();
 	}
+
+
+
 
 
 }
