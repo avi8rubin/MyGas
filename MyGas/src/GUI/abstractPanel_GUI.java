@@ -69,7 +69,7 @@ public class abstractPanel_GUI extends JFrame {
 	protected JLayeredPane ContactsPanel = new JLayeredPane();
 	private JLabel RoleLabel = new JLabel("<Role> Panel");
 	private JLabel WelcomLabel = new JLabel("Welcome First + Last Name");
-	private final JInternalFrame ContactFrame = new JInternalFrame("Contact List");
+	protected final JInternalFrame ContactFrame = new JInternalFrame("Contact List");
 	private final JScrollPane ContactsSrollPane = new JScrollPane();
 	private JTable ContactTable;
 	private JButton LogoutButton = new JButton("Logout");
@@ -85,7 +85,7 @@ public class abstractPanel_GUI extends JFrame {
 	 */
 
 	public abstractPanel_GUI(callbackUser EnteredUser, Client Server,callbackBuffer CommonBuffer, Login_GUI LoginScreen) {
-		setBounds(100, 100, 1300, 900);
+		setBounds(100, 100, 1300, 700);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

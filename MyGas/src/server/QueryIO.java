@@ -323,7 +323,7 @@ public class QueryIO  {
 			 * Create the report callback structure
 			 */
 					while (AnswerResult.next()) { 					
-						callbackCommentsForMarketionCampaign callback_Obj = new callbackCommentsForMarketionCampaign();
+						callbackCommentsForMarketionCampaign callback_Obj = new callbackCommentsForMarketionCampaign(null);
 						callback_Obj.setCampaignID(AnswerResult.getInt("Campaign_ID"));
 						callback_Obj.setStartCampaign(AnswerResult.getDate("Start_Campaign").toString());
 						callback_Obj.setEndCampaign(AnswerResult.getDate("End_Campaign").toString());

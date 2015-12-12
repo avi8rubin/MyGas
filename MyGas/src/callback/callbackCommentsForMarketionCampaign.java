@@ -1,5 +1,7 @@
 package callback;
 
+import common.MessageType;
+
 public class callbackCommentsForMarketionCampaign extends CallBack{
 
 	/**
@@ -15,8 +17,8 @@ public class callbackCommentsForMarketionCampaign extends CallBack{
 	private float TotalFuelAmount;
 	
 	
-	public callbackCommentsForMarketionCampaign(){
-		
+	public callbackCommentsForMarketionCampaign(MessageType WhatToDo){
+		super(WhatToDo);
 	}
 	
 	public int getCampaignID(){
