@@ -44,7 +44,7 @@ public class MarketingManagerController extends Controller {
 		TariffButton.addActionListener(this);
 		TariffButton.setActionCommand("Tariff");								//Add action command
 		
-		//Tariff Update Button
+//		Tariff Update Button
 		UpdateButton = GuiScreen.getUpdateButton();
 		UpdateButton.addActionListener(this);
 		UpdateButton.setActionCommand("Update Button");								//Add action command
@@ -52,7 +52,7 @@ public class MarketingManagerController extends Controller {
 		//Report Button
 		ReportButton = GuiScreen.getReportButton();
 		ReportButton.addActionListener(this);
-		ReportButton.setActionCommand("Reports");								//Add action command
+		ReportButton.setActionCommand("CreateReports");								//Add action command
 
 		//Activate Sale Campaign Button
 		ActivateSaleCampaignButton = GuiScreen.getActivateSaleCampaignButton();
@@ -76,30 +76,32 @@ public class MarketingManagerController extends Controller {
 		ContainerCardLeft	= (CardLayout)(LeftCardContainer.getLayout());
 		/* -------- Check the source of the event ---------*/
 		if(e.getActionCommand().equals("Tariff")){
+			ContainerCardLeft.show(LeftCardContainer, "EmptyLeftPanel");
 			ContainerCardCenter.show(CenterCardContainer, "Tariff");				//The TariffApproval layer will be display
 			HandleTariffUpdatePressed();											
 		}
-		if(e.getActionCommand().equals("Reports")){
-			ContainerCardCenter.show(CenterCardContainer,"Reports Center");
-			ContainerCardLeft.show(LeftCardContainer, "Reports Left");
+		else if(e.getActionCommand().equals("CreateReports")){
+			ContainerCardCenter.show(CenterCardContainer,"EmptyCenterPanel");
+			ContainerCardLeft.show(LeftCardContainer, "ReportsLeft");
 			HandleCreateReportsPressed();											
 		}
-		if(e.getActionCommand().equals("Activate Sale Campaign")){
+		else if(e.getActionCommand().equals("Activate Sale Campaign")){
 			HandleActivateSaleCampaignPressed();											
 		}
 		
-		if(e.getActionCommand().equals("Customer Characterization Report")){
+		else if(e.getActionCommand().equals("Customer Characterization Report")){
 			HandleCustomerCharacterizationReport();											
 		}
-		if(e.getActionCommand().equals("Comments For Marketing Campaign")){
+		else if(e.getActionCommand().equals("Comments For Marketing Campaign")){
+			ContainerCardCenter.show(CenterCardContainer, "CommentsForMarketingCampaignReport");			
 			HandleCommentsForMarketingCampaign();											
 		}
 	}
 
 	private void HandleTariffUpdatePressed(){
-	//	Server.handleMessageFromClient(new callbackStringArray(MessageType.getWaitingTariff));
-	//	callbackStringArray TariffTable = (callbackStringArray) getCallBackFromBuffer();		
-	//	GuiScreen.setTariffUpdateTable(new TableModel(TariffTable.getData(), TariffTable.getColHeaders()));
+//		Server.handleMessageFromClient(new callbackStringArray(MessageType.getWaitingTariff));
+//		callbackStringArray TariffUpdateTable = (callbackStringArray) getCallBackFromBuffer();		
+//		GuiScreen.setTariffUpdateTable(new TableModel(TariffUpdateTable.getData(), TariffUpdateTable.getColHeaders()));
 	}
 
 	private void HandleCreateReportsPressed(){
@@ -108,10 +110,12 @@ public class MarketingManagerController extends Controller {
 	private void HandleActivateSaleCampaignPressed(){}
 	
 	private void HandleCustomerCharacterizationReport(){
-	//Server.handleMessageFromClient(new callbackStringArray(MessageType.getCommentsForMarketionCampaign));
-	//callbackStringArray TariffTable = (callbackStringArray) getCallBackFromBuffer();		
-	//GuiScreen.setTariffUpdateTable(new TableModel(TariffTable.getData(), TariffTable.getColHeaders()));
 	}
-	private void HandleCommentsForMarketingCampaign(){}
+	
+	private void HandleCommentsForMarketingCampaign(){
+//		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCommentsForMarketionCampaign));
+//		callbackStringArray CommentsReportTable = (callbackStringArray) getCallBackFromBuffer();		
+//		GuiScreen.setCommentsForMarketingCampaignTable(new TableModel(CommentsReportTable.getData(), CommentsReportTable.getColHeaders()));
+	}
 }
 
