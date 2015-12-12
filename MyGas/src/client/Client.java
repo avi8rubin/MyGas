@@ -66,7 +66,7 @@ public void handleMessageFromServer(Object msg)
 public void handleMessageFromClient(Object message)
 {
 		BufferInUse = false;
-		int ReleaseCounter = 100;
+		int ReleaseCounter = 50;
 		try {
 			sendToServer(message);
 		} catch (IOException e) {

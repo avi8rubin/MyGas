@@ -19,6 +19,7 @@ public class callbackWaitingTariff extends CallBack {
 	private float CurrentPrice;
 	private String CEOConfirmation;
 
+	public callbackWaitingTariff(){};
 	public callbackWaitingTariff(MessageType WhatToDo){
 		super(WhatToDo);
 	}

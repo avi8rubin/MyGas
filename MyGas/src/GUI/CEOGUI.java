@@ -2,13 +2,20 @@ package GUI;
 
 import java.awt.Color;
 import java.awt.Font;
+
+import javax.swing.DefaultCellEditor;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import callback.callbackBuffer;
 import callback.callbackUser;
@@ -25,7 +32,19 @@ public class CEOGUI extends abstractPanel_GUI{
 	 */
 	private JButton TariffApprovalButton;
 	private JLayeredPane TariffApprovalLayer;
-	private JTable TariffApprovalTable = new JTable();
+	
+	// Create JTable - that the last column is editable.
+	private JTable TariffApprovalTable = new JTable(){
+		private static final long serialVersionUID = 1L;
+        public boolean isCellEditable(int row, int column) { 
+        	switch(column){
+        	case 6:
+                return true; 
+        	default:
+                return false;
+        	}
+        };
+	};
 	private JButton TariffSaveButton;
 	
 	/**
@@ -95,8 +114,27 @@ public class CEOGUI extends abstractPanel_GUI{
 	public JTable getTariffApprovalTable(){
 		return TariffApprovalTable;
 	}
-	public void setTariffApprovalTable(TableModel NewTable){
-		TariffApprovalTable.setModel(NewTable);
+	/**
+	 * Insert to JTable the new table from DB with combo box.
+	 * @param NewTableModel
+	 */
+	public void setTariffApprovalTable(DefaultTableModel NewTableModel){
 		
+		Object[] value = { "Waiting", "Yes", "No"};
+		TariffApprovalTable.setModel(NewTableModel);
+		DefaultComboBoxModel<?> comboModel = new DefaultComboBoxModel( value );
+		JComboBox combo = new JComboBox();
+		combo.setModel( comboModel );
+		TableColumn col = TariffApprovalTable.getColumnModel().getColumn( 6 );
+		col.setCellEditor( new DefaultCellEditor( combo ) );
+			
+	}
+	
+	public void setTariffApprovalTable(DefaultTableModel NewTableModel, JComboBox Combo){	
+
+		TariffApprovalTable.setModel(NewTableModel);
+		TableColumn col = TariffApprovalTable.getColumnModel().getColumn( 6 );
+		col.setCellEditor( new DefaultCellEditor( Combo ) );
+			
 	}
 }
