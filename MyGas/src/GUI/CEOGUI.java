@@ -120,6 +120,7 @@ public class CEOGUI extends abstractPanel_GUI{
 	 */
 	public void setTariffApprovalTable(DefaultTableModel NewTableModel){
 		
+		//Create combo box
 		Object[] value = { "Waiting", "Yes", "No"};
 		TariffApprovalTable.setModel(NewTableModel);
 		DefaultComboBoxModel<?> comboModel = new DefaultComboBoxModel( value );
@@ -127,6 +128,13 @@ public class CEOGUI extends abstractPanel_GUI{
 		combo.setModel( comboModel );
 		TableColumn col = TariffApprovalTable.getColumnModel().getColumn( 6 );
 		col.setCellEditor( new DefaultCellEditor( combo ) );
+		//Hide columns
+		TariffApprovalTable.removeColumn(TariffApprovalTable.getColumnModel().getColumn( 0 ));
+		TariffApprovalTable.removeColumn(TariffApprovalTable.getColumnModel().getColumn( 2 ));
+		//All values are in the center of the cell		
+		DefaultTableCellRenderer CenterRenderer = new DefaultTableCellRenderer();
+		CenterRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		TariffApprovalTable.setDefaultRenderer(Object.class, CenterRenderer);
 			
 	}
 	
