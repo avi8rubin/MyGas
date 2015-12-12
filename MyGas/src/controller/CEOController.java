@@ -101,9 +101,7 @@ public class CEOController extends Controller {
 				JOptionPane.showMessageDialog(GuiScreen,	
 					"There are no changes in the existing records.",
 						"Error Message",
-			    			JOptionPane.ERROR_MESSAGE);
-				
-				
+			    			JOptionPane.ERROR_MESSAGE);		
 		}
 	}
 
