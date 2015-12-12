@@ -85,7 +85,7 @@ public class abstractPanel_GUI extends JFrame {
 	 */
 
 	public abstractPanel_GUI(callbackUser EnteredUser, Client Server,callbackBuffer CommonBuffer, Login_GUI LoginScreen) {
-		setBounds(100, 100, 1300, 700);
+		setBounds(100, 100, 1300, 900);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
