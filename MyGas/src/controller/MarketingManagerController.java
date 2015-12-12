@@ -26,9 +26,11 @@ public class MarketingManagerController extends Controller {
 	private JButton UpdateButton;
 //
 	private JButton CustomerCharacterizationReportButton;
+	private JButton ExportButton2;
 	private JButton CommentsForMarketingCampaignButton;
-	private JLayeredPane CreateReortsCenterPanel;
-	private JLayeredPane CreateReportsLeftPanel;
+	private JButton ExportButton;
+
+
 //
 	
 
@@ -62,11 +64,20 @@ public class MarketingManagerController extends Controller {
 		//Customer Characterization Report
 		CustomerCharacterizationReportButton= GuiScreen.getCustomerCharacterizationReportButton();
 		CustomerCharacterizationReportButton.addActionListener(this);
-		CustomerCharacterizationReportButton.setActionCommand("Customer Characterization Report");	
+		CustomerCharacterizationReportButton.setActionCommand("Customer Characterization Report");
+		
+		ExportButton2= GuiScreen.getExport2Button();
+		ExportButton2.addActionListener(this);
+		ExportButton2.setActionCommand("Export CustomerCharacterization Report");		
+
 		//Comments For Marketing Campaign
 		CommentsForMarketingCampaignButton=GuiScreen.getCommentsForMarketingCampaignButton();
 		CommentsForMarketingCampaignButton.addActionListener(this);
 		CommentsForMarketingCampaignButton.setActionCommand("Comments For Marketing Campaign");	
+		
+		ExportButton= GuiScreen.getExportButton();
+		ExportButton.addActionListener(this);
+		ExportButton.setActionCommand("Export CommentsForMarketingCampaign Report");		
 		//
 
 	}
@@ -90,8 +101,16 @@ public class MarketingManagerController extends Controller {
 		}
 		
 		else if(e.getActionCommand().equals("Customer Characterization Report")){
+			ContainerCardCenter.show(CenterCardContainer, "CustomerCharacterizationReport");
 			HandleCustomerCharacterizationReport();											
 		}
+		else if(e.getActionCommand().equals("Export CustomerCharacterization Report")){
+			HandleCustomerCharacterizationExportReport();											
+		}
+		else if(e.getActionCommand().equals("Export CommentsForMarketingCampaign Report")){
+			HandleCommentsForMarketingCampaignExportReport();											
+		}
+		
 		else if(e.getActionCommand().equals("Comments For Marketing Campaign")){
 			ContainerCardCenter.show(CenterCardContainer, "CommentsForMarketingCampaignReport");			
 			HandleCommentsForMarketingCampaign();											
@@ -117,5 +136,11 @@ public class MarketingManagerController extends Controller {
 //		callbackStringArray CommentsReportTable = (callbackStringArray) getCallBackFromBuffer();		
 //		GuiScreen.setCommentsForMarketingCampaignTable(new TableModel(CommentsReportTable.getData(), CommentsReportTable.getColHeaders()));
 	}
+	
+	private void HandleCommentsForMarketingCampaignExportReport()
+	{
+		String CampaignToChooseFrom=GuiScreen.getComboBoxSelection();
+	}
+	private void HandleCustomerCharacterizationExportReport(){}
 }
 

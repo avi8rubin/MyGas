@@ -3,6 +3,8 @@ package GUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.text.SimpleDateFormat;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -11,6 +13,8 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.LineBorder;
+
+import com.toedter.calendar.JDateChooser;
 
 import callback.callbackBuffer;
 import callback.callbackUser;
@@ -40,15 +44,22 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	private JButton CustomerCharacterizationReportButton;
 	private JButton CommentsForMarketingCampaignButton;
 	private JLayeredPane CreateReportsLeftLayer;
-	private JLayeredPane CreateReportsCenterLayer ;
 	//Comments For Marketing Campaign Report
+	private JLayeredPane CreateCommentsReportsCenterLayer ;
 	private JScrollPane CommentsReportScrollPane = new JScrollPane();
 	private JTable CommentsReportTable = new JTable();
 	private JLabel ChooseCampaignLabel;
 	private JComboBox CampaignComboBox ;
 	private JButton ExportButton;
-	//private JScrollBar scrollBar;
-	
+	//Comments For Marketing Campaign Report
+	private JLayeredPane CreateCustomerReportsCenterLayer ;
+	private JScrollPane CustomerCharacterizationReportScrollPane = new JScrollPane();
+	private JTable CustomerCharacterizationReportTable= new JTable();
+	private JButton ExportButton2;
+	private JDateChooser StartDateChooser;
+	private JDateChooser EndDateChooser;
+	private JLabel StartDateLabel;
+	private JLabel EndDateLabel;
 	
 	
 	public MarketingManagerGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer,
@@ -133,35 +144,38 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		CreateReportsLeftLayer.add(CommentsForMarketingCampaignButton);
 		CreateReportsLeftLayer.add(CustomerCharacterizationReportButton);
 		/* ------- Adding CommentsForMarketingCampaignButton layer -------- */
-		CreateReportsCenterLayer= new JLayeredPane();
-		CreateReportsCenterLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		CreateCommentsReportsCenterLayer= new JLayeredPane();
+		CreateCommentsReportsCenterLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		
-		CenterCardContainer.add(CreateReportsCenterLayer,"CommentsForMarketingCampaignReport");
-		CreateReportsCenterLayer.setOpaque(true);
-		CreateReportsCenterLayer.setName("CommentsForMarketingCampaignReport");
+		CenterCardContainer.add(CreateCommentsReportsCenterLayer,"CommentsForMarketingCampaignReport");
+		CreateCommentsReportsCenterLayer.setOpaque(true);
+		CreateCommentsReportsCenterLayer.setName("CommentsForMarketingCampaignReport");
 		
-		/*------- Create JTable surround with scroll pane and add
-		 * 				 it to CommentsForMarketingCampaignReport --------*/
+		/*------- add labels, comboBox and buttons 
+		 * 						to CreateCommentsReportsCenterLayer --------*/
 		ChooseCampaignLabel = new JLabel("Choose Campaign ");
 		ChooseCampaignLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		ChooseCampaignLabel.setEnabled(false);
 		ChooseCampaignLabel.setBounds(27, 22, 184, 34);
 		ContactFrame.getContentPane().add(ChooseCampaignLabel);
-		CreateReportsCenterLayer.add(ChooseCampaignLabel);
+		CreateCommentsReportsCenterLayer.add(ChooseCampaignLabel);
 		
 		CampaignComboBox = new JComboBox();
 		CampaignComboBox.setBounds(27, 71, 217, 34);
 		ContactFrame.getContentPane().add(CampaignComboBox);
-		CreateReportsCenterLayer.add(CampaignComboBox);
+		CreateCommentsReportsCenterLayer.add(CampaignComboBox);
 
 		ExportButton = new JButton("EXPORT");
 		ExportButton.setBounds(278, 71, 126, 34);
 		ContactFrame.getContentPane().add(ExportButton);
 		ExportButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		CreateReportsCenterLayer.add(ExportButton);
-
+		CreateCommentsReportsCenterLayer.add(ExportButton);
+		
+		/*------- Create JTable surround with scroll pane and add
+		 * 				 it to CommentsForMarketingCampaignReport --------*/
+		
 		CommentsReportScrollPane.setBounds(38, 133, 600, 200);
-		CreateReportsCenterLayer.add(CommentsReportScrollPane);
+		CreateCommentsReportsCenterLayer.add(CommentsReportScrollPane);
 		
 		CommentsReportScrollPane.setViewportView(CommentsReportTable);
 		CommentsReportTable.setRowHeight(23);
@@ -169,10 +183,53 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		CommentsReportTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		CommentsReportTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
 		CommentsReportTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		
+		/* ------- Adding CreateCustomerReportsCenterLayer -------- */
+		CreateCustomerReportsCenterLayer= new JLayeredPane();
+		CreateCustomerReportsCenterLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		
+		CenterCardContainer.add(CreateCustomerReportsCenterLayer,"CustomerCharacterizationReport");
+		CreateCustomerReportsCenterLayer.setOpaque(true);
+		CreateCustomerReportsCenterLayer.setName("CustomerCharacterizationReport");
+		
+		/*------- add dated and buttons to CreateCustomerReportsCenterLayer--------*/
+		
+		StartDateChooser = new JDateChooser();
+		StartDateChooser.setBounds(107, 35, 140, 36);
+		CreateCustomerReportsCenterLayer.add(StartDateChooser);
+		
+		EndDateChooser = new JDateChooser();
+		EndDateChooser.setBounds(362, 35, 145, 34);
+		CreateCustomerReportsCenterLayer.add(EndDateChooser);
+
+		StartDateLabel = new JLabel("Start Date");
+		StartDateLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		StartDateLabel.setBounds(20, 35, 98, 34);
+		CreateCustomerReportsCenterLayer.add(StartDateLabel);
+		
+		EndDateLabel = new JLabel("End Date");
+		EndDateLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		EndDateLabel.setBounds(268, 40, 84, 26);
+		CreateCustomerReportsCenterLayer.add(EndDateLabel);
+		
+		ExportButton2 = new JButton("EXPORT");
+		ExportButton2.setBounds(584, 35, 126, 34);
+		ContactFrame.getContentPane().add(ExportButton2);
+		ExportButton2.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		CreateCustomerReportsCenterLayer.add(ExportButton2);
+		
 		/*------- Create JTable surround with scroll pane and add
 		 * 				 it to CustomerCharacterizationReportButton --------*/
+		CustomerCharacterizationReportScrollPane.setBounds(38, 133, 600, 200);
+		CreateCustomerReportsCenterLayer.add(CustomerCharacterizationReportScrollPane);
 		
-		
+		CustomerCharacterizationReportScrollPane.setViewportView(CustomerCharacterizationReportTable);
+		CustomerCharacterizationReportTable.setRowHeight(23);
+		CustomerCharacterizationReportTable.setFillsViewportHeight(true);
+		CustomerCharacterizationReportTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		CustomerCharacterizationReportTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
+		CustomerCharacterizationReportTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
 		
 }
 
@@ -193,21 +250,40 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	public JButton getReportButton(){
 		return ReportButton;
 	}
+////CommentsForMarketingCampaign
 	public JButton getCommentsForMarketingCampaignButton(){
 		return CommentsForMarketingCampaignButton;
 	}
+	public JButton getExportButton(){
+		return ExportButton;
+	}
+	public String getComboBoxSelection(){
+		return (String)CampaignComboBox.getSelectedItem();
+	}
+	
 	public void setCommentsForMarketingCampaignTable(TableModel NewTable){
 		CommentsReportTable.setModel(NewTable);	
 	}
+///CustomerCharacterization
 	public JButton getCustomerCharacterizationReportButton(){
 		return CustomerCharacterizationReportButton;
 	}
-
+	public JButton getExport2Button(){
+		return ExportButton2;
+	}
+	public String getStartDate(){
+		return StartDateChooser.getDateFormatString();// (new SimpleDateFormat("yyyy-mm-dd"));
+	}
+	public String getEndDate(){
+		return EndDateChooser.getDateFormatString();// (new SimpleDateFormat("yyyy-mm-dd"));
+	}
+	public void setCustomerCharacterizationReportTable(TableModel NewTable){
+		CustomerCharacterizationReportTable.setModel(NewTable);	
+	}
 	//campaign sale
 	public JButton getActivateSaleCampaignButton(){
 		return ActivateSaleCampaignButton;
 	}
-
 
 }
 
