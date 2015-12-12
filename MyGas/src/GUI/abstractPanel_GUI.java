@@ -188,8 +188,8 @@ public class abstractPanel_GUI extends JFrame {
 		EmptyCenterPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		EmptyCenterPanel.setOpaque(true);
 		CenterCardContainer.add(EmptyCenterPanel, "EmptyCenterPanel");
-		EmptyCenterPanel.setName("EmptyCenterPanel");
-		EmptyCenterPanel.setLayout(null);
+		EmptyCenterPanel.setLayout(new CardLayout(0, 0));
+		EmptyCenterPanel.setName("EmptyCenterPanel");		
 	
 		
 /**
