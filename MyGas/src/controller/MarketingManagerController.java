@@ -118,9 +118,9 @@ public class MarketingManagerController extends Controller {
 	}
 
 	private void HandleTariffUpdatePressed(){
-//		Server.handleMessageFromClient(new callbackStringArray(MessageType.getWaitingTariff));
-//		callbackStringArray TariffUpdateTable = (callbackStringArray) getCallBackFromBuffer();		
-//		GuiScreen.setTariffUpdateTable(new TableModel(TariffUpdateTable.getData(), TariffUpdateTable.getColHeaders()));
+		Server.handleMessageFromClient(new callbackStringArray(MessageType.getWaitingTariff));
+		callbackStringArray TariffUpdateTable = (callbackStringArray) getCallBackFromBuffer();		
+		GuiScreen.setTariffUpdateTable(new TableModel(TariffUpdateTable.getData(), TariffUpdateTable.getColHeaders()));
 	}
 
 	private void HandleCreateReportsPressed(){

@@ -132,13 +132,13 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		//buttons left layer
 		CommentsForMarketingCampaignButton = 
 				new JButton("<html>Comments for marketing campaign report</html>");
-		CommentsForMarketingCampaignButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		CommentsForMarketingCampaignButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		CommentsForMarketingCampaignButton.setBounds(27, 33, 212, 100);
 		
 		CustomerCharacterizationReportButton = 
 				new JButton("<html>Customer haracterization by period report</html>");
 
-		CustomerCharacterizationReportButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		CustomerCharacterizationReportButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		CustomerCharacterizationReportButton.setBounds(27, 161, 212, 100);
 		
 		CreateReportsLeftLayer.add(CommentsForMarketingCampaignButton);
