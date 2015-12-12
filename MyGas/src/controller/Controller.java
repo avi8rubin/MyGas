@@ -28,7 +28,7 @@ public abstract class Controller implements ActionListener{
 	 */
 	protected JPanel CenterCardContainer;
 	protected JPanel LeftCardContainer;
-	
+	protected CardLayout ContainerCard;
 	/**
 	 * The abstract controller constructor.
 	 * @param Server - The client connection to server.

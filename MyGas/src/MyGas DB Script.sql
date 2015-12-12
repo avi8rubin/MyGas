@@ -738,6 +738,17 @@ SELECT A.*
 FROM Users A
 LEFT OUTER JOIN User_Type B ON A.User_Type_Id=B.User_Type_Id
 RIGHT OUTER JOIN Workers C ON A.User_ID=C.User_ID
+
+UNION
+
+SELECT A.*
+,B.User_Privilege
+,CONCAT('To ',C.Station_Name) AS Station_Name
+,'Station' AS Worker_Last_Name
+,' ' AS Email
+FROM Users A
+LEFT OUTER JOIN User_Type B ON A.User_Type_Id=B.User_Type_Id
+RIGHT OUTER JOIN Gas_Stations C ON A.User_ID = C.User_Interface_ID
 ;
 /*
 CREATE VIEW Customers_Purchase_By_Fuel_Company AS
