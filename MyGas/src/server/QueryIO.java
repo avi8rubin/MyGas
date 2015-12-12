@@ -96,7 +96,7 @@ public class QueryIO  {
 				break;	
 				
 		default:
-			AnswerObject = new callback_Error("Not a callback object, send legal callback.");
+			AnswerObject = new callback_Error("Not a callback object, send legal callback or you don't fill 'WhatToDo'.");
 			break;
 				
 		} // END switch
@@ -105,10 +105,20 @@ public class QueryIO  {
 		return AnswerObject;
 	}
 
-	public Object VectorResolver(Object SwitchCallbak){
+	public Object VectorResolver(Object SwitchCallback){
 		Vector AnswerVector = new Vector();
+		switch(((callbackVector) SwitchCallback).getWhatToDo()){
+/*CEO*/
+			case setWaitingTariff:
+				AnswerObject = setWaitingTariff((callbackVector)SwitchCallback);
+				break;
+				
+		default:
+			AnswerObject = new callback_Error("Not a callbackVector object, send legal callbackVector or you don't fill 'WhatToDo'.");
+			break;
+		}
 		
-		return AnswerVector;
+		return AnswerObject;
 		
 	}
 	
@@ -123,7 +133,7 @@ public class QueryIO  {
 		// Build query -----------------------------------------------------------
 		String SqlQuery = "SELECT * FROM All_Users_Detailes "
 						+ "WHERE User_Name= '"+User.getUserName()+"' ";
-		
+		 	
 		// Send query to DB and get result ---------------------------------------
 		try {
 			AnswerResult = st.executeQuery(SqlQuery);	
@@ -342,8 +352,8 @@ public class QueryIO  {
 		String[] Headers;
 		int ColNum;
 		int RowNum =0;
-	//	JComboBox Confirm = new JComboBox
-		//String[] Confirm = {"Waiting","Yes","No"};
+		//	JComboBox Confirm = new JComboBox
+		Object[] Confirm = {"Waiting","Yes","No"};
 		// Build query -----------------------------------------------------------
 		String SqlQuery = 
 				"SELECT A.Tariff_Update_ID "+
@@ -382,6 +392,7 @@ public class QueryIO  {
 					//else Data[RowNum][i] = new JComboBox<String[]>(Confirm);
 				RowNum++;
 			}
+			Tarrif.setComboBoxStringArray(Confirm);
 			Tarrif.setData(Data);
 			} catch (SQLException e) {
 				return new callback_Error("Problem has occurred, query not valid or not connection to DB.");
@@ -390,7 +401,30 @@ public class QueryIO  {
 		
 	}
 	
-	
+	private CallBack setWaitingTariff(callbackVector UpdateWaitingTariff){
+		// Set variables ---------------------------------------------------------
+		//Vector <CallBack> LocalVector = new Vector <CallBack>();
+		int i;
+		// Build query -----------------------------------------------------------
+		try {
+			PreparedStatement ps1=conn.prepareStatement("UPDATE Tariff_Update SET CEO_Confirmation=(?) WHERE Tariff_Update_ID=(?)");
+			PreparedStatement ps2=conn.prepareStatement("UPDATE Fuels SET Current_Price=(?) WHERE Fuel_ID=(?)");
+		// Send query to DB  -----------------------------------------------------
+			for(i=0;i<UpdateWaitingTariff.size();i++){
+				ps1.setString(1, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getCEOConfirmation());
+				ps1.setInt(2, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getTariffUpdateID());
+				ps2.setFloat(1, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getCurrentPrice());
+				ps2.setInt(2, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getFuelID());
+				ps1.executeUpdate();
+				ps2.executeUpdate();
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
+		}
+			return (new callbackSuccess());					// 	Query not succeed
+	}
 	
 	private void printQueryResult(ResultSet Result){
 		try {

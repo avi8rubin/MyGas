@@ -1,6 +1,9 @@
 package callback;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 import common.MessageType;
 import common.TableModel;
@@ -15,6 +18,7 @@ public class callbackStringArray extends CallBack {
 	private int rowCount;
 	private Object[][] Data;
 	private String[] colHeaders;
+	private Object[] ComboBoxString;
 	
 	public callbackStringArray(MessageType WhatToDo){
 		super(WhatToDo);
@@ -25,8 +29,25 @@ public class callbackStringArray extends CallBack {
 	}
 	public TableModel getTableModelObject(){
 		return new TableModel(Data,colHeaders);
+	}	
+	public DefaultTableModel getDefaultTableModel(){
+		return new DefaultTableModel(Data,colHeaders);
 	}
-	
+	public void setComboBoxStringArray(Object[] StringArray){
+		ComboBoxString = StringArray;
+	}
+	public Object[] getComboBoxStringArray(){
+		return ComboBoxString;
+	}
+	public JComboBox getJComboBoxObject (){
+		DefaultComboBoxModel<?> comboModel = new DefaultComboBoxModel( ComboBoxString );
+		JComboBox combo = new JComboBox();
+		combo.addItem((String)ComboBoxString[0]);
+		combo.addItem((String)ComboBoxString[1]);
+		combo.addItem((String)ComboBoxString[2]);
+		combo.setModel( comboModel );
+		return combo;
+	}
 	public int getColCount(){
 		return colCount;
 	}

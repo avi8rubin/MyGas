@@ -3,13 +3,14 @@ package common;
 import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * TableModel created to allow us replace tables in GUI screens in a simple and fast way.
  * @author zino ohad
  *
  */
-public class TableModel extends AbstractTableModel{
+public class TableModel extends DefaultTableModel{
 
 	private static final long serialVersionUID = 1L;
 	ArrayList<Object[]> Table;
@@ -25,15 +26,16 @@ public class TableModel extends AbstractTableModel{
 	}
 	
 	// constructor 
-	public TableModel(Object[][] Date, String[] header) {	
-		setTableModel(Date,header);
+	public TableModel(Object[][] Data, String[] header) {	
+		super(Data,header);
+		setTableModel(Data,header);
 	}
 	
-	public void setTableModel(Object[][] Date, String[] header){
+	public void setTableModel(Object[][] Data, String[] header){
 		this.header = header;									// save the header
 		Table = new ArrayList<Object[]>(); 						// and the rows
-		for(int i = 0; i < Date.length; ++i) 					// copy the rows into the ArrayList
-		Table.add(Date[i]);
+		for(int i = 0; i < Data.length; ++i) 					// copy the rows into the ArrayList
+		Table.add(Data[i]);
 		fireTableDataChanged();
 	}
 	
