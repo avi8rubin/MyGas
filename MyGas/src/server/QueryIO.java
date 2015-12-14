@@ -88,7 +88,10 @@ public class QueryIO  {
 				
 /*Marketing Manager*/
 			case getCommentsForMarketionCampaign:
-				AnswerObject = getCommentsForMarketionCampaign((callbackCommentsForMarketionCampaign)SwitchCallback);				
+				if(SwitchCallback instanceof callbackCommentsForMarketionCampaign)
+					AnswerObject = getCommentsForMarketionCampaign((callbackCommentsForMarketionCampaign)SwitchCallback);	
+				else if (SwitchCallback instanceof callbackStringArray)
+					AnswerObject = getCommentsForMarketionCampaign((callbackStringArray)SwitchCallback);
 				break;	
 /*CEO*/
 			case getWaitingTariff:
@@ -342,6 +345,63 @@ public class QueryIO  {
 		
 	}
 
+	private CallBack getCommentsForMarketionCampaign(callbackStringArray Report){
+		// Set variables ---------------------------------------------------------	
+		ResultSetMetaData LocalResult;
+		String[][] Data;
+		String[] Headers;
+		String[] Combo;
+		int ColNum;
+		int RowNum =0;
+		// Build query -----------------------------------------------------------
+		String SqlQuery = 
+				"SELECT A.Campaign_ID "+
+				",DATE_FORMAT(A.Start_Campaign,'%d/%m/%Y') AS Start_Campaign "+
+				",DATE_FORMAT(A.End_Campaign,'%d/%m/%Y') AS End_Campaign "+
+				",CONCAT(A.Campaign_Description,' (',CAST(DATE_FORMAT(A.Start_Campaign,'%d/%m/%Y') AS CHAR),' - ',CAST(DATE_FORMAT(A.End_Campaign,'%d/%m/%Y') AS CHAR),')') AS Campaign_Description "+ 
+				",COUNT(*) AS NumberOfCoustomer "+
+				",SUM(B.Payment) AS TotalProfit "+
+				",SUM(B.Fuel_Amount) AS TotalFuelAmount "+
+				"FROM All_Campaign_On_System A "+
+				"LEFT OUTER JOIN All_Gas_Stations_Sales B ON A.Campaign_ID=B.Campaign_ID "+
+				"WHERE IS_Active = 'Yes' "+
+				"GROUP BY A.Campaign_ID "	;
+		
+		// Send query to DB and get result ---------------------------------------
+		try {
+			AnswerResult = st.executeQuery(SqlQuery);
+			LocalResult = AnswerResult.getMetaData();
+			Report.setColCount(ColNum = LocalResult.getColumnCount());
+			
+			AnswerResult.last();
+			Report.setRowCount(AnswerResult.getRow());
+			AnswerResult.beforeFirst();
+			Data = new String[Report.getRowCount()][ColNum];
+			Headers = new String[ColNum];
+			Combo = new String[Report.getRowCount()];
+			
+			/*Get the table headers*/
+			for(int i=0;i<ColNum;i++)
+				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
+			Report.setColHeaders(Headers);
+			
+			/**
+			 * Create the report callback structure
+			 */
+			while (AnswerResult.next()) { 			
+				for (int i = 0; i < ColNum; i++) 
+					Data[RowNum][i] = AnswerResult.getString(i + 1);
+				Combo[RowNum] = AnswerResult.getString("Campaign_Description");
+				RowNum++;
+			}
+			Report.setData(Data);
+			Report.setComboBoxStringArray(Combo);	
+				} catch (SQLException e) {
+						return new callback_Error("Problem has occurred, query not valid or not connection to DB.");					
+			}
+		return Report;
+		
+	}
 /**
  * CEO
  */
@@ -411,12 +471,15 @@ public class QueryIO  {
 			PreparedStatement ps2=conn.prepareStatement("UPDATE Fuels SET Current_Price=(?) WHERE Fuel_ID=(?)");
 		// Send query to DB  -----------------------------------------------------
 			for(i=0;i<UpdateWaitingTariff.size();i++){
+				
 				ps1.setString(1, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getCEOConfirmation());
 				ps1.setInt(2, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getTariffUpdateID());
-				ps2.setFloat(1, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getCurrentPrice());
-				ps2.setInt(2, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getFuelID());
 				ps1.executeUpdate();
-				ps2.executeUpdate();
+				if(((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getCEOConfirmation().equals("Yes")){	
+					ps2.setFloat(1, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getCurrentPrice());
+					ps2.setInt(2, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getFuelID());
+					ps2.executeUpdate();
+				}
 			}
 			
 		} catch (SQLException e) {
