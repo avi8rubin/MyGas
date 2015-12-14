@@ -13,14 +13,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-
 import callback.callbackBuffer;
 import callback.callbackUser;
 import client.Client;
-import common.TableModel;
 
 public class CEOGUI extends abstractPanel_GUI{
 
@@ -38,7 +36,7 @@ public class CEOGUI extends abstractPanel_GUI{
 		private static final long serialVersionUID = 1L;
         public boolean isCellEditable(int row, int column) { 
         	switch(column){
-        	case 6:
+        	case 4:
                 return true; 
         	default:
                 return false;
@@ -119,7 +117,6 @@ public class CEOGUI extends abstractPanel_GUI{
 	 * @param NewTableModel
 	 */
 	public void setTariffApprovalTable(DefaultTableModel NewTableModel){
-		
 		//Create combo box
 		Object[] value = { "Waiting", "Yes", "No"};
 		TariffApprovalTable.setModel(NewTableModel);
@@ -135,9 +132,10 @@ public class CEOGUI extends abstractPanel_GUI{
 		DefaultTableCellRenderer CenterRenderer = new DefaultTableCellRenderer();
 		CenterRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		TariffApprovalTable.setDefaultRenderer(Object.class, CenterRenderer);
-			
 	}
 	
+	
+	/*Not work - don't delete yet (ohad)*/
 	public void setTariffApprovalTable(DefaultTableModel NewTableModel, JComboBox Combo){	
 
 		TariffApprovalTable.setModel(NewTableModel);
