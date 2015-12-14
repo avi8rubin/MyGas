@@ -14,6 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.LineBorder;
 
+import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
 
 import callback.callbackBuffer;
@@ -36,23 +37,23 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	private JButton ReportButton;
 	private JButton ActivateSaleCampaignButton;
 	//TariffButton
-	private JLayeredPane TariffDisplayLayer;
+	private JLayeredPane TariffDisplayLayer= new JLayeredPane();
 	private JScrollPane TariffScrollPane = new JScrollPane();
 	private JTable TariffUpdateTable = new JTable();
 	private JButton UpdateButton;
 	//ReportButton
 	private JButton CustomerCharacterizationReportButton;
 	private JButton CommentsForMarketingCampaignButton;
-	private JLayeredPane CreateReportsLeftLayer;
+	private JLayeredPane CreateReportsLeftLayer= new JLayeredPane();
 	//Comments For Marketing Campaign Report
-	private JLayeredPane CreateCommentsReportsCenterLayer ;
+	private JLayeredPane CreateCommentsReportsCenterLayer= new JLayeredPane();
 	private JScrollPane CommentsReportScrollPane = new JScrollPane();
 	private JTable CommentsReportTable = new JTable();
 	private JLabel ChooseCampaignLabel;
 	private JComboBox CampaignComboBox ;
 	private JButton ExportButton;
 	//Comments For Marketing Campaign Report
-	private JLayeredPane CreateCustomerReportsCenterLayer ;
+	private JLayeredPane CreateCustomerReportsCenterLayer= new JLayeredPane(); ;
 	private JScrollPane CustomerCharacterizationReportScrollPane = new JScrollPane();
 	private JTable CustomerCharacterizationReportTable= new JTable();
 	private JButton ExportButton2;
@@ -60,7 +61,20 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	private JDateChooser EndDateChooser;
 	private JLabel StartDateLabel;
 	private JLabel EndDateLabel;
-	
+	//Activate Sale
+	private JLayeredPane ActivateSaleLeftLayer= new JLayeredPane();
+	private JLayeredPane ActivateSaleCenterLayer= new JLayeredPane();
+	private JDateChooser ActivateSale_StartDateChooser;
+	private JDateChooser ActivateSale_EndDateChooser;
+	private JLabel ActivateSale_StartDateLabel;
+	private JLabel ActivateSale_EndDateLabel;
+	private JLabel AllActiveCampaignLabel;
+	private JLabel SelectPatternLabel;
+	private JComboBox PatternsComboBox;
+	private JScrollPane ActiveSalesScrollPane = new JScrollPane();
+	private JTable ActiveSalesTable= new JTable();
+	private JButton StartSaleButton;
+
 	
 	public MarketingManagerGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer,
 			Login_GUI LoginScreen) {
@@ -84,9 +98,8 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		ActivateSaleCampaignButton.setBounds(416, 133, 274, 38);
 		TopPanel.add(ActivateSaleCampaignButton);
 		
-		
+////////////////////////////////////////////////////////////////////////////////////////////////////////		
 		/* ------- Adding new layer to Tariff Panel -------- */
-		TariffDisplayLayer = new JLayeredPane();
 		TariffDisplayLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		
 		//TariffDisplayLayer.setBounds(0, 0, 968, 512);
@@ -116,11 +129,9 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		UpdateButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		UpdateButton.setBounds(787, 416, 125, 33);
 		TariffDisplayLayer.add(UpdateButton);	
-
-		/* ------- Adding new layer to Reports Panel -------- */
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		/* ------- Adding Left layer to Reports Panel -------- */
-		CreateReportsLeftLayer= new JLayeredPane();
 		CreateReportsLeftLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		CreateReportsLeftLayer.setBackground(new Color(169, 169, 169));
 
@@ -144,12 +155,12 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		CreateReportsLeftLayer.add(CommentsForMarketingCampaignButton);
 		CreateReportsLeftLayer.add(CustomerCharacterizationReportButton);
 		/* ------- Adding CommentsForMarketingCampaignButton layer -------- */
-		CreateCommentsReportsCenterLayer= new JLayeredPane();
 		CreateCommentsReportsCenterLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		
 		CenterCardContainer.add(CreateCommentsReportsCenterLayer,"CommentsForMarketingCampaignReport");
 		CreateCommentsReportsCenterLayer.setOpaque(true);
 		CreateCommentsReportsCenterLayer.setName("CommentsForMarketingCampaignReport");
+
 		
 		/*------- add labels, comboBox and buttons 
 		 * 						to CreateCommentsReportsCenterLayer --------*/
@@ -185,7 +196,6 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		CommentsReportTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		
 		/* ------- Adding CreateCustomerReportsCenterLayer -------- */
-		CreateCustomerReportsCenterLayer= new JLayeredPane();
 		CreateCustomerReportsCenterLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		
 		CenterCardContainer.add(CreateCustomerReportsCenterLayer,"CustomerCharacterizationReport");
@@ -230,6 +240,72 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		CustomerCharacterizationReportTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
 		CustomerCharacterizationReportTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/* ------- Adding ActivateSale center layer -------- */
+		ActivateSaleCenterLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		
+	    AllActiveCampaignLabel = new JLabel("All Active Campaign");
+		AllActiveCampaignLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		AllActiveCampaignLabel.setBounds(38, 33, 312, 49);
+		
+		ActivateSaleCenterLayer.add(AllActiveCampaignLabel);
+//		/*------- Create JTable surround with scroll pane and add
+//		 * 				 it to CommentsForMarketingCampaignReport --------*/
+//		
+		ActiveSalesScrollPane.setBounds(38, 133, 600, 200);
+		ActivateSaleCenterLayer.add(ActiveSalesScrollPane);
+		
+		ActiveSalesScrollPane.setViewportView(ActiveSalesTable);
+		ActiveSalesTable.setRowHeight(23);
+		ActiveSalesTable.setFillsViewportHeight(true);
+		ActiveSalesTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		ActiveSalesTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
+		ActiveSalesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		
+		CenterCardContainer.add(ActivateSaleCenterLayer,"ActivateSaleCenterLayer");
+		ActivateSaleCenterLayer.setOpaque(true);
+		ActivateSaleCenterLayer.setName("ActivateSaleCenterLayer");
+
+		
+		/* ------- Adding ActivateSale left layer -------- */
+		ActivateSaleLeftLayer.setBackground(new Color(169, 169, 169));
+		ActivateSaleLeftLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+
+		ActivateSale_StartDateChooser = new JDateChooser();
+		ActivateSale_StartDateChooser.setBounds(134, 175, 140, 36);
+		ActivateSaleLeftLayer.add(ActivateSale_StartDateChooser);
+		
+		ActivateSale_EndDateChooser = new JDateChooser();
+		ActivateSale_EndDateChooser.setBounds(134, 231, 140, 34);
+		ActivateSaleLeftLayer.add(ActivateSale_EndDateChooser);
+
+		ActivateSale_StartDateLabel = new JLabel("Start Date");
+		ActivateSale_StartDateLabel.setBounds(26, 175, 98, 34);
+		ActivateSale_StartDateLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		ActivateSaleLeftLayer.add(ActivateSale_StartDateLabel);
+		
+		ActivateSale_EndDateLabel = new JLabel("End Date");
+		ActivateSale_EndDateLabel.setBounds(26, 231, 84, 26);
+		ActivateSale_EndDateLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		ActivateSaleLeftLayer.add(ActivateSale_EndDateLabel);
+
+		SelectPatternLabel = new JLabel("Select Pattern");
+		SelectPatternLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		SelectPatternLabel.setBounds(69, 33, 151, 26);
+		ActivateSaleLeftLayer.add(SelectPatternLabel);
+
+	    PatternsComboBox = new JComboBox();
+		PatternsComboBox.setBounds(43, 70, 194, 36);
+		ActivateSaleLeftLayer.add(PatternsComboBox);
+
+	    StartSaleButton = new JButton("Start");
+		StartSaleButton.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		StartSaleButton.setBounds(87, 291, 98, 36);
+		ActivateSaleLeftLayer.add(StartSaleButton);
+
+		LeftCardContainer.add(ActivateSaleLeftLayer,"ActivateSaleLeftLayer");
+		ActivateSaleLeftLayer.setOpaque(true);
+		ActivateSaleLeftLayer.setName("ActivateSaleLeftLayer");
 		
 }
 
@@ -284,6 +360,8 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	public JButton getActivateSaleCampaignButton(){
 		return ActivateSaleCampaignButton;
 	}
+
+
 
 }
 
