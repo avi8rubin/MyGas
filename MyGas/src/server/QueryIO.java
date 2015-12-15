@@ -476,7 +476,7 @@ public class QueryIO  {
 				ps1.setInt(2, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getTariffUpdateID());
 				ps1.executeUpdate();
 				if(((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getCEOConfirmation().equals("Yes")){	
-					ps2.setFloat(1, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getCurrentPrice());
+					ps2.setFloat(1, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getWantedPrice());
 					ps2.setInt(2, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getFuelID());
 					ps2.executeUpdate();
 				}
