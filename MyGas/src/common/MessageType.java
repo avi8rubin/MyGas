@@ -18,6 +18,7 @@ public enum MessageType {
 	getContacts,
 /*Marketing Manager*/	
 	getCommentsForMarketionCampaign,
+	getFuelsDetailes,
 /*CEO*/
 	getWaitingTariff,
 	setWaitingTariff

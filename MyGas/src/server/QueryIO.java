@@ -93,6 +93,11 @@ public class QueryIO  {
 				else if (SwitchCallback instanceof callbackStringArray)
 					AnswerObject = getCommentsForMarketionCampaign((callbackStringArray)SwitchCallback);
 				break;	
+				
+			case getFuelsDetailes:
+				AnswerObject = getFuelsDetailes((callbackStringArray)SwitchCallback);
+				break;
+				
 /*CEO*/
 			case getWaitingTariff:
 				AnswerObject = getWaitingTariff((callbackStringArray)SwitchCallback);				
@@ -402,6 +407,53 @@ public class QueryIO  {
 		return Report;
 		
 	}
+	private CallBack getFuelsDetailes(callbackStringArray Callback){
+		// Set variables ---------------------------------------------------------	
+		ResultSetMetaData LocalResult;
+		String[][] Data;
+		String[] Headers;
+		String[] Combo;
+		int ColNum;
+		int RowNum =0;
+		// Build query -----------------------------------------------------------
+		String SqlQuery = "SELECT * FROM Fuels";
+		
+		// Send query to DB and get result ---------------------------------------
+		try {
+			AnswerResult = st.executeQuery(SqlQuery);					//Send query to DB
+			LocalResult = AnswerResult.getMetaData();					//Get MetaData object
+			Callback.setColCount(ColNum = LocalResult.getColumnCount());//How many columns in the table that back from DB
+			
+			AnswerResult.last();										//--------------------------
+			Callback.setRowCount(AnswerResult.getRow());				//Get the number of rows   |
+			AnswerResult.beforeFirst();									//--------------------------
+			Data = new String[Callback.getRowCount()][ColNum];			//Create table in the result size
+			Headers = new String[ColNum];
+			//Combo = new String[Callback.getRowCount()];				//Set values for combobox object
+			
+			/*Get the table headers*/
+			for(int i=0;i<ColNum;i++)
+				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
+			Callback.setColHeaders(Headers);
+			
+			/**
+			 * Create the report callback structure
+			 */
+			while (AnswerResult.next()) { 			
+				for (int i = 0; i < ColNum; i++) 
+					Data[RowNum][i] = AnswerResult.getString(i + 1);
+				//Combo[RowNum] = AnswerResult.getString("Campaign_Description");
+				RowNum++;
+			}
+			Callback.setData(Data);
+			//Callback.setComboBoxStringArray(Combo);
+				} catch (SQLException e) {
+						return new callback_Error("Problem has occurred, query not valid or not connection to DB.");					
+			}
+		return Callback;
+		
+	}
+	
 /**
  * CEO
  */
