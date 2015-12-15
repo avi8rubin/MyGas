@@ -31,7 +31,12 @@ public class CEOController extends Controller {
 	private JButton TariffSaveButton;
 	private JTable TariffApprovalTable;
 
-	
+	/**
+	 * Constractor - CEO Gui
+	 * @param Server
+	 * @param CommonBuffer
+	 * @param GuiScreen
+	 */
 	public CEOController(Client Server, callbackBuffer CommonBuffer, CEOGUI GuiScreen) {
 		super(Server, CommonBuffer,GuiScreen);
 		this.GuiScreen = GuiScreen;
@@ -66,14 +71,18 @@ public class CEOController extends Controller {
 		}
 		
 	}
-
+/**
+ * Sends request to query from DB
+ */
 	private void HandleTariffApprovalPressed(){
 		
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getWaitingTariff));
 		callbackStringArray TariffTable = (callbackStringArray) getCallBackFromBuffer();		
 		GuiScreen.setTariffApprovalTable(TariffTable.getDefaultTableModel());
 	}
-	
+/**
+ * When 'Save' button pressed, send the relevant values to save in the DB
+ */
 	private void HandleSavePressed(){
 		int i,RowNum;
 		callbackVector UpdateTariff = new callbackVector(MessageType.setWaitingTariff);
@@ -90,6 +99,7 @@ public class CEOController extends Controller {
 				UpdateTariff.add(NewTariff);
 			}
 		}
+		/*Just is there was a change update DB*/
 		if(UpdateTariff.size()>0){
 			Server.handleMessageFromClient(UpdateTariff);
 			getCallBackFromBuffer();

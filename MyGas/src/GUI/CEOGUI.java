@@ -127,7 +127,7 @@ public class CEOGUI extends abstractPanel_GUI{
 		col.setCellEditor( new DefaultCellEditor( combo ) );
 		//Hide columns
 		TariffApprovalTable.removeColumn(TariffApprovalTable.getColumnModel().getColumn( 0 ));
-		TariffApprovalTable.removeColumn(TariffApprovalTable.getColumnModel().getColumn( 2 ));
+		TariffApprovalTable.removeColumn(TariffApprovalTable.getColumnModel().getColumn( 1 ));
 		//All values are in the center of the cell		
 		DefaultTableCellRenderer CenterRenderer = new DefaultTableCellRenderer();
 		CenterRenderer.setHorizontalAlignment(SwingConstants.CENTER);
