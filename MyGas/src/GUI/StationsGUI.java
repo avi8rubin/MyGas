@@ -114,10 +114,8 @@ public class StationsGUI extends abstractPanel_GUI{
 		AmountTxt.setFont(new Font("Tahoma", Font.BOLD, 20));
 		AmountTxt.setBounds(12, 217, 147, 40);
 		left_car.add(AmountTxt);
-		/////////////////////
-/////////////////////
-/////////////////////
-		
+
+		////////////////////////////
 		LiterLabel.setFont(new Font("Tahoma", Font.BOLD, 18));
 		LiterLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		LiterLabel.setText("0");
