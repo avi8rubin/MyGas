@@ -1,5 +1,6 @@
 package controller;
 
+import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -7,8 +8,8 @@ import java.awt.event.WindowListener;
 import java.io.IOException;
 
 import javax.swing.JButton;
+import javax.swing.JLayeredPane;
 
-import GUI.CEOGUI;
 import GUI.Login_GUI;
 import GUI.StationsGUI;
 import callback.CallBack;
@@ -20,65 +21,59 @@ import common.MessageType;
 
 public class StationsController extends Controller {
 
-	
-	//Instance variables **********************************************
-		/**
-		 * The default port to connect on.
-		 */
-		 final public static int DEFAULT_PORT = 5555;
-		/**
-		 * This buffer will allows the transfer of the callback, back to the application
-		 */
 		private callbackBuffer CommonBuffer = null;
-		/**
-		 * The login GUI screen
-		 */
-		private Login_GUI LoginScreen;
-		
-		/**
-		 * Buttons from login Gui, use to set handler in controller
-		 */
-		private JButton LoginButton;
-		/**
-		 * The server connection to send queries and receive callback's
-		 */
-			
-		/**
-		 * The login user
-		 */
 		private static callbackUser EnteredUser;
-		/**
-		 * Set connection Flag
-		 */
 		
+		private JButton LoginButton;
+		private JButton UserLogoutButton;
+		private JButton MainLogoutButton;
+				
 		private StationsGUI StationUserLoginGui;
 		
+		private CardLayout ContainerCardLeft;
+		private CardLayout ContainerCardCenter;
+		
 		private boolean ConnectionFlag = false;
+		private boolean logoutflag;
 		
-		
-	public StationsController(Client Server, callbackBuffer CommonBuffer, StationsGUI GuiScreen) {
+		public StationsController(Client Server, callbackBuffer CommonBuffer, StationsGUI GuiScreen) {
 		super(Server, CommonBuffer, GuiScreen);
 		this.StationUserLoginGui = GuiScreen;
 		StationUserLoginGui.setVisible(true);
 		
-		
 		/*----- Create gui button handlers -----*/
+		MainLogoutButton=new JButton();
+		MainLogoutButton=GuiScreen.getMainLogoutButton();
+		
+		
+		UserLogoutButton=GuiScreen.getUserLogoutButton();
+		UserLogoutButton.addActionListener(this);
+		
+		
 		LoginButton = GuiScreen.getLoginButton(); 					//Login Button on the main GUI
 		LoginButton.addActionListener(this);							//Add action listener
 		
-			
+		ContainerCardLeft=(CardLayout)(LeftCardContainer.getLayout());
+		ContainerCardCenter=(CardLayout)(CenterCardContainer.getLayout());
+		ContainerCardLeft.show(LeftCardContainer,"EmptyLeftPanel");
+		ContainerCardCenter.show(CenterCardContainer,"StationUserLoginLayer");
+		
 		}
-	
-
-	@Override
+	/**
+	 * This function set action listenter to login & logout buttons
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource()==LoginButton){
 			LoginButtonHandler();
 		}
+		if(e.getSource()==UserLogoutButton){
+			LogoutButtonHandler();
+		}
+		
 	}
-		/**
-		 * Login button handler
- */
+	/**
+	 * This function handel User login from gas station
+	 */
 	private void LoginButtonHandler()
 	{
 		CallBack LocalUserCallBack = null;
@@ -108,23 +103,38 @@ public class StationsController extends Controller {
 			/*------ Move to the next screen ------*/
 					else{
 						EnteredUser.setWhatToDo(MessageType.updateUserLogin);
-						Server.handleMessageFromClient(EnteredUser);		//Update user is logged in, in the DB	
-						getCallBackFromBuffer();							//Emptying buffer		
-						StationUserLoginGui.ClearErrorMessage(); 					//Clear the error message if exists
-						GasStationFueling();									// go to the next gui screen by user role
-						
-						
-						//LoginScreen.setWelcomUserLabel(EnteredUser.getFirstName(), EnteredUser.getLastName());
-						//LoginScreen.SwitchScreen();
+						Server.handleMessageFromClient(EnteredUser);	//Update user is logged in, in the DB	
+						getCallBackFromBuffer();						//Emptying buffer		
+						StationUserLoginGui.ClearErrorMessage(); 		//Clear the error message if exists
+						GasStationSwitchLeftPanel();					// go to the next gui screen by user role
+						logoutflag=true;								//logout will return to this screen
+						MainLogoutButton.setEnabled(false);
+						StationUserLoginGui.setlogoutvisable(true);
 					}
 				}
 				else StationUserLoginGui.IllegalPassword();							//Display password error message
 			}
-		}//END if
+	}
 	/**
-	 * This function replace gas station screen to Fueling screen
+	 * This function switch left window
 	 */
-	private void GasStationFueling(){
+	private void GasStationSwitchLeftPanel(){
+	ContainerCardLeft.show(LeftCardContainer, "left_panel");
+	ContainerCardCenter.show(CenterCardContainer,"GasFuelingCenterPanel");
+	}
+	/**
+	 * This function handel logout window
+	 */
+	private void LogoutButtonHandler(){
+		if(logoutflag){
+			logoutflag=false;
+    		//EnteredUser.setWhatToDo(MessageType.updateUserLogout);
+    		//Server.handleMessageFromClient(EnteredUser);
+			ContainerCardLeft.show(LeftCardContainer,"EmptyLeftPanel");
+			ContainerCardCenter.show(CenterCardContainer,"StationUserLoginLayer");
+			StationUserLoginGui.setlogoutvisable(false);
+			MainLogoutButton.setEnabled(true);
+		}
 	}
 }
 
