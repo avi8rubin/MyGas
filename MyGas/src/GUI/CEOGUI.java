@@ -58,7 +58,7 @@ public class CEOGUI extends abstractPanel_GUI{
 		/* ------- Adding new button to Top Panel -------- */
 		TariffApprovalButton = new JButton("Tariff Approval");									//Global variable
 		TariffApprovalButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		TariffApprovalButton.setBounds(24, 128, 198, 47);		
+		TariffApprovalButton.setBounds(12, 99, 185, 38);		
 		TopPanel.add(TariffApprovalButton);
 		
 	
@@ -74,7 +74,7 @@ public class CEOGUI extends abstractPanel_GUI{
 		
 		/*------- Create JTable surround with scroll pane and add it to TariffApprovalPanel --------*/
 		JScrollPane TariffApprovalScroll = new JScrollPane();
-		TariffApprovalScroll.setBounds(43, 58, 911, 518);
+		TariffApprovalScroll.setBounds(43, 58, 911, 438);
 		TariffApprovalLayer.add(TariffApprovalScroll);		
 		
 		TariffApprovalScroll.setViewportView(TariffApprovalTable);		
@@ -94,7 +94,7 @@ public class CEOGUI extends abstractPanel_GUI{
 		/* ------- Adding new button to Tariff layer -------- */
 		TariffSaveButton = new JButton("Save");													//Global variable
 		TariffSaveButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		TariffSaveButton.setBounds(842, 593, 112, 38);
+		TariffSaveButton.setBounds(840, 500, 112, 38); 
 		TariffApprovalLayer.add(TariffSaveButton);
 		
 		
@@ -127,7 +127,7 @@ public class CEOGUI extends abstractPanel_GUI{
 		col.setCellEditor( new DefaultCellEditor( combo ) );
 		//Hide columns
 		TariffApprovalTable.removeColumn(TariffApprovalTable.getColumnModel().getColumn( 0 ));
-		TariffApprovalTable.removeColumn(TariffApprovalTable.getColumnModel().getColumn( 2 ));
+		TariffApprovalTable.removeColumn(TariffApprovalTable.getColumnModel().getColumn( 1 ));
 		//All values are in the center of the cell		
 		DefaultTableCellRenderer CenterRenderer = new DefaultTableCellRenderer();
 		CenterRenderer.setHorizontalAlignment(SwingConstants.CENTER);
