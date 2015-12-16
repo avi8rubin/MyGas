@@ -2,12 +2,16 @@ package controller;
 
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 
 import GUI.Login_GUI;
@@ -19,7 +23,7 @@ import callback.callback_Error;
 import client.Client;
 import common.MessageType;
 
-public class StationsController extends Controller {
+public class StationsController extends Controller implements MouseListener {
 
 		private callbackBuffer CommonBuffer = null;
 		private static callbackUser EnteredUser;
@@ -27,7 +31,10 @@ public class StationsController extends Controller {
 		private JButton LoginButton;
 		private JButton UserLogoutButton;
 		private JButton MainLogoutButton;
-				
+		
+		private JLabel BlueHand;
+		private JLabel GreenHand;
+		private JLabel RedHand;
 		private StationsGUI StationUserLoginGui;
 		
 		private CardLayout ContainerCardLeft;
@@ -44,6 +51,21 @@ public class StationsController extends Controller {
 		/*----- Create gui button handlers -----*/
 		MainLogoutButton=new JButton();
 		MainLogoutButton=GuiScreen.getMainLogoutButton();
+		
+		/*-----Hand gui Icons-------*/
+		BlueHand=GuiScreen.getBlueHand();
+		GreenHand=GuiScreen.getGreenHand();
+		RedHand=GuiScreen.getRedHand();
+		/*
+ 		JLabel BlueHand = new JLabel("");
+		BlueHand.addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseDragged(MouseEvent arg0) {
+				BlueHand.setBounds(getMousePosition().x-350, getMousePosition().y-300,90, 138);
+			}
+		});
+		 */
+
 		
 		
 		UserLogoutButton=GuiScreen.getUserLogoutButton();
@@ -135,6 +157,31 @@ public class StationsController extends Controller {
 			StationUserLoginGui.setlogoutvisable(false);
 			MainLogoutButton.setEnabled(true);
 		}
+	}
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

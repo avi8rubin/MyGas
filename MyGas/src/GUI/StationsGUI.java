@@ -37,6 +37,8 @@ public class StationsGUI extends abstractPanel_GUI{
 	
 	private JLabel ErrorMassage=new JLabel();
 	private	JLabel GreenHand;
+	private	JLabel BlueHand;
+	private	JLabel RedHand;
 	
 	private JTextField PasswordTextField = new JPasswordField();
 	private JTextField LiterLabel = new JTextField();
@@ -185,12 +187,12 @@ public class StationsGUI extends abstractPanel_GUI{
 		GreenHand.setBounds(798, 249, 90, 138);
 		GasFuelingCenterPanel.add(GreenHand);
 		
-		JLabel RedHand = new JLabel("");
+		RedHand = new JLabel("");
 		RedHand.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Red_hand.png")));
 		RedHand.setBounds(651, 249, 90, 138);
 		GasFuelingCenterPanel.add(RedHand);
 		
-		JLabel BlueHand = new JLabel("");
+		BlueHand = new JLabel("");
 		BlueHand.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 		BlueHand.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Blue_hand.png")));
 		BlueHand.setBounds(497, 249, 90, 138);
@@ -266,6 +268,12 @@ public class StationsGUI extends abstractPanel_GUI{
 	}
 	public JLabel getGreenHand(){
 		return this.GreenHand;
+	}
+	public JLabel getBlueHand(){
+		return this.BlueHand;
+	}
+	public JLabel getRedHand(){
+		return this.RedHand;
 	}
 	public JComboBox getCarNumberComboBox(){
 		return this.CarNumberCombobox;
