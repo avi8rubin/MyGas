@@ -85,7 +85,7 @@ public class abstractPanel_GUI extends JFrame {
 	 */
 
 	public abstractPanel_GUI(callbackUser EnteredUser, Client Server,callbackBuffer CommonBuffer, Login_GUI LoginScreen) {
-		setBounds(100, 100, 1300, 900);
+		setBounds(100, 100, 1300, 750);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -113,7 +113,7 @@ public class abstractPanel_GUI extends JFrame {
 		TopPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		TopPanel.setBackground(SystemColor.activeCaption);
 		TopPanel.setOpaque(true);
-		TopPanel.setPreferredSize(new Dimension(1295,200));
+		TopPanel.setPreferredSize(new Dimension(1295,150));
 		contentPane.add(TopPanel, BorderLayout.NORTH);
 		
 		// Role label
@@ -179,7 +179,7 @@ public class abstractPanel_GUI extends JFrame {
 		// Logo on left panel
 		JLabel LogoImage = new JLabel("");
 		LogoImage.setIcon(new ImageIcon(abstractPanel_GUI.class.getResource("/images/Left_Panel_Logo22.jpg")));
-		LogoImage.setBounds(37, 400, 239, 242);
+		LogoImage.setBounds(38, 313, 239, 242);
 		EmptyLeftPanel.add(LogoImage);
 		
 /**
@@ -209,7 +209,7 @@ public class abstractPanel_GUI extends JFrame {
 		ContactsPanel.add(SubPanelLabel, "name_2211558062915");
 		ContactsPanel.add(ContactFrame, "name_2211600466443");
 		ContactFrame.getContentPane().setLayout(null);
-		ContactsSrollPane.setBounds(12, 13, 944, 593);		
+		ContactsSrollPane.setBounds(12, 13, 944, 495);		
 		ContactFrame.getContentPane().add(ContactsSrollPane);
 		ContactFrame.setVisible(true);
 		
@@ -269,11 +269,9 @@ public class abstractPanel_GUI extends JFrame {
 	public JPanel getLeftCardContainer(){
 		return LeftCardContainer;
 	}
-	////////-----16.12 New Function----///
 	public JButton getLogoutButton(){
 		return this.LogoutButton;
 	}
-	
 	/**
 	 * @return The callback from the buffer
 	 */

@@ -57,7 +57,7 @@ public class abstractPanel_GUI_Tester extends JFrame {
 	 */
 	public abstractPanel_GUI_Tester() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1300, 900);
+		setBounds(100, 100, 1300, 750);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -68,7 +68,7 @@ public class abstractPanel_GUI_Tester extends JFrame {
 		TopPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		TopPanel.setBackground(SystemColor.activeCaption);
 		TopPanel.setOpaque(true);
-		TopPanel.setPreferredSize(new Dimension(1295,200));
+		TopPanel.setPreferredSize(new Dimension(1295,150));
 		contentPane.add(TopPanel, BorderLayout.NORTH);
 		
 		
@@ -112,7 +112,7 @@ public class abstractPanel_GUI_Tester extends JFrame {
 		
 		JLabel LogoImage = new JLabel("");
 		LogoImage.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Left_Panel_Logo22.jpg")));
-		LogoImage.setBounds(37, 400, 239, 242);
+		LogoImage.setBounds(37, 313, 239, 242);
 		LeftPanel.add(LogoImage);
 		
 		
@@ -127,7 +127,7 @@ public class abstractPanel_GUI_Tester extends JFrame {
 		
 		// Contact list frame
 		
-		ContactFrame.setBounds(0, 0, 984, 655);
+		ContactFrame.setBounds(0, 0, 984, 555);
 		ContactFrame.setVisible(false);
 		CenterPanel.add(ContactFrame);
 		ContactFrame.getContentPane().setLayout(null);
