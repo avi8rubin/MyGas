@@ -269,7 +269,9 @@ public class abstractPanel_GUI extends JFrame {
 	public JPanel getLeftCardContainer(){
 		return LeftCardContainer;
 	}
-	
+	public JButton getLogoutButton(){
+		return this.LogoutButton;
+	}
 	/**
 	 * @return The callback from the buffer
 	 */
