@@ -13,6 +13,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 			Login_GUI LoginScreen) {
 		super(EnteredUser, Server, CommonBuffer, LoginScreen);
 		// TODO Auto-generated constructor stub
+		LoginScreen=LoginScreen;
 	}
 
 }
