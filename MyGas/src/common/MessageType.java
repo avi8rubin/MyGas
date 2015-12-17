@@ -25,6 +25,9 @@ public enum MessageType {
 	setNewCampaign,
 /*CEO*/
 	getWaitingTariff,
-	setWaitingTariff
-
+	setWaitingTariff,
+/*Marketing Representative*/
+	getCustomer,
+/*Customer*/
+	setNewHomeFuelSale
 }
