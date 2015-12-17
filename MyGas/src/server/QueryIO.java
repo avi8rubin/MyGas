@@ -680,8 +680,8 @@ public class QueryIO  {
 		// Send query to DB  -----------------------------------------------------
 						
 				ps.setInt(1, Callback.getCampaignPatternsID());
-				ps.setDate(2, Callback.getStartCampaignDate());
-				ps.setDate(3, Callback.getStartCampaignDate());
+				ps.setString(2, Callback.getStartCampaignDate());
+				ps.setString(3, Callback.getEndCampaignDate());
 				ps.executeUpdate();
 			
 			
