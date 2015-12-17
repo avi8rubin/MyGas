@@ -80,7 +80,7 @@ public class Login_GUI extends JFrame {
 		PasswordLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		PasswordLabel.setBounds(63, 388, 123, 35);
 		FirstLoginScreen.add(PasswordLabel);
-		UserNameTextField.setText("litaf");
+		UserNameTextField.setText("");
 		
 		//User Name Text Field
 		UserNameTextField.setToolTipText("Enter User Name");
