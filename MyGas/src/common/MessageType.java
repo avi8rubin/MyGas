@@ -21,6 +21,8 @@ public enum MessageType {
 	getFuelsDetailes,
 	setUpdateFuelsTariffForCEO,
 	getCustomerCharacterizationByPeriod,
+	getCampaignPatternAndActiveCampaign,
+	setNewCampaign,
 /*CEO*/
 	getWaitingTariff,
 	setWaitingTariff

@@ -94,12 +94,20 @@ public class QueryIO  {
 					AnswerObject = getCommentsForMarketionCampaign((callbackStringArray)SwitchCallback);
 				break;	
 				
+			case getCustomerCharacterizationByPeriod:
+				AnswerObject = getCustomerCharacterizationByPeriod((callbackStringArray)SwitchCallback);
+				break;
+				
 			case getFuelsDetailes:
 				AnswerObject = getFuelsDetailes((callbackStringArray)SwitchCallback);
 				break;
 				
-			case setUpdateFuelsTariffForCEO:
-				AnswerObject = setUpdateFuelsTariffForCEO((callbackVector)SwitchCallback);
+			case getCampaignPatternAndActiveCampaign:
+				AnswerObject = getCampaignPatternAndActiveCampaign((callbackStringArray)SwitchCallback);
+				break;
+				
+			case setNewCampaign:
+				AnswerObject = setNewCampaign((callbackCampaign)SwitchCallback);
 				break;
 				
 /*CEO*/
@@ -120,6 +128,11 @@ public class QueryIO  {
 	public Object VectorResolver(Object SwitchCallback){
 		Vector AnswerVector = new Vector();
 		switch(((callbackVector) SwitchCallback).getWhatToDo()){
+
+/*Marketing Manager*/			
+		case setUpdateFuelsTariffForCEO:
+			AnswerObject = setUpdateFuelsTariffForCEO((callbackVector)SwitchCallback);
+			break;		
 /*CEO*/
 			case setWaitingTariff:
 				AnswerObject = setWaitingTariff((callbackVector)SwitchCallback);
@@ -587,6 +600,99 @@ public class QueryIO  {
 		return Callback;
 		
 	}
+	private CallBack getCampaignPatternAndActiveCampaign(callbackStringArray Callback){
+		// Set variables ---------------------------------------------------------	
+		ResultSetMetaData LocalResult;
+		String[][] Data;
+		String[] Headers;
+		String[] Combo;
+		int ColNum;
+		int RowNum =0;
+		// Build query -----------------------------------------------------------
+		//Campaign Patterns
+		String SqlQuery1 = "SELECT Campaign_Patterns_ID, Campaign_Description FROM Campaign_patterns";
+		//Active Campaign
+		String SqlQuery2 = 	"SELECT Campaign_ID "+
+							",DATE_FORMAT(Start_Campaign,'%d/%m/%Y') AS Start_Campaign "+
+							",DATE_FORMAT(End_Campaign,'%d/%m/%Y') AS End_Campaign "+
+							",CONCAT(Campaign_Description,' (',CAST(DATE_FORMAT(Start_Campaign,'%d/%m/%Y') AS CHAR),' - ',CAST(DATE_FORMAT(End_Campaign,'%d/%m/%Y') AS CHAR),')') AS Campaign_Description "+
+							"FROM All_Campaign_On_System "+
+							"WHERE IS_Active = 'Yes'";
+		
+		
+		
+		// Send query to DB and get result ---------------------------------------
+		try {
+			
+			//Campaign Patterns			
+			AnswerResult = st.executeQuery(SqlQuery1);					//Send query to DB
+			AnswerResult.last();										//--------------------------
+			RowNum = AnswerResult.getRow();								//Get the number of rows   |
+			AnswerResult.beforeFirst();									//--------------------------
+			Combo = new String[RowNum];									//Set values for combobox object
+			RowNum=0;
+			while (AnswerResult.next()) { 	
+				Combo[RowNum] = AnswerResult.getString("Campaign_Description");
+			}
+			RowNum=0;
+			Callback.setComboBoxStringArray(Combo);
+			
+			
+			//Active Campaign
+			AnswerResult = st.executeQuery(SqlQuery2);					//Send query to DB
+			LocalResult = AnswerResult.getMetaData();					//Get MetaData object
+			Callback.setColCount(ColNum = LocalResult.getColumnCount());//How many columns in the table that back from DB
+			
+			AnswerResult.last();										//--------------------------
+			Callback.setRowCount(AnswerResult.getRow());				//Get the number of rows   |
+			AnswerResult.beforeFirst();									//--------------------------
+			Data = new String[Callback.getRowCount()][ColNum];			//Create table in the result size
+			Headers = new String[ColNum];
+			
+			/*Get the table headers*/
+			for(int i=0;i<ColNum;i++)
+				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
+			Callback.setColHeaders(Headers);
+			
+			/**
+			 * Create the report callback structure
+			 */
+			while (AnswerResult.next()) { 			
+				for (int i = 0; i < ColNum; i++) 
+					Data[RowNum][i] = AnswerResult.getString(i + 1);
+				RowNum++;
+			}
+			Callback.setData(Data);
+				} catch (SQLException e) {
+						return new callback_Error("Problem has occurred, query not valid or not connection to DB.");					
+			}
+		return Callback;
+		
+	}
+	private CallBack setNewCampaign(callbackCampaign Callback){
+		// Set variables ---------------------------------------------------------
+
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps=conn.prepareStatement("INSERT INTO Campaigns VALUES(null,(?),(?),(?),'Yes')");
+			
+		// Send query to DB  -----------------------------------------------------
+						
+				ps.setInt(1, Callback.getCampaignPatternsID());
+				ps.setDate(2, Callback.getStartCampaignDate());
+				ps.setDate(3, Callback.getStartCampaignDate());
+				ps.executeUpdate();
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
+		}
+			return (new callbackSuccess());					// 	Query not succeed
+		
+	}
+	
 /**
  * CEO
  */
