@@ -98,6 +98,10 @@ public class QueryIO  {
 				AnswerObject = getFuelsDetailes((callbackStringArray)SwitchCallback);
 				break;
 				
+			case setUpdateFuelsTariffForCEO:
+				AnswerObject = setUpdateFuelsTariffForCEO((callbackVector)SwitchCallback);
+				break;
+				
 /*CEO*/
 			case getWaitingTariff:
 				AnswerObject = getWaitingTariff((callbackStringArray)SwitchCallback);				
@@ -132,8 +136,7 @@ public class QueryIO  {
 	
 /**
  * Global queries 	
- */
-	
+ */	
 	private CallBack getCheckExistsUserPass(callbackUser User){
 		// Set variables ---------------------------------------------------------
 		callbackUser callback_Obj = new callbackUser();
@@ -170,7 +173,6 @@ public class QueryIO  {
 
 		
 	} // END getCheckExistsUserPass
-	
 	private CallBack updateChangeUserPassword(callbackUser User){
 		// Set variables ---------------------------------------------------------
 				
@@ -189,7 +191,6 @@ public class QueryIO  {
 			return (new callbackSuccess());					// 	Query not succeed
 		
 	}
-	
 	private CallBack updateUserLogin(callbackUser User){
 		// Set variables ---------------------------------------------------------
 				
@@ -207,7 +208,6 @@ public class QueryIO  {
 		}
 			return (new callbackSuccess());					// 	Query not succeed
 	}
-	
 	private CallBack updateUserLogout(callbackUser User){
 		// Set variables ---------------------------------------------------------
 			//Vector <CallBack> LocalVector = new Vector <CallBack>();
@@ -226,7 +226,6 @@ public class QueryIO  {
 		}
 			return (new callbackSuccess());					// 	Query not succeed
 	}
-	
 	private Vector<?> getContacts(callbackWorkersDetailes WorkersDetailes){
 		// Set variables ---------------------------------------------------------
 		Vector <CallBack> LocalVector = new Vector <CallBack>();	
@@ -258,7 +257,6 @@ public class QueryIO  {
 		return LocalVector;
 		
 	}
-	
 	private CallBack getContacts(callbackStringArray WorkersDetailes){
 		// Set variables ---------------------------------------------------------	
 		ResultSetMetaData LocalResult;
@@ -302,7 +300,7 @@ public class QueryIO  {
 		return WorkersDetailes;
 		
 	}
-	
+
 /**
  * Marketing Manager 	
  */	
@@ -349,7 +347,6 @@ public class QueryIO  {
 		return LocalVector;
 		
 	}
-
 	private CallBack getCommentsForMarketionCampaign(callbackStringArray Report){
 		// Set variables ---------------------------------------------------------	
 		ResultSetMetaData LocalResult;
@@ -442,7 +439,7 @@ public class QueryIO  {
 			while (AnswerResult.next()) { 			
 				for (int i = 0; i < ColNum; i++) 
 					Data[RowNum][i] = AnswerResult.getString(i + 1);
-				//Combo[RowNum] = AnswerResult.getString("Campaign_Description");
+				//Combo[RowNum] = AnswerResult.getString("Campaign_Description");	//Object from ComboBox in the specific screen
 				RowNum++;
 			}
 			Callback.setData(Data);
@@ -453,7 +450,143 @@ public class QueryIO  {
 		return Callback;
 		
 	}
-	
+	private CallBack setUpdateFuelsTariffForCEO(callbackVector Callback){
+		// Set variables ---------------------------------------------------------
+		int i;
+		// Build query -----------------------------------------------------------
+		if(Callback.size()==0) return new callback_Error("The callbackVector was empty.");
+		
+		try {
+			PreparedStatement ps=conn.prepareStatement(
+					"INSERT INTO Tariff_Update (Tariff_Update_ID, Tariff_Update_Date, Fuel_ID, Wanted_Price, Current_Price, CEO_Confirmation) "+
+					"VALUES(NULL,NOW(),(?),(?),(?),DEFAULT)");
+			
+		// Send query to DB  -----------------------------------------------------
+			for(i=0;i<Callback.size();i++){				
+				ps.setInt(1, ((callbackTariffUpdate)Callback.get(i)).getFuelID());
+				ps.setFloat(2, ((callbackTariffUpdate)Callback.get(i)).getWantedPrice());
+				ps.setFloat(3, ((callbackTariffUpdate)Callback.get(i)).getCurrentPrice());
+				ps.executeUpdate();
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
+		}
+			return (new callbackSuccess());					// 	Query not succeed
+		
+	}
+	private CallBack getCustomerCharacterizationByPeriod(callbackStringArray Callback){
+		// Set variables ---------------------------------------------------------	
+		ResultSetMetaData LocalResult;
+		String[][] Data;
+		String[] Headers;
+		int ColNum;
+		int RowNum =0;
+		// Build query -----------------------------------------------------------
+		String SqlQuery = 
+				"SELECT  DISTINCT A.Customers_ID "+
+				", A.Customer_First_Name "+
+				", A.Customer_Last_Name "+
+				", IFNULL(B.Paz,0) AS Paz "+
+				", IFNULL(C.Sonol,0) AS Sonol "+
+				", IFNULL(D.Yellow,0) AS Yellow "+
+				", IFNULL(E.Ten,0) AS Ten "+
+				", IFNULL(F.Total,0) AS Total "+
+				"FROM All_Gas_Stations_Sales A "+
+				"LEFT OUTER JOIN ( "+
+				"	SELECT  Customers_ID "+
+				"	,COUNT(*) AS Paz "+
+				"	FROM All_Gas_Stations_Sales  "+
+				"	WHERE Gas_Company_Name='Paz' "+
+				"   AND Sale_Date BETWEEN (?) AND (?) "+
+				"    GROUP BY Customers_ID "+
+				") B ON A.Customers_ID=B.Customers_ID "+
+
+				"LEFT OUTER JOIN ( "+
+				"	SELECT  Customers_ID "+
+				"	,COUNT(*) AS Sonol "+
+				"	FROM All_Gas_Stations_Sales  "+
+				"	WHERE Gas_Company_Name='Sonol' "+
+				"   AND Sale_Date BETWEEN (?) AND (?) "+
+				"   GROUP BY Customers_ID "+
+				") C ON A.Customers_ID=C.Customers_ID "+
+
+				"LEFT OUTER JOIN ( "+
+				"	SELECT  Customers_ID "+
+				"	,COUNT(*) AS Yellow "+
+				"	FROM All_Gas_Stations_Sales "+
+				"	WHERE Gas_Company_Name='Yellow' "+
+				"   AND Sale_Date BETWEEN (?) AND (?) "+
+				"   GROUP BY Customers_ID "+
+				") D ON A.Customers_ID=D.Customers_ID "+
+
+				"LEFT OUTER JOIN ( "+
+				"	SELECT  Customers_ID "+
+				"	,COUNT(*) AS Ten "+
+				"	FROM All_Gas_Stations_Sales "+
+				"	WHERE Gas_Company_Name='Ten' "+
+				"   AND Sale_Date BETWEEN (?) AND (?) "+
+				"   GROUP BY Customers_ID "+
+				") E ON A.Customers_ID=E.Customers_ID "+
+
+				"LEFT OUTER JOIN ( "+
+				"	SELECT  Customers_ID "+
+				"	,COUNT(*) AS Total "+
+				"	FROM All_Gas_Stations_Sales "+
+				"   WHERE Sale_Date BETWEEN (?) AND (?) "+
+				"   GROUP BY Customers_ID "+
+				") F ON A.Customers_ID=F.Customers_ID "+
+				"ORDER BY F.Total DESC ";
+		
+		
+		// Send query to DB and get result ---------------------------------------
+		try {
+			PreparedStatement ps=conn.prepareStatement(SqlQuery);
+						
+				ps.setString(1, Callback.getColHeaders()[0]);
+				ps.setString(2, Callback.getColHeaders()[1]);
+				ps.setString(3, Callback.getColHeaders()[0]);
+				ps.setString(4, Callback.getColHeaders()[1]);
+				ps.setString(5, Callback.getColHeaders()[0]);
+				ps.setString(6, Callback.getColHeaders()[1]);
+				ps.setString(7, Callback.getColHeaders()[0]);
+				ps.setString(8, Callback.getColHeaders()[1]);
+				ps.setString(9, Callback.getColHeaders()[0]);
+				ps.setString(10, Callback.getColHeaders()[1]);
+				AnswerResult = ps.executeQuery();
+			
+			
+			
+			LocalResult = AnswerResult.getMetaData();
+			Callback.setColCount(ColNum = LocalResult.getColumnCount());
+			
+			AnswerResult.last();
+			Callback.setRowCount(AnswerResult.getRow());
+			AnswerResult.beforeFirst();
+			Data = new String[Callback.getRowCount()][ColNum];
+			Headers = new String[ColNum];
+			
+			/*Get the table headers*/
+			for(int i=0;i<ColNum;i++)
+				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
+			Callback.setColHeaders(Headers);
+			
+			/**
+			 * Create the report callback structure
+			 */
+			while (AnswerResult.next()) { 			
+				for (int i = 0; i < ColNum; i++) 
+					Data[RowNum][i] = AnswerResult.getString(i + 1);
+				RowNum++;
+			}
+			Callback.setData(Data);
+				} catch (SQLException e) {
+						return new callback_Error("Problem has occurred, query not valid or not connection to DB.");					
+			}
+		return Callback;
+		
+	}
 /**
  * CEO
  */
@@ -512,10 +645,8 @@ public class QueryIO  {
 		return Tarrif;
 		
 	}
-	
 	private CallBack setWaitingTariff(callbackVector UpdateWaitingTariff){
 		// Set variables ---------------------------------------------------------
-		//Vector <CallBack> LocalVector = new Vector <CallBack>();
 		int i;
 		// Build query -----------------------------------------------------------
 		try {
@@ -540,7 +671,15 @@ public class QueryIO  {
 		}
 			return (new callbackSuccess());					// 	Query not succeed
 	}
+
+/**
+ * Variance
+ */
 	
+	/**
+	 * Local function for check if the query return results
+	 * @param Result - the result from DB
+	 */	
 	private void printQueryResult(ResultSet Result){
 		try {
 			while (Result.next()) {
@@ -566,9 +705,7 @@ public class QueryIO  {
 			} catch (SQLException e) {
 				
 				e.printStackTrace();
-			}
-			
-		
+			}	
 		
 	}
 	
