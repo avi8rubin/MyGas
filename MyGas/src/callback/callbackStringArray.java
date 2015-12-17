@@ -19,11 +19,15 @@ public class callbackStringArray extends CallBack {
 	private Object[][] Data;
 	private String[] colHeaders;
 	private Object[] ComboBoxString;
+	private Object[] Variance;
 	
 	public callbackStringArray(MessageType WhatToDo){
 		super(WhatToDo);
 	}
-	
+	public callbackStringArray(Object[][] Data, String[] Headers){
+		setData(Data);
+		setColHeaders(Headers);
+	}
 	public JTable getJTableObject(){
 		return new JTable(Data,colHeaders);
 	}
@@ -71,5 +75,11 @@ public class callbackStringArray extends CallBack {
 	}
 	public void setColHeaders(String[] colHeaders){
 		this.colHeaders = colHeaders;
+	}
+	public Object[] getVariance(){
+		return Variance;
+	}
+	public void setVariance(Object[] Variance){
+		this.Variance = Variance;
 	}
 }

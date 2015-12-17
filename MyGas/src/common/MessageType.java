@@ -19,6 +19,8 @@ public enum MessageType {
 /*Marketing Manager*/	
 	getCommentsForMarketionCampaign,
 	getFuelsDetailes,
+	setUpdateFuelsTariffForCEO,
+	getCustomerCharacterizationByPeriod,
 /*CEO*/
 	getWaitingTariff,
 	setWaitingTariff

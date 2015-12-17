@@ -13,25 +13,23 @@ public class callbackTariffUpdate extends CallBack {
 	private float CurrentPrice;
 	private float MaxPrice;
 	private float NewPrice;
+	private float WantedPrice;
 	
 	public callbackTariffUpdate(MessageType WhatToDo){
 		super(WhatToDo);
-	}
-	
+	}	
 	public int getFuelID(){
 		return FuelID;
 	}
 	public void setFuelID(int FuelID){
 		this.FuelID = FuelID;
-	}
-	
+	}	
 	public String getFuelDescription(){
 		return FuelDescription;
 	}
 	public void setFuelDescription(String FuelDescription){
 		this.FuelDescription = FuelDescription;
-	}
-	
+	}	
 	
 	public float getCurrentPrice(){
 		return CurrentPrice;
@@ -44,13 +42,17 @@ public class callbackTariffUpdate extends CallBack {
 	}
 	public void setMaxPrice(float MaxPrice){
 		this.MaxPrice = MaxPrice;
-	}
-	
+	}	
 	public float getNewPrice(){
 		return NewPrice;
 	}
 	public void setNewPrice(float NewPrice){
 		this.NewPrice = NewPrice;
 	}
-	
+	public float getWantedPrice(){
+		return WantedPrice;
+	}
+	public void setWantedPrice(float WantedPrice){
+		this.WantedPrice = WantedPrice;
+	}
 }
