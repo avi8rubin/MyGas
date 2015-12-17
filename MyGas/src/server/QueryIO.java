@@ -115,6 +115,15 @@ public class QueryIO  {
 				AnswerObject = getWaitingTariff((callbackStringArray)SwitchCallback);				
 				break;	
 				
+/*Marketing Representative*/				
+			case getCustomer:
+				AnswerObject = getCustomer((callbackCustomer)SwitchCallback);				
+				break;	
+/*Customer*/
+			case setNewHomeFuelSale:
+				AnswerObject = setNewHomeFuelSale((callbackSale)SwitchCallback);				
+				break;
+				
 		default:
 			AnswerObject = new callback_Error("Not a callback object, send legal callback or you don't fill 'WhatToDo'.");
 			break;
@@ -778,6 +787,88 @@ public class QueryIO  {
 			return (new callbackSuccess());					// 	Query not succeed
 	}
 
+/**
+ * Marketing Representative	
+ */
+	private CallBack getCustomer(callbackCustomer Callback){
+		// Set variables ---------------------------------------------------------
+
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps=conn.prepareStatement("SELECT * FROM mygas.customer_detailes "+
+														"WHERE User_ID = (?)");
+			
+		// Send query to DB  -----------------------------------------------------
+						
+			ps.setInt(1, Callback.getUserID());
+			AnswerResult = ps.executeQuery();
+			
+			Callback.setUserID(AnswerResult.getInt("User_ID"));
+			Callback.setCustomersID(AnswerResult.getInt("Customers_ID"));
+			Callback.setCustomerFirstName(AnswerResult.getString("Customer_First_Name"));
+			Callback.setCustomerLastName(AnswerResult.getString("Customer_Last_Name"));
+			Callback.setCustomerType(AnswerResult.getString("Customer_Type"));
+			Callback.setPlanName(AnswerResult.getString("Plan_Name"));
+			Callback.setPhoneNumber(AnswerResult.getString("Phone_Number"));
+			Callback.setCreditCard(AnswerResult.getString("Credit_Card"));
+			Callback.setEmail(AnswerResult.getString("Email"));
+			Callback.setCarrentRate(AnswerResult.getInt("Carrent_Rate"));
+			Callback.setISActive(AnswerResult.getString("IS_Active"));
+			Callback.setUserName(AnswerResult.getString("User_Name"));
+			Callback.setUserPassword(AnswerResult.getString("User_Password"));
+			Callback.setUserTypeID(AnswerResult.getInt("User_Type_ID"));
+			Callback.setUserPrivilege(AnswerResult.getString("User_Privilege"));
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
+		}
+			return Callback;					// 	Query not succeed
+		
+	}
+	
+/**
+ * Customer	
+ */
+	private CallBack setNewHomeFuelSale(callbackSale Callback){
+		// Set variables ---------------------------------------------------------
+			int SaleID;
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps1=conn.prepareStatement(
+					"INSERT INTO Sales VALUES(null,(?),NOW(),(?),(?),(?))");
+			PreparedStatement ps2=conn.prepareStatement(
+					"SELECT Sales_ID, MAX(Sale_Date) AS Sale_Date FROM Sales WHERE Customers_ID = (?)");										
+			PreparedStatement ps3=conn.prepareStatement(
+					"INSERT INTO Home_Fuel_Sales VALUES((?),(?),(?),'Not Delivered')");
+		// Send query to DB  -----------------------------------------------------
+			//Create new sale 			
+			ps1.setInt(1, Callback.getFuelID());
+			ps1.setInt(2, Callback.getFuelAmount());
+			ps1.setFloat(3, Callback.getPayment());
+			ps1.setInt(4, Callback.getCustomersID());
+			ps1.executeUpdate();
+			//Get SaleID
+			ps2.setInt(1, Callback.getCustomersID());
+			AnswerResult = ps2.executeQuery();
+			SaleID = AnswerResult.getInt("Sales_ID");
+			//Enter new home fuel sale
+			ps3.setInt(1, SaleID);
+			ps3.setString(2,Callback.getDeliveryDateAndTime());
+			ps3.setString(3,Callback.getAddress());
+			ps3.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
+		}
+			return Callback;					// 	Query not succeed
+		
+	}
+	
 /**
  * Variance
  */
