@@ -2,6 +2,7 @@ package callback;
 
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 
 import common.MessageType;
 
@@ -13,8 +14,8 @@ public class callbackCampaign extends CallBack{
 	private static final long serialVersionUID = 1L;
 	private int CampaignID;
 	private int CampaignPatternsID;
-	private Date StartCampaignDate;
-	private Date EndCampaignDate;
+	private String StartCampaignDate;
+	private String EndCampaignDate;
 	private String ISActive;
 	
 	public callbackCampaign(){};
@@ -33,21 +34,24 @@ public class callbackCampaign extends CallBack{
 	public void setCampaignPatternsID(int campaignPatternsID) {
 		CampaignPatternsID = campaignPatternsID;
 	}
-	public Date getStartCampaignDate() {
+
+	public String getStartCampaignDate() {
 		return StartCampaignDate;
 	}
-	public void setStartCampaignDate(Date startCampaignDate) {
+	public void setStartCampaignDate(String startCampaignDate) {
 		StartCampaignDate = startCampaignDate;
 	}
-/*
 	public void setStartCampaignDate(int year, int month, int day) {
-		StartCampaignDate = new Date() ;
-	}*/
-	public Date getEndCampaignDate() {
+		StartCampaignDate = String.valueOf(year)+"/"+String.valueOf(month)+"/"+String.valueOf(day);
+	}
+	public String getEndCampaignDate() {
 		return EndCampaignDate;
 	}
-	public void setEndCampaignDate(Date endCampaignDate) {
+	public void setEndCampaignDate(String endCampaignDate) {
 		EndCampaignDate = endCampaignDate;
+	}
+	public void setEndCampaignDate(int year, int month, int day) {
+		EndCampaignDate = String.valueOf(year)+"/"+String.valueOf(month)+"/"+String.valueOf(day);
 	}
 	public boolean getISActive() {
 		if(ISActive.equals("Yes")) return true;
