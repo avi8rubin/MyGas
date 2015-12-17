@@ -56,9 +56,10 @@ public class StationsGUI extends abstractPanel_GUI{
 		 * Station Login Layer maker
 		 */
 		
+		
 		LogoutButton2 = new JButton("User Logout");
 		LogoutButton2.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		LogoutButton2.setBounds(980, 13, 148, 34);
+		LogoutButton2.setBounds(978, 13, 158, 38);
 		LogoutButton2.setVisible(false);
 		TopPanel.add(LogoutButton2);
 		
@@ -110,6 +111,8 @@ public class StationsGUI extends abstractPanel_GUI{
 		ErrorMassage.setBounds(375, 575, 242, 32);
 		StationUserLoginLayer.add(ErrorMassage);
 		
+		// Gas station 1
+		
 		// left panel
 		left_car.setBackground(new Color(169, 169, 169));
 		left_car.setOpaque(true);
@@ -120,50 +123,46 @@ public class StationsGUI extends abstractPanel_GUI{
 		
 		JLabel LogoImage = new JLabel("");
 		LogoImage.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Left_Panel_Logo22.jpg")));
-		LogoImage.setBounds(37, 400, 239, 242);
+		LogoImage.setBounds(37, 313, 239, 242);
 		left_car.add(LogoImage);
 		
 		CarNumberCombobox = new JComboBox();
-		CarNumberCombobox.setBounds(25, 47, 251, 40);
+		CarNumberCombobox.setBounds(25, 30, 251, 40);
 		left_car.add(CarNumberCombobox);
 		
 		JButton StartFuelingButton = new JButton("Start Fueling");
-		StartFuelingButton.setHideActionText(true);
-		StartFuelingButton.setVerticalTextPosition(SwingConstants.TOP);
-		StartFuelingButton.setHorizontalAlignment(SwingConstants.LEFT);
-		StartFuelingButton.setHorizontalTextPosition(SwingConstants.LEFT);
-		StartFuelingButton.setFont(new Font("Tahoma", Font.BOLD, 20));
-		StartFuelingButton.setBounds(62, 110, 170, 56);
+		StartFuelingButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		StartFuelingButton.setBounds(56, 90, 185, 40);
 		left_car.add(StartFuelingButton);
 		
 		JLabel AmountTxt = new JLabel("Liter Amount :");
-		AmountTxt.setFont(new Font("Tahoma", Font.BOLD, 20));
-		AmountTxt.setBounds(12, 217, 147, 40);
+		AmountTxt.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		AmountTxt.setBounds(12, 217-70, 160, 40);
 		left_car.add(AmountTxt);
 
-		LiterLabel.setFont(new Font("Tahoma", Font.BOLD, 18));
+		LiterLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		LiterLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		LiterLabel.setText("0");
-		LiterLabel.setBounds(171, 218, 117, 40);
+		LiterLabel.setBounds(171, 218-70, 117, 40);
 		left_car.add(LiterLabel);
 		LiterLabel.setColumns(10);
 		
 		JLabel PriceTxt = new JLabel("Price :");
-		PriceTxt.setFont(new Font("Tahoma", Font.BOLD, 20));
-		PriceTxt.setBounds(12, 270, 90, 40);
+		PriceTxt.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		PriceTxt.setBounds(12, 270-70, 110, 40);
 		left_car.add(PriceTxt);
 		
 		
 		PriceLabel.setText("0");
 		PriceLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		PriceLabel.setFont(new Font("Tahoma", Font.BOLD, 18));
+		PriceLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		PriceLabel.setColumns(10);
-		PriceLabel.setBounds(171, 271, 117, 40);
+		PriceLabel.setBounds(171, 271-70, 117, 40);
 		left_car.add(PriceLabel);
 		
 		PayButton = new JButton("Pay");
 		PayButton.setFont(new Font("Tahoma", Font.BOLD, 20));
-		PayButton.setBounds(69, 341, 153, 40);
+		PayButton.setBounds(103, 121+150, 92, 38);
 		left_car.add(PayButton);
 		
 		JLabel CarNumberTxt = new JLabel("Car Number : ");
@@ -173,7 +172,11 @@ public class StationsGUI extends abstractPanel_GUI{
 		
 		//-------Gas fueling panel----////
 		
-	
+		JLabel car = new JLabel("");
+		car.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Blackcarmid.png")));
+		//car.setIcon(new ImageIcon("/images/Blackcarmid.png"));
+		car.setBounds(0, 207, 503, 259);
+		GasFuelingCenterPanel.add(car);
 		
 		GasFuelingCenterPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		//contentPane.add(GasFuelingCenterPanel, BorderLayout.CENTER);
@@ -184,57 +187,27 @@ public class StationsGUI extends abstractPanel_GUI{
 		
 		GreenHand = new JLabel("");
 		GreenHand.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Green_hand.png")));
-		GreenHand.setBounds(798, 249, 90, 138);
+		GreenHand.setBounds(621, 324, 90, 119);
 		GasFuelingCenterPanel.add(GreenHand);
 		
 		RedHand = new JLabel("");
 		RedHand.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Red_hand.png")));
-		RedHand.setBounds(651, 249, 90, 138);
+		RedHand.setBounds(508, 330, 90, 119);
 		GasFuelingCenterPanel.add(RedHand);
 		
 		BlueHand = new JLabel("");
 		BlueHand.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 		BlueHand.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Blue_hand.png")));
-		BlueHand.setBounds(497, 249, 90, 138);
+		BlueHand.setBounds(720, 321, 90, 119);
 		GasFuelingCenterPanel.add(BlueHand);
 		
-		JLabel CarIcon = new JLabel("");
-		CarIcon.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Car.png")));
-		CarIcon.setBounds(12, 328, 240, 316);
-		GasFuelingCenterPanel.add(CarIcon);
 		
-		JLabel BlueHandHome = new JLabel("");
-		BlueHandHome.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Blue_hand_Home.png")));
-		BlueHandHome.setBounds(529, 209, 90, 138);
-		GasFuelingCenterPanel.add(BlueHandHome);
 		
-		JLabel RedHandHome = new JLabel("");
-		RedHandHome.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Red_hand_Home.png")));
-		RedHandHome.setBounds(686, 209, 90, 138);
-		GasFuelingCenterPanel.add(RedHandHome);
-		
-		JLabel GreenHandHome = new JLabel("");
-		GreenHandHome.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Green_Hand_Home.png")));
-		GreenHandHome.setBounds(839, 209, 90, 138);
-		GasFuelingCenterPanel.add(GreenHandHome);
-		
-		JLabel Label95 = new JLabel("95");
-		Label95.setHorizontalAlignment(SwingConstants.CENTER);
-		Label95.setFont(new Font("Tahoma", Font.BOLD, 27));
-		Label95.setBounds(542, 156, 58, 52);
-		GasFuelingCenterPanel.add(Label95);
-		
-		JLabel Label98 = new JLabel("98");
-		Label98.setHorizontalAlignment(SwingConstants.CENTER);
-		Label98.setFont(new Font("Tahoma", Font.BOLD, 27));
-		Label98.setBounds(700, 156, 58, 52);
-		GasFuelingCenterPanel.add(Label98);
-		
-		JLabel LabelDiesel = new JLabel("Diesel");
-		LabelDiesel.setHorizontalAlignment(SwingConstants.CENTER);
-		LabelDiesel.setFont(new Font("Tahoma", Font.BOLD, 27));
-		LabelDiesel.setBounds(839, 156, 90, 52);
-		GasFuelingCenterPanel.add(LabelDiesel);
+		JLabel GasStationHome = new JLabel("");
+		GasStationHome.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Gas_Station_Empty.png")));
+		GasStationHome.setBounds(477, 0, 444, 508);
+		GasFuelingCenterPanel.add(GasStationHome);
+
 	}
 	
 	public String getUserName(){
