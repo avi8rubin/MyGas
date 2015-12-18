@@ -16,6 +16,8 @@ public class callbackSale extends CallBack {
 	private int CustomersID;
 //For home fuel sale
 	private String DeliveryDateAndTime;
+	private String DeliveryDate;
+	private String DeliveryTime;
 	private String Address;
 	private String OrderStatus;
 	
@@ -86,6 +88,18 @@ public class callbackSale extends CallBack {
 	}
 	public void setOrderStatus(String orderStatus) {
 		OrderStatus = orderStatus;
+	}
+	public String getDeliveryDate() {
+		return DeliveryDate;
+	}
+	public void setDeliveryDate(String deliveryDate) {
+		DeliveryDate = deliveryDate;
+	}
+	public String getDeliveryTime() {
+		return DeliveryTime;
+	}
+	public void setDeliveryTime(String deliveryTime) {
+		DeliveryTime = deliveryTime;
 	}
 	
 	

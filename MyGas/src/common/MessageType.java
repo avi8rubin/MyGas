@@ -29,5 +29,7 @@ public enum MessageType {
 /*Marketing Representative*/
 	getCustomer,
 /*Customer*/
-	setNewHomeFuelSale
+	setNewHomeFuelSale,
+	getHomeFuelOrders
+
 }
