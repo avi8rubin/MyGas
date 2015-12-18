@@ -124,6 +124,14 @@ public class QueryIO  {
 				AnswerObject = setNewHomeFuelSale((callbackSale)SwitchCallback);				
 				break;
 				
+			case getHomeFuelOrders:
+				if(SwitchCallback instanceof callbackSale)
+					AnswerObject = getHomeFuelOrders((callbackSale)SwitchCallback);	
+				if(SwitchCallback instanceof callbackStringArray)
+					AnswerObject = getHomeFuelOrders((callbackStringArray)SwitchCallback);	
+				break;
+				
+				
 		default:
 			AnswerObject = new callback_Error("Not a callback object, send legal callback or you don't fill 'WhatToDo'.");
 			break;
@@ -868,7 +876,129 @@ public class QueryIO  {
 			return Callback;					// 	Query not succeed
 		
 	}
-	
+	private Object getHomeFuelOrders(callbackSale Callback){
+		// Set variables ---------------------------------------------------------
+			int CustomerID = Callback.getCustomersID();
+			Vector <CallBack> LocalVector = new Vector <CallBack>();
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps1=conn.prepareStatement(
+					"UPDATE Home_Fuel_Sales SET Order_Status = 'Delivered' "+
+					"WHERE Sales_ID IN (SELECT Sales_ID FROM All_Home_Fuel_Sales "+
+										"WHERE Customers_ID =(?)) "+
+					"AND Delivery_Date < NOW()");
+			PreparedStatement ps2=conn.prepareStatement(
+					"SELECT Sale_Date AS Sale_Date_And_Time "+
+					", Address "+
+					", Fuel_Amount "+
+					", Payment AS Price "+
+					", DATE_FORMAT(Delivery_Date,'%d/%m/%Y') AS Delivery_Date "+
+					", TIME(Delivery_Date) AS Delivery_Time "+
+					", Order_Status "+
+					"FROM All_Home_Fuel_Sales "+
+					"WHERE Customers_ID = (?) "+
+					"ORDER BY Sale_Date DESC");										
+
+		// Send query to DB  -----------------------------------------------------
+			//Update customer orders status 			
+			ps1.setInt(1, CustomerID);
+			ps1.executeUpdate();
+			//Get customer orders
+			ps2.setInt(1, CustomerID);
+			AnswerResult = ps2.executeQuery();		
+			
+			while (AnswerResult.next()) { 					
+				callbackSale callback_Obj = new callbackSale();
+				callback_Obj.setSaleDate(AnswerResult.getString("Sale_Date_And_Time"));
+				callback_Obj.setAddress(AnswerResult.getString("Address"));
+				callback_Obj.setFuelAmount(AnswerResult.getInt("Fuel_Amount"));
+				callback_Obj.setPayment(AnswerResult.getFloat("Price"));
+				callback_Obj.setDeliveryDate(AnswerResult.getString("Delivery_Date"));
+				callback_Obj.setDeliveryTime(AnswerResult.getString("Delivery_Time"));
+				callback_Obj.setOrderStatus(AnswerResult.getString("Order_Status"));
+				LocalVector.add(callback_Obj);
+			}
+			
+			if (LocalVector.size() == 0) 
+				return new callbackSuccess("No records of orders.");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");					// If query not succeed 
+		}
+			return LocalVector;					// 	Query not succeed
+		
+	}
+	private CallBack getHomeFuelOrders(callbackStringArray Callback){
+		// Set variables ---------------------------------------------------------
+			int CustomerID = (int) Callback.getVariance()[0];
+			ResultSetMetaData LocalResult;
+			String[][] Data;
+			String[] Headers;
+			int ColNum;
+			int RowNum =0;
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps1=conn.prepareStatement(
+					"UPDATE Home_Fuel_Sales SET Order_Status = 'Delivered' "+
+					"WHERE Sales_ID IN (SELECT Sales_ID FROM All_Home_Fuel_Sales "+
+										"WHERE Customers_ID =(?)) "+
+					"AND Delivery_Date < NOW()");
+			PreparedStatement ps2=conn.prepareStatement(
+					"SELECT Sale_Date AS Sale_Date_And_Time "+
+					", Address "+
+					", Fuel_Amount "+
+					", Payment AS Price "+
+					", DATE_FORMAT(Delivery_Date,'%d/%m/%Y') AS Delivery_Date "+
+					", TIME(Delivery_Date) AS Delivery_Time "+
+					", Order_Status "+
+					"FROM All_Home_Fuel_Sales "+
+					"WHERE Customers_ID = (?) "+
+					"ORDER BY Sale_Date DESC");										
+
+		// Send query to DB  -----------------------------------------------------
+			//Update customer orders status 			
+			ps1.setInt(1, CustomerID);
+			ps1.executeUpdate();
+			//Get customer orders
+			ps2.setInt(1, CustomerID);
+			AnswerResult = ps2.executeQuery();		
+			
+			LocalResult = AnswerResult.getMetaData();
+			Callback.setColCount(ColNum = LocalResult.getColumnCount());
+			
+			AnswerResult.last();										//--------------------------
+			RowNum = AnswerResult.getRow();								//Get the number of rows   |
+			AnswerResult.beforeFirst();									//--------------------------
+			
+			if(RowNum == 0) return new callbackSuccess("No records of orders.");
+						
+			Data = new String[Callback.getRowCount()][ColNum];			//Create table in the result size
+			Headers = new String[ColNum];
+			
+			/*Get the table headers*/
+			for(int i=0;i<ColNum;i++)
+				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
+			Callback.setColHeaders(Headers);
+			
+			/**
+			 * Create the report callback structure
+			 */
+			while (AnswerResult.next()) { 			
+				for (int i = 0; i < ColNum; i++) 
+					Data[RowNum][i] = AnswerResult.getString(i + 1);
+				RowNum++;
+			}
+			Callback.setData(Data);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");					// If query not succeed 
+		}
+			return Callback;					// 	Query not succeed
+		
+	}	
 /**
  * Variance
  */
