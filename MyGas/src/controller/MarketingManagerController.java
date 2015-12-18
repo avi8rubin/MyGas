@@ -91,7 +91,7 @@ public class MarketingManagerController extends Controller {
 		if(e.getActionCommand().equals("Tariff")){
 			ContainerCardLeft.show(LeftCardContainer, "EmptyLeftPanel");
 			ContainerCardCenter.show(CenterCardContainer, "Tariff");				//The TariffApproval layer will be display
-			HandleTariffUpdatePressed();											
+			HandleTariffPressed();											
 		}
 		else if(e.getActionCommand().equals("CreateReports")){
 			ContainerCardCenter.show(CenterCardContainer,"EmptyCenterPanel");
@@ -113,16 +113,20 @@ public class MarketingManagerController extends Controller {
 			HandleCustomerCharacterizationExportReport();											
 		}
 		else if(e.getActionCommand().equals("Export CommentsForMarketingCampaign Report")){
-			HandleCommentsForMarketingCampaignExportReport();											
+		//	HandleCommentsForMarketingCampaignExportReport();											
 		}
 		
 		
 	}
 
-	private void HandleTariffUpdatePressed(){
-//		Server.handleMessageFromClient(new callbackStringArray(MessageType.getWaitingTariff));
-//		callbackStringArray TariffUpdateTable = (callbackStringArray) getCallBackFromBuffer();		
-//		GuiScreen.setTariffUpdateTable(new TableModel(TariffUpdateTable.getData(), TariffUpdateTable.getColHeaders()));
+	private void HandleTariffPressed(){
+//		Server.handleMessageFromClient(new callbackStringArray(MessageType.getFuelsDetailes));
+//		callbackStringArray TariffTable = (callbackStringArray) getCallBackFromBuffer();		
+//		GuiScreen.setTariffApprovalTable(TariffTable.getDefaultTableModel());
+		
+		Server.handleMessageFromClient(new callbackStringArray(MessageType.getFuelsDetailes));
+		callbackStringArray TariffTable = (callbackStringArray) getCallBackFromBuffer();		
+		GuiScreen.setTariffUpdateTable(TariffTable.getDefaultTableModel());
 	}
 
 	private void HandleActivateSaleCampaignPressed(){}
@@ -132,11 +136,6 @@ public class MarketingManagerController extends Controller {
 	{
 		String CampaignToChooseFrom=GuiScreen.getComboBoxSelection();
      //   JOptionPane.showMessageDialog(null,CampaignToChooseFrom.toString());
-		
-//		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCommentsForMarketionCampaign));
-//		callbackStringArray CommentsReportTable = (callbackStringArray) getCallBackFromBuffer();		
-//		GuiScreen.setCommentsForMarketingCampaignTable(new TableModel(CommentsReportTable.getData(), CommentsReportTable.getColHeaders()));
-
 	}
 	private void HandleCustomerCharacterizationExportReport(){
 		String startDate=GuiScreen.getStartDate(); 
