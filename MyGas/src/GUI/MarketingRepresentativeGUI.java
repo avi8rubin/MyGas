@@ -3,12 +3,19 @@ package GUI;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.text.ParseException;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
+import javax.swing.text.MaskFormatter;
 
 import callback.callbackBuffer;
 import callback.callbackUser;
@@ -23,27 +30,57 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	 * Gui variables
 	 */
 	
-	//top buttons
+	//Top Layer Components
 	private JButton CreateNewCustomerAccountButton;
 	private JButton CustomerDetailsButton;
 	private JButton CreateNewCampignPatternButton;
 	private JButton ReportsButton;
 	
-	//CreateNewCustomerAccountLayer buttons
+	//CreateNewCustomerAccountLayer Left Layer Components
 	private JLayeredPane CreateNewCustomerAccountLayer;
 	private JButton CreateUserButton;
 	private JButton AddCarDetailsButton;
 	
-	//CreateUserLayer buttons
+	//CreateUserLayer Center Layer Components
+	private JLayeredPane CreateUserLayer;
 	private JLabel UserNameLabel;
-	private JLabel PasswordLabel;
-	private JLabel PasswordValidateLabel;
+	private JPasswordField PasswordPasswordField;
+	private JPasswordField PasswordValidatePasswordField;
 	private JLabel UserNameExistMesaageLabel;
 	private JLabel PasswordValidationFailedMessageLabel;
 	private JTextField PasswordValidateTextField;
 	private JTextField PasswordTextField;
 	private JTextField UserNametextField;
 	private JButton NextButton;
+	private JLabel MissedFieldsMessageLabel;
+	
+	// AddPersonalDetails Center Layer Components
+	private JLayeredPane AddPersonalDetails;
+	private JLabel CustimerIDLabel;
+	private JLabel FirstNameLabel;
+	private JLabel LastNameLabel;
+	private JLabel EmailLabel;
+	private JLabel PhoneLabel;
+	private JLabel CreditCardLabel;
+	private JLabel CustomerTypeLabel;
+	private JLabel PurchasePlanLabel;
+	private JLabel CustomerIDExistMesaageLabel;
+	private JLabel EmailExistMesaageLabel;
+	private JLabel InvalidEmailMesaageLabel;
+	private JTextField CustomerIDTextField;
+	private JTextField FirstNameTextField;
+	private JTextField LastNameTextField;
+	private JTextField EmailTextField;
+	private MaskFormatter PhoneMask = null;
+	private JFormattedTextField PhoneFormattedTextField;
+	private MaskFormatter CreditCardMask = null;
+	private JFormattedTextField CreditCardFormattedTextField;
+	private ButtonGroup PurchasePlanButtonGroup;
+	private JRadioButton PrivateCustomerRadioButton;
+	private JRadioButton CommercialCustomerRadioButton;
+	private JComboBox PurchasePlanComboBox;
+	private JButton CreateButton;
+	private JLabel MissedFieldsMessage;
 
 	public MarketingRepresentativeGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer,
 			Login_GUI LoginScreen) {
@@ -97,10 +134,20 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		AddCarDetailsButton.setBounds(27, 99, 212, 46);
 		
 		CreateNewCustomerAccountLayer.add(CreateUserButton);
-		CreateNewCustomerAccountLayer.add(AddCarDetailsButton);	
-		
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// display changes till the controller will build- please don't delete (Adir)
+//		CardLayout ContainerCardCenter;
+//		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
+//		ContainerCardCenter.show(CenterCardContainer,"CreateUserLayerCenter");
+	//	CardLayout ContainerCardLeft;
+	//	ContainerCardLeft	= (CardLayout)(LeftCardContainer.getLayout());
+	//	ContainerCardLeft.show(LeftCardContainer, "CreateNewCustomerAccountLeft");			
+	}
+
+	public void CreateNewUserCenterLayer()
+	{
 		/* ------- Adding CreateUser Center Layer -------- */
-		JLayeredPane CreateUserLayer = new JLayeredPane();
+		CreateUserLayer = new JLayeredPane();
 		CreateUserLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		
 		CenterCardContainer.add(CreateUserLayer,"CreateUserLayerCenter");
@@ -116,31 +163,27 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		UserNameLabel.setBounds(27, 47, 115, 34);
 		CreateUserLayer.add(UserNameLabel);		
 		
-		PasswordLabel = new JLabel("Password");
-		PasswordLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		PasswordLabel.setEnabled(false);
-		PasswordLabel.setBounds(27, 104, 100, 34);
-		CreateUserLayer.add(PasswordLabel);
-	
-		PasswordValidateLabel = new JLabel("Password Validate");
-		PasswordValidateLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		PasswordValidateLabel.setEnabled(false);
-		PasswordValidateLabel.setBounds(27, 151, 163, 46);
-		CreateUserLayer.add(PasswordValidateLabel);
+		PasswordPasswordField = new JPasswordField();
+		PasswordPasswordField.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		PasswordPasswordField.setBounds(179, 111, 201, 27);
+		CreateUserLayer.add(PasswordPasswordField);
+		
+		PasswordValidatePasswordField = new JPasswordField();
+		PasswordValidatePasswordField.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		PasswordValidatePasswordField.setBounds(179, 161, 201, 27);
+		CreateUserLayer.add(PasswordValidatePasswordField);
 
 		// Message to marketing representative - display only in User name existance case
 		UserNameExistMesaageLabel = new JLabel("User name already exist in system");
 		UserNameExistMesaageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
 		UserNameExistMesaageLabel.setEnabled(false);
-		UserNameExistMesaageLabel.setBounds(403, 41, 309, 46);
-		CreateUserLayer.add(UserNameExistMesaageLabel);		
+		UserNameExistMesaageLabel.setBounds(403, 41, 309, 46);	
 
 		// Message to marketing representative - display only in Password Validation Failure case
 		PasswordValidationFailedMessageLabel = new JLabel("Password Validation Failed");
 		PasswordValidationFailedMessageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
 		PasswordValidationFailedMessageLabel.setEnabled(false);
 		PasswordValidationFailedMessageLabel.setBounds(403, 122, 268, 46);
-		CreateUserLayer.add(PasswordValidationFailedMessageLabel);	
 		
 		PasswordValidateTextField = new JTextField();
 		PasswordValidateTextField.setFont(new Font("Tahoma", Font.PLAIN, 17));
@@ -164,21 +207,166 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		NextButton.setBounds(607, 248, 125, 38);	
 		CreateUserLayer.add(NextButton);
 		
-		// display changes till the controller will build- please don't delete (Adir)
+		// Message to marketing representative - display only in Missed Fields case
+		MissedFieldsMessageLabel = new JLabel("There is one or more missed fields");
+		MissedFieldsMessageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
+		MissedFieldsMessageLabel.setEnabled(false);
+		MissedFieldsMessageLabel.setBounds(249, 240, 348, 46);
 		
+		/* ------- AddPersonalDetails Center Layer -------- */
 		
-//		CardLayout ContainerCardCenter;
-//		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
-//		ContainerCardCenter.show(CenterCardContainer,"CreateUserLayerCenter");
+		AddPersonalDetails = new JLayeredPane();
+		AddPersonalDetails.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		
-	//	CardLayout ContainerCardLeft;
-	//	ContainerCardLeft	= (CardLayout)(LeftCardContainer.getLayout());
-	//	ContainerCardLeft.show(LeftCardContainer, "CreateNewCustomerAccountLeft");
+		CenterCardContainer.add(AddPersonalDetails,"AddPersonalDetailsCenter");
+		AddPersonalDetails.setOpaque(true);
+		AddPersonalDetails.setName("AddPersonalDetailsCenter");
 		
+		/*------- add labels, textFields and buttons 
+		 * 						to CreateUserLayer --------*/		
+		CustimerIDLabel = new JLabel("Custimer ID :");
+		CustimerIDLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		CustimerIDLabel.setEnabled(false);
+		CustimerIDLabel.setBounds(39, 50, 115, 34);
+		AddPersonalDetails.add(CustimerIDLabel);		
 		
+		FirstNameLabel = new JLabel("First Name :");
+		FirstNameLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		FirstNameLabel.setEnabled(false);
+		FirstNameLabel.setBounds(39, 107, 100, 34);
+		AddPersonalDetails.add(FirstNameLabel);
+	
+		LastNameLabel = new JLabel("Last Name :");
+		LastNameLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		LastNameLabel.setEnabled(false);
+		LastNameLabel.setBounds(39, 154, 163, 46);
+		AddPersonalDetails.add(LastNameLabel);
 		
+		EmailLabel = new JLabel("Email :");
+		EmailLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		EmailLabel.setEnabled(false);
+		EmailLabel.setBounds(39, 211, 163, 46);
+		AddPersonalDetails.add(EmailLabel);
 		
+		PhoneLabel = new JLabel("Phone :");
+		PhoneLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		PhoneLabel.setEnabled(false);
+		PhoneLabel.setBounds(39, 267, 163, 46);
+		AddPersonalDetails.add(PhoneLabel);
 		
-	}
+		CreditCardLabel = new JLabel("Credit Card :");
+		CreditCardLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		CreditCardLabel.setEnabled(false);
+		CreditCardLabel.setBounds(39, 324, 163, 46);
+		AddPersonalDetails.add(CreditCardLabel);
+		
+		CustomerTypeLabel = new JLabel("Customer Type :");
+		CustomerTypeLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		CustomerTypeLabel.setEnabled(false);
+		CustomerTypeLabel.setBounds(39, 381, 163, 46);
+		AddPersonalDetails.add(CustomerTypeLabel);
+		
+		PurchasePlanLabel = new JLabel("Purchase Plan :");
+		PurchasePlanLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		PurchasePlanLabel.setEnabled(false);
+		PurchasePlanLabel.setBounds(39, 427, 163, 46);
+		AddPersonalDetails.add(PurchasePlanLabel);
 
+		CustomerIDExistMesaageLabel = new JLabel("Customer ID already exist in system");
+		CustomerIDExistMesaageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
+		CustomerIDExistMesaageLabel.setEnabled(false);
+		CustomerIDExistMesaageLabel.setBounds(403, 41, 340, 46);	
+
+		EmailExistMesaageLabel = new JLabel("Email already exist in system");
+		EmailExistMesaageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
+		EmailExistMesaageLabel.setEnabled(false);
+		EmailExistMesaageLabel.setBounds(497, 211, 278, 46);
+		
+		InvalidEmailMesaageLabel = new JLabel("Invalid email");
+		InvalidEmailMesaageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
+		InvalidEmailMesaageLabel.setEnabled(false);
+		InvalidEmailMesaageLabel.setBounds(497, 211, 278, 46);
+		
+		CustomerIDTextField = new JTextField();
+		CustomerIDTextField.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		CustomerIDTextField.setColumns(10);
+		CustomerIDTextField.setBounds(179, 51, 201, 27);
+		AddPersonalDetails.add(CustomerIDTextField);
+		
+		FirstNameTextField = new JTextField();
+		FirstNameTextField.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		FirstNameTextField.setColumns(10);
+		FirstNameTextField.setBounds(179, 108, 201, 27);
+		AddPersonalDetails.add(FirstNameTextField);
+		
+		LastNameTextField = new JTextField();
+		LastNameTextField.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		LastNameTextField.setBounds(179, 161, 201, 27);
+		AddPersonalDetails.add(LastNameTextField);
+		
+		EmailTextField = new JTextField();
+		EmailTextField.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		EmailTextField.setBounds(179, 227, 295, 27);
+		AddPersonalDetails.add(EmailTextField);
+		
+        try {
+            //
+            // Create a MaskFormatter for accepting phone number, the # symbol accept
+            // only a number. We can also set the empty value with a place holder
+            // character.
+            //
+        	PhoneMask = new MaskFormatter("###-#######");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+		
+        PhoneFormattedTextField = new JFormattedTextField(PhoneMask);
+		PhoneFormattedTextField.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		PhoneFormattedTextField.setBounds(179, 280, 125, 27);
+		AddPersonalDetails.add(PhoneFormattedTextField);
+		
+        try {
+            //
+            // Create a MaskFormatter for accepting CreditCard number, the # symbol accept
+            // only a number. We can also set the empty value with a place holder
+            // character.
+            //
+        	CreditCardMask = new MaskFormatter("####-####-####-####");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        CreditCardFormattedTextField = new JFormattedTextField(CreditCardMask);
+		CreditCardFormattedTextField.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		CreditCardFormattedTextField.setBounds(179, 334, 241, 27);
+		AddPersonalDetails.add(CreditCardFormattedTextField);       
+        
+		PrivateCustomerRadioButton = new JRadioButton("Private");
+		PurchasePlanButtonGroup.add(PrivateCustomerRadioButton);
+		PrivateCustomerRadioButton.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		PrivateCustomerRadioButton.setBounds(179, 393, 100, 23);
+		AddPersonalDetails.add(PrivateCustomerRadioButton);
+		
+		CommercialCustomerRadioButton = new JRadioButton("Commercial");
+		PurchasePlanButtonGroup.add(CommercialCustomerRadioButton);
+		CommercialCustomerRadioButton.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		CommercialCustomerRadioButton.setBounds(279, 393, 141, 23);
+		AddPersonalDetails.add(CommercialCustomerRadioButton);
+		
+		PurchasePlanComboBox = new JComboBox();
+		PurchasePlanComboBox.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		PurchasePlanComboBox.setBounds(179, 438, 295, 27);
+		AddPersonalDetails.add(PurchasePlanComboBox);
+		
+		CreateButton = new JButton("Create");
+		CreateButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		CreateButton.setBounds(678, 496, 125, 38);	
+		AddPersonalDetails.add(CreateButton);
+		
+		MissedFieldsMessage = new JLabel("There is one or more missed fields");
+		MissedFieldsMessage.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
+		MissedFieldsMessage.setEnabled(false);
+		MissedFieldsMessage.setBounds(320, 493, 348, 46);	
+			
+	}
 }
