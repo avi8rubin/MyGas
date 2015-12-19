@@ -26,6 +26,7 @@ import callback.callbackStringArray;
 import callback.callbackUser;
 import callback.callback_Error;
 import client.Client;
+import common.Checks;
 import common.MessageType;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -58,6 +59,7 @@ public class abstractPanel_GUI extends JFrame {
 	 */
 	private Client Server;
 	private callbackBuffer CommonBuffer;
+	protected Checks checks = new Checks();
 	
 	//GUI variables ***************************************************
 	protected JPanel contentPane;
