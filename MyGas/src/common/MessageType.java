@@ -29,6 +29,7 @@ public enum MessageType {
 /*Marketing Representative*/
 	getCustomer,
 	getIsUserNameExists,
+	setCreateNewCustomer,
 /*Customer*/
 	setNewHomeFuelSale,
 	getHomeFuelOrders

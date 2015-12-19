@@ -8,8 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
 
-import javax.swing.JComboBox;
-
 import callback.*;
 import common.MessageType;
 
@@ -124,6 +122,10 @@ public class QueryIO  {
 				AnswerObject = getIsUserNameExists((callbackUser)SwitchCallback);				
 				break;
 				
+			case setCreateNewCustomer:
+				AnswerObject = setCreateNewCustomer((callbackCustomer)SwitchCallback);				
+				break;	
+				
 /*Customer*/
 			case setNewHomeFuelSale:
 				AnswerObject = setNewHomeFuelSale((callbackSale)SwitchCallback);				
@@ -148,7 +150,6 @@ public class QueryIO  {
 	}
 
 	public Object VectorResolver(Object SwitchCallback){
-		Vector AnswerVector = new Vector();
 		switch(((callbackVector) SwitchCallback).getWhatToDo()){
 
 /*Marketing Manager*/			
@@ -444,7 +445,6 @@ public class QueryIO  {
 		ResultSetMetaData LocalResult;
 		String[][] Data;
 		String[] Headers;
-		String[] Combo;
 		int ColNum;
 		int RowNum =0;
 		// Build query -----------------------------------------------------------
@@ -809,7 +809,7 @@ public class QueryIO  {
 		// Build query -----------------------------------------------------------
 		
 		try {
-			PreparedStatement ps=conn.prepareStatement("SELECT * FROM mygas.customer_detailes "+
+			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Customer_Detailes "+
 														"WHERE User_ID = (?)");
 			
 		// Send query to DB  -----------------------------------------------------
@@ -877,6 +877,42 @@ public class QueryIO  {
 		}		
 		 return NewCustomer;	
 	} // END getCheckExistsUserPass
+	private CallBack setCreateNewCustomer(callbackCustomer Callback){
+		// Set variables ---------------------------------------------------------
+
+		// Build query -----------------------------------------------------------
+		String SqlQuery1 = "SELECT * FROM Customers WHERE Email=(?)";
+		String SqlQuery2 = "INSERT INTO Customers VALUES((?),(?),(?),(?),(?),(?),(?),(?),(?),0,1)";
+		try {
+			PreparedStatement ps1 = conn.prepareStatement(SqlQuery1);
+			PreparedStatement ps2=conn.prepareStatement(SqlQuery2);
+			
+		// Send query to DB  -----------------------------------------------------
+			//Check if email already exists	
+			ps1.setString(1, Callback.getEmail().trim());
+			AnswerResult = ps1.executeQuery();			
+			if (AnswerResult.isLast()) return new callback_Error("Email belong to another customer.");
+			
+			//Add new customer to DB
+			ps2.setInt(1, Callback.getUserID());
+			ps2.setString(2, Callback.getCustomerFirstName().trim());
+			ps2.setString(3, Callback.getCustomerLastName().trim());
+			ps2.setString(4, Callback.getCustomerType().trim());
+			ps2.setInt(5, Callback.getPlanID());
+			ps2.setInt(6, Callback.getUserID());
+			ps2.setString(7, Callback.getPhoneNumber().trim());
+			ps2.setString(8, Callback.getCreditCard().trim());
+			ps2.setString(9, Callback.getEmail().trim());			
+			ps2.executeUpdate();
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
+		}
+			return new callbackSuccess("Create new customer successfully.");					// 	Query succeed
+		
+	}
 	
 /**
  * Customer	

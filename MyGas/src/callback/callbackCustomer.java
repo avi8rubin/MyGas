@@ -13,6 +13,7 @@ public class callbackCustomer extends CallBack{
 	private String CustomerFirstName;
 	private String CustomerLastName;
 	private String CustomerType;
+	private int PlanID;
 	private String PlanName;
 	private String PhoneNumber;
 	private String CreditCard;
@@ -117,5 +118,11 @@ public class callbackCustomer extends CallBack{
 	}
 	public void setUserPrivilege(String userPrivilege) {
 		UserPrivilege = userPrivilege;
+	}
+	public int getPlanID() {
+		return PlanID;
+	}
+	public void setPlanID(int planID) {
+		PlanID = planID;
 	}
 }
