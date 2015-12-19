@@ -13,6 +13,7 @@ import callback.callbackBuffer;
 import callback.callbackLostConnection;
 import callback.callback_Error;
 import client.Client;
+import common.Checks;
 
 public abstract class Controller implements ActionListener{
 	/**
@@ -29,6 +30,10 @@ public abstract class Controller implements ActionListener{
 	protected JPanel CenterCardContainer;
 	protected JPanel LeftCardContainer;
 	protected CardLayout ContainerCard;
+	/**
+	 * All the required checks we need to do in the controllers
+	 */
+	protected Checks checks = new Checks();
 	/**
 	 * The abstract controller constructor.
 	 * @param Server - The client connection to server.
