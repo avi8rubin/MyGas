@@ -28,6 +28,7 @@ public enum MessageType {
 	setWaitingTariff,
 /*Marketing Representative*/
 	getCustomer,
+	getIsUserNameExists,
 /*Customer*/
 	setNewHomeFuelSale,
 	getHomeFuelOrders

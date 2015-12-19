@@ -119,6 +119,11 @@ public class QueryIO  {
 			case getCustomer:
 				AnswerObject = getCustomer((callbackCustomer)SwitchCallback);				
 				break;	
+				
+			case getIsUserNameExists:
+				AnswerObject = getIsUserNameExists((callbackUser)SwitchCallback);				
+				break;
+				
 /*Customer*/
 			case setNewHomeFuelSale:
 				AnswerObject = setNewHomeFuelSale((callbackSale)SwitchCallback);				
@@ -173,7 +178,7 @@ public class QueryIO  {
 		
 		// Build query -----------------------------------------------------------
 		String SqlQuery = "SELECT * FROM All_Users_Detailes "
-						+ "WHERE User_Name= '"+User.getUserName()+"' ";
+						+ "WHERE User_Name= '"+User.getUserName().trim()+"' ";
 		 	
 		// Send query to DB and get result ---------------------------------------
 		try {
@@ -836,6 +841,42 @@ public class QueryIO  {
 			return Callback;					// 	Query not succeed
 		
 	}
+	private CallBack getIsUserNameExists(callbackUser Callback){
+		// Set variables ---------------------------------------------------------
+		CallBack UserCheck;
+		callbackCustomer NewCustomer = new callbackCustomer();
+		// Build query -----------------------------------------------------------
+		String SqlQuery1 = "INSERT INTO Users VALUES(NULL,(?),(?),1,DEFAULT)";
+		String SqlQuery2 = "SELECT User_ID FROM Users WHERE User_Name=(?)";
+		 	
+		// Send query to DB and get result ---------------------------------------
+		/*Check if the user name is already exists*/
+		UserCheck = getCheckExistsUserPass(Callback);
+		if(UserCheck instanceof callbackUser)
+			return new callback_Error("User name already exists in DB."); 
+		
+		/*Create new customer user*/
+		try {
+			PreparedStatement ps=conn.prepareStatement(SqlQuery1);
+			ps.setString(1, Callback.getUserName().trim());
+			ps.setString(2, Callback.getPassword().trim());
+			ps.executeUpdate();
+		/**
+		 * Create the callback structure for user 
+		 */
+			AnswerResult = ps.executeQuery(SqlQuery2);
+			NewCustomer.setUserID(AnswerResult.getInt("User_ID"));
+			NewCustomer.setUserName(Callback.getUserName().trim());
+			NewCustomer.setUserPassword(Callback.getPassword().trim());
+			NewCustomer.setUserPrivilege("Customer");
+			NewCustomer.setUserTypeID(1);
+			
+				} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");				// If query not succeed 
+		}		
+		 return NewCustomer;	
+	} // END getCheckExistsUserPass
 	
 /**
  * Customer	
