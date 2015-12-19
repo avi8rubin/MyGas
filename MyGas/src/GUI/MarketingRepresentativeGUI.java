@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.text.ParseException;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
@@ -40,6 +41,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	private JLayeredPane CreateNewCustomerAccountLayer;
 	private JButton CreateUserButton;
 	private JButton AddCarDetailsButton;
+	private JLabel LogoImage;
 	
 	//CreateUserLayer Center Layer Components
 	private JLayeredPane CreateUserLayer;
@@ -133,7 +135,17 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		AddCarDetailsButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		AddCarDetailsButton.setBounds(27, 99, 212, 46);
 		
+		// Logo on left panel
+		LogoImage = new JLabel("");
+		LogoImage.setIcon(new ImageIcon(abstractPanel_GUI.class.getResource("/images/Left_Panel_Logo22.jpg")));
+		LogoImage.setBounds(38, 313, 239, 242);
+		
 		CreateNewCustomerAccountLayer.add(CreateUserButton);
+		CreateNewCustomerAccountLayer.add(LogoImage);
+		
+		CreateNewUserCenterLayer();
+		
+		
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// display changes till the controller will build- please don't delete (Adir)
 //		CardLayout ContainerCardCenter;
@@ -143,7 +155,56 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	//	ContainerCardLeft	= (CardLayout)(LeftCardContainer.getLayout());
 	//	ContainerCardLeft.show(LeftCardContainer, "CreateNewCustomerAccountLeft");			
 	}
+		
+//Create User Account 
+	
+	public JButton getCreateNewCustomerAccountButton(){
+		return CreateNewCustomerAccountButton;
+	}	
+	
+	public JButton getCustomerDetailsButton(){
+		return CustomerDetailsButton;
+	}	
+	
+	
+	public JLayeredPane getCreateNewCustomerAccountLayer(){
+		return CreateNewCustomerAccountLayer;
+	}	
+	
+	public JButton getCreateUserButton(){
+		return CreateUserButton;
+	}		
+	
+	public JButton getAddCarDetailsButton(){
+		return AddCarDetailsButton;
+	}		
 
+	public JButton getNextButton(){
+		return NextButton;
+	}		
+
+	public JLabel getPasswordValidationFailedMessageLabel() {
+		return PasswordValidationFailedMessageLabel;
+	}
+	
+	public JPasswordField getPasswordPasswordField() {
+		return PasswordPasswordField;
+	}	
+	
+	public JPasswordField getPasswordValidatePasswordField() {
+		return PasswordValidatePasswordField;
+	}	
+	
+	/////////////////	
+	public JTextField getUserNametextField() {
+		return UserNametextField;
+	}		
+	/////////////////
+
+	public JButton getCreateButton(){
+		return CreateButton;
+	}		
+	
 	public void CreateNewUserCenterLayer()
 	{
 		/* ------- Adding CreateUser Center Layer -------- */
@@ -163,6 +224,18 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		UserNameLabel.setBounds(27, 47, 115, 34);
 		CreateUserLayer.add(UserNameLabel);		
 		
+		JLabel PasswordLabel = new JLabel("Password");
+		PasswordLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		PasswordLabel.setEnabled(false);
+		PasswordLabel.setBounds(27, 104, 100, 34);
+		CreateUserLayer.add(PasswordLabel);
+	
+		JLabel PasswordValidateLabel = new JLabel("Password Validate");
+		PasswordValidateLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		PasswordValidateLabel.setEnabled(false);
+		PasswordValidateLabel.setBounds(27, 151, 163, 46);
+		CreateUserLayer.add(PasswordValidateLabel);		
+				
 		PasswordPasswordField = new JPasswordField();
 		PasswordPasswordField.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		PasswordPasswordField.setBounds(179, 111, 201, 27);
@@ -178,23 +251,16 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		UserNameExistMesaageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
 		UserNameExistMesaageLabel.setEnabled(false);
 		UserNameExistMesaageLabel.setBounds(403, 41, 309, 46);	
-
+		UserNameExistMesaageLabel.setVisible(false);
+		CreateUserLayer.add(UserNameExistMesaageLabel);
+		
 		// Message to marketing representative - display only in Password Validation Failure case
 		PasswordValidationFailedMessageLabel = new JLabel("Password Validation Failed");
 		PasswordValidationFailedMessageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
 		PasswordValidationFailedMessageLabel.setEnabled(false);
 		PasswordValidationFailedMessageLabel.setBounds(403, 122, 268, 46);
-		
-		PasswordValidateTextField = new JTextField();
-		PasswordValidateTextField.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		PasswordValidateTextField.setBounds(179, 161, 201, 27);
-		CreateUserLayer.add(PasswordValidateTextField);
-		
-		PasswordTextField = new JTextField();
-		PasswordTextField.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		PasswordTextField.setColumns(10);
-		PasswordTextField.setBounds(179, 108, 201, 27);
-		CreateUserLayer.add(PasswordTextField);
+		PasswordValidationFailedMessageLabel.setVisible(false);
+		CreateUserLayer.add(PasswordValidationFailedMessageLabel);
 		
 		UserNametextField = new JTextField();
 		UserNametextField.setFont(new Font("Tahoma", Font.PLAIN, 17));
@@ -204,7 +270,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		
 		NextButton = new JButton("Next");
 		NextButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		NextButton.setBounds(607, 248, 125, 38);	
+		NextButton.setBounds(607, 248, 125, 38);
 		CreateUserLayer.add(NextButton);
 		
 		// Message to marketing representative - display only in Missed Fields case
@@ -342,16 +408,18 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		AddPersonalDetails.add(CreditCardFormattedTextField);       
         
 		PrivateCustomerRadioButton = new JRadioButton("Private");
-		PurchasePlanButtonGroup.add(PrivateCustomerRadioButton);
 		PrivateCustomerRadioButton.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		PrivateCustomerRadioButton.setBounds(179, 393, 100, 23);
 		AddPersonalDetails.add(PrivateCustomerRadioButton);
 		
 		CommercialCustomerRadioButton = new JRadioButton("Commercial");
-		PurchasePlanButtonGroup.add(CommercialCustomerRadioButton);
 		CommercialCustomerRadioButton.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		CommercialCustomerRadioButton.setBounds(279, 393, 141, 23);
 		AddPersonalDetails.add(CommercialCustomerRadioButton);
+		
+		PurchasePlanButtonGroup = new ButtonGroup();
+		PurchasePlanButtonGroup.add(PrivateCustomerRadioButton);
+		PurchasePlanButtonGroup.add(CommercialCustomerRadioButton);
 		
 		PurchasePlanComboBox = new JComboBox();
 		PurchasePlanComboBox.setFont(new Font("Tahoma", Font.PLAIN, 17));
@@ -369,4 +437,6 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		MissedFieldsMessage.setBounds(320, 493, 348, 46);	
 			
 	}
+
+
 }
