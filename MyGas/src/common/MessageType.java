@@ -28,7 +28,6 @@ public enum MessageType {
 	setWaitingTariff,
 /*Marketing Representative*/
 	getCustomer,
-
 /*Customer*/
 	setNewHomeFuelSale,
 	getHomeFuelOrders

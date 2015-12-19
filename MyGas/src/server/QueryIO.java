@@ -123,14 +123,14 @@ public class QueryIO  {
 			case setNewHomeFuelSale:
 				AnswerObject = setNewHomeFuelSale((callbackSale)SwitchCallback);				
 				break;
-	
+				
 			case getHomeFuelOrders:
 				if(SwitchCallback instanceof callbackSale)
 					AnswerObject = getHomeFuelOrders((callbackSale)SwitchCallback);	
 				if(SwitchCallback instanceof callbackStringArray)
 					AnswerObject = getHomeFuelOrders((callbackStringArray)SwitchCallback);	
 				break;
-			
+				
 				
 		default:
 			AnswerObject = new callback_Error("Not a callback object, send legal callback or you don't fill 'WhatToDo'.");
@@ -876,7 +876,6 @@ public class QueryIO  {
 			return Callback;					// 	Query not succeed
 		
 	}
-
 	private Object getHomeFuelOrders(callbackSale Callback){
 		// Set variables ---------------------------------------------------------
 			int CustomerID = Callback.getCustomersID();
@@ -1000,7 +999,6 @@ public class QueryIO  {
 			return Callback;					// 	Query not succeed
 		
 	}	
-
 /**
  * Variance
  */
