@@ -632,7 +632,7 @@ public class QueryIO  {
 		int RowNum =0;
 		// Build query -----------------------------------------------------------
 		//Campaign Patterns
-		String SqlQuery1 = "SELECT Campaign_Patterns_ID, Campaign_Description FROM Campaign_patterns";
+		String SqlQuery1 = "SELECT Campaign_Patterns_ID, Campaign_Description FROM Campaign_Patterns";
 		//Active Campaign
 		String SqlQuery2 = 	"SELECT Campaign_ID "+
 							",DATE_FORMAT(Start_Campaign,'%d/%m/%Y') AS Start_Campaign "+
@@ -651,10 +651,11 @@ public class QueryIO  {
 			AnswerResult.last();										//--------------------------
 			RowNum = AnswerResult.getRow();								//Get the number of rows   |
 			AnswerResult.beforeFirst();									//--------------------------
-			Combo = new String[RowNum];									//Set values for combobox object
+			Combo = new String[RowNum];									//Set values for omboBox object
 			RowNum=0;
 			while (AnswerResult.next()) { 	
 				Combo[RowNum] = AnswerResult.getString("Campaign_Description");
+				RowNum++;
 			}
 			RowNum=0;
 			Callback.setComboBoxStringArray(Combo);
@@ -879,7 +880,9 @@ public class QueryIO  {
 	} // END getCheckExistsUserPass
 	private CallBack setCreateNewCustomer(callbackCustomer Callback){
 		// Set variables ---------------------------------------------------------
-
+		CallBack Ucallback;			//Check User callback
+		callbackUser NewUser = new callbackUser(Callback.getUserName(),Callback.getUserPassword());		
+		
 		// Build query -----------------------------------------------------------
 		String SqlQuery1 = "SELECT * FROM Customers WHERE Email=(?)";
 		String SqlQuery2 = "INSERT INTO Customers VALUES((?),(?),(?),(?),(?),(?),(?),(?),(?),0,1)";
@@ -888,6 +891,11 @@ public class QueryIO  {
 			PreparedStatement ps2=conn.prepareStatement(SqlQuery2);
 			
 		// Send query to DB  -----------------------------------------------------
+			
+			Ucallback = getIsUserNameExists(NewUser);
+			if(Ucallback instanceof callback_Error) return Ucallback;
+			Callback = (callbackCustomer) Ucallback;
+			
 			//Check if email already exists	
 			ps1.setString(1, Callback.getEmail().trim());
 			AnswerResult = ps1.executeQuery();			
