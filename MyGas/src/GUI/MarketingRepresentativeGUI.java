@@ -134,6 +134,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		AddCarDetailsButton = new JButton("<html>Add Car Details</html>");
 		AddCarDetailsButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		AddCarDetailsButton.setBounds(27, 99, 212, 46);
+		AddCarDetailsButton.setVisible(false);
 		
 		// Logo on left panel
 		LogoImage = new JLabel("");
@@ -141,6 +142,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		LogoImage.setBounds(38, 313, 239, 242);
 		
 		CreateNewCustomerAccountLayer.add(CreateUserButton);
+		CreateNewCustomerAccountLayer.add(AddCarDetailsButton);
 		CreateNewCustomerAccountLayer.add(LogoImage);
 		
 		CreateNewUserCenterLayer();
@@ -194,13 +196,15 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	public JPasswordField getPasswordValidatePasswordField() {
 		return PasswordValidatePasswordField;
 	}	
-	
-	/////////////////	
+		
 	public JTextField getUserNametextField() {
 		return UserNametextField;
 	}		
-	/////////////////
 
+	public JLabel getMissedFieldsMessageLabel() {
+		return MissedFieldsMessageLabel;
+	}		
+	
 	public JButton getCreateButton(){
 		return CreateButton;
 	}		
@@ -278,6 +282,8 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		MissedFieldsMessageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
 		MissedFieldsMessageLabel.setEnabled(false);
 		MissedFieldsMessageLabel.setBounds(249, 240, 348, 46);
+		MissedFieldsMessageLabel.setVisible(false);
+		CreateUserLayer.add(MissedFieldsMessageLabel);
 		
 		/* ------- AddPersonalDetails Center Layer -------- */
 		

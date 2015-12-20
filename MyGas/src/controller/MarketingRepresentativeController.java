@@ -10,8 +10,10 @@ import javax.swing.JLayeredPane;
 import GUI.CEOGUI;
 import GUI.MarketingRepresentativeGUI;
 import callback.callbackBuffer;
+import callback.callbackUser;
 import client.Client;
 import common.Checks;
+import common.MessageType;
 
 public class MarketingRepresentativeController extends Controller{
 	/**
@@ -33,6 +35,7 @@ public class MarketingRepresentativeController extends Controller{
 	
 	//CreateUserLayer Center Layer Components
 	private JLabel PasswordValidationFailedMessageLabel;
+	private JLabel MissedFieldsMessageLabel;
 	private JButton NextButton;	
 	
 	// AddPersonalDetails Center Layer Components	
@@ -124,16 +127,23 @@ public class MarketingRepresentativeController extends Controller{
 	private void HandleNextPressed(){
 		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
 		PasswordValidationFailedMessageLabel = GuiScreen.getPasswordValidationFailedMessageLabel();
+		MissedFieldsMessageLabel = GuiScreen.getMissedFieldsMessageLabel();
 		
 		if (!Checks.isValidPassword(GuiScreen.getPasswordPasswordField().getText(), GuiScreen.getPasswordValidatePasswordField().getText()))
 			PasswordValidationFailedMessageLabel.setVisible(true);
-		else 
+		else PasswordValidationFailedMessageLabel.setVisible(false);
+		
+		if (!Checks.isAllFieldsFilled(GuiScreen.getPasswordPasswordField().getText(), GuiScreen.getPasswordValidatePasswordField().getText(), GuiScreen.getUserNametextField().getText()))
+				MissedFieldsMessageLabel.setVisible(true);
+		else MissedFieldsMessageLabel.setVisible(false);
+
+		if (!PasswordValidationFailedMessageLabel.isVisible()&&!MissedFieldsMessageLabel.isVisible())
 		{
-			PasswordValidationFailedMessageLabel.setVisible(false);
-			ContainerCardCenter.show(CenterCardContainer, "AddPersonalDetailsCenter");
+//			Server.handleMessageFromClient(new callbackUser(MessageType.getCheckExistsUserName, GuiScreen.getUserNametextField().getText(),""));
+//			if ( !((callbackUser)getCallBackFromBuffer()).getIsUserNameExist() )
+				ContainerCardCenter.show(CenterCardContainer, "AddPersonalDetailsCenter");
 		}
-		
-		
+			
 		//ContainerCardCenter.show(CenterCardContainer, "AddPersonalDetailsCenter");				//The AddPersonalDetailsCenter layer will be display
 
 		
