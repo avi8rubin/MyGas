@@ -9,6 +9,7 @@ public class Checks {
 		// TODO Auto-generated constructor stub
 	}
 
+// MarketingRepresentative
 	public static boolean isValidEmailAddress(String email) {
 		   boolean result = true;
 		   try {
@@ -25,6 +26,13 @@ public class Checks {
 		   return false;
 		}	
 	
+	public static boolean isAllFieldsFilled(String field1, String field2, String field3 ) {	
+		if (field1.equals("")||field2.equals("")||field3.equals(""))
+			return false;
+		return true;
+	}
+	
+	// Litaf
 	/**
 	 * 
 	 * @param startDate
