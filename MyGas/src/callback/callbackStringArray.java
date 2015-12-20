@@ -82,4 +82,10 @@ public class callbackStringArray extends CallBack {
 	public void setVariance(Object[] Variance){
 		this.Variance = Variance;
 	}
+	public Object[][] getRowByIndex (int[] Index){
+		Object[][] obj = new Object[Index.length][];
+		for(int i=0 ; i<Index.length ; i++)
+			obj[i] = Data[Index[i]];
+		return obj;
+	}
 }
