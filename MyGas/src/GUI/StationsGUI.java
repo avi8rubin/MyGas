@@ -4,8 +4,10 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -34,11 +36,17 @@ public class StationsGUI extends abstractPanel_GUI{
 	private JButton LoginButton;
 	private JButton PayButton;
 	private JButton LogoutButton2;
-	
+	private JButton StartFuelingButton;
+	public JLabel car;
 	private JLabel ErrorMassage=new JLabel();
 	private	JLabel GreenHand;
 	private	JLabel BlueHand;
 	private	JLabel RedHand;
+	private JLabel BlueHandFlip;
+	private JLabel RedHandFlip;
+	private JLabel GreenHandFlip;
+	private JLabel GasStationHome;
+	private JLabel DiscountTextBox;
 	
 	private JTextField PasswordTextField = new JPasswordField();
 	private JTextField LiterLabel = new JTextField();
@@ -68,7 +76,7 @@ public class StationsGUI extends abstractPanel_GUI{
 		StationUserLoginLayer.setName("StationUserLoginLayer");
 		CenterCardContainer.add(StationUserLoginLayer,"StationUserLoginLayer");
 		//MyGas Icon
-		JLabel MyGasIcon = new JLabel("");
+		JLabel MyGasIcon = new JLabel("CEO");
 		MyGasIcon.setIcon(new ImageIcon(Login_GUI.class.getResource("/images/Main_Login_empty.png")));
 		MyGasIcon.setBounds(343, 13, 294, 303);
 		StationUserLoginLayer.add(MyGasIcon);
@@ -130,7 +138,7 @@ public class StationsGUI extends abstractPanel_GUI{
 		CarNumberCombobox.setBounds(25, 30, 251, 40);
 		left_car.add(CarNumberCombobox);
 		
-		JButton StartFuelingButton = new JButton("Start Fueling");
+		StartFuelingButton = new JButton("Start Fueling");
 		StartFuelingButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		StartFuelingButton.setBounds(56, 90, 185, 40);
 		left_car.add(StartFuelingButton);
@@ -172,11 +180,7 @@ public class StationsGUI extends abstractPanel_GUI{
 		
 		//-------Gas fueling panel----////
 		
-		JLabel car = new JLabel("");
-		car.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Blackcarmid.png")));
-		//car.setIcon(new ImageIcon("/images/Blackcarmid.png"));
-		car.setBounds(0, 207, 503, 259);
-		GasFuelingCenterPanel.add(car);
+
 		
 		GasFuelingCenterPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		//contentPane.add(GasFuelingCenterPanel, BorderLayout.CENTER);
@@ -196,18 +200,41 @@ public class StationsGUI extends abstractPanel_GUI{
 		GasFuelingCenterPanel.add(RedHand);
 		
 		BlueHand = new JLabel("");
-		BlueHand.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 		BlueHand.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Blue_hand.png")));
 		BlueHand.setBounds(720, 321, 90, 119);
 		GasFuelingCenterPanel.add(BlueHand);
 		
+		BlueHandFlip = new JLabel("");
+		BlueHandFlip.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Blue_hand_flip.png"))); 
+		BlueHandFlip.setBounds(200, 305, 90, 119);
+		BlueHandFlip.setVisible(false);
+		GasFuelingCenterPanel.add(BlueHandFlip);
 		
+		RedHandFlip = new JLabel("");
+		RedHandFlip.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Red_hand_flip.png"))); 
+		RedHandFlip.setBounds(200, 305, 90, 119);
+		RedHandFlip.setVisible(false);
+		GasFuelingCenterPanel.add(RedHandFlip);
 		
-		JLabel GasStationHome = new JLabel("");
+		GreenHandFlip= new JLabel("");
+		GreenHandFlip.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Green_hand_flip.png"))); 
+		GreenHandFlip.setBounds(200, 305, 90, 119);
+		GreenHandFlip.setVisible(false);
+		GasFuelingCenterPanel.add(GreenHandFlip);
+		
+		GasStationHome = new JLabel("");
 		GasStationHome.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Gas_Station_Empty.png")));
 		GasStationHome.setBounds(477, 0, 444, 508);
 		GasFuelingCenterPanel.add(GasStationHome);
-
+		
+		car = new JLabel("");
+		car.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Blackcarmid.png")));	
+		car.setBounds(0, 207, 503, 259);
+		GasFuelingCenterPanel.add(car);
+		
+		DiscountTextBox = new JLabel("");
+		DiscountTextBox.setBounds(3, 13, 491, 33);
+		GasFuelingCenterPanel.add(DiscountTextBox);
 	}
 	
 	public String getUserName(){
@@ -248,6 +275,15 @@ public class StationsGUI extends abstractPanel_GUI{
 	public JLabel getRedHand(){
 		return this.RedHand;
 	}
+	public JLabel getBlueHandFlip(){
+		return this.BlueHandFlip;
+	}
+	public JLabel getRedHandFlip(){
+		return this.RedHandFlip;
+	}
+	public JLabel getGreenHandFlip(){
+		return this.GreenHandFlip;
+	}
 	public JComboBox getCarNumberComboBox(){
 		return this.CarNumberCombobox;
 	}
@@ -261,5 +297,51 @@ public class StationsGUI extends abstractPanel_GUI{
 	public void setlogoutvisable(boolean x){
 		this.LogoutButton2.setVisible(x);
 	}
-
+	public void ResetPumps(){
+		BlueHand.setBounds(720, 321, 90, 119);
+		GreenHand.setBounds(621, 324, 90, 119);
+		RedHand.setBounds(508, 330, 90, 119);
+	}
+	public void setGasStation(){
+		this.GasStationHome.setBounds(477, 0, 444, 508);
+	}
+	public void BluePumpShow(){
+		BlueHand.setVisible(false);
+		BlueHandFlip.setVisible(true);
+	}
+	public void BluePumpNotShow(){
+		BlueHand.setVisible(true);
+		BlueHandFlip.setVisible(false);	
+	}
+	public void RedPumpShow(){
+		RedHand.setVisible(false);
+		RedHandFlip.setVisible(true);
+	}
+	public void RedPumpNotShow(){
+		RedHand.setVisible(true);
+		RedHandFlip.setVisible(false);
+	}
+	public void GreenPumpShow(){
+		GreenHand.setVisible(false);
+		GreenHandFlip.setVisible(true);
+	}
+	public void GreenPumpNotShow(){
+		GreenHand.setVisible(true);
+		GreenHandFlip.setVisible(false);
+	}
+	public JButton getStartFuelingButton(){
+		return this.StartFuelingButton;
+	}
+	public JButton getPayButton(){
+		return this.PayButton;
+	}
+	public JLabel getDiscountLabelBox(){
+		return this.DiscountTextBox;
+	}
+	public JTextField getLiterLabel(){
+		return this.LiterLabel;
+	}
+	public JTextField getPriceLabel(){
+		return this.PriceLabel;
+	}
 }
