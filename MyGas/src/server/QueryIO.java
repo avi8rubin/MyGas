@@ -126,12 +126,27 @@ public class QueryIO  {
 				AnswerObject = setCreateNewCustomer((callbackCustomer)SwitchCallback);				
 				break;	
 				
+			case setNewCar:
+				AnswerObject = setNewCar((callbackCar)SwitchCallback);				
+				break;
+				
+			case getHomeFuelOrders:
+				if(SwitchCallback instanceof callbackCar)
+					AnswerObject = getCarDetailes((callbackCar)SwitchCallback);	
+				if(SwitchCallback instanceof callbackStringArray)
+					AnswerObject = getCarDetailes((callbackStringArray)SwitchCallback);	
+				break;
+				
+			case getCustomerDetailes:
+				AnswerObject = getCustomerDetailes((callbackCustomer)SwitchCallback);				
+				break;
+				
 /*Customer*/
 			case setNewHomeFuelSale:
 				AnswerObject = setNewHomeFuelSale((callbackSale)SwitchCallback);				
 				break;
 				
-			case getHomeFuelOrders:
+			case getCarDetailes:
 				if(SwitchCallback instanceof callbackSale)
 					AnswerObject = getHomeFuelOrders((callbackSale)SwitchCallback);	
 				if(SwitchCallback instanceof callbackStringArray)
@@ -784,10 +799,10 @@ public class QueryIO  {
 		// Send query to DB  -----------------------------------------------------
 			for(i=0;i<UpdateWaitingTariff.size();i++){
 				
-				ps1.setString(1, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getCEOConfirmation());
+				ps1.setString(1, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getCEOConfirmation().trim());
 				ps1.setInt(2, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getTariffUpdateID());
 				ps1.executeUpdate();
-				if(((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getCEOConfirmation().equals("Yes")){	
+				if(((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getCEOConfirmation().trim().equals("Yes")){	
 					ps2.setFloat(1, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getWantedPrice());
 					ps2.setInt(2, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getFuelID());
 					ps2.executeUpdate();
@@ -817,6 +832,8 @@ public class QueryIO  {
 						
 			ps.setInt(1, Callback.getUserID());
 			AnswerResult = ps.executeQuery();
+			
+			if (AnswerResult.isLast()) return new callback_Error("Customer not exists in DB.");
 			
 			Callback.setUserID(AnswerResult.getInt("User_ID"));
 			Callback.setCustomersID(AnswerResult.getInt("Customers_ID"));
@@ -920,6 +937,130 @@ public class QueryIO  {
 		}
 			return new callbackSuccess("Create new customer successfully.");					// 	Query succeed
 		
+	}
+	private CallBack setNewCar(callbackCar Callback){
+		// Set variables ---------------------------------------------------------
+
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps=conn.prepareStatement("INSERT INTO Cars VALUES(null,(?),(?),(?),(?),(?))");
+			
+		// Send query to DB  -----------------------------------------------------
+			
+				ps.setString(1, Callback.getCarNumber().trim());
+				ps.setInt(2, Callback.getCustomerID());
+				ps.setString(3, Callback.getYesNoNFC().trim());
+				ps.setInt(4, Callback.getFuelID());
+				ps.setInt(5, Callback.getCostingModelID());
+				ps.executeUpdate();
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");					// If query not succeed 
+		}
+			return (new callbackSuccess());					// 	Query not succeed
+		
+	}
+	private Object getCarDetailes(callbackCar Callback){
+		// Set variables ---------------------------------------------------------
+		callbackVector LocalVector = new callbackVector();
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Cars WHERE Customers_ID=(?)");
+			
+		// Send query to DB  -----------------------------------------------------
+			ps.setInt(1, Callback.getCustomerID());
+			AnswerResult = ps.executeQuery();
+			
+			while (AnswerResult.next()) { 					
+				callbackCar callback_Obj = new callbackCar();
+				callback_Obj.setCarID(AnswerResult.getInt("Car_ID"));
+				callback_Obj.setCarNumber(AnswerResult.getString("Car_Number"));
+				callback_Obj.setCostingModelID(AnswerResult.getInt("Costing_Model_ID"));
+				callback_Obj.setCustomerID(AnswerResult.getInt("Customers_ID"));
+				callback_Obj.setFuelID(AnswerResult.getInt("Fuel_ID"));
+				callback_Obj.setYesNoNFC(AnswerResult.getString("NFC"));				
+				LocalVector.add(callback_Obj);
+			}
+			if (LocalVector.size() == 0) 
+				return new callback_Error("No records of cars for this customer.");
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");					// If query not succeed 
+		}
+			return LocalVector;					// 	Query not succeed
+		
+	}
+	private CallBack getCarDetailes(callbackStringArray Callback){
+		// Set variables ---------------------------------------------------------
+		ResultSetMetaData LocalResult;
+		Object[][] Data;
+		String[] Headers;
+		int ColNum;
+		int RowNum =0;
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Cars WHERE Customers_ID=(?)");
+			
+		// Send query to DB  -----------------------------------------------------
+			ps.setInt(1, (int) Callback.getVariance()[0]);
+			AnswerResult = ps.executeQuery();
+			
+			LocalResult = AnswerResult.getMetaData();
+			Callback.setColCount(ColNum = LocalResult.getColumnCount());
+			
+			AnswerResult.last();
+			Callback.setRowCount(AnswerResult.getRow());
+			AnswerResult.beforeFirst();
+			Data = new String[Callback.getRowCount()][ColNum+1];
+			Headers = new String[ColNum];
+			
+			for(int i=0;i<ColNum;i++)
+				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
+			Callback.setColHeaders(Headers);
+			/**
+			 * Create the report callback structure
+			 */
+			while (AnswerResult.next()) { 				
+				for (int i = 0; i < ColNum; i++) 
+					Data[RowNum][i] = AnswerResult.getString(i + 1);
+				RowNum++;
+			}
+
+			Callback.setData(Data);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");					// If query not succeed 
+		}
+			return Callback;					// 	Query not succeed
+		
+	}
+	private Object getCustomerDetailes(callbackCustomer Callback){
+		// Set variables ---------------------------------------------------------
+			CallBack returnCallback;
+			Object[] Var = new Object[1];
+			Var[0] = (int)Callback.getCustomersID();
+			callbackStringArray NSCB = new callbackStringArray(Var);
+			callbackVector LocalVector = new callbackVector();
+		// Build query -----------------------------------------------------------
+			
+		// Send query to DB  -----------------------------------------------------
+			returnCallback = getCustomer(Callback);
+			if (returnCallback instanceof callback_Error) return returnCallback;
+			Callback = (callbackCustomer) getCustomer(Callback);
+			LocalVector.add(Callback);
+			
+			returnCallback = getCarDetailes(NSCB);
+			if (returnCallback instanceof callback_Error) return returnCallback;
+			NSCB = (callbackStringArray) returnCallback;
+			LocalVector.add(NSCB);
+			return LocalVector;
 	}
 	
 /**
@@ -1084,6 +1225,7 @@ public class QueryIO  {
 			return Callback;					// 	Query not succeed
 		
 	}	
+
 /**
  * Variance
  */

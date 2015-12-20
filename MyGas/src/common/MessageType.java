@@ -30,6 +30,9 @@ public enum MessageType {
 	getCustomer,
 	getIsUserNameExists,
 	setCreateNewCustomer,
+	setNewCar,
+	getCarDetailes,
+	getCustomerDetailes,
 /*Customer*/
 	setNewHomeFuelSale,
 	getHomeFuelOrders

@@ -14,6 +14,7 @@ public class callbackVector extends Vector<CallBack>{
 	private Object[][] Data;
 	private String[] Headers;
 	
+	public callbackVector(){}
 	public callbackVector(MessageType WhatToDo){
 		this.WhatToDo = WhatToDo;
 	}
