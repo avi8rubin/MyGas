@@ -24,4 +24,36 @@ public class Checks {
 		   if (password.equals(passwordValidate)) return true;
 		   return false;
 		}	
+	
+	/**
+	 * 
+	 * @param startDate
+	 * @param endDate
+	 * @return if dates are valid
+	 */
+	public static boolean isDateValid(String startDate, String endDate){
+
+		String startDay=startDate.substring(0, 2);
+		String EndDay=endDate.substring(0, 2);
+
+		String startMonth=startDate.substring(3, 5);
+		String EndMonth=endDate.substring(3, 5);
+
+		String startYear=startDate.substring(8, 10);
+		String EndYear=endDate.substring(8, 10);
+		
+		if(Integer.parseInt(EndYear)<Integer.parseInt(startYear))
+			return false;
+		else if(Integer.parseInt(EndMonth)<Integer.parseInt(startMonth)){
+			if(Integer.parseInt(EndYear)==Integer.parseInt(startYear))
+				return false;
+			}
+		else if(Integer.parseInt(EndDay)<Integer.parseInt(startDay)){
+			if(Integer.parseInt(EndMonth)==Integer.parseInt(startMonth)){
+				if(Integer.parseInt(EndYear)==Integer.parseInt(startYear))
+					return false;
+			}
+		}
+		return true;
+	}
 }

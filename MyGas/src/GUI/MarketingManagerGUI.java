@@ -2,11 +2,9 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.geom.Arc2D.Float;
-import java.text.SimpleDateFormat;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -16,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -24,6 +23,7 @@ import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
 
 import callback.callbackBuffer;
+import callback.callbackStringArray;
 import callback.callbackUser;
 import client.Client;
 import common.TableModel;
@@ -41,7 +41,6 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	private JButton TariffButton;
 	private JButton ReportButton;
 	private JButton ActivateSaleCampaignButton;
-	private JLabel LogoImage;
 	//TariffButton
 	private JLayeredPane TariffDisplayLayer= new JLayeredPane();
 	private JScrollPane TariffScrollPane = new JScrollPane();
@@ -105,6 +104,7 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		TopPanel.add(ActivateSaleCampaignButton);
 		
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////		
 		/* ------- Adding new layer to Tariff Panel -------- */
 		TariffDisplayLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
@@ -144,22 +144,26 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		LeftCardContainer.add(CreateReportsLeftLayer, "ReportsLeft");
 		CreateReportsLeftLayer.setOpaque(true);
 		CreateReportsLeftLayer.setName("ReportsLeft");
-		//CreateReportsLeftLayer.add(LogoImage);
 
 		//buttons left layer
 		CommentsForMarketingCampaignButton = 
 				new JButton("<html>Comments for marketing campaign report</html>");
 		CommentsForMarketingCampaignButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		CommentsForMarketingCampaignButton.setBounds(27, 33, 212, 38);
+		CommentsForMarketingCampaignButton.setBounds(27, 33, 212, 76);
+
 		
 		CustomerCharacterizationReportButton = 
 				new JButton("<html>Customer characterization by period report</html>");
-
 		CustomerCharacterizationReportButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		CustomerCharacterizationReportButton.setBounds(27, 161, 212, 38);
+		CustomerCharacterizationReportButton.setBounds(27, 164, 212, 76);
 		
 		CreateReportsLeftLayer.add(CommentsForMarketingCampaignButton);
 		CreateReportsLeftLayer.add(CustomerCharacterizationReportButton);
+		
+        JLabel LogoImageCreateReports = new JLabel("");
+        LogoImageCreateReports.setIcon(new ImageIcon(abstractPanel_GUI.class.getResource("/images/Left_Panel_Logo22.jpg")));
+        LogoImageCreateReports.setBounds(38, 313, 239, 242);
+        CreateReportsLeftLayer.add(LogoImageCreateReports);
 		/* ------- Adding CommentsForMarketingCampaignButton layer -------- */
 		CreateCommentsReportsCenterLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		
@@ -173,17 +177,18 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		ChooseCampaignLabel = new JLabel("Choose Campaign ");
 		ChooseCampaignLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		ChooseCampaignLabel.setEnabled(false);
-		ChooseCampaignLabel.setBounds(38, 22, 184, 34);
+		ChooseCampaignLabel.setBounds(38, 35, 160, 34);
 		ContactFrame.getContentPane().add(ChooseCampaignLabel);
 		CreateCommentsReportsCenterLayer.add(ChooseCampaignLabel);
 		
 		CampaignComboBox = new JComboBox();
-		CampaignComboBox.setBounds(38, 71, 217, 34);
+		CampaignComboBox.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		CampaignComboBox.setBounds(180,35, 410, 34);
 		ContactFrame.getContentPane().add(CampaignComboBox);
 		CreateCommentsReportsCenterLayer.add(CampaignComboBox);
 
-		ExportButton = new JButton("EXPORT");
-		ExportButton.setBounds(290, 71, 126, 34);
+		ExportButton = new JButton("Export");
+		ExportButton.setBounds(595, 35, 126, 34);
 		ContactFrame.getContentPane().add(ExportButton);
 		ExportButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		CreateCommentsReportsCenterLayer.add(ExportButton);
@@ -191,7 +196,7 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		/*------- Create JTable surround with scroll pane and add
 		 * 				 it to CommentsForMarketingCampaignReport --------*/
 
-		CommentsReportScrollPane.setBounds(38, 133,  900, 400);
+		CommentsReportScrollPane.setBounds(38, 110,  900, 400);
 		CreateCommentsReportsCenterLayer.add(CommentsReportScrollPane);
 		
 		CommentsReportScrollPane.setViewportView(CommentsReportTable);
@@ -228,7 +233,7 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		EndDateLabel.setBounds(283, 40, 84, 26);
 		CreateCustomerReportsCenterLayer.add(EndDateLabel);
 		
-		ExportButton2 = new JButton("EXPORT");
+		ExportButton2 = new JButton("Export");
 		ExportButton2.setBounds(595, 35, 126, 34);
 		ContactFrame.getContentPane().add(ExportButton2);
 		ExportButton2.setFont(new Font("Tahoma", Font.PLAIN, 20));
@@ -236,7 +241,7 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		
 		/*------- Create JTable surround with scroll pane and add
 		 * 				 it to CustomerCharacterizationReportButton --------*/
-		CustomerCharacterizationReportScrollPane.setBounds(38, 133, 900, 400);
+		CustomerCharacterizationReportScrollPane.setBounds(38, 110, 900, 400);
 		CreateCustomerReportsCenterLayer.add(CustomerCharacterizationReportScrollPane);
 		
 		CustomerCharacterizationReportScrollPane.setViewportView(CustomerCharacterizationReportTable);
@@ -278,20 +283,20 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		ActivateSaleLeftLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 
 		ActivateSale_StartDateChooser = new JDateChooser();
-		ActivateSale_StartDateChooser.setBounds(134, 175, 140, 36);
+		ActivateSale_StartDateChooser.setBounds(130, 131, 140, 36);
 		ActivateSaleLeftLayer.add(ActivateSale_StartDateChooser);
 		
 		ActivateSale_EndDateChooser = new JDateChooser();
-		ActivateSale_EndDateChooser.setBounds(134, 231, 140, 34);
+		ActivateSale_EndDateChooser.setBounds(130, 178, 140, 34);
 		ActivateSaleLeftLayer.add(ActivateSale_EndDateChooser);
 
 		ActivateSale_StartDateLabel = new JLabel("Start Date:");
-		ActivateSale_StartDateLabel.setBounds(26, 175, 98, 34);
+		ActivateSale_StartDateLabel.setBounds(22, 133, 98, 34);
 		ActivateSale_StartDateLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		ActivateSaleLeftLayer.add(ActivateSale_StartDateLabel);
 		
 		ActivateSale_EndDateLabel = new JLabel("End Date:");
-		ActivateSale_EndDateLabel.setBounds(26, 231, 84, 26);
+		ActivateSale_EndDateLabel.setBounds(22, 178, 84, 26);
 		ActivateSale_EndDateLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		ActivateSaleLeftLayer.add(ActivateSale_EndDateLabel);
 
@@ -301,14 +306,21 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		ActivateSaleLeftLayer.add(SelectPatternLabel);
 
 	    PatternsComboBox = new JComboBox();
-		PatternsComboBox.setBounds(43, 70, 194, 36);
+		PatternsComboBox.setBounds(44, 67, 194, 36);
 		ActivateSaleLeftLayer.add(PatternsComboBox);
 
 	    StartSaleButton = new JButton("Start");
 		StartSaleButton.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		StartSaleButton.setBounds(87, 291, 98, 36);
+		StartSaleButton.setBounds(88, 279, 98, 36);
 		ActivateSaleLeftLayer.add(StartSaleButton);
 
+		//////////////logo////////////////////////
+
+        JLabel LogoImageActivateSale = new JLabel("");
+        LogoImageActivateSale.setIcon(new ImageIcon(abstractPanel_GUI.class.getResource("/images/Left_Panel_Logo22.jpg")));
+        LogoImageActivateSale.setBounds(38, 313, 239, 242);
+        ActivateSaleLeftLayer.add(LogoImageActivateSale);
+		
 		//ActivateSaleLeftLayer.add(LogoImage);
 
 		LeftCardContainer.add(ActivateSaleLeftLayer,"ActivateSaleLeftLayer");
@@ -330,19 +342,13 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	public void setTariffUpdateTable(DefaultTableModel NewTableModel)
 	{
 		TariffUpdateTable.setModel(NewTableModel);
-//		TableColumn NewTariff = TariffUpdateTable.getColumnModel().getColumn(4);
-//		TableColumn MaxTariff = TariffUpdateTable.getColumnModel().getColumn(3);
-		//if((float)NewTariff>(float)MaxTariff)
-		//	JOptionPane.showMessageDialog(null, "Eggs are not supposed to be green.");
 
-		
-	
 	}
 	//reports
 	public JButton getReportButton(){
 		return ReportButton;
 	}
-////CommentsForMarketingCampaign
+	//CommentsForMarketingCampaign
 	public JButton getCommentsForMarketingCampaignButton(){
 		return CommentsForMarketingCampaignButton;
 	}
@@ -353,10 +359,37 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		return (String)CampaignComboBox.getSelectedItem();
 	}
 	
-	public void setCommentsForMarketingCampaignTable(TableModel NewTable){
-		CommentsReportTable.setModel(NewTable);	
+	public void SetComboBoxSelection(callbackStringArray CampaignPatterns){
+		Object[]pattern=CampaignPatterns.getComboBoxStringArray();
+		DefaultComboBoxModel<?> combopatternModel=new DefaultComboBoxModel(pattern);
+		CampaignComboBox.setModel(combopatternModel);
+		CampaignComboBox.addItem("All Campaigns");		
 	}
-///CustomerCharacterization
+	public JComboBox<?> getComboBox(){
+		return CampaignComboBox;
+	}
+	
+	public void setCommentsForMarketingCampaignTable(DefaultTableModel NewTable, String RowDetails){
+		
+		Object selectedObject;
+		int rowToShow=0, numberOfRows=NewTable.getRowCount();
+		CommentsReportTable.setModel(NewTable);
+		
+		if(!RowDetails.equals("All Campaigns")){	
+			for(int i=0; i<numberOfRows;i++){
+				selectedObject = (Object)NewTable.getValueAt(i, 3);
+				if(RowDetails.equals(selectedObject))
+					rowToShow=i;
+				}
+			for(int i=0;i<NewTable.getRowCount();i++){
+				if(i!=rowToShow)
+				NewTable.removeRow(i);
+				}
+			}
+		 CommentsReportTable.setModel(NewTable);
+
+	}
+	//CustomerCharacterization
 	public JButton getCustomerCharacterizationReportButton(){
 		return CustomerCharacterizationReportButton;
 	}
@@ -364,12 +397,12 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		return ExportButton2;
 	}
 	public String getStartDate(){
-		return StartDateChooser.getDateFormatString();// (new SimpleDateFormat("yyyy-mm-dd"));
+		return ((JTextField)StartDateChooser.getDateEditor().getUiComponent()).getText();
 	}
 	public String getEndDate(){
-		return EndDateChooser.getDateFormatString();// (new SimpleDateFormat("yyyy-mm-dd"));
+		return  ((JTextField)EndDateChooser.getDateEditor().getUiComponent()).getText();
 	}
-	public void setCustomerCharacterizationReportTable(TableModel NewTable){
+	public void setCustomerCharacterizationReportTable(DefaultTableModel NewTable){
 		CustomerCharacterizationReportTable.setModel(NewTable);	
 	}
 	//campaign sale
@@ -377,8 +410,22 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		return ActivateSaleCampaignButton;
 	}
 
+	public void SetComboBoxPattern(callbackStringArray CampaignPatterns){
+		Object[]pattern=CampaignPatterns.getComboBoxStringArray();
+		DefaultComboBoxModel<?> combopatternModel=new DefaultComboBoxModel(pattern);
+		PatternsComboBox.setModel(combopatternModel);
 
-
+	}
+	public JButton getStartSaleButton(){
+		return StartSaleButton;
+	}
+	public String getComboBoxPattern(){
+		return (String)PatternsComboBox.getSelectedItem();
+	}
+	public String getStartSaleDate(){
+		return ((JTextField)ActivateSale_StartDateChooser.getDateEditor().getUiComponent()).getText();
+	}
+	public String getEndSaleDate(){
+		return  ((JTextField)ActivateSale_EndDateChooser.getDateEditor().getUiComponent()).getText();
+	}
 }
-
-
