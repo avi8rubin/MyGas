@@ -33,6 +33,8 @@ public class Checks {
 	 */
 	public static boolean isDateValid(String startDate, String endDate){
 
+		if(startDate==null || endDate==null)
+			return false;
 		String startDay=startDate.substring(0, 2);
 		String EndDay=endDate.substring(0, 2);
 
