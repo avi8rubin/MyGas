@@ -1,15 +1,22 @@
 package controller;
 
 import java.awt.CardLayout;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 import GUI.MarketingManagerGUI;
 import callback.callbackBuffer;
 import callback.callbackStringArray;
 import client.Client;
+import common.Checks;
 import common.MessageType;
 import common.TableModel;
 
@@ -32,7 +39,7 @@ public class MarketingManagerController extends Controller {
 	private JButton CommentsForMarketingCampaignButton;
 	private JButton ExportButton;
 
-
+	private JComboBox<?> ComboBoxSelection;
 //
 	
 
@@ -81,7 +88,9 @@ public class MarketingManagerController extends Controller {
 		ExportButton.addActionListener(this);
 		ExportButton.setActionCommand("Export CommentsForMarketingCampaign Report");		
 		//
-
+		ComboBoxSelection=GuiScreen.getComboBox();
+		ComboBoxSelection.addActionListener(this);
+		ComboBoxSelection.setActionCommand("Change ComboBox selection");	
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -100,47 +109,85 @@ public class MarketingManagerController extends Controller {
 		else if(e.getActionCommand().equals("Activate Sale Campaign")){
 			ContainerCardLeft.show(LeftCardContainer,"ActivateSaleLeftLayer");
 			ContainerCardCenter.show(CenterCardContainer,"ActivateSaleCenterLayer");
-		//	HandleActivateSaleCampaignPressed();											
+			HandleActivateSaleCampaignPressed();											
 		}
 		
 		else if(e.getActionCommand().equals("Customer Characterization")){
 			ContainerCardCenter.show(CenterCardContainer, "CustomerCharacterizationReport");
+		}		
+		else if(e.getActionCommand().equals("Export CustomerCharacterization Report")){
+			HandleCustomerCharacterizationReport();											
+		}
+		//
+		else if(e.getActionCommand().equals("Change ComboBox selection")){
+			HandleChangeCampaignFromComboBox();
+
 		}
 		else if(e.getActionCommand().equals("Comments For Marketing Campaign")){
-			ContainerCardCenter.show(CenterCardContainer, "CommentsForMarketingCampaignReport");			
+			ContainerCardCenter.show(CenterCardContainer, "CommentsForMarketingCampaignReport");
+			HandleCommentsForMarketingCampaign();
+			//HandleActivateSaleCampaignCustomerCharacterizationReportButtonPressed();
 		}
-		else if(e.getActionCommand().equals("Export CustomerCharacterization Report")){
-			HandleCustomerCharacterizationExportReport();											
-		}
+
 		else if(e.getActionCommand().equals("Export CommentsForMarketingCampaign Report")){
-		//	HandleCommentsForMarketingCampaignExportReport();											
+			//HandleChangeCampaignFromComboBox();
+//			HandleCommentsForMarketingCampaignExportReport();											
 		}
 		
 		
 	}
 
 	private void HandleTariffPressed(){
-//		Server.handleMessageFromClient(new callbackStringArray(MessageType.getFuelsDetailes));
-//		callbackStringArray TariffTable = (callbackStringArray) getCallBackFromBuffer();		
-//		GuiScreen.setTariffApprovalTable(TariffTable.getDefaultTableModel());
-		
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getFuelsDetailes));
 		callbackStringArray TariffTable = (callbackStringArray) getCallBackFromBuffer();		
 		GuiScreen.setTariffUpdateTable(TariffTable.getDefaultTableModel());
 	}
 
-	private void HandleActivateSaleCampaignPressed(){}
+
+	private void HandleChangeCampaignFromComboBox(){
+		
+		String patternSelected=GuiScreen.getComboBoxSelection();
+		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCommentsForMarketionCampaign));
+		callbackStringArray CampaignTable = (callbackStringArray) getCallBackFromBuffer();		
+		GuiScreen.setCommentsForMarketingCampaignTable(CampaignTable.getDefaultTableModel(),patternSelected);
 	
-	
-	private void HandleCommentsForMarketingCampaignExportReport()
-	{
-		String CampaignToChooseFrom=GuiScreen.getComboBoxSelection();
-     //   JOptionPane.showMessageDialog(null,CampaignToChooseFrom.toString());
 	}
-	private void HandleCustomerCharacterizationExportReport(){
+
+	private void HandleCommentsForMarketingCampaign(){
+		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCommentsForMarketionCampaign));
+		callbackStringArray CampaignPatters = (callbackStringArray) getCallBackFromBuffer();	
+		GuiScreen.SetComboBoxSelection(CampaignPatters);
+	}
+	private void HandleCustomerCharacterizationReport(){
 		String startDate=GuiScreen.getStartDate(); 
 		String endDate=GuiScreen.getEndDate();
 
+		boolean flag=Checks.isDateValid(startDate,endDate);
+		if(flag==false)
+			JOptionPane.showMessageDialog(null, "Error, Illegal Date\nPlease insert a different date", "", JOptionPane.INFORMATION_MESSAGE);
+		else{
+		String startDateInFormat=String.format(startDate.substring(0,6)+startDate.substring(8,10));
+		String endDateInFormat=String.format(endDate.substring(0,6)+endDate.substring(8,10));
+
+		String[] dateArr={startDateInFormat,endDateInFormat};
+		
+		callbackStringArray createCustomerTable=new callbackStringArray(MessageType.getCustomerCharacterizationByPeriod);
+		createCustomerTable.setColHeaders(dateArr);
+		Server.handleMessageFromClient(createCustomerTable);
+		callbackStringArray customerTable = (callbackStringArray) getCallBackFromBuffer();	
+		GuiScreen.setCustomerCharacterizationReportTable(customerTable.getDefaultTableModel());
+		}
 	}
+	
+	
+	private void HandleActivateSaleCampaignPressed() {
+		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCampaignPatternAndActiveCampaign));
+		callbackStringArray Patterns = (callbackStringArray) getCallBackFromBuffer();	
+		GuiScreen.SetComboBoxPattern(Patterns);
+	}
+	private void HandleActivateSaleCampaignCustomerCharacterizationReportButtonPressed(){	
+	}
+
+
 }
 
