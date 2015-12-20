@@ -233,8 +233,8 @@ public class StationsGUI extends abstractPanel_GUI{
 		GasFuelingCenterPanel.add(car);
 		
 		DiscountTextBox = new JLabel("");
-		DiscountTextBox.setBounds(0, 13, 491, 33);
-		ContactFrame.getContentPane().add(DiscountTextBox);
+		DiscountTextBox.setBounds(3, 13, 491, 33);
+		GasFuelingCenterPanel.add(DiscountTextBox);
 	}
 	
 	public String getUserName(){
@@ -340,5 +340,8 @@ public class StationsGUI extends abstractPanel_GUI{
 	}
 	public JTextField getLiterLabel(){
 		return this.LiterLabel;
+	}
+	public JTextField getPriceLabel(){
+		return this.PriceLabel;
 	}
 }

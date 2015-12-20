@@ -45,6 +45,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		private StationsGUI StationUserLoginGui;
 		
 		private JTextField LiterLabel;
+		private JTextField PriceLabel;
 		
 		private CardLayout ContainerCardLeft;
 		private CardLayout ContainerCardCenter;
@@ -75,6 +76,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		DiscountTextBox=GuiScreen.getDiscountLabelBox();
 		LiterCounter = new Thread(this);
 		LiterLabel=GuiScreen.getLiterLabel();
+		PriceLabel=GuiScreen.getPriceLabel();
 		
 		/*-----Hand gui Icons-------*/
 		BlueHand=GuiScreen.getBlueHand();
@@ -261,6 +263,8 @@ public class StationsController extends Controller implements MouseListener,Runn
 			PressStartStopButtonFlag=true;
 			Paybutton.setEnabled(true);
 			StartFuelingButton.setText("Start Fueling");
+			DiscountTextBox.setText(" You Need to Pay: "+Liter*10+" Shekel");
+			DiscountTextBox.setVisible(true);
 		}
 		
 		
@@ -274,6 +278,8 @@ public class StationsController extends Controller implements MouseListener,Runn
 			LiterLabel.setText(String.valueOf(Liter));
 			StationUserLoginGui.getUserLogoutButton().setEnabled(true);
 			StartFuelingButton.setEnabled(false);
+			DiscountTextBox.setText("");
+			DiscountTextBox.setVisible(true);
 			//reset all Hand back to the station
 			if(Fuel_95){
 				StationUserLoginGui.RedPumpNotShow();//return the hand to the right palce
