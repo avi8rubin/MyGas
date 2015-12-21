@@ -161,6 +161,10 @@ public class QueryIO  {
 				AnswerObject = getCarWithNFC((callbackCar)SwitchCallback);				
 				break;
 				
+			case setNewGasStationSale:
+				AnswerObject = setNewGasStationSale((callbackSale)SwitchCallback);				
+				break;
+				
 		default:
 			AnswerObject = new callback_Error("Not a callback object, send legal callback or you don't fill 'WhatToDo'.");
 			break;
@@ -1108,6 +1112,7 @@ public class QueryIO  {
 			//Get SaleID
 			ps2.setInt(1, Callback.getCustomersID());
 			AnswerResult = ps2.executeQuery();
+			AnswerResult.next();
 			SaleID = AnswerResult.getInt("Sales_ID");
 			//Enter new home fuel sale
 			ps3.setInt(1, SaleID);
@@ -1426,6 +1431,47 @@ public class QueryIO  {
 			return Callback;
 		
 	}
+	private CallBack setNewGasStationSale(callbackSale Callback){
+		// Set variables ---------------------------------------------------------
+			int SaleID;
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps1=conn.prepareStatement(
+					"INSERT INTO Sales VALUES(null,(?),NOW(),(?),(?),(?))");
+			PreparedStatement ps2=conn.prepareStatement(
+					"SELECT Sales_ID, MAX(Sale_Date) AS Sale_Date FROM Sales WHERE Customers_ID = (?)");										
+			PreparedStatement ps3=conn.prepareStatement(
+					"INSERT INTO Gas_Stations_Sales VALUES((?),(?),(?),(?),(?))");
+		// Send query to DB  -----------------------------------------------------
+			//Create new sale 			
+			ps1.setInt(1, Callback.getFuelID());
+			ps1.setInt(2, Callback.getFuelAmount());
+			ps1.setFloat(3, Callback.getPayment());
+			ps1.setInt(4, Callback.getCustomersID());
+			ps1.executeUpdate();
+			//Get SaleID
+			ps2.setInt(1, Callback.getCustomersID());
+			AnswerResult = ps2.executeQuery();
+			
+			AnswerResult.next();
+			SaleID = AnswerResult.getInt("Sales_ID");
+			//Enter new gas station sale
+			ps3.setInt(1, SaleID);
+			ps3.setString(2,Callback.getDriverName());
+			ps3.setInt(3, Callback.getCarID());
+			ps3.setInt(4, Callback.getGasStationID());
+			ps3.setInt(5, Callback.getCampaignID());
+			ps3.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
+		}
+			return new callbackSuccess("Add sale to DB.");					
+		
+	}
+	
 /**
  * Variance
  */

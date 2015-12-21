@@ -38,6 +38,7 @@ public enum MessageType {
 	getHomeFuelOrders,
 /*Station*/
 	getSaleDiscount,
-	getCarWithNFC
+	getCarWithNFC,
+	setNewGasStationSale
 
 }
