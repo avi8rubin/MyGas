@@ -9,7 +9,7 @@ public class callbackCar extends CallBack{
 	private int CarID;
 	private String CarNumber;
 	private int CustomerID;
-	private String NFC;
+	private String NFC = "No";
 	private int FuelID;
 	private int CostingModelID;
 		

@@ -152,7 +152,14 @@ public class QueryIO  {
 				if(SwitchCallback instanceof callbackStringArray)
 					AnswerObject = getHomeFuelOrders((callbackStringArray)SwitchCallback);	
 				break;
+/*Station*/		
+			case getSaleDiscount:
+				AnswerObject = getSaleDiscount((callbackSale)SwitchCallback);				
+				break;
 				
+			case getCarWithNFC:
+				AnswerObject = getCarWithNFC((callbackCar)SwitchCallback);				
+				break;
 				
 		default:
 			AnswerObject = new callback_Error("Not a callback object, send legal callback or you don't fill 'WhatToDo'.");
@@ -1006,6 +1013,8 @@ public class QueryIO  {
 		String[] Headers;
 		int ColNum;
 		int RowNum =0;
+		String[] Combo;
+		String[][] ComboWithIndex;
 		// Build query -----------------------------------------------------------
 		
 		try {
@@ -1023,6 +1032,8 @@ public class QueryIO  {
 			AnswerResult.beforeFirst();
 			Data = new String[Callback.getRowCount()][ColNum+1];
 			Headers = new String[ColNum];
+			Combo = new String[Callback.getRowCount()];
+			ComboWithIndex = new String[Callback.getRowCount()][2];
 			
 			for(int i=0;i<ColNum;i++)
 				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
@@ -1033,10 +1044,15 @@ public class QueryIO  {
 			while (AnswerResult.next()) { 				
 				for (int i = 0; i < ColNum; i++) 
 					Data[RowNum][i] = AnswerResult.getString(i + 1);
+				Combo[RowNum] = AnswerResult.getString("Car_Number");
+				ComboWithIndex[RowNum][0] = AnswerResult.getString("Car_ID");
+				ComboWithIndex[RowNum][1] = AnswerResult.getString("Car_Number");
 				RowNum++;
 			}
 
 			Callback.setData(Data);
+			Callback.setComboBoxStringArray(Combo);
+			Callback.setVarianceMatrix(ComboWithIndex);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1230,6 +1246,186 @@ public class QueryIO  {
 		
 	}	
 
+/**
+ * Station	
+ */
+	private CallBack getSaleDiscount(callbackSale Callback){
+		// Set variables ---------------------------------------------------------
+		int UserRate=0;
+		callbackCampaign CampaignDiscount = new callbackCampaign();
+		// Build query -----------------------------------------------------------
+		
+		
+		String SqlQuery1 = "SELECT Carrent_Rate FROM Customers WHERE Customers_ID=(?)";	
+		
+		String SqlQuery2 = "SELECT A.Campaign_ID "+
+				", A.Start_Campaign "+
+				", A.End_Campaign "+
+				", A.IS_Active "+
+				", A.Campaign_Description "+
+			    ", A.Calculation_Method "+
+			    ", (?)*A.Discount_Percentage AS Discount_Percentage "+
+			    ", MIN((?) - (?)*A.Discount_Percentage ) AS Price_After_Discount "+
+			    "FROM ( "+
+			"/*Amount_Discount*/ "+
+			"SELECT A.Campaign_ID "+
+				", A.Start_Campaign "+
+				", A.End_Campaign "+
+				", A.IS_Active "+
+				", A.Campaign_Description "+
+			    ", A.Calculation_Method "+
+			    ", A.Discount_Percentage "+
+			"FROM Campaigns_Amount B "+
+			"LEFT OUTER JOIN All_Campaign_On_System A ON A.Campaign_Patterns_ID=B.Campaign_Patterns_ID "+
+			"WHERE A.IS_Active='Yes' "+
+			"AND B.Amount < (?) "+
+			
+			"UNION  "+
+			
+			"/*Date_Discount*/ "+
+			"SELECT A.Campaign_ID "+
+				", A.Start_Campaign "+
+				", A.End_Campaign "+
+				", A.IS_Active "+
+				", A.Campaign_Description "+
+			    ", A.Calculation_Method "+
+			    ", A.Discount_Percentage "+			
+			"FROM Campaigns_Date B "+
+			"LEFT OUTER JOIN All_Campaign_On_System A ON A.Campaign_Patterns_ID=B.Campaign_Patterns_ID "+
+			"WHERE A.IS_Active='Yes' "+
+			"AND NOW() BETWEEN A.Start_Campaign AND A.End_Campaign "+
+			
+			"UNION "+
+			
+			"/*Gas_Station_Discount*/ "+
+			"SELECT A.Campaign_ID "+
+				", A.Start_Campaign "+
+				", A.End_Campaign "+
+				", A.IS_Active "+
+				", A.Campaign_Description "+
+			    ", A.Calculation_Method "+
+			    ", A.Discount_Percentage "+
+			"FROM Campaigns_Gas_Station B "+
+			"LEFT OUTER JOIN All_Campaign_On_System A ON A.Campaign_Patterns_ID=B.Campaign_Patterns_ID "+
+			"WHERE A.IS_Active='Yes' "+
+			"AND B.Gas_Station_ID = (?) "+
+			
+			"UNION "+
+			
+			"/*Gas_Type_Discount*/ "+
+			"SELECT A.Campaign_ID "+
+				", A.Start_Campaign "+
+				", A.End_Campaign "+
+				", A.IS_Active "+
+				", A.Campaign_Description "+
+			    ", A.Calculation_Method "+
+			    ", A.Discount_Percentage "+
+			"FROM Campaigns_Gas_Type B "+
+			"LEFT OUTER JOIN All_Campaign_On_System A ON A.Campaign_Patterns_ID=B.Campaign_Patterns_ID "+
+			"WHERE A.IS_Active='Yes' "+
+			"AND B.Fuel_ID = (?) "+
+			
+			"UNION  "+
+			
+			"/*Hours_Discount*/ "+
+			"SELECT A.Campaign_ID "+
+				", A.Start_Campaign "+
+				", A.End_Campaign "+
+				", A.IS_Active "+
+				", A.Campaign_Description "+
+			    ", A.Calculation_Method "+
+			    ", A.Discount_Percentage  "+
+			"FROM Campaigns_hours B "+
+			"LEFT OUTER JOIN All_Campaign_On_System A ON A.Campaign_Patterns_ID=B.Campaign_Patterns_ID "+
+			"WHERE A.IS_Active='Yes' "+
+			"AND TIME(NOW()) BETWEEN B.Start_Hour AND B.End_Hour "+
+			
+			"UNION "+
+			
+			"/*Customer_Rate_Discount*/ "+
+			"SELECT A.Campaign_ID "+
+				", A.Start_Campaign "+
+				", A.End_Campaign "+
+				", A.IS_Active "+
+				", A.Campaign_Description "+
+			    ", A.Calculation_Method "+
+			    ", A.Discount_Percentage "+
+			"FROM Campaigns_Rate B "+
+			"LEFT OUTER JOIN All_Campaign_On_System A ON A.Campaign_Patterns_ID=B.Campaign_Patterns_ID "+
+			"WHERE A.IS_Active='Yes' "+
+			"AND B.Customer_Rate <= (?) "+
+			") A";
+		
+		try {
+			PreparedStatement ps1=conn.prepareStatement(SqlQuery1);						
+			PreparedStatement ps2=conn.prepareStatement(SqlQuery2);
+		// Send query to DB  -----------------------------------------------------
+			//Get customer rate			
+			ps1.setInt(1, Callback.getCustomersID());
+			AnswerResult = ps1.executeQuery();
+			AnswerResult.next();
+			if(!AnswerResult.isLast())
+				UserRate = AnswerResult.getInt("Carrent_Rate");
+			
+			//Get best discount
+			ps2.setFloat(1, Callback.getPayment());
+			ps2.setFloat(2, Callback.getPayment());
+			ps2.setFloat(3, Callback.getPayment());
+			ps2.setInt(4, Callback.getFuelAmount());
+			ps2.setInt(5, Callback.getGasStationID());
+			ps2.setInt(6, Callback.getFuelID());
+			ps2.setInt(6, UserRate);
+			AnswerResult = ps2.executeQuery();
+			
+			AnswerResult.next();
+			if(AnswerResult.isLast())
+				return new callbackSuccess("No discount, please pay full price.");
+						
+			CampaignDiscount.setCampaignID(AnswerResult.getInt("Campaign_ID"));
+			CampaignDiscount.setStartCampaignDate(AnswerResult.getString("Start_Campaign"));
+			CampaignDiscount.setEndCampaignDate(AnswerResult.getString("End_Campaign"));
+			CampaignDiscount.setCampaignDescription(AnswerResult.getString("Campaign_Description"));
+			CampaignDiscount.setCalculationMethod(AnswerResult.getString("Calculation_Method"));
+			CampaignDiscount.setDiscountPercentage(AnswerResult.getFloat("Discount_Percentage"));
+			CampaignDiscount.setPriceAfterDiscount(AnswerResult.getFloat("Price_After_Discount"));
+	
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");					// If query not succeed 
+		}
+			return CampaignDiscount;					// 	Query not succeed
+		
+	}	
+	private CallBack getCarWithNFC(callbackCar Callback){
+		// Set variables ---------------------------------------------------------
+
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Cars WHERE Car_Number = (?)");
+			
+		// Send query to DB  -----------------------------------------------------
+			
+				ps.setString(1, Callback.getCarNumber().trim());
+				AnswerResult = ps.executeQuery();
+			
+				AnswerResult.next();
+				Callback.setCarID(AnswerResult.getInt("Car_ID"));
+				Callback.setCarNumber(AnswerResult.getString("Car_Number"));
+				Callback.setCostingModelID(AnswerResult.getInt("Costing_Model_ID"));
+				Callback.setCustomerID(AnswerResult.getInt("Customers_ID"));
+				Callback.setFuelID(AnswerResult.getInt("Fuel_ID"));
+				Callback.setYesNoNFC(AnswerResult.getString("NFC"));	
+				
+				
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");					// If query not succeed 
+		}
+			return Callback;
+		
+	}
 /**
  * Variance
  */
