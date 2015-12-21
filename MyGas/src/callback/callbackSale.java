@@ -11,7 +11,7 @@ public class callbackSale extends CallBack {
 	private int SaleID;
 	private int FuelID;
 	private String SaleDate;
-	private int FuelAmount;
+	private float FuelAmount;
 	private float Payment;
 	private int CustomersID;
 //For home fuel sale
@@ -48,7 +48,7 @@ public class callbackSale extends CallBack {
 	public void setSaleDate(String saleDate) {
 		SaleDate = saleDate;
 	}
-	public int getFuelAmount() {
+	public float getFuelAmount() {
 		return FuelAmount;
 	}
 	public void setFuelAmount(int fuelAmount) {

@@ -1,4 +1,5 @@
 package server;
+import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -12,11 +13,16 @@ import callback.*;
 import common.MessageType;
 
 
-public class QueryIO  {
+public class QueryIO implements Runnable {
 	static Connection conn = null;
 	static Statement st = null;
 	private static ResultSet AnswerResult;
 	private static Object AnswerObject = null;
+	
+/**
+ * Thread values
+ */
+	callbackSale ThreadSale;
 
 	/**
 	 * This function create Driver connection
@@ -164,6 +170,11 @@ public class QueryIO  {
 			case setNewGasStationSale:
 				AnswerObject = setNewGasStationSale((callbackSale)SwitchCallback);				
 				break;
+				
+			case getFuelPerStation:
+				AnswerObject = getFuelPerStation((callbackStationFuels)SwitchCallback);				
+				break;
+				
 				
 		default:
 			AnswerObject = new callback_Error("Not a callback object, send legal callback or you don't fill 'WhatToDo'.");
@@ -1105,7 +1116,7 @@ public class QueryIO  {
 		// Send query to DB  -----------------------------------------------------
 			//Create new sale 			
 			ps1.setInt(1, Callback.getFuelID());
-			ps1.setInt(2, Callback.getFuelAmount());
+			ps1.setFloat(2, Callback.getFuelAmount());
 			ps1.setFloat(3, Callback.getPayment());
 			ps1.setInt(4, Callback.getCustomersID());
 			ps1.executeUpdate();
@@ -1368,22 +1379,20 @@ public class QueryIO  {
 			//Get customer rate			
 			ps1.setInt(1, Callback.getCustomersID());
 			AnswerResult = ps1.executeQuery();
-			AnswerResult.next();
-			if(!AnswerResult.isLast())
+			if(!AnswerResult.next())
 				UserRate = AnswerResult.getInt("Carrent_Rate");
 			
 			//Get best discount
 			ps2.setFloat(1, Callback.getPayment());
 			ps2.setFloat(2, Callback.getPayment());
 			ps2.setFloat(3, Callback.getPayment());
-			ps2.setInt(4, Callback.getFuelAmount());
+			ps2.setFloat(4, Callback.getFuelAmount());
 			ps2.setInt(5, Callback.getGasStationID());
 			ps2.setInt(6, Callback.getFuelID());
 			ps2.setInt(6, UserRate);
 			AnswerResult = ps2.executeQuery();
 			
-			AnswerResult.next();
-			if(AnswerResult.isLast())
+			if(!AnswerResult.next())
 				return new callbackSuccess("No discount, please pay full price.");
 						
 			CampaignDiscount.setCampaignID(AnswerResult.getInt("Campaign_ID"));
@@ -1414,16 +1423,15 @@ public class QueryIO  {
 				ps.setString(1, Callback.getCarNumber().trim());
 				AnswerResult = ps.executeQuery();
 			
-				AnswerResult.next();
+				if(!AnswerResult.next()) return new callback_Error("Car not exists.");
+				
 				Callback.setCarID(AnswerResult.getInt("Car_ID"));
 				Callback.setCarNumber(AnswerResult.getString("Car_Number"));
 				Callback.setCostingModelID(AnswerResult.getInt("Costing_Model_ID"));
 				Callback.setCustomerID(AnswerResult.getInt("Customers_ID"));
 				Callback.setFuelID(AnswerResult.getInt("Fuel_ID"));
 				Callback.setYesNoNFC(AnswerResult.getString("NFC"));	
-				
-				
-			
+	
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");					// If query not succeed 
@@ -1443,10 +1451,13 @@ public class QueryIO  {
 					"SELECT Sales_ID, MAX(Sale_Date) AS Sale_Date FROM Sales WHERE Customers_ID = (?)");										
 			PreparedStatement ps3=conn.prepareStatement(
 					"INSERT INTO Gas_Stations_Sales VALUES((?),(?),(?),(?),(?))");
+			PreparedStatement ps4=conn.prepareStatement(
+					"UPDATE Fuel_Per_Station SET Current_Amount=Current_Amount-(?) "+
+						"WHERE Gas_Station_ID=(?) AND Fuel_ID=(?)");
 		// Send query to DB  -----------------------------------------------------
 			//Create new sale 			
 			ps1.setInt(1, Callback.getFuelID());
-			ps1.setInt(2, Callback.getFuelAmount());
+			ps1.setFloat(2, Callback.getFuelAmount());
 			ps1.setFloat(3, Callback.getPayment());
 			ps1.setInt(4, Callback.getCustomersID());
 			ps1.executeUpdate();
@@ -1464,6 +1475,16 @@ public class QueryIO  {
 			ps3.setInt(5, Callback.getCampaignID());
 			ps3.executeUpdate();
 			
+			ps4.setFloat(1, Callback.getFuelAmount());
+			ps4.setInt(2, Callback.getGasStationID());
+			ps4.setInt(3, Callback.getFuelID());
+			ps4.executeUpdate();
+			
+			/*Initiate Thread*/
+			ThreadSale = Callback;
+			new Thread(this);
+			/*---------------*/
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
@@ -1471,7 +1492,41 @@ public class QueryIO  {
 			return new callbackSuccess("Add sale to DB.");					
 		
 	}
-	
+	private Vector<?> getFuelPerStation(callbackStationFuels Callback){
+		// Set variables ---------------------------------------------------------
+		callbackVector LocalVector = new callbackVector();	
+		
+		// Build query -----------------------------------------------------------
+		String SqlQuery = "SELECT * FROM Fuel_For_Gas_Station WHERE Gas_Station_ID=(?)";
+		
+		// Send query to DB and get result ---------------------------------------
+		try {
+			PreparedStatement ps1=conn.prepareStatement(SqlQuery);
+			ps1.setInt(1, Callback.getGasStationID());			
+			AnswerResult = ps1.executeQuery();
+			/**
+			 * Create the report callback structure
+			 */
+					while (AnswerResult.next()) { 					
+						callbackStationFuels callback_Obj = new callbackStationFuels();
+						callback_Obj.setGasStationID(AnswerResult.getInt("Gas_Station_ID"));
+						callback_Obj.setFuelID(AnswerResult.getInt("Fuel_ID"));
+						callback_Obj.setThresholdLimit(AnswerResult.getInt("Threshold_Limit"));
+						callback_Obj.setCurrentAmount(AnswerResult.getFloat("Current_Amount"));
+						callback_Obj.setCapacity(AnswerResult.getInt("Capacity"));
+						callback_Obj.setFuelDescription(AnswerResult.getString("Fuel_Description"));
+						callback_Obj.setMaxPrice(AnswerResult.getFloat("Max_Price"));
+						callback_Obj.setCurrentPrice(AnswerResult.getFloat("Current_Price"));
+						LocalVector.add(callback_Obj);
+					}
+				
+					} catch (SQLException e) {
+						LocalVector.add(new callback_Error("Problem has occurred, query not valid or not connection to DB."));					
+				e.printStackTrace();
+			}
+		return LocalVector;
+		
+	}
 /**
  * Variance
  */
@@ -1501,11 +1556,65 @@ public class QueryIO  {
 
 		// Send query to DB  -----------------------------------------------------
 			try {
-				st.executeUpdate("UPDATE Users SET Logged_In='No' where User_Type_Id<>2;");
+				st.executeUpdate("UPDATE Users SET Logged_In='No';");
 			} catch (SQLException e) {
 				
 				e.printStackTrace();
 			}	
+		
+	}
+	@Override
+	public void run() {
+		
+		callbackSale LocalSale = ThreadSale;
+		ResultSet LocalResult = AnswerResult;
+		int ThresholdLimit,Capacity;
+		float CurrentAmount;
+		try {
+			/*Prepare all queries*/
+			
+			PreparedStatement ps1=conn.prepareStatement(
+					"SELECT * FROM Fuel_Per_Station WHERE Gas_Station_ID=(?) AND Fuel_ID=(?)");
+			PreparedStatement ps2=conn.prepareStatement(
+					"SELECT Order_ID, Fuel_ID, Gas_Station_ID, Amount, MAX(Order_Date) AS Order_Date, Order_Confirmation, Showed_To_Manager "+
+					"FROM Fuel_Orders WHERE Fuel_ID = (?) AND Gas_Station_ID = (?) AND Order_Confirmation = 'Waiting'");
+			PreparedStatement ps3=conn.prepareStatement(
+					"INSERT INTO Fuel_Orders VALUES(NULL,(?),(?),(?),NOW(),DEFAULT,DEFAULT)");
+			PreparedStatement ps4=conn.prepareStatement(
+					"UPDATE Fuel_Orders SET Amount = (?) WHERE Gas_Station_ID=(?) AND Fuel_ID=(?)");
+			
+			
+			/*Check current fuel limit after sale*/
+			ps1.setInt(1, LocalSale.getGasStationID());
+			ps1.setInt(2, LocalSale.getFuelID());
+			LocalResult = ps1.executeQuery();
+			LocalResult.next();
+			ThresholdLimit = LocalResult.getInt("Threshold_Limit");
+			Capacity = LocalResult.getInt("Capacity");
+			CurrentAmount = LocalResult.getFloat("Current_Amount");
+			if(CurrentAmount <= ThresholdLimit){
+				ps2.setInt(1, LocalSale.getFuelID());
+				ps2.setInt(2, LocalSale.getGasStationID());
+				LocalResult = ps2.executeQuery();
+				/*Set new fuel order*/
+				if(!LocalResult.next()) {
+					ps3.setInt(1, LocalSale.getFuelID());
+					ps3.setInt(2, LocalSale.getGasStationID());
+					ps3.setFloat(3, Capacity - CurrentAmount);
+					ps3.executeUpdate();
+				}
+				/*Update exists order*/
+				else {
+					ps4.setFloat(1, Capacity - CurrentAmount);
+					ps4.setInt(2, LocalSale.getGasStationID());	
+					ps4.setInt(3, LocalSale.getFuelID());
+					ps4.executeUpdate();
+				}
+			}		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
