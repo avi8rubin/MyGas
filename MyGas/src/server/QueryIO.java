@@ -643,6 +643,7 @@ public class QueryIO  {
 		String[][] Data;
 		String[] Headers;
 		String[] Combo;
+		String[][] ComboWithIndex;
 		int ColNum;
 		int RowNum =0;
 		// Build query -----------------------------------------------------------
@@ -652,7 +653,7 @@ public class QueryIO  {
 		String SqlQuery2 = 	"SELECT Campaign_ID "+
 							",DATE_FORMAT(Start_Campaign,'%d/%m/%Y') AS Start_Campaign "+
 							",DATE_FORMAT(End_Campaign,'%d/%m/%Y') AS End_Campaign "+
-							",CONCAT(Campaign_Description,' (',CAST(DATE_FORMAT(Start_Campaign,'%d/%m/%Y') AS CHAR),' - ',CAST(DATE_FORMAT(End_Campaign,'%d/%m/%Y') AS CHAR),')') AS Campaign_Description "+
+							",Campaign_Description "+
 							"FROM All_Campaign_On_System "+
 							"WHERE IS_Active = 'Yes'";
 		
@@ -667,14 +668,17 @@ public class QueryIO  {
 			RowNum = AnswerResult.getRow();								//Get the number of rows   |
 			AnswerResult.beforeFirst();									//--------------------------
 			Combo = new String[RowNum];									//Set values for omboBox object
+			ComboWithIndex = new String[RowNum][2];
 			RowNum=0;
 			while (AnswerResult.next()) { 	
 				Combo[RowNum] = AnswerResult.getString("Campaign_Description");
+				ComboWithIndex[RowNum][0] = AnswerResult.getString("Campaign_Patterns_ID");
+				ComboWithIndex[RowNum][1] = AnswerResult.getString("Campaign_Description");
 				RowNum++;
 			}
 			RowNum=0;
 			Callback.setComboBoxStringArray(Combo);
-			
+			Callback.setVarianceMatrix(ComboWithIndex);
 			
 			//Active Campaign
 			AnswerResult = st.executeQuery(SqlQuery2);					//Send query to DB
