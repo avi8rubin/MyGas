@@ -8,16 +8,19 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
+import java.text.ParseException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import javax.swing.text.MaskFormatter;
 
 import callback.callbackBuffer;
 import callback.callbackUser;
@@ -51,7 +54,7 @@ public class StationsGUI extends abstractPanel_GUI{
 	private JLabel NFCLabel;
 	 
 	
-	private JTextField NFCTextField;
+	private JFormattedTextField NFCTextField;
 	private JTextField PasswordTextField = new JPasswordField();
 	private JTextField LiterLabel = new JTextField();
 	private JTextField PriceLabel = new JTextField();
@@ -79,7 +82,7 @@ public class StationsGUI extends abstractPanel_GUI{
 		StationUserLoginLayer.setName("StationUserLoginLayer");
 		CenterCardContainer.add(StationUserLoginLayer,"StationUserLoginLayer");
 		//MyGas Icon
-		JLabel MyGasIcon = new JLabel("CEO");
+		JLabel MyGasIcon = new JLabel("");
 		MyGasIcon.setIcon(new ImageIcon(Login_GUI.class.getResource("/images/Main_Login_empty.png")));
 		MyGasIcon.setBounds(343, 13, 294, 303);
 		StationUserLoginLayer.add(MyGasIcon);
@@ -87,7 +90,7 @@ public class StationsGUI extends abstractPanel_GUI{
 		//User Name Label
 		JLabel UserNameLabel = new JLabel("User Name:");
 		UserNameLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		UserNameLabel.setBounds(343, 310, 123, 35);
+		UserNameLabel.setBounds(343, 320, 123, 35);
 		StationUserLoginLayer.add(UserNameLabel);
 		
 		//Password Label
@@ -100,14 +103,14 @@ public class StationsGUI extends abstractPanel_GUI{
 		//User Name Text Field
 		UserNameTextField.setToolTipText("Enter User Name");
 		UserNameTextField.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		UserNameTextField.setBounds(478, 370, 165, 38);
+		UserNameTextField.setBounds(479, 320, 164, 39);
 		StationUserLoginLayer.add(UserNameTextField);
 		
 		//Password Text Field
 		LoginButton=new JButton();
 		PasswordTextField.setToolTipText("Enter Password");
 		PasswordTextField.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		PasswordTextField.setBounds(479, 310, 164, 39);
+		PasswordTextField.setBounds(478, 370, 165, 38);
 		StationUserLoginLayer.add(PasswordTextField);
 		LoginButton.setText("Login");
 		
@@ -118,9 +121,19 @@ public class StationsGUI extends abstractPanel_GUI{
 		StationUserLoginLayer.add(NFCLabel);
 		
 		//NFC TextField
-		NFCTextField=new JTextField();
+		MaskFormatter fmt = null;
+		try {
+			fmt = new MaskFormatter("**-***-**");
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		NFCTextField=new JFormattedTextField(fmt);
+		
 		NFCTextField.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		NFCTextField.setBounds(490, 430, 165, 38);
+		NFCTextField.setBounds(478, 430, 165, 38);
+		NFCTextField.setHorizontalAlignment(SwingConstants.CENTER);
+		NFCTextField.setValue("__-___-__");
 		StationUserLoginLayer.add(NFCTextField);
 		
 		// Login Button
@@ -365,11 +378,11 @@ public class StationsGUI extends abstractPanel_GUI{
 		return this.User;
 	}
 
-	public JTextField getNFCTextField() {
+	public JFormattedTextField getNFCTextField() {
 		return NFCTextField;
 	}
 
-	public void setNFCTextField(JTextField nFCTextField) {
+	public void setNFCTextField(JFormattedTextField nFCTextField) {
 		NFCTextField = nFCTextField;
 	}
 }
