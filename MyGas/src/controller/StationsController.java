@@ -358,15 +358,19 @@ public class StationsController extends Controller implements MouseListener,Runn
 	 */
 	private void UpdateStationInfo(){
 		/*-----send Station ID-------*/
+
 		StationCurrentFuels = new callbackStationFuels(MessageType.getFuelPerStation); //create new CallbackStationFuels
 		StationCurrentFuels.setGasStationID(StationCurrentUser.getUserID()); //Enter Station UserID
 		Server.handleMessageFromClient(StationCurrentFuels);	//send to DB
 			
-		/*------Waiting for callback ------*/
-		
-		 getCallBackFromBuffer();					//Get from the common buffer new callback
-		
-		
+		/*------get callback Fuels ------*/
+		FuelsInStation=(callbackVector)getCallBackFromBuffer();					//Get from the common buffer new callback
+		StationCurrentFuels=(callbackStationFuels)FuelsInStation.get(0);
+		System.out.println(StationCurrentFuels.getFuelID());
+		StationCurrentFuels=(callbackStationFuels)FuelsInStation.get(1);
+		System.out.println(StationCurrentFuels.getFuelID());
+		StationCurrentFuels=(callbackStationFuels)FuelsInStation.get(2);
+		System.out.println(StationCurrentFuels.getFuelID());
 		/*------Empty buffer ------*/
 		getCallBackFromBuffer();//Emptying buffer
 		
