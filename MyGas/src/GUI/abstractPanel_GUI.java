@@ -135,9 +135,11 @@ public class abstractPanel_GUI extends JFrame {
 		TopPanel.add(LogoutButton);
 		LogoutButton.addActionListener(new ActionListener() { 				//Add action listener
 			public void actionPerformed(ActionEvent e) {
-				User.setWhatToDo(MessageType.updateUserLogout);
-				Server.handleMessageFromClient(User);
-				getCallBackFromBuffer();									//Clean buffer
+				if(User.getUserTypeId()!=2){
+					User.setWhatToDo(MessageType.updateUserLogout);
+					Server.handleMessageFromClient(User);
+					getCallBackFromBuffer();									//Clean buffer
+				}
 				LoginScreen.setVisible(true);								//Go to login screen
 				ThisScreen.setVisible(false);								//Set invisible current screen
 			}

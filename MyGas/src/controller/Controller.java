@@ -3,6 +3,7 @@ package controller;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 
 import javax.swing.JPanel;
 
@@ -11,6 +12,7 @@ import GUI.abstractPanel_GUI;
 import callback.CallBack;
 import callback.callbackBuffer;
 import callback.callbackLostConnection;
+import callback.callbackVector;
 import callback.callback_Error;
 import client.Client;
 import common.Checks;
@@ -69,6 +71,25 @@ public abstract class Controller implements ActionListener{
 			new LoginController(frame,CommonBuffer);
 		}
 		return ReturnCallback; 	
+	}
+	
+	/**
+	 * @return The vector from the buffer
+	 */
+	protected Object getCallBackVectorFromBuffer(){
+		Object ReturnCallback;
+		while (CommonBuffer.getHaveNewCallBack() == false); 			//Waits for new callback		
+		ReturnCallback = CommonBuffer.getBufferCallBackVector();				//Get the new callback	
+		if (ReturnCallback instanceof callback_Error){				//If the query back empty or the entered values not illegal
+			System.out.println(((callback_Error) ReturnCallback).getErrorMassage());	
+		}	
+		if (ReturnCallback instanceof callbackLostConnection){
+			Login_GUI frame = new Login_GUI();
+			frame.GoToLoginWindow();
+			frame.NoConnectionToServer();
+			new LoginController(frame,CommonBuffer);
+		}
+		return (callbackVector) ReturnCallback; 	
 	}
 	
 	public abstract void actionPerformed(ActionEvent e);				//Buttons handlers

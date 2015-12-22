@@ -18,7 +18,7 @@ public class callbackBuffer extends CallBack{
 	 * @param NewCallBack
 	 * @return boolean - if success to set callback
 	 */
-	public boolean setNewCallBack(CallBack NewCallBack){
+	public boolean setNewCallBack(Object NewCallBack){
 		if (HaveNewCallBack == false){ 		//The buffer is empty
 			CallBack = NewCallBack;			//Set new callback
 			HaveNewCallBack = true;			//Set flag of new callback waiting
