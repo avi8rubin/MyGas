@@ -1497,13 +1497,20 @@ public class QueryIO implements Runnable {
 		callbackVector LocalVector = new callbackVector();	
 		
 		// Build query -----------------------------------------------------------
+		String SqlQueryGetID = "SELECT Gas_Station_ID FROM Gas_Stations WHERE User_Interface_ID=(?)";
 		String SqlQuery = "SELECT * FROM Fuel_For_Gas_Station WHERE Gas_Station_ID=(?)";
 		
 		// Send query to DB and get result ---------------------------------------
 		try {
-			PreparedStatement ps1=conn.prepareStatement(SqlQuery);
-			ps1.setInt(1, Callback.getGasStationID());			
+			PreparedStatement ps1=conn.prepareStatement(SqlQueryGetID);
+			ps1.setInt(1, Callback.getGasStationID());
 			AnswerResult = ps1.executeQuery();
+			AnswerResult.next();
+			
+			PreparedStatement ps2=conn.prepareStatement(SqlQuery);
+			ps2.setInt(1, AnswerResult.getInt("Gas_Station_ID"));			
+			AnswerResult = ps2.executeQuery();
+			
 			/**
 			 * Create the report callback structure
 			 */
@@ -1527,6 +1534,57 @@ public class QueryIO implements Runnable {
 		return LocalVector;
 		
 	}
+
+/**
+ * Station Manager
+ */
+	/*
+	private CallBack getStationSuppliesOrder(callbackStringArray Callback){
+		// Set variables ---------------------------------------------------------
+			int SaleID;
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps1=conn.prepareStatement(
+					"SELECT Order_ID, Fuel_ID, Gas_Station_ID, Amount, MAX(Order_Date) AS Order_Date, Order_Confirmation, Showed_To_Manager "+
+					"FROM Fuel_Orders WHERE Fuel_ID = (?) AND Gas_Station_ID = (?) AND Order_Confirmation = 'Waiting'");
+			
+		// Send query to DB  -----------------------------------------------------
+			//Create new sale 			
+			ps1.setInt(1, Callback.getFuelID());
+			ps1.setFloat(2, Callback.getFuelAmount());
+			ps1.setFloat(3, Callback.getPayment());
+			ps1.setInt(4, Callback.getCustomersID());
+			ps1.executeUpdate();
+			//Get SaleID
+			ps2.setInt(1, Callback.getCustomersID());
+			AnswerResult = ps2.executeQuery();
+			
+			AnswerResult.next();
+			SaleID = AnswerResult.getInt("Sales_ID");
+			//Enter new gas station sale
+			ps3.setInt(1, SaleID);
+			ps3.setString(2,Callback.getDriverName());
+			ps3.setInt(3, Callback.getCarID());
+			ps3.setInt(4, Callback.getGasStationID());
+			ps3.setInt(5, Callback.getCampaignID());
+			ps3.executeUpdate();
+			
+			ps4.setFloat(1, Callback.getFuelAmount());
+			ps4.setInt(2, Callback.getGasStationID());
+			ps4.setInt(3, Callback.getFuelID());
+			ps4.executeUpdate();
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
+		}
+			return new callbackSuccess("Add sale to DB.");					
+		
+	}*/
+	
+	
 /**
  * Variance
  */
@@ -1556,7 +1614,7 @@ public class QueryIO implements Runnable {
 
 		// Send query to DB  -----------------------------------------------------
 			try {
-				st.executeUpdate("UPDATE Users SET Logged_In='No';");
+				st.executeUpdate("UPDATE Users SET Logged_In='No' WHERE User_Type_Id<>2;");
 			} catch (SQLException e) {
 				
 				e.printStackTrace();

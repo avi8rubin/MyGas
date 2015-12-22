@@ -55,7 +55,7 @@ public abstract class Controller implements ActionListener{
 	/**
 	 * @return The callback from the buffer
 	 */
-	protected CallBack getCallBackFromBuffer(){
+	protected Object getCallBackFromBuffer(){
 		CallBack ReturnCallback;
 		while (CommonBuffer.getHaveNewCallBack() == false); 			//Waits for new callback		
 		ReturnCallback = CommonBuffer.getBufferCallBack();				//Get the new callback	
