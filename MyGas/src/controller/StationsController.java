@@ -7,6 +7,7 @@ import java.awt.event.MouseListener;
 import java.text.DecimalFormat;
 
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
@@ -31,6 +32,8 @@ public class StationsController extends Controller implements MouseListener,Runn
 		private JButton MainLogoutButton;
 		private JButton StartFuelingButton;
 		private JButton Paybutton;
+		
+		private JFormattedTextField NFCNumber;
 		
 		private static callbackUser EnteredUser;
 		private static callbackUser StationCurrentUser;				// Current user details
@@ -88,7 +91,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		LiterLabel=GuiScreen.getLiterLabel();
 		PriceLabel=GuiScreen.getPriceLabel();
 		StationCurrentUser=GuiScreen.getStationUser();
-		
+		NFCNumber=GuiScreen.getNFCTextField();
 		//ContainerCard2=(CardLayout)(CenterCardContainer.getLayout());
 		/*-----Hand gui Icons-------*/
 		BlueHand=GuiScreen.getBlueHand();
@@ -148,6 +151,12 @@ public class StationsController extends Controller implements MouseListener,Runn
 			/*------ Read fields from gui ------*/
 			EnteredUser = new callbackUser(MessageType.getCheckExistsUserPass,StationUserLoginGui.getUserName(),StationUserLoginGui.getPassword());
 			String Password = StationUserLoginGui.getPassword();
+			
+			/*------Read NFC Number -*/
+			if(! NFCNumber.getText().equals("") ) //if nfc is not empty
+			{
+				checks.isNumeric(NFCNumber.getText());
+			}
 			
 			/*------Send user name and password query ------*/
 			Server.handleMessageFromClient(EnteredUser);					//Send query to DB			
@@ -364,7 +373,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		Server.handleMessageFromClient(StationCurrentFuels);	//send to DB
 			
 		/*------get callback Fuels ------*/
-		FuelsInStation=(callbackVector)getCallBackFromBuffer();					//Get from the common buffer new callback
+		FuelsInStation=(callbackVector)getCallBackVectorFromBuffer();					//Get from the common buffer new callback
 		StationCurrentFuels=(callbackStationFuels)FuelsInStation.get(0);
 		System.out.println(StationCurrentFuels.getFuelID());
 		StationCurrentFuels=(callbackStationFuels)FuelsInStation.get(1);
