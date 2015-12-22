@@ -6,11 +6,14 @@ import java.awt.event.ActionEvent;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JTextField;
 
 import GUI.CEOGUI;
 import GUI.MarketingRepresentativeGUI;
+import callback.CallBack;
 import callback.callbackBuffer;
-import callback.callbackUser;
+import callback.callbackCustomer;
+import callback.callback_Error;
 import client.Client;
 import common.Checks;
 import common.MessageType;
@@ -23,6 +26,7 @@ public class MarketingRepresentativeController extends Controller{
 	private CardLayout ContainerCardCenter;
 	private CardLayout ContainerCardLeft;
 	private MarketingRepresentativeGUI GuiScreen;
+	callbackCustomer customerCallback;
 	
 	//Top Layer Components	
 	private JButton CreateNewCustomerAccountButton;
@@ -36,11 +40,16 @@ public class MarketingRepresentativeController extends Controller{
 	//CreateUserLayer Center Layer Components
 	private JLabel PasswordValidationFailedMessageLabel;
 	private JLabel MissedFieldsMessageLabel;
+	private JLabel UserNameExistMesaageLabel;
 	private JButton NextButton;	
 	
 	// AddPersonalDetails Center Layer Components	
 	private JButton CreateButton;
-	
+	private JLabel InvalidEmailMesaageLabel;
+	private JTextField EmailTextField;
+	private JLabel InvalidPhoneMesaageLabel;
+	private JLabel InvalidCreditCardMesaageLabel;
+	private JLabel MissedFieldsMessage;
 	
 	
 	public MarketingRepresentativeController(Client Server, callbackBuffer CommonBuffer, MarketingRepresentativeGUI GuiScreen) {
@@ -92,13 +101,11 @@ public class MarketingRepresentativeController extends Controller{
 
 		if(e.getActionCommand().equals("Next")){
 			HandleNextPressed();
-														
-			// HAVE TO ADD HANDLER
 		}		
 
 		if(e.getActionCommand().equals("Create")){
-			ContainerCardCenter.show(CenterCardContainer, "EmptyCenterPanel");											
-			// HAVE TO ADD HANDLER
+			HandleCreatePressed();
+			//ContainerCardCenter.show(CenterCardContainer, "EmptyCenterPanel");											
 		}			
 		
 
@@ -123,36 +130,83 @@ public class MarketingRepresentativeController extends Controller{
 		
 	}
 	
-
 	private void HandleNextPressed(){
 		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
 		PasswordValidationFailedMessageLabel = GuiScreen.getPasswordValidationFailedMessageLabel();
 		MissedFieldsMessageLabel = GuiScreen.getMissedFieldsMessageLabel();
+		UserNameExistMesaageLabel = GuiScreen.getUserNameExistMesaageLabel();
+		CallBack LocalUserCallBack = null;
 		
+		// Show/ don't show PasswordValidationFailedMessageLabel after isValidPassword check
 		if (!Checks.isValidPassword(GuiScreen.getPasswordPasswordField().getText(), GuiScreen.getPasswordValidatePasswordField().getText()))
 			PasswordValidationFailedMessageLabel.setVisible(true);
 		else PasswordValidationFailedMessageLabel.setVisible(false);
 		
+		// Show/ don't show MissedFieldsMessageLabel after isAllFieldsFilled check
 		if (!Checks.isAllFieldsFilled(GuiScreen.getPasswordPasswordField().getText(), GuiScreen.getPasswordValidatePasswordField().getText(), GuiScreen.getUserNametextField().getText()))
 				MissedFieldsMessageLabel.setVisible(true);
 		else MissedFieldsMessageLabel.setVisible(false);
-
-		if (!PasswordValidationFailedMessageLabel.isVisible()&&!MissedFieldsMessageLabel.isVisible())
-		{
-//			Server.handleMessageFromClient(new callbackUser(MessageType.getCheckExistsUserName, GuiScreen.getUserNametextField().getText(),""));
-//			if ( !((callbackUser)getCallBackFromBuffer()).getIsUserNameExist() )
-				ContainerCardCenter.show(CenterCardContainer, "AddPersonalDetailsCenter");
-		}
-			
-		//ContainerCardCenter.show(CenterCardContainer, "AddPersonalDetailsCenter");				//The AddPersonalDetailsCenter layer will be display
-
 		
+		// If the input OK - checking if UserName exist in DB
+		if (!PasswordValidationFailedMessageLabel.isVisible()&&!MissedFieldsMessageLabel.isVisible())
+			ContainerCardCenter.show(CenterCardContainer, "AddPersonalDetailsCenter");
+			
+//			Server.handleMessageFromClient(new callbackCustomer(MessageType.getIsUserNameExists, GuiScreen.getUserNametextField().getText(),GuiScreen.getPasswordPasswordField().getText()));
+//			LocalUserCallBack = getCallBackFromBuffer();
+//			if (LocalUserCallBack instanceof callback_Error) // Show UserNameExistMesaageLabel after UserName exist in DB
+//				UserNameExistMesaageLabel.setVisible(true);
+//			else 
+//			{
+//				UserNameExistMesaageLabel.setVisible(false);
+//				customerCallback= (callbackCustomer)LocalUserCallBack;
+//				
+//			}
+				
+				
+		//ContainerCardCenter.show(CenterCardContainer, "AddPersonalDetailsCenter");				//The AddPersonalDetailsCenter layer will be display
+	
 		//		Server.handleMessageFromClient(new callbackStringArray(MessageType.getWaitingTariff));
 //		callbackStringArray TariffUpdateTable = (callbackStringArray) getCallBackFromBuffer();		
 //		GuiScreen.setTariffUpdateTable(new TableModel(TariffUpdateTable.getData(), TariffUpdateTable.getColHeaders()));		
 			
 	}
-	
+
+	private void HandleCreatePressed(){
+		
+		InvalidEmailMesaageLabel = GuiScreen.getInvalidEmailMesaageLabel();
+		EmailTextField = GuiScreen.getEmailTextField();
+		InvalidPhoneMesaageLabel= GuiScreen.getInvalidPhoneMesaageLabel();
+		InvalidCreditCardMesaageLabel =  GuiScreen.getInvalidCreditCardMesaageLabel();
+		MissedFieldsMessage = GuiScreen.getMissedFieldsMessage();
+		//String check;
+		
+		// Show/ don't show InvalidEmailMesaageLabel after isValidEmailAddress check		
+		if (!Checks.isValidEmailAddress(GuiScreen.getEmailTextField().getText()))
+			InvalidEmailMesaageLabel.setVisible(true);
+		else InvalidEmailMesaageLabel.setVisible(false);
+		
+		// Show/ don't show InvalidPhoneMesaageLabel after phone number check	
+		if (String.valueOf(GuiScreen.getPhoneFormattedTextField().getText().trim().length()).equals("1")) InvalidPhoneMesaageLabel.setVisible(true);
+		else InvalidPhoneMesaageLabel.setVisible(false);
+
+//		EmailTextField.setText(String.valueOf(GuiScreen.getCreditCardFormattedTextField().getText().trim().length()));
+//		EmailTextField.setText(String.valueOf(GuiScreen.getCreditCardFormattedTextField().getText()));
+		
+		// Show/ don't show InvalidCreditCardMesaageLabel after credit card number check		
+		if (!String.valueOf(GuiScreen.getCreditCardFormattedTextField().getText().trim().length()).equals("19") && !GuiScreen.getCreditCardFormattedTextField().getText().equals("    -    -    -    ") ) 
+			InvalidCreditCardMesaageLabel.setVisible(true);
+		else InvalidCreditCardMesaageLabel.setVisible(false);		
+		
+		// Show/ don't show MissedFieldsMessage after checking that all fields filled
+		if ( !checks.isAllFieldsFilled(GuiScreen.getCustomerIDTextField().getText(), GuiScreen.getFirstNameTextField().getText(), GuiScreen.getLastNameTextField().getText()) ||
+				InvalidEmailMesaageLabel.isVisible() || InvalidPhoneMesaageLabel.isVisible() || InvalidCreditCardMesaageLabel.isVisible() ||
+				( !GuiScreen.getPrivateCustomerRadioButton().isSelected() && !GuiScreen.getCommercialCustomerRadioButton().isSelected() )   )
+			MissedFieldsMessage.setVisible(true);
+		else MissedFieldsMessage.setVisible(false);
+			
+		
+		
+	}
 	
 
 }

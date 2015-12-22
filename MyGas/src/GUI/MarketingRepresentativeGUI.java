@@ -83,6 +83,8 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	private JComboBox PurchasePlanComboBox;
 	private JButton CreateButton;
 	private JLabel MissedFieldsMessage;
+	private JLabel InvalidPhoneMesaageLabel;
+	private JLabel InvalidCreditCardMesaageLabel;
 
 	public MarketingRepresentativeGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer,
 			Login_GUI LoginScreen) {
@@ -205,9 +207,61 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		return MissedFieldsMessageLabel;
 	}		
 	
+	public JLabel getMissedFieldsMessage() {
+		return MissedFieldsMessage;
+	}		
+	
+	public JLabel getUserNameExistMesaageLabel() {
+		return UserNameExistMesaageLabel;
+	}	
+	
 	public JButton getCreateButton(){
 		return CreateButton;
 	}		
+	
+	public JTextField getCustomerIDTextField(){
+		return CustomerIDTextField;
+	}
+	
+	public JTextField getFirstNameTextField(){
+		return FirstNameTextField;
+	}
+	
+	public JTextField getLastNameTextField(){
+		return LastNameTextField;
+	}
+	
+	public JLabel getInvalidEmailMesaageLabel() {
+		return InvalidEmailMesaageLabel;
+	}	
+	
+	public JTextField getEmailTextField(){
+		return EmailTextField;
+	}
+	
+	public JFormattedTextField getPhoneFormattedTextField(){
+		return PhoneFormattedTextField;
+	}
+	
+	public JFormattedTextField getCreditCardFormattedTextField(){
+		return CreditCardFormattedTextField;
+	}
+	
+	public JLabel getInvalidPhoneMesaageLabel() {
+		return InvalidPhoneMesaageLabel;
+	}	
+	
+	public JLabel getInvalidCreditCardMesaageLabel() {
+		return InvalidCreditCardMesaageLabel;
+	}	
+	
+	public JRadioButton getPrivateCustomerRadioButton() {
+		return PrivateCustomerRadioButton;
+	}	
+	
+	public JRadioButton getCommercialCustomerRadioButton() {
+		return CommercialCustomerRadioButton;
+	}	
 	
 	public void CreateNewUserCenterLayer()
 	{
@@ -347,17 +401,23 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		CustomerIDExistMesaageLabel = new JLabel("Customer ID already exist in system");
 		CustomerIDExistMesaageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
 		CustomerIDExistMesaageLabel.setEnabled(false);
-		CustomerIDExistMesaageLabel.setBounds(403, 41, 340, 46);	
+		CustomerIDExistMesaageLabel.setBounds(403, 41, 340, 46);
+		CustomerIDExistMesaageLabel.setVisible(false);
+		AddPersonalDetails.add(CustomerIDExistMesaageLabel);
 
 		EmailExistMesaageLabel = new JLabel("Email already exist in system");
 		EmailExistMesaageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
 		EmailExistMesaageLabel.setEnabled(false);
 		EmailExistMesaageLabel.setBounds(497, 211, 278, 46);
+		EmailExistMesaageLabel.setVisible(false);
+		AddPersonalDetails.add(EmailExistMesaageLabel);
 		
 		InvalidEmailMesaageLabel = new JLabel("Invalid email");
 		InvalidEmailMesaageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
 		InvalidEmailMesaageLabel.setEnabled(false);
 		InvalidEmailMesaageLabel.setBounds(497, 211, 278, 46);
+		InvalidEmailMesaageLabel.setVisible(false);
+		AddPersonalDetails.add(InvalidEmailMesaageLabel);
 		
 		CustomerIDTextField = new JTextField();
 		CustomerIDTextField.setFont(new Font("Tahoma", Font.PLAIN, 17));
@@ -377,6 +437,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		AddPersonalDetails.add(LastNameTextField);
 		
 		EmailTextField = new JTextField();
+		EmailTextField.setToolTipText("Email have to include @.\r\nFor example: david@gmail.com");
 		EmailTextField.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		EmailTextField.setBounds(179, 227, 295, 27);
 		AddPersonalDetails.add(EmailTextField);
@@ -394,6 +455,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		
         PhoneFormattedTextField = new JFormattedTextField(PhoneMask);
 		PhoneFormattedTextField.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		PhoneFormattedTextField.setToolTipText("Phone have to written with 10 digits. For example: 050-1234567");
 		PhoneFormattedTextField.setBounds(179, 280, 125, 27);
 		AddPersonalDetails.add(PhoneFormattedTextField);
 		
@@ -410,6 +472,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 
         CreditCardFormattedTextField = new JFormattedTextField(CreditCardMask);
 		CreditCardFormattedTextField.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		CreditCardFormattedTextField.setToolTipText("Credit Card have to written with 16 digits. For example: 1234-5678-9876-4321");
 		CreditCardFormattedTextField.setBounds(179, 334, 241, 27);
 		AddPersonalDetails.add(CreditCardFormattedTextField);       
         
@@ -440,7 +503,24 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		MissedFieldsMessage = new JLabel("There is one or more missed fields");
 		MissedFieldsMessage.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
 		MissedFieldsMessage.setEnabled(false);
-		MissedFieldsMessage.setBounds(320, 493, 348, 46);	
+		MissedFieldsMessage.setBounds(320, 493, 348, 46);
+		MissedFieldsMessage.setVisible(false);
+		AddPersonalDetails.add(MissedFieldsMessage);
+		
+		InvalidPhoneMesaageLabel = new JLabel("Invalid phone number inserted");
+		InvalidPhoneMesaageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
+		InvalidPhoneMesaageLabel.setEnabled(false);
+		InvalidPhoneMesaageLabel.setBounds(340, 267, 278, 46);
+		InvalidPhoneMesaageLabel.setVisible(false);
+		AddPersonalDetails.add(InvalidPhoneMesaageLabel);
+		
+		InvalidCreditCardMesaageLabel = new JLabel("Invalid credit card number inserted");
+		InvalidCreditCardMesaageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
+		InvalidCreditCardMesaageLabel.setEnabled(false);
+		InvalidCreditCardMesaageLabel.setBounds(444, 324, 331, 46);
+		InvalidCreditCardMesaageLabel.setVisible(false);
+		AddPersonalDetails.add(InvalidCreditCardMesaageLabel);
+		
 			
 	}
 
