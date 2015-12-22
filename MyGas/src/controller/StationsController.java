@@ -185,7 +185,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 						logoutflag=true;								//logout will return to this screen
 						MainLogoutButton.setEnabled(false);
 						StationUserLoginGui.setlogoutvisable(true);
-						//UpdateStationInfo();
+						UpdateStationInfo();
 					}
 				}
 				else StationUserLoginGui.IllegalPassword();							//Display password error message
@@ -381,7 +381,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		StationCurrentFuels=(callbackStationFuels)FuelsInStation.get(2);
 		System.out.println(StationCurrentFuels.getFuelID());
 		/*------Empty buffer ------*/
-		getCallBackFromBuffer();//Emptying buffer
+		//getCallBackFromBuffer();//Emptying buffer
 		
 		
 		
