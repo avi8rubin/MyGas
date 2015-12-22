@@ -151,6 +151,7 @@ public class StationsGUI extends abstractPanel_GUI{
 		LiterLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		LiterLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		LiterLabel.setText("0");
+		LiterLabel.setEditable(false);
 		LiterLabel.setBounds(171, 218-70, 117, 40);
 		left_car.add(LiterLabel);
 		LiterLabel.setColumns(10);
@@ -162,6 +163,7 @@ public class StationsGUI extends abstractPanel_GUI{
 		
 		
 		PriceLabel.setText("0");
+		PriceLabel.setEditable(false);
 		PriceLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		PriceLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		PriceLabel.setColumns(10);
@@ -223,7 +225,7 @@ public class StationsGUI extends abstractPanel_GUI{
 		GasFuelingCenterPanel.add(GreenHandFlip);
 		
 		GasStationHome = new JLabel("");
-		GasStationHome.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Gas_Station_Empty.png")));
+		GasStationHome.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Gas_Station_Empty_scoter.png")));
 		GasStationHome.setBounds(477, 0, 444, 508);
 		GasFuelingCenterPanel.add(GasStationHome);
 		

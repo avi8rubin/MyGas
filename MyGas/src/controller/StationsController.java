@@ -4,7 +4,6 @@ import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.beans.FeatureDescriptor;
 import java.text.DecimalFormat;
 
 import javax.swing.JButton;
@@ -23,13 +22,15 @@ public class StationsController extends Controller implements MouseListener,Runn
 
 		private callbackBuffer CommonBuffer = null;
 		private static callbackUser EnteredUser;
-		private float Liter=0;
+		private float Liter=0,Price=0,Fuel_95_Price,Fuel_Scoter_Price,Fuel_Diesel_Price;
 		
 		private JButton LoginButton;
 		private JButton UserLogoutButton;
 		private JButton MainLogoutButton;
 		private JButton StartFuelingButton;
 		private JButton Paybutton;
+		
+		private static callbackUser User;				// Current user details
 		
 		DecimalFormat myFormatter = new DecimalFormat("###.##");
 		
@@ -44,22 +45,22 @@ public class StationsController extends Controller implements MouseListener,Runn
 		private JLabel DiscountTextBox;
 		private StationsGUI StationUserLoginGui;
 		
+		//private CardLayout ContainerCard2=(CardLayout)(CenterCardContainer.getLayout()),ContainerCard1;
 		private JTextField LiterLabel;
 		private JTextField PriceLabel;
 		
-		private CardLayout ContainerCardLeft;
-		private CardLayout ContainerCardCenter;
-		
-		private boolean ConnectionFlag = false;
 		private boolean logoutflag;
 		private boolean UserIsFueling =false;  //if hand in the car
 		private boolean UserNeedToPay=false;   //if was start pumping
 		private boolean PressStartStopButtonFlag=true;      //   true = start        false=stop
 		private boolean Fuel_95=false;  //RED
-		private boolean Fuel_98=false; //Green
+		private boolean Fuel_Scoter=false; //Green
 		private boolean Fuel_Diesel=false; //Blue
+		private boolean Fuel95IsExist,FuelScoterIsExist,FuelDieselIsExist;
+
 		
-		public StationsController(Client Server, callbackBuffer CommonBuffer, StationsGUI GuiScreen) {
+		
+	public StationsController(Client Server, callbackBuffer CommonBuffer, StationsGUI GuiScreen) {
 		super(Server, CommonBuffer, GuiScreen);
 		this.StationUserLoginGui = GuiScreen;
 		StationUserLoginGui.setVisible(true);
@@ -78,6 +79,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		LiterLabel=GuiScreen.getLiterLabel();
 		PriceLabel=GuiScreen.getPriceLabel();
 		
+		//ContainerCard2=(CardLayout)(CenterCardContainer.getLayout());
 		/*-----Hand gui Icons-------*/
 		BlueHand=GuiScreen.getBlueHand();
 		BlueHandFlip=GuiScreen.getBlueHandFlip();
@@ -101,10 +103,10 @@ public class StationsController extends Controller implements MouseListener,Runn
 		LoginButton = GuiScreen.getLoginButton(); 					//Login Button on the main GUI
 		LoginButton.addActionListener(this);							//Add action listener
 		
-		ContainerCardLeft=(CardLayout)(LeftCardContainer.getLayout());
-		ContainerCardCenter=(CardLayout)(CenterCardContainer.getLayout());
-		ContainerCardLeft.show(LeftCardContainer,"EmptyLeftPanel");
-		ContainerCardCenter.show(CenterCardContainer,"StationUserLoginLayer");
+		
+		ContainerCard=(CardLayout)(CenterCardContainer.getLayout());
+		//ContainerCard1.show(LeftCardContainer,"EmptyLeftPanel");
+		ContainerCard.show(CenterCardContainer,"StationUserLoginLayer");
 		
 		}
 	/**
@@ -164,6 +166,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 						logoutflag=true;								//logout will return to this screen
 						MainLogoutButton.setEnabled(false);
 						StationUserLoginGui.setlogoutvisable(true);
+						UpdateStationInfo();
 					}
 				}
 				else StationUserLoginGui.IllegalPassword();							//Display password error message
@@ -173,19 +176,28 @@ public class StationsController extends Controller implements MouseListener,Runn
 	 * This function switch left window
 	 */
 	private void GasStationSwitchLeftPanel(){
-	ContainerCardLeft.show(LeftCardContainer, "left_panel");
-	ContainerCardCenter.show(CenterCardContainer,"GasFuelingCenterPanel");
+		ContainerCard=(CardLayout)(LeftCardContainer.getLayout());
+		ContainerCard.show(LeftCardContainer, "left_panel");
+		ContainerCard=(CardLayout)(CenterCardContainer.getLayout());
+		ContainerCard.show(CenterCardContainer,"GasFuelingCenterPanel");
 	}
 	/**
-	 * This function handel logout window
+	 * This function handel logout window for User
 	 */
 	private void LogoutButtonHandler(){
-		if(logoutflag){
+		if(logoutflag){ // if User can logout
 			logoutflag=false;
-			ContainerCardLeft.show(LeftCardContainer,"EmptyLeftPanel");
-			ContainerCardCenter.show(CenterCardContainer,"StationUserLoginLayer");
+			/* restore to Enter to Station Login*/
+			ContainerCard=(CardLayout)(LeftCardContainer.getLayout());
+			ContainerCard.show(LeftCardContainer,"EmptyLeftPanel");
+			ContainerCard=(CardLayout)(CenterCardContainer.getLayout());
+			ContainerCard.show(CenterCardContainer,"StationUserLoginLayer");
 			StationUserLoginGui.setlogoutvisable(false);
-			MainLogoutButton.setEnabled(true);
+			MainLogoutButton.setEnabled(true); // Enable to logout from station
+			EnteredUser.setWhatToDo(MessageType.updateUserLogout);
+			Server.handleMessageFromClient(EnteredUser);
+			getCallBackFromBuffer();									//Clean buffer
+			
 		}
 	}
 	
@@ -225,7 +237,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		if(e.getComponent()==GreenHand){
 			if(!UserIsFueling){  //if user is not fuling
 				UserIsFueling=true;
-				Fuel_98=true;
+				Fuel_Scoter=true;
 				this.Liter=0;
 				StartFuelingButton.setEnabled(true);
 				StationUserLoginGui.GreenPumpShow();
@@ -285,7 +297,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 				StationUserLoginGui.RedPumpNotShow();//return the hand to the right palce
 				UserIsFueling=false;
 			}
-			if(Fuel_98){
+			if(Fuel_Scoter){
 				StationUserLoginGui.GreenPumpNotShow();//return the hand to the right palce
 				UserIsFueling=false;
 			}
@@ -303,8 +315,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 	}
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -329,6 +340,13 @@ public class StationsController extends Controller implements MouseListener,Runn
                 e1.printStackTrace();
             }
 		}
+		
+	}
+	/**
+	 * Update Station with the current fuels types, fuel price
+	 * 
+	 */
+	public void UpdateStationInfo(){
 		
 	}
 }
