@@ -10,6 +10,7 @@ import java.util.Vector;
 import javax.swing.text.BadLocationException;
 import GUI.Server_GUI;
 import callback.CallBack;
+import callback.callbackVector;
 import callback.callback_Error;
 import common.MessageType;
 import ocsf.server.*;
@@ -64,11 +65,14 @@ public class EchoServer extends AbstractServer
 	  cal = Calendar.getInstance();								//Current time  
 	  Object Answer;
 	  if (msg instanceof CallBack){
+		  printToConsol(dateFormat.format(cal.getTime())+": Client "+client+", Send: "+((CallBack)msg).getWhatToDo().toString());
 		  Answer = QueryAsk.CallbackResolver(msg);
 		  
 		  /*------ Print to console panel -------*/
-		  printToConsol(dateFormat.format(cal.getTime())+": Client "+client+", Send: "+((CallBack)msg).getWhatToDo().toString());
-		  printToConsol(dateFormat.format(cal.getTime())+": Server answer: "+((CallBack)Answer).getClass().toString());
+		  if (Answer instanceof CallBack)
+			  printToConsol(dateFormat.format(cal.getTime())+": Server answer: "+((CallBack)Answer).getClass().toString());
+		  if (Answer instanceof Vector)
+			  printToConsol(dateFormat.format(cal.getTime())+": Server answer: "+((callbackVector)Answer).getClass().toString());
 	  }
 	  else if(msg instanceof Vector){
 		  Answer = QueryAsk.VectorResolver(msg);

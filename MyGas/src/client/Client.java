@@ -47,14 +47,15 @@ public Client(String host, int port, callbackBuffer CommonBuffer) throws IOExcep
 */
 public void handleMessageFromServer(Object msg) 
 {	  
-		if (msg instanceof Vector){
-			Vector<?> NewCallBack = (Vector<?>) msg; 							// Casting to Vector object that received from server
-			//CallBack Message = (CallBack) NewCallBack.get(0);					// Casting to CallBack object
-			while (CommonBuffer.setNewCallBack(NewCallBack) == false);				// Set the new callback
-		}
+
 		if ( msg instanceof CallBack){
 			CallBack Message = (CallBack) msg;
 			while (CommonBuffer.setNewCallBack(Message) == false);				// Set the new callback
+		}
+		else if (msg instanceof Vector){
+			Vector<?> NewCallBack = (Vector<?>) msg; 							// Casting to Vector object that received from server
+			//CallBack Message = (CallBack) NewCallBack.get(0);					// Casting to CallBack object
+			while (CommonBuffer.setNewCallBack(NewCallBack) == false);				// Set the new callback
 		}
 		  BufferInUse = true;													// Release client to read callback
 }	
