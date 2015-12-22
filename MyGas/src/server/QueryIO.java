@@ -1571,6 +1571,7 @@ public class QueryIO implements Runnable {
 		int ThresholdLimit,Capacity;
 		float CurrentAmount;
 		try {
+			Thread.sleep(20);						//Let the result back to the client
 			/*Prepare all queries*/
 			
 			PreparedStatement ps1=conn.prepareStatement(
@@ -1609,9 +1610,9 @@ public class QueryIO implements Runnable {
 					ps4.setInt(2, LocalSale.getGasStationID());	
 					ps4.setInt(3, LocalSale.getFuelID());
 					ps4.executeUpdate();
-				}
+				}		
 			}		
-		} catch (SQLException e) {
+		} catch (SQLException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

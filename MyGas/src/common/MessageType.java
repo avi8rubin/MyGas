@@ -40,6 +40,8 @@ public enum MessageType {
 	getSaleDiscount,
 	getCarWithNFC,
 	setNewGasStationSale,
-	getFuelPerStation
+	getFuelPerStation,
+/*Station Manager*/
+	getStationSuppliesOrder
 
 }

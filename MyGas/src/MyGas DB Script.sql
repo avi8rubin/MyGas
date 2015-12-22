@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS Fuel_Orders (
 	Order_ID INTEGER NOT NULL AUTO_INCREMENT,
     Fuel_ID INTEGER NOT NULL,
     Gas_Station_ID INTEGER NOT NULL,
-    Amount INTEGER,
+    Amount FLOAT,
     Order_Date DATETIME NOT NULL,
     Order_Confirmation ENUM('Yes','No','Waiting') DEFAULT 'Waiting',
     Showed_To_Manager ENUM('Yes','No') DEFAULT 'No',
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS Fuel_Per_Station (
 	Gas_Station_ID INTEGER,
     Fuel_ID INTEGER,
     Threshold_Limit INTEGER,
-	Current_Amount INTEGER,
+	Current_Amount FLOAT,
     Capacity INTEGER NOT NULL,   
     PRIMARY KEY (Fuel_ID,Gas_Station_ID),
     FOREIGN KEY (Fuel_ID) references Fuels(Fuel_ID),
@@ -233,7 +233,7 @@ CREATE TABLE IF NOT EXISTS Sales (
 	Sales_ID INTEGER NOT NULL AUTO_INCREMENT,
     Fuel_ID INTEGER,
     Sale_Date DATETIME NOT NULL DEFAULT NOW(),
-	Fuel_Amount INTEGER,
+	Fuel_Amount FLOAT,
     Payment FLOAT,
     Customers_ID INTEGER,
     PRIMARY KEY (Sales_ID),
@@ -845,4 +845,17 @@ LEFT OUTER JOIN Campaigns_Gas_Type G ON A.Campaign_Patterns_ID=G.Campaign_Patter
 LEFT OUTER JOIN Fuels I ON I.Fuel_ID=G.Fuel_ID
 LEFT OUTER JOIN Campaigns_Hours J ON A.Campaign_Patterns_ID=J.Campaign_Patterns_ID
 LEFT OUTER JOIN Campaigns_Rate K ON A.Campaign_Patterns_ID=K.Campaign_Patterns_ID
+;
+
+CREATE VIEW Fuel_For_Gas_Station AS
+SELECT A.Gas_Station_ID
+, A.Fuel_ID
+, A.Threshold_Limit
+, A.Current_Amount
+, A.Capacity
+, B.Fuel_Description
+, B.Max_Price
+, B.Current_Price
+FROM Fuel_Per_Station A
+LEFT OUTER JOIN Fuels B ON A.Fuel_ID=B.Fuel_ID
 ;
