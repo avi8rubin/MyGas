@@ -47,7 +47,7 @@ public class abstractPanel_GUI extends JFrame {
 	/**
 	 * The login user
 	 */
-	private static callbackUser User;				// Current user details
+	protected static callbackUser User;				// Current user details
 	/**
 	 * Gui screens
 	 */
