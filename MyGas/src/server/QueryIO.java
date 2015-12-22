@@ -174,6 +174,11 @@ public class QueryIO implements Runnable {
 			case getFuelPerStation:
 				AnswerObject = getFuelPerStation((callbackStationFuels)SwitchCallback);				
 				break;
+
+/*Station Manager*/
+			case getStationSuppliesOrder:
+				AnswerObject = getStationSuppliesOrder((callbackStringArray)SwitchCallback);				
+				break;	
 				
 				
 		default:
@@ -804,7 +809,6 @@ public class QueryIO implements Runnable {
 				
 				for (int i = 0; i < ColNum; i++) 
 					if(i<ColNum) Data[RowNum][i] = AnswerResult.getString(i + 1);
-					//else Data[RowNum][i] = new JComboBox<String[]>(Confirm);
 				RowNum++;
 			}
 			Tarrif.setComboBoxStringArray(Confirm);
@@ -1539,51 +1543,65 @@ public class QueryIO implements Runnable {
 /**
  * Station Manager
  */
-	/*
+	
 	private CallBack getStationSuppliesOrder(callbackStringArray Callback){
 		// Set variables ---------------------------------------------------------
-			int SaleID;
+		ResultSetMetaData LocalResult;
+		Object[][] Data;
+		String[] Headers;
+		int ColNum;
+		int RowNum =0;
+		Object[] Confirm = {"Waiting","Yes","No"};
 		// Build query -----------------------------------------------------------
 		
 		try {
+			
 			PreparedStatement ps1=conn.prepareStatement(
-					"SELECT Order_ID, Fuel_ID, Gas_Station_ID, Amount, MAX(Order_Date) AS Order_Date, Order_Confirmation, Showed_To_Manager "+
-					"FROM Fuel_Orders WHERE Fuel_ID = (?) AND Gas_Station_ID = (?) AND Order_Confirmation = 'Waiting'");
+					"UPDATE Fuel_Orders SET Showed_To_Manager='Yes' WHERE Gas_Station_ID=(?) AND Order_Confirmation = 'Waiting'");
+			PreparedStatement ps2=conn.prepareStatement(
+					"SELECT Order_ID, Gas_Station_ID, Fuel_ID, Fuel_Description "+
+					", Amount_To_Order, Current_Amount, Order_Date, Order_Confirmation, Showed_To_Manager "+
+					"FROM Fuel_Orders_For_Stations WHERE Gas_Station_ID = (?) AND Order_Confirmation = 'Waiting'");
 			
-		// Send query to DB  -----------------------------------------------------
-			//Create new sale 			
-			ps1.setInt(1, Callback.getFuelID());
-			ps1.setFloat(2, Callback.getFuelAmount());
-			ps1.setFloat(3, Callback.getPayment());
-			ps1.setInt(4, Callback.getCustomersID());
+		// Send query to DB  ----------------------------------------------------- 	
+		
+			ps1.setInt(1, (int) Callback.getVariance()[0]);
 			ps1.executeUpdate();
-			//Get SaleID
-			ps2.setInt(1, Callback.getCustomersID());
+			
+			ps2.setInt(1, (int) Callback.getVariance()[0]);
 			AnswerResult = ps2.executeQuery();
+
 			
-			AnswerResult.next();
-			SaleID = AnswerResult.getInt("Sales_ID");
-			//Enter new gas station sale
-			ps3.setInt(1, SaleID);
-			ps3.setString(2,Callback.getDriverName());
-			ps3.setInt(3, Callback.getCarID());
-			ps3.setInt(4, Callback.getGasStationID());
-			ps3.setInt(5, Callback.getCampaignID());
-			ps3.executeUpdate();
+			LocalResult = AnswerResult.getMetaData();
+			Callback.setColCount(ColNum = LocalResult.getColumnCount());
 			
-			ps4.setFloat(1, Callback.getFuelAmount());
-			ps4.setInt(2, Callback.getGasStationID());
-			ps4.setInt(3, Callback.getFuelID());
-			ps4.executeUpdate();
+			AnswerResult.last();
+			Callback.setRowCount(AnswerResult.getRow());
+			AnswerResult.beforeFirst();
+			Data = new String[Callback.getRowCount()][ColNum];
+			Headers = new String[ColNum];
 			
-			
+			for(int i=0;i<ColNum;i++)
+				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
+			Callback.setColHeaders(Headers);
+			/**
+			 * Create the report callback structure
+			 */
+			while (AnswerResult.next()) { 				
+				for (int i = 0; i < ColNum; i++) 
+					Data[RowNum][i] = AnswerResult.getString(i + 1);
+				RowNum++;
+			}
+			Callback.setComboBoxStringArray(Confirm);
+			Callback.setData(Data);
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
 		}
-			return new callbackSuccess("Add sale to DB.");					
+			return Callback;					
 		
-	}*/
+	}
 	
 	
 /**
