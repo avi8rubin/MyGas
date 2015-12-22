@@ -346,4 +346,7 @@ public class StationsGUI extends abstractPanel_GUI{
 	public JTextField getPriceLabel(){
 		return this.PriceLabel;
 	}
+	public callbackUser getStationUser(){
+		return this.User;
+	}
 }

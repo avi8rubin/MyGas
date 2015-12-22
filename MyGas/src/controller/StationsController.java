@@ -13,15 +13,17 @@ import javax.swing.JTextField;
 import GUI.StationsGUI;
 import callback.CallBack;
 import callback.callbackBuffer;
+import callback.callbackStationFuels;
 import callback.callbackUser;
+import callback.callbackVector;
 import callback.callback_Error;
 import client.Client;
 import common.MessageType;
 
 public class StationsController extends Controller implements MouseListener,Runnable{
-
 		private callbackBuffer CommonBuffer = null;
-		private static callbackUser EnteredUser;
+		private callbackStationFuels CurrentStation=null;
+		
 		private float Liter=0,Price=0,Fuel_95_Price,Fuel_Scoter_Price,Fuel_Diesel_Price;
 		
 		private JButton LoginButton;
@@ -30,8 +32,10 @@ public class StationsController extends Controller implements MouseListener,Runn
 		private JButton StartFuelingButton;
 		private JButton Paybutton;
 		
-		private static callbackUser User;				// Current user details
-		
+		private static callbackUser EnteredUser;
+		private static callbackUser StationCurrentUser;				// Current user details
+		private static callbackStationFuels StationCurrentFuels;
+		private static callbackVector FuelsInStation;
 		DecimalFormat myFormatter = new DecimalFormat("###.##");
 		
 		private Thread LiterCounter;
@@ -59,7 +63,12 @@ public class StationsController extends Controller implements MouseListener,Runn
 		private boolean Fuel95IsExist,FuelScoterIsExist,FuelDieselIsExist;
 
 		
-		
+		/**
+		 * Constratcor
+		 * @param Server
+		 * @param CommonBuffer
+		 * @param GuiScreen
+		 */
 	public StationsController(Client Server, callbackBuffer CommonBuffer, StationsGUI GuiScreen) {
 		super(Server, CommonBuffer, GuiScreen);
 		this.StationUserLoginGui = GuiScreen;
@@ -78,6 +87,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		LiterCounter = new Thread(this);
 		LiterLabel=GuiScreen.getLiterLabel();
 		PriceLabel=GuiScreen.getPriceLabel();
+		StationCurrentUser=GuiScreen.getStationUser();
 		
 		//ContainerCard2=(CardLayout)(CenterCardContainer.getLayout());
 		/*-----Hand gui Icons-------*/
@@ -143,7 +153,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 			Server.handleMessageFromClient(EnteredUser);					//Send query to DB			
 	
 			/*------Waiting for callback ------*/
-			LocalUserCallBack = getCallBackFromBuffer();					//Get from the common buffer new callback
+			LocalUserCallBack = (CallBack) getCallBackFromBuffer();					//Get from the common buffer new callback
 				
 			/*------ User not exists ------*/
 			if (LocalUserCallBack instanceof callback_Error){				//If the query back empty or the entered values not illegal
@@ -166,7 +176,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 						logoutflag=true;								//logout will return to this screen
 						MainLogoutButton.setEnabled(false);
 						StationUserLoginGui.setlogoutvisable(true);
-						UpdateStationInfo();
+						//UpdateStationInfo();
 					}
 				}
 				else StationUserLoginGui.IllegalPassword();							//Display password error message
@@ -346,8 +356,23 @@ public class StationsController extends Controller implements MouseListener,Runn
 	 * Update Station with the current fuels types, fuel price
 	 * 
 	 */
-	public void UpdateStationInfo(){
+	private void UpdateStationInfo(){
+		/*-----send Station ID-------*/
+		StationCurrentFuels = new callbackStationFuels(MessageType.getFuelPerStation); //create new CallbackStationFuels
+		StationCurrentFuels.setGasStationID(StationCurrentUser.getUserID()); //Enter Station UserID
+		Server.handleMessageFromClient(StationCurrentFuels);	//send to DB
+			
+		/*------Waiting for callback ------*/
+		
+		 getCallBackFromBuffer();					//Get from the common buffer new callback
+		
+		
+		/*------Empty buffer ------*/
+		getCallBackFromBuffer();//Emptying buffer
+		
+		
 		
 	}
+	
 }
 
