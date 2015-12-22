@@ -1495,6 +1495,7 @@ public class QueryIO implements Runnable {
 	private Vector<?> getFuelPerStation(callbackStationFuels Callback){
 		// Set variables ---------------------------------------------------------
 		callbackVector LocalVector = new callbackVector();	
+		int row;
 		// Build query -----------------------------------------------------------
 		String SqlQueryGetID = "SELECT Gas_Station_ID FROM Gas_Stations WHERE User_Interface_ID=(?)";
 		String SqlQuery = "SELECT * FROM Fuel_For_Gas_Station WHERE Gas_Station_ID=(?)";
@@ -1530,6 +1531,7 @@ public class QueryIO implements Runnable {
 						LocalVector.add(new callback_Error("Problem has occurred, query not valid or not connection to DB."));					
 				e.printStackTrace();
 			}
+		row = LocalVector.size();
 		return LocalVector;
 		
 	}
