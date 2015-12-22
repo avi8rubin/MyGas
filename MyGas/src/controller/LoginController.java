@@ -124,9 +124,11 @@ public class LoginController implements ActionListener{
 					}
 			/*------ Move to the next screen ------*/
 					else{
-						EnteredUser.setWhatToDo(MessageType.updateUserLogin);
-						Server.handleMessageFromClient(EnteredUser);		//Update user is logged in, in the DB	
-						getCallBackFromBuffer();							//Emptying buffer		
+						if(EnteredUser.getUserTypeId()!=2){
+							EnteredUser.setWhatToDo(MessageType.updateUserLogin);
+							Server.handleMessageFromClient(EnteredUser);		//Update user is logged in, in the DB	
+							getCallBackFromBuffer();							//Emptying buffer		
+						}
 						LoginScreen.ClearErrorMessage(); 					//Clear the error message if exists
 						NextScreenByRole();									// go to the next gui screen by user role
 						
