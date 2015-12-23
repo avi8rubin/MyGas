@@ -152,6 +152,10 @@ public class QueryIO implements Runnable {
 				AnswerObject = getCustomerDetailes((callbackCustomer)SwitchCallback);				
 				break;
 				
+			case getPurchasePlans:
+				AnswerObject = getPurchasePlans((callbackStringArray)SwitchCallback);				
+				break;
+				
 /*Customer*/
 			case setNewHomeFuelSale:
 				AnswerObject = setNewHomeFuelSale((callbackSale)SwitchCallback);				
@@ -968,7 +972,8 @@ public class QueryIO implements Runnable {
 			Callback.setUserPassword(AnswerResult.getString("User_Password"));
 			Callback.setUserTypeID(AnswerResult.getInt("User_Type_ID"));
 			Callback.setUserPrivilege(AnswerResult.getString("User_Privilege"));
-			
+			Callback.setCostingModelID(AnswerResult.getInt("Costing_Model_ID"));
+			Callback.setModelTypeDescription(AnswerResult.getString("Model_Type_Description"));
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1021,7 +1026,7 @@ public class QueryIO implements Runnable {
 		// Build query -----------------------------------------------------------
 		String SqlQuery1 = "SELECT Customers_ID FROM Customers WHERE Customers_ID=(?)";
 		String SqlQuery2 = "SELECT * FROM Customers WHERE Email=(?)";
-		String SqlQuery3 = "INSERT INTO Customers VALUES((?),(?),(?),(?),(?),(?),(?),(?),(?),0,1)";
+		String SqlQuery3 = "INSERT INTO Customers VALUES((?),(?),(?),(?),(?),(?),(?),(?),(?),0,1,(?))";
 		try {
 			PreparedStatement ps1 = conn.prepareStatement(SqlQuery1);
 			PreparedStatement ps2 = conn.prepareStatement(SqlQuery2);
@@ -1052,7 +1057,8 @@ public class QueryIO implements Runnable {
 			ps3.setInt(6, Callback.getUserID());
 			ps3.setString(7, Callback.getPhoneNumber().trim());
 			ps3.setString(8, Callback.getCreditCard().trim());
-			ps3.setString(9, Callback.getEmail().trim());			
+			ps3.setString(9, Callback.getEmail().trim());		
+			ps3.setInt(10, Callback.getCostingModelID());	
 			ps3.executeUpdate();
 			
 			
@@ -1069,7 +1075,7 @@ public class QueryIO implements Runnable {
 		// Build query -----------------------------------------------------------
 		
 		try {
-			PreparedStatement ps=conn.prepareStatement("INSERT INTO Cars VALUES(null,(?),(?),(?),(?),(?))");
+			PreparedStatement ps=conn.prepareStatement("INSERT INTO Cars VALUES(null,(?),(?),(?),(?))");
 			
 		// Send query to DB  -----------------------------------------------------
 			
@@ -1077,7 +1083,6 @@ public class QueryIO implements Runnable {
 				ps.setInt(2, Callback.getCustomerID());
 				ps.setString(3, Callback.getYesNoNFC().trim());
 				ps.setInt(4, Callback.getFuelID());
-				ps.setInt(5, Callback.getCostingModelID());
 				ps.executeUpdate();
 			
 			
@@ -1104,7 +1109,6 @@ public class QueryIO implements Runnable {
 				callbackCar callback_Obj = new callbackCar();
 				callback_Obj.setCarID(AnswerResult.getInt("Car_ID"));
 				callback_Obj.setCarNumber(AnswerResult.getString("Car_Number"));
-				callback_Obj.setCostingModelID(AnswerResult.getInt("Costing_Model_ID"));
 				callback_Obj.setCustomerID(AnswerResult.getInt("Customers_ID"));
 				callback_Obj.setFuelID(AnswerResult.getInt("Fuel_ID"));
 				callback_Obj.setYesNoNFC(AnswerResult.getString("NFC"));				
@@ -1196,7 +1200,46 @@ public class QueryIO implements Runnable {
 			LocalVector.add(NSCB);
 			return LocalVector;
 	}
-	
+	private CallBack getPurchasePlans(callbackStringArray Callback){
+		// Set variables ---------------------------------------------------------
+		int RowNum =0;
+		String[] Combo;
+		String[][] ComboWithIndex;
+		// Build query -----------------------------------------------------------
+		
+		try {
+
+			
+		// Send query to DB  -----------------------------------------------------
+
+			AnswerResult = st.executeQuery("SELECT * FROM Purchase_Plan");
+						
+			AnswerResult.last();
+			Callback.setRowCount(AnswerResult.getRow());
+			AnswerResult.beforeFirst();
+			Combo = new String[Callback.getRowCount()];
+			ComboWithIndex = new String[Callback.getRowCount()][2];
+			
+			/**
+			 * Create the report callback structure
+			 */
+			while (AnswerResult.next()) { 				
+				Combo[RowNum] = AnswerResult.getString("Plan_Name");
+				ComboWithIndex[RowNum][0] = AnswerResult.getString("Plan_ID");
+				ComboWithIndex[RowNum][1] = AnswerResult.getString("Plan_Name");
+				RowNum++;
+			}
+
+			Callback.setComboBoxStringArray(Combo);
+			Callback.setVarianceMatrix(ComboWithIndex);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");					// If query not succeed 
+		}
+			return Callback;					// 	Query not succeed
+		
+	}
 /**
  * Customer	
  */
@@ -1491,7 +1534,7 @@ public class QueryIO implements Runnable {
 			ps2.setInt(7, UserRate);
 			AnswerResult = ps2.executeQuery();
 			
-			if(!AnswerResult.next())
+			if(!AnswerResult.next() || AnswerResult.getInt("Campaign_ID")==0)
 				return new callbackSuccess("No discount, please pay full price.");
 						
 			CampaignDiscount.setCampaignID(AnswerResult.getInt("Campaign_ID"));
@@ -1526,7 +1569,6 @@ public class QueryIO implements Runnable {
 				
 				Callback.setCarID(AnswerResult.getInt("Car_ID"));
 				Callback.setCarNumber(AnswerResult.getString("Car_Number"));
-				Callback.setCostingModelID(AnswerResult.getInt("Costing_Model_ID"));
 				Callback.setCustomerID(AnswerResult.getInt("Customers_ID"));
 				Callback.setFuelID(AnswerResult.getInt("Fuel_ID"));
 				Callback.setYesNoNFC(AnswerResult.getString("NFC"));	
