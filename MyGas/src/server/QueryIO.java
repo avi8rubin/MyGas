@@ -1491,7 +1491,7 @@ public class QueryIO implements Runnable {
 			ps2.setInt(7, UserRate);
 			AnswerResult = ps2.executeQuery();
 			
-			if(!AnswerResult.next())
+			if(!AnswerResult.next() || AnswerResult.getInt("Campaign_ID")==0)
 				return new callbackSuccess("No discount, please pay full price.");
 						
 			CampaignDiscount.setCampaignID(AnswerResult.getInt("Campaign_ID"));

@@ -79,11 +79,12 @@ public class LoginController implements ActionListener{
 	 */
 		WindowListener exitListener = new WindowAdapter() {
 		    @Override
-		    public void windowClosing(WindowEvent e) {	    	
+		    public void windowClosing(WindowEvent e) {	  
+		    	/*
 		    	if(ConnectionFlag) {
 		    		EnteredUser.setWhatToDo(MessageType.updateUserLogout);
 		    		Server.handleMessageFromClient(EnteredUser);
-		    	}
+		    	}*/
 		        System.exit(0);		        
 		    }
 		};
