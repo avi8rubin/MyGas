@@ -268,6 +268,15 @@ CREATE TABLE IF NOT EXISTS Gas_Stations_Sales (
 
 CREATE INDEX Gas_Station_ID ON Gas_Stations_Sales (Gas_Station_ID);
 
+CREATE TABLE IF NOT EXISTS Notifications (
+	User_ID INTEGER,
+    NotificationsDescription VARCHAR(100),
+    Notification_Date DATETIME NOT NULL DEFAULT NOW(),
+    User_Saw ENUM('Yes','No') DEFAULT 'No',
+    PRIMARY KEY (User_ID),
+    FOREIGN KEY (User_ID) references Users(User_ID)
+);
+
 INSERT INTO Fuels VALUES(null,'95',6.5,6.3);
 INSERT INTO Fuels VALUES(null,'Scooters Fuel',6.6,6.4);
 INSERT INTO Fuels VALUES(null,'Home Fuel',6.7,6);
@@ -807,7 +816,8 @@ SELECT A.Order_ID
 , A.Fuel_ID
 , B.Fuel_Description
 , A.Gas_Station_ID
-, A.Amount
+, A.Amount AS Amount_To_Order
+, E.Current_Amount
 , A.Order_Date
 , A.Order_Confirmation
 , A.Showed_To_Manager
@@ -818,6 +828,7 @@ FROM Fuel_Orders A
 LEFT OUTER JOIN Fuels B ON A.Fuel_ID=B.Fuel_ID
 LEFT OUTER JOIN Gas_Stations C ON A.Gas_Station_ID=C.Gas_Station_ID
 LEFT OUTER JOIN Gas_Company D ON C.Gas_Company_ID=D.Gas_Company_ID
+LEFT OUTER JOIN Fuel_Per_Station E ON A.Gas_Station_ID=E.Gas_Station_ID AND A.Fuel_ID=E.Fuel_ID
 ORDER BY A.Order_ID
 ;
 
