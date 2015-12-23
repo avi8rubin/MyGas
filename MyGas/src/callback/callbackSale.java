@@ -51,7 +51,7 @@ public class callbackSale extends CallBack {
 	public float getFuelAmount() {
 		return FuelAmount;
 	}
-	public void setFuelAmount(int fuelAmount) {
+	public void setFuelAmount(float fuelAmount) {
 		FuelAmount = fuelAmount;
 	}
 	public float getPayment() {

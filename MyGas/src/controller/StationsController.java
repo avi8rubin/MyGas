@@ -16,9 +16,12 @@ import javax.swing.JTextField;
 import GUI.StationsGUI;
 import callback.CallBack;
 import callback.callbackBuffer;
+import callback.callbackCampaign;
 import callback.callbackCar;
 import callback.callbackCustomer;
+import callback.callbackSale;
 import callback.callbackStationFuels;
+import callback.callbackSuccess;
 import callback.callbackUser;
 import callback.callbackVector;
 import callback.callback_Error;
@@ -47,7 +50,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		private static callbackUser StationCurrentUser;				// Current user details
 		private static callbackStationFuels StationCurrentFuels;
 		private static callbackVector FuelsInStation;
-		private static callbackCar UserCarNFC;
+		private static callbackCar UserCarNFC;  // need to change back to customer
 		private static callbackCar CustomerCars;
 		private static CallBack Temp;
 		private static callbackCustomer Customer;
@@ -85,7 +88,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		 * @param CommonBuffer - get all the callbacks
 		 * @param GuiScreen - gas Station enter
 		 */
-		public StationsController(Client Server, callbackBuffer CommonBuffer, StationsGUI GuiScreen) {
+	public StationsController(Client Server, callbackBuffer CommonBuffer, StationsGUI GuiScreen) {
 		super(Server, CommonBuffer, GuiScreen);
 		this.StationUserLoginGui = GuiScreen;
 		StationUserLoginGui.setVisible(true);
@@ -105,9 +108,16 @@ public class StationsController extends Controller implements MouseListener,Runn
 		PriceLabel=GuiScreen.getPriceLabel();
 		StationCurrentUser=GuiScreen.getStationUser();
 		NFCTextField=GuiScreen.getNFCTextField();
-		GasStationID=StationCurrentUser.getUserID();
-		Customer=new callbackCustomer();
 		
+		/*--------Need GAS STATION ID!!!-----*/
+		//
+		//GasStationID=StationCurrentUser.
+		//	
+		//		
+				
+		Customer=new callbackCustomer();
+		this.Liter=0;
+		this.Price=0;
 		/*-----Hand gui Icons-------*/
 		BlueHand=GuiScreen.getBlueHand();
 		BlueHandFlip=GuiScreen.getBlueHandFlip();
@@ -418,10 +428,21 @@ public class StationsController extends Controller implements MouseListener,Runn
 		{ 
 			LiterCounter.stop();
 			LiterCounter=new Thread(this);
+			/*
+			 * 1=95
+			 * 2=Scooter Fuel
+			 * 4=Diesel
+			 */
+			int FuelID=0;
+			if(FuelDiesel) FuelID=4;
+			if(Fuel95) FuelID=1;
+			if(FuelScoter) FuelID=2;
+			DiscountCalulation(Float.valueOf(myFormatter.format(Price)), this.Liter, this.GasStationID, FuelID, Customer.getCustomersID());
+			
+			
 			PressStartStopButtonFlag=true;
 			Paybutton.setEnabled(true);
 			StartFuelingButton.setText("Start Fueling");
-			DiscountTextBox.setText(" You Need to Pay: "+myFormatter.format(Price)+" Shekel");
 			DiscountTextBox.setVisible(true);
 		}
 		
@@ -764,6 +785,68 @@ public class StationsController extends Controller implements MouseListener,Runn
 		return fuel;
 	}
 	
-}
+	/**
+	 * This function check if user can enter to statio by his station costing model
+	 * @return true if is OK
+	 */
+	private boolean CheckIfUserCanEnterToGasStationByCostingModel(callbackCustomer currentCustomer)
 
+	{
+		//"Sonol"/"Paz".... 
+		/*--------need Qurey---- */
+		return true;
+	}
+
+/**
+ * This funtion check & update discount for user
+ * @param Payment - Price
+ * @param FueAmount - Liters
+ * @param GasStationID - GasID
+ * @param FuelID - 1=95, 2=Scooter Fuel, 4=Diesel
+ * @param CustomerID - CusotmerID
+ */
+	private void DiscountCalulation(float Payment,float FueAmount,int GasStationID,int FuelID,int CustomerID){
+		callbackSale CurrentSale=new callbackSale();
+		CurrentSale.setPayment(Payment);
+		CurrentSale.setFuelAmount(FueAmount);
+		CurrentSale.setGasStationID(GasStationID);
+		CurrentSale.setFuelID(FuelID);
+		if(NFCIsExist)
+		{
+			CustomerID=UserCarNFC.getCustomerID();
+		}
+		CurrentSale.setCustomersID(CustomerID);
+		CurrentSale.setWhatToDo(MessageType.getSaleDiscount);
+		Server.handleMessageFromClient(CurrentSale);
+		Temp=(CallBack) getCallBackFromBuffer();
+
+		if(Temp instanceof callbackSuccess) // No Discount
+		{
+			DiscountTextBox.setText(" You Need To Pay: "+myFormatter.format(Price)+" Shekel *No Discount");
+		}
+		if(Temp instanceof callbackCampaign) // Was Discount
+		{
+			Temp=(callbackCampaign)Temp;
+			Price=((callbackCampaign) Temp).getPriceAfterDiscount();
+			DiscountTextBox.setText("<html>You Need To Pay: "+myFormatter.format(Price)+" The Calcultion By "+((callbackCampaign) Temp).getCalculationMethod()+
+					" Discount = "+((callbackCampaign) Temp).getDiscountPercentage()+" By "+((callbackCampaign) Temp).getCampaignDescription()+"</html>");
+		/*----Send To DB Update*/
+		CurrentSale.setPayment(Price);
+		CurrentSale.setWhatToDo(MessageType.setNewGasStationSale);
+		Server.handleMessageFromClient(CurrentSale);
+		Temp=(CallBack) getCallBackFromBuffer();
+		if(Temp instanceof callback_Error)
+		{
+			/*----was Error in sending to DB*/
+		}
+		if(Temp instanceof callbackSuccess)
+		{
+			/*---Success transfer to DB*/
+		}
+		}
+		
+	
+	}
+	
+	}
 //	8565232
