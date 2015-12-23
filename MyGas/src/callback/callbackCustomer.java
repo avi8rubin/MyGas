@@ -24,6 +24,8 @@ public class callbackCustomer extends CallBack{
 	private String UserPassword;
 	private int UserTypeID;
 	private String UserPrivilege;
+	private int CostingModelID;
+	private String ModelTypeDescription;
 	
 	public callbackCustomer(){};
 	public callbackCustomer(MessageType WhatToDo){
@@ -124,5 +126,17 @@ public class callbackCustomer extends CallBack{
 	}
 	public void setPlanID(int planID) {
 		PlanID = planID;
+	}
+	public int getCostingModelID() {
+		return CostingModelID;
+	}
+	public void setCostingModelID(int costingModelID) {
+		CostingModelID = costingModelID;
+	}
+	public String getModelTypeDescription() {
+		return ModelTypeDescription;
+	}
+	public void setModelTypeDescription(String modelTypeDescription) {
+		ModelTypeDescription = modelTypeDescription;
 	}
 }
