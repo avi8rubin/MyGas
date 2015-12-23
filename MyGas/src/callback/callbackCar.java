@@ -1,5 +1,7 @@
 package callback;
 
+import common.MessageType;
+
 public class callbackCar extends CallBack{
 
 	/**
@@ -13,6 +15,11 @@ public class callbackCar extends CallBack{
 	private int FuelID;
 	private int CostingModelID;
 		
+	public callbackCar(){}
+	public callbackCar(MessageType Message){
+		super(Message);
+	}
+	
 	public int getCarID() {
 		return CarID;
 	}

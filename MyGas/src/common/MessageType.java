@@ -16,6 +16,8 @@ public enum MessageType {
 	updateUserLogout,
 	getCheckExistsUserPass,
 	getContacts,
+	getNotifications,
+	updateNotifications,
 /*Marketing Manager*/	
 	getCommentsForMarketionCampaign,
 	getFuelsDetailes,

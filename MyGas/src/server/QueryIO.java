@@ -90,6 +90,14 @@ public class QueryIO implements Runnable {
 					AnswerObject = getContacts((callbackStringArray)SwitchCallback);
 				break;
 				
+			case getNotifications:
+				AnswerObject = getNotifications((callbackStringArray)SwitchCallback);				
+				break;
+				
+			case updateNotifications:
+				AnswerObject = updateNotifications((callbackUser)SwitchCallback);				
+				break;
+				
 /*Marketing Manager*/
 			case getCommentsForMarketionCampaign:
 				if(SwitchCallback instanceof callbackCommentsForMarketionCampaign)
@@ -137,10 +145,10 @@ public class QueryIO implements Runnable {
 				break;
 				
 			case getHomeFuelOrders:
-				if(SwitchCallback instanceof callbackCar)
-					AnswerObject = getCarDetailes((callbackCar)SwitchCallback);	
+				if(SwitchCallback instanceof callbackSale)
+					AnswerObject = getHomeFuelOrders((callbackSale)SwitchCallback);	
 				if(SwitchCallback instanceof callbackStringArray)
-					AnswerObject = getCarDetailes((callbackStringArray)SwitchCallback);	
+					AnswerObject = getHomeFuelOrders((callbackStringArray)SwitchCallback);	
 				break;
 				
 			case getCustomerDetailes:
@@ -153,10 +161,10 @@ public class QueryIO implements Runnable {
 				break;
 				
 			case getCarDetailes:
-				if(SwitchCallback instanceof callbackSale)
-					AnswerObject = getHomeFuelOrders((callbackSale)SwitchCallback);	
+				if(SwitchCallback instanceof callbackCar)
+					AnswerObject = getCarDetailes((callbackCar)SwitchCallback);	
 				if(SwitchCallback instanceof callbackStringArray)
-					AnswerObject = getHomeFuelOrders((callbackStringArray)SwitchCallback);	
+					AnswerObject = getCarDetailes((callbackStringArray)SwitchCallback);	
 				break;
 /*Station*/		
 			case getSaleDiscount:
@@ -378,7 +386,90 @@ public class QueryIO implements Runnable {
 		return WorkersDetailes;
 		
 	}
+	private CallBack getNotifications(callbackStringArray Callback){
+		// Set variables ---------------------------------------------------------	
+		ResultSetMetaData LocalResult;
+		String[][] Data;
+		String[] Headers;
+		int ColNum;
+		int RowNum =0;
+		// Build query -----------------------------------------------------------
+		String SqlQuery1 = "DELETE FROM Notifications WHERE User_ID=(?) AND User_Saw = 'Yes' AND HOUR(TIMEDIFF(now(), Notification_Date))>48";
+		String SqlQuery2 = "SELECT Notification_Date, NotificationsDescription, User_Saw FROM Notifications WHERE User_ID=(?)";
+		// Send query to DB and get result ---------------------------------------
+		try {
+			PreparedStatement ps1=conn.prepareStatement(SqlQuery1);
+			ps1.setInt(1,(int) Callback.getVariance()[0] );
+			ps1.executeUpdate();		
+			
+			PreparedStatement ps2=conn.prepareStatement(SqlQuery2);
+			ps2.setInt(1,(int) Callback.getVariance()[0] );
+			AnswerResult = ps2.executeQuery();
+			LocalResult = AnswerResult.getMetaData();
+			Callback.setColCount(ColNum = LocalResult.getColumnCount());
+			
+			AnswerResult.last();
+			Callback.setRowCount(AnswerResult.getRow());
+			AnswerResult.beforeFirst();
+			Data = new String[Callback.getRowCount()][ColNum];
+			Headers = new String[ColNum];
+			
+			for(int i=0;i<ColNum;i++)
+				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
+			Callback.setColHeaders(Headers);
+			
+			
+			/**
+			 * Create the report callback structure
+			 */
+			while (AnswerResult.next()) { 
+					
+				for (int i = 0; i < ColNum; i++) 
+					Data[RowNum][i] = AnswerResult.getString(i + 1);
+				RowNum++;
+			}
+			Callback.setData(Data);
+			} catch (SQLException e) {
+				return new callback_Error("Problem has occurred, query not valid or not connection to DB.");
+				}
+		return Callback;
+		
+	}
+	private CallBack updateNotifications(callbackUser Callback){
+		// Set variables ---------------------------------------------------------	
 
+		// Build query -----------------------------------------------------------
+		String SqlQuery1 = "UPDATE Notifications SET User_Saw='Yes' WHERE User_ID=(?)";
+		// Send query to DB and get result ---------------------------------------
+		try {
+			PreparedStatement ps1=conn.prepareStatement(SqlQuery1);
+			ps1.setInt(1,(int) Callback.getUserID() );
+			ps1.executeUpdate();
+			
+			} catch (SQLException e) {
+				return new callback_Error("Problem has occurred, query not valid or not connection to DB.");
+				}
+		return new callbackSuccess("Update Notifications Successfully."); 
+		
+	}
+	private boolean setNotifications(int UserID, String Message){
+		// Set variables ---------------------------------------------------------	
+
+		// Build query -----------------------------------------------------------
+		String SqlQuery = "INSERT INTO Notifications VALUES((?),(?),DEFAULT,DEFAULT)";
+		// Send query to DB and get result ---------------------------------------
+		try {
+			PreparedStatement ps=conn.prepareStatement(SqlQuery);
+			ps.setInt(1, UserID);
+			ps.setString(2, Message);
+			ps.executeUpdate();
+			
+			} catch (SQLException e) {
+				return false;
+				}
+		return true; 
+		
+	}
 /**
  * Marketing Manager 	
  */	
@@ -855,15 +946,14 @@ public class QueryIO implements Runnable {
 		// Build query -----------------------------------------------------------
 		
 		try {
-			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Customer_Detailes "+
-														"WHERE User_ID = (?)");
+			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Customer_Detailes WHERE User_ID = (?)");
 			
 		// Send query to DB  -----------------------------------------------------
 						
 			ps.setInt(1, Callback.getUserID());
 			AnswerResult = ps.executeQuery();
 			
-			if (AnswerResult.isLast()) return new callback_Error("Customer not exists in DB.");
+			if (!AnswerResult.next()) return new callback_Error("Customer not exists in DB.");
 			
 			Callback.setUserID(AnswerResult.getInt("User_ID"));
 			Callback.setCustomersID(AnswerResult.getInt("Customers_ID"));
@@ -1016,7 +1106,7 @@ public class QueryIO implements Runnable {
 				LocalVector.add(callback_Obj);
 			}
 			if (LocalVector.size() == 0) 
-				return new callback_Error("No records of cars for this customer.");
+				return LocalVector.add( new callback_Error("No records of cars for this customer."));
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1644,15 +1734,17 @@ public class QueryIO implements Runnable {
 	public void run() {
 		
 		callbackSale LocalSale = ThreadSale;
-		ResultSet LocalResult = AnswerResult;
-		int ThresholdLimit,Capacity;
+		ResultSet NotificationResultSet, LocalResult = AnswerResult;
+		int ThresholdLimit,Capacity,StationManagerUserID;
+		String FuelDescription;
 		float CurrentAmount;
 		try {
 			Thread.sleep(20);						//Let the result back to the client
 			/*Prepare all queries*/
 			
 			PreparedStatement ps1=conn.prepareStatement(
-					"SELECT * FROM Fuel_Per_Station WHERE Gas_Station_ID=(?) AND Fuel_ID=(?)");
+					"SELECT A.* ,B.Fuel_Description FROM Fuel_Per_Station A "+
+					"LEFT OUTER JOIN Fuels B ON A.Fuel_ID = B.Fuel_ID WHERE Gas_Station_ID=(?) AND Fuel_ID=(?)");
 			PreparedStatement ps2=conn.prepareStatement(
 					"SELECT Order_ID, Fuel_ID, Gas_Station_ID, Amount, MAX(Order_Date) AS Order_Date, Order_Confirmation, Showed_To_Manager "+
 					"FROM Fuel_Orders WHERE Fuel_ID = (?) AND Gas_Station_ID = (?) AND Order_Confirmation = 'Waiting'");
@@ -1660,7 +1752,10 @@ public class QueryIO implements Runnable {
 					"INSERT INTO Fuel_Orders VALUES(NULL,(?),(?),(?),NOW(),DEFAULT,DEFAULT)");
 			PreparedStatement ps4=conn.prepareStatement(
 					"UPDATE Fuel_Orders SET Amount = (?) WHERE Gas_Station_ID=(?) AND Fuel_ID=(?)");
-			
+			PreparedStatement ps5=conn.prepareStatement(
+					"SELECT B.User_Id FROM Gas_Stations A "+
+					"LEFT OUTER JOIN Workers B ON A.Gas_Station_Manager_ID=B.Worker_ID "+
+					"WHERE A.Gas_Station_ID = (?)");
 			
 			/*Check current fuel limit after sale*/
 			ps1.setInt(1, LocalSale.getGasStationID());
@@ -1670,6 +1765,8 @@ public class QueryIO implements Runnable {
 			ThresholdLimit = LocalResult.getInt("Threshold_Limit");
 			Capacity = LocalResult.getInt("Capacity");
 			CurrentAmount = LocalResult.getFloat("Current_Amount");
+			FuelDescription = LocalResult.getString("Fuel_Description");
+			
 			if(CurrentAmount <= ThresholdLimit){
 				ps2.setInt(1, LocalSale.getFuelID());
 				ps2.setInt(2, LocalSale.getGasStationID());
@@ -1680,6 +1777,11 @@ public class QueryIO implements Runnable {
 					ps3.setInt(2, LocalSale.getGasStationID());
 					ps3.setFloat(3, Capacity - CurrentAmount);
 					ps3.executeUpdate();
+					/*Update new notification*/
+					ps5.setInt(1, LocalSale.getGasStationID());
+					NotificationResultSet = ps5.executeQuery();
+					NotificationResultSet.next();
+					setNotifications(NotificationResultSet.getInt("User_Id"),"A new order for "+FuelDescription+" fuel is waiting For approval."); 
 				}
 				/*Update exists order*/
 				else {
