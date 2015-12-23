@@ -123,9 +123,9 @@ public class MarketingRepresentativeController extends Controller{
 		GuiScreen.CreateNewUserCenterLayer();
 		
 
-//		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCommentsForMarketionCampaign));
-//		callbackStringArray purchasePlansNames = (callbackStringArray) getCallBackFromBuffer();	
-//		GuiScreen.SetComboBoxSelection(purchasePlansNames);
+		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCommentsForMarketionCampaign));
+		callbackStringArray purchasePlansNames = (callbackStringArray) getCallBackFromBuffer();	
+		GuiScreen.SetComboBoxSelection(purchasePlansNames);
 		
 		ContainerCardCenter.show(CenterCardContainer, "CreateUserLayerCenter");				//The CreateUser layer will be display											
 		
@@ -205,53 +205,53 @@ public class MarketingRepresentativeController extends Controller{
 			MissedFieldsMessage.setVisible(true);
 		else MissedFieldsMessage.setVisible(false);
 			
-//		// If all input OK- start checking valid input with DB
-//		if ( !MissedFieldsMessage.isVisible() && !InvalidCreditCardMesaageLabel.isVisible() && !InvalidCreditCardMesaageLabel.isVisible()
-//				&& !InvalidPhoneMesaageLabel.isVisible() && !InvalidEmailMesaageLabel.isVisible() && !InvalidCustomerIDMesaageLabel.isVisible() )
-//		{
-//			CallBack LocalUserCallBack;
-//			callbackCustomer fullCallbackCustomer = GuiScreen.getFullCallbackCustomer(); // Fill CallbackCustomer with GUI data
-//			fullCallbackCustomer.setWhatToDo(MessageType.setCreateNewCustomer);
-//			
-//			//Send CallbackCustomer to DB
-//			Server.handleMessageFromClient( fullCallbackCustomer);
-//			LocalUserCallBack = (CallBack) getCallBackFromBuffer();
-//			
-//			ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
-//			
-//			// Success case
-//			if  (LocalUserCallBack instanceof callbackSuccess)
-//			{
-//				ContainerCardCenter.show(CenterCardContainer, "EmptyCenterPanel");
-//				AddCarDetailsButton.setVisible(true);
-//			}
-//			else 
-//			{
-//				callback_Error LocalErrorCallBack;
-//				LocalErrorCallBack= (callback_Error)LocalUserCallBack;
-//				
-//				// UserNameExist error case
-//				if (LocalErrorCallBack.getErrorMassage().equals("AskOhad"))
-//				{
-//					UserNameExistMesaageLabel.setVisible(true);
-//					ContainerCardCenter.show(CenterCardContainer, "CreateUserLayerCenter");	 //The CreateUser layer will be display	
-//				}
-//				else UserNameExistMesaageLabel.setVisible(false);
-//				
-//				
-//				// CustomerID error case
-//				CustomerIDExistMesaageLabel = GuiScreen.getCustomerIDExistMesaageLabel();
-//				if (LocalErrorCallBack.getErrorMassage().equals("AskOhad2"))
-//					CustomerIDExistMesaageLabel.setVisible(true);
-//				else CustomerIDExistMesaageLabel.setVisible(false);	
-//				
-//				// EmailExist error case
-//				EmailExistMesaageLabel = GuiScreen.getEmailExistMesaageLabel();
-//				if (LocalErrorCallBack.getErrorMassage().equals("Email belong to another customer."))
-//					EmailExistMesaageLabel.setVisible(true);
-//				else EmailExistMesaageLabel.setVisible(false);				
-//					
-//			}		
-//		}	
+		// If all input OK- start checking valid input with DB
+		if ( !MissedFieldsMessage.isVisible() && !InvalidCreditCardMesaageLabel.isVisible() && !InvalidCreditCardMesaageLabel.isVisible()
+				&& !InvalidPhoneMesaageLabel.isVisible() && !InvalidEmailMesaageLabel.isVisible() && !InvalidCustomerIDMesaageLabel.isVisible() )
+		{
+			CallBack LocalUserCallBack;
+			callbackCustomer fullCallbackCustomer = GuiScreen.getFullCallbackCustomer(); // Fill CallbackCustomer with GUI data
+			fullCallbackCustomer.setWhatToDo(MessageType.setCreateNewCustomer);
+			
+			//Send CallbackCustomer to DB
+			Server.handleMessageFromClient( fullCallbackCustomer);
+			LocalUserCallBack = (CallBack) getCallBackFromBuffer();
+			
+			ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
+			
+			// Success case
+			if  (LocalUserCallBack instanceof callbackSuccess)
+			{
+				ContainerCardCenter.show(CenterCardContainer, "EmptyCenterPanel");
+				AddCarDetailsButton.setVisible(true);
+			}
+			else 
+			{
+				callback_Error LocalErrorCallBack;
+				LocalErrorCallBack= (callback_Error)LocalUserCallBack;
+				
+				// UserNameExist error case
+				if (LocalErrorCallBack.getErrorMassage().equals("User name already exists in DB."))
+				{
+					UserNameExistMesaageLabel.setVisible(true);
+					ContainerCardCenter.show(CenterCardContainer, "CreateUserLayerCenter");	 //The CreateUser layer will be display	
+				}
+				else UserNameExistMesaageLabel.setVisible(false);
+				
+				
+				// CustomerID error case
+				CustomerIDExistMesaageLabel = GuiScreen.getCustomerIDExistMesaageLabel();
+				if (LocalErrorCallBack.getErrorMassage().equals("Customer already registered in system."))
+					CustomerIDExistMesaageLabel.setVisible(true);
+				else CustomerIDExistMesaageLabel.setVisible(false);	
+				
+				// EmailExist error case
+				EmailExistMesaageLabel = GuiScreen.getEmailExistMesaageLabel();
+				if (LocalErrorCallBack.getErrorMassage().equals("Email belong to another customer."))
+					EmailExistMesaageLabel.setVisible(true);
+				else EmailExistMesaageLabel.setVisible(false);				
+					
+			}		
+		}	
 	}
 }
