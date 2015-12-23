@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -20,8 +21,10 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.text.MaskFormatter;
 
@@ -58,7 +61,8 @@ public class StationsGUI extends abstractPanel_GUI{
 	private JLabel DiscountTextBox;
 	private JLabel NFCLabel;
 	 
-
+	private JRadioButton Cash;
+	private JRadioButton Credit;
 	
 	private JFormattedTextField NFCTextField;
 	private JTextField PasswordTextField = new JPasswordField();
@@ -183,15 +187,15 @@ public class StationsGUI extends abstractPanel_GUI{
 		left_car.add(CarNumberCombobox);
 		
 		//Start/Stop Button
-		StartFuelingButton = new JButton("Start Fueling");
+		StartFuelingButton = new JButton("Start");
 		StartFuelingButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		StartFuelingButton.setBounds(170, 40, 150, 40);
+		StartFuelingButton.setBounds(170, 35, 117, 40);
 		left_car.add(StartFuelingButton);
 		
 		//"Liter Amount:"
 		JLabel AmountTxt = new JLabel("Liter Amount :");
 		AmountTxt.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		AmountTxt.setBounds(12, 217-70, 160, 40);
+		AmountTxt.setBounds(12, 100, 160, 40);
 		left_car.add(AmountTxt);
 		
 		// Liter Counter
@@ -199,29 +203,49 @@ public class StationsGUI extends abstractPanel_GUI{
 		LiterLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		LiterLabel.setText("0");
 		LiterLabel.setEditable(false);
-		LiterLabel.setBounds(171, 218-70, 117, 40);
+		LiterLabel.setBounds(171, 100, 117, 40);
 		left_car.add(LiterLabel);
 		LiterLabel.setColumns(10);
 		
+		//"Price:"
 		JLabel PriceTxt = new JLabel("Price :");
 		PriceTxt.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		PriceTxt.setBounds(12, 270-70, 110, 40);
+		PriceTxt.setBounds(12, 150, 110, 40);
 		left_car.add(PriceTxt);
 		
+		//PriceCounter
 		PriceLabel.setText("0");
 		PriceLabel.setEditable(false);
 		PriceLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		PriceLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		PriceLabel.setColumns(10);
-		PriceLabel.setBounds(171, 271-70, 117, 40);
+		PriceLabel.setBounds(171, 150, 117, 40);
 		left_car.add(PriceLabel);
 		
+		
+		//Cash Radio Button
+		Cash = new JRadioButton("Cash");
+		Cash.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		Cash.setBackground(UIManager.getColor(left_car.getBackground()));
+		Cash.setBounds(19, 230, 80, 25);
+		left_car.add(Cash);
+		
+		//Credit Radio Button
+		Credit = new JRadioButton("Credit");
+		Credit.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		Credit.setBackground(UIManager.getColor(left_car.getBackground()));
+		Credit.setBounds(171, 230, 120, 25);
+		left_car.add(Credit);
+		
+		//Pay
 		PayButton = new JButton("Pay");
 		PayButton.setFont(new Font("Tahoma", Font.BOLD, 20));
-		PayButton.setBounds(103, 121+140, 92, 38);
+		PayButton.setBounds(103, 260, 92, 38);
 		left_car.add(PayButton);
 		
-
+		ButtonGroup group = new ButtonGroup();
+		group.add(Cash);
+		group.add(Credit);
 		
 		//-------Gas fueling panel----////
 		
@@ -285,6 +309,9 @@ public class StationsGUI extends abstractPanel_GUI{
 	
 	public String getUserName(){
 		return UserNameTextField.getText().trim();
+	}
+	public void setUserName(){
+		this.UserNameTextField.setText("");
 	}
 	public String getPassword(){
 		return String.valueOf(PasswordTextField.getText());
@@ -444,5 +471,13 @@ public class StationsGUI extends abstractPanel_GUI{
 	}
 	public String getComboboxCarSelect(){
 		return (String) this.CarNumberCombobox.getSelectedItem();
+	}
+	public void setCreditRadioButtonEdit(boolean t)
+	{
+		this.Credit.setEnabled(t);
+	}
+	public void setCashCheacked()
+	{
+		this.Cash.setSelected(true);
 	}
 }
