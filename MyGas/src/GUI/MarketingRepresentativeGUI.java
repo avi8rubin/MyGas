@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.text.ParseException;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -19,6 +20,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.text.MaskFormatter;
 
 import callback.callbackBuffer;
+import callback.callbackCustomer;
+import callback.callbackStringArray;
 import callback.callbackUser;
 import client.Client;
 
@@ -66,6 +69,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	private JLabel CreditCardLabel;
 	private JLabel CustomerTypeLabel;
 	private JLabel PurchasePlanLabel;
+	private JLabel InvalidCustomerIDMesaageLabel;
 	private JLabel CustomerIDExistMesaageLabel;
 	private JLabel EmailExistMesaageLabel;
 	private JLabel InvalidEmailMesaageLabel;
@@ -85,6 +89,8 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	private JLabel MissedFieldsMessage;
 	private JLabel InvalidPhoneMesaageLabel;
 	private JLabel InvalidCreditCardMesaageLabel;
+
+
 
 	public MarketingRepresentativeGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer,
 			Login_GUI LoginScreen) {
@@ -247,6 +253,20 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		return CreditCardFormattedTextField;
 	}
 	
+	public String getComboBoxSelection(){
+		return (String)PurchasePlanComboBox.getSelectedItem();
+	}
+	
+	public void SetComboBoxSelection(callbackStringArray CampaignPatterns){
+		Object[]pattern=CampaignPatterns.getComboBoxStringArray();
+		DefaultComboBoxModel<?> combopatternModel=new DefaultComboBoxModel(pattern);
+		PurchasePlanComboBox.setModel(combopatternModel);	
+	}	
+	
+	public JComboBox<?> getComboBox(){
+		return PurchasePlanComboBox;
+	}
+	
 	public JLabel getInvalidPhoneMesaageLabel() {
 		return InvalidPhoneMesaageLabel;
 	}	
@@ -263,8 +283,21 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		return CommercialCustomerRadioButton;
 	}	
 	
+	public JLabel getEmailExistMesaageLabel() {
+		return EmailExistMesaageLabel;
+	}
+	
+	public JLabel getCustomerIDExistMesaageLabel() {
+		return CustomerIDExistMesaageLabel;
+	}
+	
+	public JLabel getInvalidCustomerIDMesaageLabel() {
+		return InvalidCustomerIDMesaageLabel;
+	}
 	public void CreateNewUserCenterLayer()
 	{
+		
+		AddCarDetailsButton.setVisible(false);
 		/* ------- Adding CreateUser Center Layer -------- */
 		CreateUserLayer = new JLayeredPane();
 		CreateUserLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
@@ -398,6 +431,13 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		PurchasePlanLabel.setBounds(39, 427, 163, 46);
 		AddPersonalDetails.add(PurchasePlanLabel);
 
+		InvalidCustomerIDMesaageLabel = new JLabel("Invalid Customer ID ");
+		InvalidCustomerIDMesaageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
+		InvalidCustomerIDMesaageLabel.setEnabled(false);
+		InvalidCustomerIDMesaageLabel.setBounds(403, 44, 184, 46);
+		InvalidCustomerIDMesaageLabel.setVisible(false);
+		AddPersonalDetails.add(InvalidCustomerIDMesaageLabel);		
+		
 		CustomerIDExistMesaageLabel = new JLabel("Customer ID already exist in system");
 		CustomerIDExistMesaageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
 		CustomerIDExistMesaageLabel.setEnabled(false);
@@ -423,6 +463,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		CustomerIDTextField.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		CustomerIDTextField.setColumns(10);
 		CustomerIDTextField.setBounds(179, 51, 201, 27);
+		CustomerIDTextField.setToolTipText("Customer ID have to include only numbers.\r\nFor example: 123456789");
 		AddPersonalDetails.add(CustomerIDTextField);
 		
 		FirstNameTextField = new JTextField();
@@ -524,5 +565,30 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 			
 	}
 
+	public callbackCustomer getFullCallbackCustomer(){
+		callbackCustomer customerCallback = new callbackCustomer();
+		
+		customerCallback.setUserName(UserNametextField.getText());
+		customerCallback.setUserPassword(PasswordTextField.getText());
+		customerCallback.setCustomersID( Integer.valueOf(CustomerIDTextField.getText()) );
+		customerCallback.setCustomerFirstName(FirstNameTextField.getText());
+		customerCallback.setCustomerLastName(LastNameTextField.getText());
+		customerCallback.setEmail(EmailTextField.getText());
+		customerCallback.setPhoneNumber(PhoneFormattedTextField.getText());
+		customerCallback.setCreditCard(CreditCardFormattedTextField.getText());
+		if (PrivateCustomerRadioButton.isSelected()) customerCallback.setCustomerType("Private");
+		else customerCallback.setCustomerType("Commercial");
+		customerCallback.setPlanName( getComboBoxSelection() );
 
+		return customerCallback;
+	}
+
+
+
+
+
+
+	
+
+	
 }
