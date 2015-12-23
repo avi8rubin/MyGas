@@ -306,20 +306,11 @@ public class abstractPanel_GUI extends JFrame{
 		CenterRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		NotificationsTable.setDefaultRenderer(Object.class, CenterRenderer);
 		
-		
-		
-		
 		/*Create notification thread*/
 		NotificationThrerad = new UpdateNotifications(ThisScreen, Server, User.getUserID());
 		new Thread(NotificationThrerad).start();
 		
-		
-		
-		
-		
-		
-		
-		
+
 /**
  * Set the exit (X) button to performed a organized logout
  */

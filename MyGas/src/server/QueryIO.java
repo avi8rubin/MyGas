@@ -52,18 +52,15 @@ public class QueryIO implements Runnable {
 		}	
 		return MessageType.Connection_To_Database_Succeded.toString();
 	}
-	public String setStatement(){
-	
+	public String setStatement(){	
 		try {
 			st =  conn.createStatement();
 		} catch (SQLException e) {
 			return MessageType.Statement_Not_succeded.toString()+"|Class:QueryIO| Function:setStatement()|";
 		}
 		return MessageType.statement_Succeded.toString();
-	}
-	
-	public Object CallbackResolver(Object SwitchCallback){
-		
+	}	
+	public Object CallbackResolver(Object SwitchCallback){		
 		switch(((CallBack) SwitchCallback).getWhatToDo()){
 		
 /*Global Queries*/
@@ -470,6 +467,7 @@ public class QueryIO implements Runnable {
 		return true; 
 		
 	}
+
 /**
  * Marketing Manager 	
  */	
@@ -1021,11 +1019,13 @@ public class QueryIO implements Runnable {
 		callbackUser NewUser = new callbackUser(Callback.getUserName(),Callback.getUserPassword());		
 		
 		// Build query -----------------------------------------------------------
-		String SqlQuery1 = "SELECT * FROM Customers WHERE Email=(?)";
-		String SqlQuery2 = "INSERT INTO Customers VALUES((?),(?),(?),(?),(?),(?),(?),(?),(?),0,1)";
+		String SqlQuery1 = "SELECT Customers_ID FROM Customers WHERE Customers_ID=(?)";
+		String SqlQuery2 = "SELECT * FROM Customers WHERE Email=(?)";
+		String SqlQuery3 = "INSERT INTO Customers VALUES((?),(?),(?),(?),(?),(?),(?),(?),(?),0,1)";
 		try {
 			PreparedStatement ps1 = conn.prepareStatement(SqlQuery1);
-			PreparedStatement ps2=conn.prepareStatement(SqlQuery2);
+			PreparedStatement ps2 = conn.prepareStatement(SqlQuery2);
+			PreparedStatement ps3 = conn.prepareStatement(SqlQuery3);
 			
 		// Send query to DB  -----------------------------------------------------
 			
@@ -1033,22 +1033,27 @@ public class QueryIO implements Runnable {
 			if(Ucallback instanceof callback_Error) return Ucallback;
 			Callback = (callbackCustomer) Ucallback;
 			
-			//Check if email already exists	
-			ps1.setString(1, Callback.getEmail().trim());
+			//Check if customer already exists	
+			ps1.setInt(1, Callback.getCustomersID());
 			AnswerResult = ps1.executeQuery();			
-			if (AnswerResult.isLast()) return new callback_Error("Email belong to another customer.");
+			if (AnswerResult.next()) return new callback_Error("Customer already registered in system."); 
+			
+			//Check if email already exists	
+			ps2.setString(1, Callback.getEmail().trim());
+			AnswerResult = ps2.executeQuery();			
+			if (AnswerResult.next()) return new callback_Error("Email belong to another customer.");
 			
 			//Add new customer to DB
-			ps2.setInt(1, Callback.getUserID());
-			ps2.setString(2, Callback.getCustomerFirstName().trim());
-			ps2.setString(3, Callback.getCustomerLastName().trim());
-			ps2.setString(4, Callback.getCustomerType().trim());
-			ps2.setInt(5, Callback.getPlanID());
-			ps2.setInt(6, Callback.getUserID());
-			ps2.setString(7, Callback.getPhoneNumber().trim());
-			ps2.setString(8, Callback.getCreditCard().trim());
-			ps2.setString(9, Callback.getEmail().trim());			
-			ps2.executeUpdate();
+			ps3.setInt(1, Callback.getUserID());
+			ps3.setString(2, Callback.getCustomerFirstName().trim());
+			ps3.setString(3, Callback.getCustomerLastName().trim());
+			ps3.setString(4, Callback.getCustomerType().trim());
+			ps3.setInt(5, Callback.getPlanID());
+			ps3.setInt(6, Callback.getUserID());
+			ps3.setString(7, Callback.getPhoneNumber().trim());
+			ps3.setString(8, Callback.getCreditCard().trim());
+			ps3.setString(9, Callback.getEmail().trim());			
+			ps3.executeUpdate();
 			
 			
 		} catch (SQLException e) {
@@ -1483,7 +1488,7 @@ public class QueryIO implements Runnable {
 			ps2.setFloat(4, Callback.getFuelAmount());
 			ps2.setInt(5, Callback.getGasStationID());
 			ps2.setInt(6, Callback.getFuelID());
-			ps2.setInt(6, UserRate);
+			ps2.setInt(7, UserRate);
 			AnswerResult = ps2.executeQuery();
 			
 			if(!AnswerResult.next())

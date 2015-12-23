@@ -132,11 +132,13 @@ CREATE TABLE IF NOT EXISTS Customers (
     Email VARCHAR (30),
     Carrent_Rate FLOAT DEFAULT 0,
     IS_Active ENUM('Yes','No') DEFAULT 'Yes',
+	Costing_Model_ID INTEGER,
     PRIMARY KEY (Customers_ID),
     UNIQUE KEY (User_ID,Plan_ID),
     UNIQUE KEY (Email),
     FOREIGN KEY (Plan_ID) references Purchase_Plan(Plan_ID),
-    FOREIGN KEY (User_ID) references Users(User_ID)
+    FOREIGN KEY (User_ID) references Users(User_ID),
+	FOREIGN KEY (Costing_Model_ID) references Costing_Model(Costing_Model_ID)
 );
 
 CREATE INDEX Carrent_Rate ON Customers (Carrent_Rate);
@@ -147,11 +149,9 @@ CREATE TABLE IF NOT EXISTS Cars (
     Customers_ID INTEGER,
     NFC ENUM('Yes','No') DEFAULT 'No',
     Fuel_ID INTEGER,
-    Costing_Model_ID INTEGER,
     PRIMARY KEY (Car_ID,Car_Number,Customers_ID),
     FOREIGN KEY (Fuel_ID) references Fuels(Fuel_ID),
-    FOREIGN KEY (Customers_ID) references Customers(Customers_ID),
-    FOREIGN KEY (Costing_Model_ID) references Costing_Model(Costing_Model_ID)
+    FOREIGN KEY (Customers_ID) references Customers(Customers_ID)
 );
 
 CREATE INDEX Car_Number ON Cars (Car_Number);
@@ -436,82 +436,82 @@ INSERT INTO Tariff_Update VALUES(null,'2013-9-6 5:18:00',4,3.5,7.6,2);
 INSERT INTO Tariff_Update VALUES(null,'2013-9-9 7:22:00',1,3.8,6.7,2);
 INSERT INTO Tariff_Update VALUES(null,'2013-9-12 8:2:00',2,3.5,9.6,1);
 
-INSERT INTO Customers  VALUES(956321568,'David','Shall','Private',1,18,'052-4233658','2356-6589-6589-7852','David@gmail.com',2,1);
-INSERT INTO Customers  VALUES(853629458,'Itzik','Lav','Commercial',2,19,'054-2659847','','Itzik@gmail.com',8,1);
-INSERT INTO Customers  VALUES(302548695,'Nisim','Zok','Private',3,20,'052-4233658','2345-3456-6589-8520','Nisim@gmail.com',5,1);
-INSERT INTO Customers  VALUES(302541654,'Him','Aesh','Commercial',1,21,'054-6598520','5528-9632-7418-2583','Him@gmail.com',3,1);
-INSERT INTO Customers  VALUES(984884621,'Eden','Fali','Private',3,22,'057-2315468','7538-6589-9852-7852','Eden@gmail.com',5,2);
-INSERT INTO Customers  VALUES(984651535,'Dror','Vir','Private',2,23,'054-8542031','2356-4521-6589-3547','Dror@gmail.com',2,1);
-INSERT INTO Customers  VALUES(513813213,'Eli','Sol','Commercial',2,24,'054-8569521','','Eli@gmail.com',1,1);
-INSERT INTO Customers  VALUES(681135135,'Ron','Van','Private',1,25,'052-3265874','6589-315-6589-8520','Ron@gmail.com',0,1);
-INSERT INTO Customers  VALUES(026065065,'Roni','Israeli','Commercial',1,26,'052-6953268','','Roni@gmail.com',7,1);
-INSERT INTO Customers  VALUES(065161615,'Rita','Itan','Commercial',3,27,'052-0231546','2356-6589-6589-7852','Rita@gmail.com',4,2);
-INSERT INTO Customers  VALUES(329090511,'Zah','Levi','Private',1,28,'052-5216487','2356-6589-6589-7852','Zah@gmail.com',5,1);
-INSERT INTO Customers  VALUES(302929161,'Sheli','Shaked','Private',2,29,'052-9587462','2356-6589-6589-7852','Sheli@gmail.com',6,1);
-INSERT INTO Customers  VALUES(302298198,'Shalom','Sal','Private',2,30,'054-8520134','2356-1234-6589-3547','Shalom@gmail.com',2,1);
-INSERT INTO Customers  VALUES(302926815,'Niv','Bor','Commercial',2,31,'054-9513265','','Niv@gmail.com',1,1);
-INSERT INTO Customers  VALUES(302296816,'Shay','Kill','Private',1,32,'052-7894561','6589-3145-5423-8520','Shay@gmail.com',0,1);
-INSERT INTO Customers  VALUES(302561566,'Sali','Funny','Commercial',1,33,'052-2563148','','Sali@gmail.com',7,1);
-INSERT INTO Customers  VALUES(306216168,'Nir','Lod','Commercial',3,34,'052-0210225','2356-6589-7644-7852','Nir@gmail.com',4,2);
-INSERT INTO Customers  VALUES(359681680,'Kfir','Bill','Private',1,35,'052-3355996','2356-6589-4444-7852','Kfir@gmail.com',5,1);
-INSERT INTO Customers  VALUES(326594906,'Or','Levi','Private',2,36,'052-3266585','2345-6589-3333-7852','Or@gmail.com',6,1);
+INSERT INTO Customers  VALUES(956321568,'David','Shall','Private',1,18,'052-4233658','2356-6589-6589-7852','David@gmail.com',2,1,1);
+INSERT INTO Customers  VALUES(853629458,'Itzik','Lav','Commercial',2,19,'054-2659847','','Itzik@gmail.com',8,1,1);
+INSERT INTO Customers  VALUES(302548695,'Nisim','Zok','Private',3,20,'052-4233658','2345-3456-6589-8520','Nisim@gmail.com',5,1,1);
+INSERT INTO Customers  VALUES(302541654,'Him','Aesh','Commercial',1,21,'054-6598520','5528-9632-7418-2583','Him@gmail.com',3,1,1);
+INSERT INTO Customers  VALUES(984884621,'Eden','Fali','Private',3,22,'057-2315468','7538-6589-9852-7852','Eden@gmail.com',5,2,1);
+INSERT INTO Customers  VALUES(984651535,'Dror','Vir','Private',2,23,'054-8542031','2356-4521-6589-3547','Dror@gmail.com',2,1,1);
+INSERT INTO Customers  VALUES(513813213,'Eli','Sol','Commercial',2,24,'054-8569521','','Eli@gmail.com',1,1,1);
+INSERT INTO Customers  VALUES(681135135,'Ron','Van','Private',1,25,'052-3265874','6589-315-6589-8520','Ron@gmail.com',0,1,2);
+INSERT INTO Customers  VALUES(026065065,'Roni','Israeli','Commercial',1,26,'052-6953268','','Roni@gmail.com',7,1,2);
+INSERT INTO Customers  VALUES(065161615,'Rita','Itan','Commercial',3,27,'052-0231546','2356-6589-6589-7852','Rita@gmail.com',4,2,2);
+INSERT INTO Customers  VALUES(329090511,'Zah','Levi','Private',1,28,'052-5216487','2356-6589-6589-7852','Zah@gmail.com',5,1,2);
+INSERT INTO Customers  VALUES(302929161,'Sheli','Shaked','Private',2,29,'052-9587462','2356-6589-6589-7852','Sheli@gmail.com',6,1,2);
+INSERT INTO Customers  VALUES(302298198,'Shalom','Sal','Private',2,30,'054-8520134','2356-1234-6589-3547','Shalom@gmail.com',2,1,2);
+INSERT INTO Customers  VALUES(302926815,'Niv','Bor','Commercial',2,31,'054-9513265','','Niv@gmail.com',1,1,3);
+INSERT INTO Customers  VALUES(302296816,'Shay','Kill','Private',1,32,'052-7894561','6589-3145-5423-8520','Shay@gmail.com',0,1,3);
+INSERT INTO Customers  VALUES(302561566,'Sali','Funny','Commercial',1,33,'052-2563148','','Sali@gmail.com',7,1,3);
+INSERT INTO Customers  VALUES(306216168,'Nir','Lod','Commercial',3,34,'052-0210225','2356-6589-7644-7852','Nir@gmail.com',4,2,4);
+INSERT INTO Customers  VALUES(359681680,'Kfir','Bill','Private',1,35,'052-3355996','2356-6589-4444-7852','Kfir@gmail.com',5,1,4);
+INSERT INTO Customers  VALUES(326594906,'Or','Levi','Private',2,36,'052-3266585','2345-6589-3333-7852','Or@gmail.com',6,1,4);
 
-INSERT INTO Cars VALUES(null,'85-659-85',956321568,Default,1,1);
-INSERT INTO Cars VALUES(null,'21-659-85',853629458,'No',2,1);
-INSERT INTO Cars VALUES(null,'85-652-32',302548695,'Yes',1,2);
-INSERT INTO Cars VALUES(null,'74-856-02',302541654,'No',4,3);
-INSERT INTO Cars VALUES(null,'32-958-74',984884621,'No',2,4);
-INSERT INTO Cars VALUES(null,'89-654-21',984651535,'No',1,1);
-INSERT INTO Cars VALUES(null,'11-555-54',513813213,'No',2,2);
-INSERT INTO Cars VALUES(null,'78-153-34',681135135,'No',4,1);
-INSERT INTO Cars VALUES(null,'87-563-55',026065065,'No',1,2);
-INSERT INTO Cars VALUES(null,'95-846-54',065161615,'No',1,1);
-INSERT INTO Cars VALUES(null,'12-234-45',329090511,'No',2,2);
-INSERT INTO Cars VALUES(null,'55-874-95',302929161,'Yes',4,3);
-INSERT INTO Cars VALUES(null,'21-035-95',302298198,'Yes',2,4);
-INSERT INTO Cars VALUES(null,'98-000-32',302926815,'No',2,1);
-INSERT INTO Cars VALUES(null,'78-555-96',302296816,'Yes',1,2);
-INSERT INTO Cars VALUES(null,'21-236-50',302561566,'Yes',4,3);
-INSERT INTO Cars VALUES(null,'12-985-44',306216168,'Yes',2,4);
-INSERT INTO Cars VALUES(null,'42-635-95',359681680,'No',1,1);
-INSERT INTO Cars VALUES(null,'78-542-63',326594906,'Yes',2,2);
-INSERT INTO Cars VALUES(null,'12-035-62',956321568,'No',4,1);
-INSERT INTO Cars VALUES(null,'78-953-20',853629458,'Yes',1,2);
-INSERT INTO Cars VALUES(null,'02-352-65',302548695,'No',1,1);
-INSERT INTO Cars VALUES(null,'45-652-35',302541654,'Yes',2,2);
-INSERT INTO Cars VALUES(null,'98-785-65',984884621,'No',4,3);
-INSERT INTO Cars VALUES(null,'25-632-50',984651535,'No',2,4);
-INSERT INTO Cars VALUES(null,'31-264-95',513813213,'No',2,1);
-INSERT INTO Cars VALUES(null,'32-659-84',681135135,'Yes',1,2);
-INSERT INTO Cars VALUES(null,'12-320-65',026065065,'No',4,3);
-INSERT INTO Cars VALUES(null,'98-632-95',065161615,'No',2,4);
-INSERT INTO Cars VALUES(null,'23-654-85',329090511,'No',1,1);
-INSERT INTO Cars VALUES(null,'32-456-85',302929161,'No',2,2);
-INSERT INTO Cars VALUES(null,'10-963-52',302298198,'No',4,1);
-INSERT INTO Cars VALUES(null,'10-842-95',302926815,'No',1,2);
-INSERT INTO Cars VALUES(null,'95-642-32',302296816,'No',1,1);
-INSERT INTO Cars VALUES(null,'12-632-85',302561566,'Yes',2,2);
-INSERT INTO Cars VALUES(null,'10-845-98',306216168,'Yes',4,3);
-INSERT INTO Cars VALUES(null,'23-468-95',359681680,'Yes',2,4);
-INSERT INTO Cars VALUES(null,'10-456-85',326594906,'No',2,1);
-INSERT INTO Cars VALUES(null,'20-352-61',956321568,'Yes',1,2);
-INSERT INTO Cars VALUES(null,'10-623-98',853629458,'No',4,3);
-INSERT INTO Cars VALUES(null,'79-852-30',302548695,'No',2,4);
-INSERT INTO Cars VALUES(null,'84-951-32',302541654,'No',1,1);
-INSERT INTO Cars VALUES(null,'75-842-91',984884621,'No',2,2);
-INSERT INTO Cars VALUES(null,'42-956-35',984651535,'No',4,1);
-INSERT INTO Cars VALUES(null,'20-951-86',513813213,'No',1,2);
-INSERT INTO Cars VALUES(null,'32-654-82',681135135,'Yes',1,1);
-INSERT INTO Cars VALUES(null,'12-030-95',026065065,'No',2,2);
-INSERT INTO Cars VALUES(null,'12-005-78',065161615,'Yes',4,3);
-INSERT INTO Cars VALUES(null,'32-000-65',329090511,'No',2,4);
+INSERT INTO Cars VALUES(null,'85-659-85',956321568,Default,1);
+INSERT INTO Cars VALUES(null,'21-659-85',853629458,'No',2);
+INSERT INTO Cars VALUES(null,'85-652-32',302548695,'Yes',1);
+INSERT INTO Cars VALUES(null,'74-856-02',302541654,'No',4);
+INSERT INTO Cars VALUES(null,'32-958-74',984884621,'No',2);
+INSERT INTO Cars VALUES(null,'89-654-21',984651535,'No',1);
+INSERT INTO Cars VALUES(null,'11-555-54',513813213,'No',2);
+INSERT INTO Cars VALUES(null,'78-153-34',681135135,'No',4);
+INSERT INTO Cars VALUES(null,'87-563-55',026065065,'No',1);
+INSERT INTO Cars VALUES(null,'95-846-54',065161615,'No',1);
+INSERT INTO Cars VALUES(null,'12-234-45',329090511,'No',2);
+INSERT INTO Cars VALUES(null,'55-874-95',302929161,'Yes',4);
+INSERT INTO Cars VALUES(null,'21-035-95',302298198,'Yes',2);
+INSERT INTO Cars VALUES(null,'98-000-32',302926815,'No',2);
+INSERT INTO Cars VALUES(null,'78-555-96',302296816,'Yes',1);
+INSERT INTO Cars VALUES(null,'21-236-50',302561566,'Yes',4);
+INSERT INTO Cars VALUES(null,'12-985-44',306216168,'Yes',2);
+INSERT INTO Cars VALUES(null,'42-635-95',359681680,'No',1);
+INSERT INTO Cars VALUES(null,'78-542-63',326594906,'Yes',2);
+INSERT INTO Cars VALUES(null,'12-035-62',956321568,'No',4);
+INSERT INTO Cars VALUES(null,'78-953-20',853629458,'Yes',1);
+INSERT INTO Cars VALUES(null,'02-352-65',302548695,'No',1);
+INSERT INTO Cars VALUES(null,'45-652-35',302541654,'Yes',2);
+INSERT INTO Cars VALUES(null,'98-785-65',984884621,'No',4);
+INSERT INTO Cars VALUES(null,'25-632-50',984651535,'No',2);
+INSERT INTO Cars VALUES(null,'31-264-95',513813213,'No',2);
+INSERT INTO Cars VALUES(null,'32-659-84',681135135,'Yes',1);
+INSERT INTO Cars VALUES(null,'12-320-65',026065065,'No',4);
+INSERT INTO Cars VALUES(null,'98-632-95',065161615,'No',2);
+INSERT INTO Cars VALUES(null,'23-654-85',329090511,'No',1);
+INSERT INTO Cars VALUES(null,'32-456-85',302929161,'No',2);
+INSERT INTO Cars VALUES(null,'10-963-52',302298198,'No',4);
+INSERT INTO Cars VALUES(null,'10-842-95',302926815,'No',1);
+INSERT INTO Cars VALUES(null,'95-642-32',302296816,'No',1);
+INSERT INTO Cars VALUES(null,'12-632-85',302561566,'Yes',2);
+INSERT INTO Cars VALUES(null,'10-845-98',306216168,'Yes',4);
+INSERT INTO Cars VALUES(null,'23-468-95',359681680,'Yes',2);
+INSERT INTO Cars VALUES(null,'10-456-85',326594906,'No',2);
+INSERT INTO Cars VALUES(null,'20-352-61',956321568,'Yes',1);
+INSERT INTO Cars VALUES(null,'10-623-98',853629458,'No',4);
+INSERT INTO Cars VALUES(null,'79-852-30',302548695,'No',2);
+INSERT INTO Cars VALUES(null,'84-951-32',302541654,'No',1);
+INSERT INTO Cars VALUES(null,'75-842-91',984884621,'No',2);
+INSERT INTO Cars VALUES(null,'42-956-35',984651535,'No',4);
+INSERT INTO Cars VALUES(null,'20-951-86',513813213,'No',1);
+INSERT INTO Cars VALUES(null,'32-654-82',681135135,'Yes',1);
+INSERT INTO Cars VALUES(null,'12-030-95',026065065,'No',2);
+INSERT INTO Cars VALUES(null,'12-005-78',065161615,'Yes',4);
+INSERT INTO Cars VALUES(null,'32-000-65',329090511,'No',2);
 
-INSERT INTO Campaign_Type VALUES(null,'Campaighn - Discount betweem hours.');
-INSERT INTO Campaign_Type VALUES(null,'Campaighn - Discount betweem days (Date).');
-INSERT INTO Campaign_Type VALUES(null,'Campaighn - Discount on spasific type of fuel.');
-INSERT INTO Campaign_Type VALUES(null,'Campaighn - Discount on gas above spasific amount.');
-INSERT INTO Campaign_Type VALUES(null,'Campaighn - Discount in gas station.');
-INSERT INTO Campaign_Type VALUES(null,'Campaighn - Discount on customer rate.');
+INSERT INTO Campaign_Type VALUES(null,'Campaign - Discount betweem hours.');
+INSERT INTO Campaign_Type VALUES(null,'Campaign - Discount betweem days (Date).');
+INSERT INTO Campaign_Type VALUES(null,'Campaign - Discount on spasific type of fuel.');
+INSERT INTO Campaign_Type VALUES(null,'Campaign - Discount on gas above spasific amount.');
+INSERT INTO Campaign_Type VALUES(null,'Campaign - Discount in gas station.');
+INSERT INTO Campaign_Type VALUES(null,'Campaign - Discount on customer rate.');
 
 INSERT INTO Campaign_Patterns VALUES(null,'Discount of 10% between 2:00 - 4:00.',1,'0.1');
 INSERT INTO Campaign_Patterns VALUES(null,'Discount of 15% between 4:00 - 5:30',1,'0.15');
@@ -633,12 +633,25 @@ INSERT INTO Home_Fuel_Sales VALUES(27,'2015-1-7 23:42:00','Balfur 6','Delivered'
 INSERT INTO Home_Fuel_Sales VALUES(28,'2015-5-22 11:34:00','Hadar 12','Delivered');
 INSERT INTO Home_Fuel_Sales VALUES(29,'2015-8-2 19:45:00','Sharon 34','Delivered');
 
+INSERT INTO Notifications VALUES(6,'NEW MESSAGE',DEFAULT,DEFAULT);
+INSERT INTO Notifications VALUES(7,'NEW MESSAGE',DEFAULT,DEFAULT);
+INSERT INTO Notifications VALUES(8,'NEW MESSAGE',DEFAULT,DEFAULT);
+INSERT INTO Notifications VALUES(9,'NEW MESSAGE',DEFAULT,DEFAULT);
+INSERT INTO Notifications VALUES(10,'NEW MESSAGE',DEFAULT,DEFAULT);
+INSERT INTO Notifications VALUES(11,'NEW MESSAGE',DEFAULT,DEFAULT);
+INSERT INTO Notifications VALUES(1,'NEW MESSAGE',DEFAULT,DEFAULT);
+INSERT INTO Notifications VALUES(2,'NEW MESSAGE',DEFAULT,DEFAULT);
+INSERT INTO Notifications VALUES(3,'NEW MESSAGE',DEFAULT,DEFAULT);
+INSERT INTO Notifications VALUES(4,'NEW MESSAGE',DEFAULT,DEFAULT);
+
 CREATE VIEW Customer_Detailes AS
 SELECT A.User_ID
 	,A.Customers_ID
     ,A.Customer_First_Name
     ,A.Customer_Last_Name
     ,A.Customer_Type
+    ,A.Costing_Model_ID
+    ,E.Model_Type_Description
     ,C.Plan_Name
     ,A.Phone_Number
     ,A.Credit_Card
@@ -654,6 +667,7 @@ FROM Customers A
 LEFT OUTER JOIN Users B ON B.User_ID = A.User_ID
 LEFT OUTER JOIN Purchase_Plan C ON A.Plan_ID=C.Plan_ID
 LEFT OUTER JOIN User_Type D ON B.User_Type_Id=D.User_Type_Id
+LEFT OUTER JOIN Costing_Model E ON A.Costing_Model_ID=E.Costing_Model_ID
 ;
 
 CREATE VIEW All_Campaign_On_System AS
@@ -869,4 +883,21 @@ SELECT A.Gas_Station_ID
 , B.Current_Price
 FROM Fuel_Per_Station A
 LEFT OUTER JOIN Fuels B ON A.Fuel_ID=B.Fuel_ID
+;
+
+CREATE VIEW Gas_Station_Detailes AS
+SELECT A.Gas_Station_ID
+, A.Station_Name
+, A.Station_Address
+, A.Gas_Station_Manager_ID
+, A.User_Interface_ID
+, A.Gas_Company_ID
+, D.Gas_Company_Name
+, C.Plan_ID
+, C.Plan_Name
+FROM gas_stations A
+LEFT OUTER JOIN purchase_plan_for_gas_company B ON A.Gas_Company_ID = B.Gas_Company_ID
+LEFT OUTER JOIN purchase_plan C ON B.Plan_ID=C.Plan_ID
+LEFT OUTER JOIN gas_company D ON D.Gas_Company_ID=A.Gas_Company_ID
+ORDER BY A.Gas_Station_ID
 ;
