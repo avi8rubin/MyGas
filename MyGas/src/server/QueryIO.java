@@ -1,4 +1,5 @@
 package server;
+import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -12,11 +13,16 @@ import callback.*;
 import common.MessageType;
 
 
-public class QueryIO  {
+public class QueryIO implements Runnable {
 	static Connection conn = null;
 	static Statement st = null;
 	private static ResultSet AnswerResult;
 	private static Object AnswerObject = null;
+	
+/**
+ * Thread values
+ */
+	callbackSale ThreadSale;
 
 	/**
 	 * This function create Driver connection
@@ -46,18 +52,15 @@ public class QueryIO  {
 		}	
 		return MessageType.Connection_To_Database_Succeded.toString();
 	}
-	public String setStatement(){
-	
+	public String setStatement(){	
 		try {
 			st =  conn.createStatement();
 		} catch (SQLException e) {
 			return MessageType.Statement_Not_succeded.toString()+"|Class:QueryIO| Function:setStatement()|";
 		}
 		return MessageType.statement_Succeded.toString();
-	}
-	
-	public Object CallbackResolver(Object SwitchCallback){
-		
+	}	
+	public Object CallbackResolver(Object SwitchCallback){		
 		switch(((CallBack) SwitchCallback).getWhatToDo()){
 		
 /*Global Queries*/
@@ -82,6 +85,14 @@ public class QueryIO  {
 					AnswerObject = getContacts((callbackWorkersDetailes)SwitchCallback);	
 				else if (SwitchCallback instanceof callbackStringArray)
 					AnswerObject = getContacts((callbackStringArray)SwitchCallback);
+				break;
+				
+			case getNotifications:
+				AnswerObject = getNotifications((callbackStringArray)SwitchCallback);				
+				break;
+				
+			case updateNotifications:
+				AnswerObject = updateNotifications((callbackUser)SwitchCallback);				
 				break;
 				
 /*Marketing Manager*/
@@ -126,9 +137,8 @@ public class QueryIO  {
 				AnswerObject = setCreateNewCustomer((callbackCustomer)SwitchCallback);				
 				break;	
 				
-/*Customer*/
-			case setNewHomeFuelSale:
-				AnswerObject = setNewHomeFuelSale((callbackSale)SwitchCallback);				
+			case setNewCar:
+				AnswerObject = setNewCar((callbackCar)SwitchCallback);				
 				break;
 				
 			case getHomeFuelOrders:
@@ -137,6 +147,43 @@ public class QueryIO  {
 				if(SwitchCallback instanceof callbackStringArray)
 					AnswerObject = getHomeFuelOrders((callbackStringArray)SwitchCallback);	
 				break;
+				
+			case getCustomerDetailes:
+				AnswerObject = getCustomerDetailes((callbackCustomer)SwitchCallback);				
+				break;
+				
+/*Customer*/
+			case setNewHomeFuelSale:
+				AnswerObject = setNewHomeFuelSale((callbackSale)SwitchCallback);				
+				break;
+				
+			case getCarDetailes:
+				if(SwitchCallback instanceof callbackCar)
+					AnswerObject = getCarDetailes((callbackCar)SwitchCallback);	
+				if(SwitchCallback instanceof callbackStringArray)
+					AnswerObject = getCarDetailes((callbackStringArray)SwitchCallback);	
+				break;
+/*Station*/		
+			case getSaleDiscount:
+				AnswerObject = getSaleDiscount((callbackSale)SwitchCallback);				
+				break;
+				
+			case getCarWithNFC:
+				AnswerObject = getCarWithNFC((callbackCar)SwitchCallback);				
+				break;
+				
+			case setNewGasStationSale:
+				AnswerObject = setNewGasStationSale((callbackSale)SwitchCallback);				
+				break;
+				
+			case getFuelPerStation:
+				AnswerObject = getFuelPerStation((callbackStationFuels)SwitchCallback);				
+				break;
+
+/*Station Manager*/
+			case getStationSuppliesOrder:
+				AnswerObject = getStationSuppliesOrder((callbackStringArray)SwitchCallback);				
+				break;	
 				
 				
 		default:
@@ -334,6 +381,90 @@ public class QueryIO  {
 				return new callback_Error("Problem has occurred, query not valid or not connection to DB.");
 				}
 		return WorkersDetailes;
+		
+	}
+	private CallBack getNotifications(callbackStringArray Callback){
+		// Set variables ---------------------------------------------------------	
+		ResultSetMetaData LocalResult;
+		String[][] Data;
+		String[] Headers;
+		int ColNum;
+		int RowNum =0;
+		// Build query -----------------------------------------------------------
+		String SqlQuery1 = "DELETE FROM Notifications WHERE User_ID=(?) AND User_Saw = 'Yes' AND HOUR(TIMEDIFF(now(), Notification_Date))>48";
+		String SqlQuery2 = "SELECT Notification_Date, NotificationsDescription, User_Saw FROM Notifications WHERE User_ID=(?)";
+		// Send query to DB and get result ---------------------------------------
+		try {
+			PreparedStatement ps1=conn.prepareStatement(SqlQuery1);
+			ps1.setInt(1,(int) Callback.getVariance()[0] );
+			ps1.executeUpdate();		
+			
+			PreparedStatement ps2=conn.prepareStatement(SqlQuery2);
+			ps2.setInt(1,(int) Callback.getVariance()[0] );
+			AnswerResult = ps2.executeQuery();
+			LocalResult = AnswerResult.getMetaData();
+			Callback.setColCount(ColNum = LocalResult.getColumnCount());
+			
+			AnswerResult.last();
+			Callback.setRowCount(AnswerResult.getRow());
+			AnswerResult.beforeFirst();
+			Data = new String[Callback.getRowCount()][ColNum];
+			Headers = new String[ColNum];
+			
+			for(int i=0;i<ColNum;i++)
+				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
+			Callback.setColHeaders(Headers);
+			
+			
+			/**
+			 * Create the report callback structure
+			 */
+			while (AnswerResult.next()) { 
+					
+				for (int i = 0; i < ColNum; i++) 
+					Data[RowNum][i] = AnswerResult.getString(i + 1);
+				RowNum++;
+			}
+			Callback.setData(Data);
+			} catch (SQLException e) {
+				return new callback_Error("Problem has occurred, query not valid or not connection to DB.");
+				}
+		return Callback;
+		
+	}
+	private CallBack updateNotifications(callbackUser Callback){
+		// Set variables ---------------------------------------------------------	
+
+		// Build query -----------------------------------------------------------
+		String SqlQuery1 = "UPDATE Notifications SET User_Saw='Yes' WHERE User_ID=(?)";
+		// Send query to DB and get result ---------------------------------------
+		try {
+			PreparedStatement ps1=conn.prepareStatement(SqlQuery1);
+			ps1.setInt(1,(int) Callback.getUserID() );
+			ps1.executeUpdate();
+			
+			} catch (SQLException e) {
+				return new callback_Error("Problem has occurred, query not valid or not connection to DB.");
+				}
+		return new callbackSuccess("Update Notifications Successfully."); 
+		
+	}
+	private boolean setNotifications(int UserID, String Message){
+		// Set variables ---------------------------------------------------------	
+
+		// Build query -----------------------------------------------------------
+		String SqlQuery = "INSERT INTO Notifications VALUES((?),(?),DEFAULT,DEFAULT)";
+		// Send query to DB and get result ---------------------------------------
+		try {
+			PreparedStatement ps=conn.prepareStatement(SqlQuery);
+			ps.setInt(1, UserID);
+			ps.setString(2, Message);
+			ps.executeUpdate();
+			
+			} catch (SQLException e) {
+				return false;
+				}
+		return true; 
 		
 	}
 
@@ -628,6 +759,7 @@ public class QueryIO  {
 		String[][] Data;
 		String[] Headers;
 		String[] Combo;
+		String[][] ComboWithIndex;
 		int ColNum;
 		int RowNum =0;
 		// Build query -----------------------------------------------------------
@@ -637,7 +769,7 @@ public class QueryIO  {
 		String SqlQuery2 = 	"SELECT Campaign_ID "+
 							",DATE_FORMAT(Start_Campaign,'%d/%m/%Y') AS Start_Campaign "+
 							",DATE_FORMAT(End_Campaign,'%d/%m/%Y') AS End_Campaign "+
-							",CONCAT(Campaign_Description,' (',CAST(DATE_FORMAT(Start_Campaign,'%d/%m/%Y') AS CHAR),' - ',CAST(DATE_FORMAT(End_Campaign,'%d/%m/%Y') AS CHAR),')') AS Campaign_Description "+
+							",Campaign_Description "+
 							"FROM All_Campaign_On_System "+
 							"WHERE IS_Active = 'Yes'";
 		
@@ -652,14 +784,17 @@ public class QueryIO  {
 			RowNum = AnswerResult.getRow();								//Get the number of rows   |
 			AnswerResult.beforeFirst();									//--------------------------
 			Combo = new String[RowNum];									//Set values for omboBox object
+			ComboWithIndex = new String[RowNum][2];
 			RowNum=0;
 			while (AnswerResult.next()) { 	
 				Combo[RowNum] = AnswerResult.getString("Campaign_Description");
+				ComboWithIndex[RowNum][0] = AnswerResult.getString("Campaign_Patterns_ID");
+				ComboWithIndex[RowNum][1] = AnswerResult.getString("Campaign_Description");
 				RowNum++;
 			}
 			RowNum=0;
 			Callback.setComboBoxStringArray(Combo);
-			
+			Callback.setVarianceMatrix(ComboWithIndex);
 			
 			//Active Campaign
 			AnswerResult = st.executeQuery(SqlQuery2);					//Send query to DB
@@ -763,7 +898,6 @@ public class QueryIO  {
 				
 				for (int i = 0; i < ColNum; i++) 
 					if(i<ColNum) Data[RowNum][i] = AnswerResult.getString(i + 1);
-					//else Data[RowNum][i] = new JComboBox<String[]>(Confirm);
 				RowNum++;
 			}
 			Tarrif.setComboBoxStringArray(Confirm);
@@ -784,10 +918,10 @@ public class QueryIO  {
 		// Send query to DB  -----------------------------------------------------
 			for(i=0;i<UpdateWaitingTariff.size();i++){
 				
-				ps1.setString(1, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getCEOConfirmation());
+				ps1.setString(1, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getCEOConfirmation().trim());
 				ps1.setInt(2, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getTariffUpdateID());
 				ps1.executeUpdate();
-				if(((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getCEOConfirmation().equals("Yes")){	
+				if(((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getCEOConfirmation().trim().equals("Yes")){	
 					ps2.setFloat(1, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getWantedPrice());
 					ps2.setInt(2, ((callbackWaitingTariff)UpdateWaitingTariff.get(i)).getFuelID());
 					ps2.executeUpdate();
@@ -810,13 +944,14 @@ public class QueryIO  {
 		// Build query -----------------------------------------------------------
 		
 		try {
-			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Customer_Detailes "+
-														"WHERE User_ID = (?)");
+			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Customer_Detailes WHERE User_ID = (?)");
 			
 		// Send query to DB  -----------------------------------------------------
 						
 			ps.setInt(1, Callback.getUserID());
 			AnswerResult = ps.executeQuery();
+			
+			if (!AnswerResult.next()) return new callback_Error("Customer not exists in DB.");
 			
 			Callback.setUserID(AnswerResult.getInt("User_ID"));
 			Callback.setCustomersID(AnswerResult.getInt("Customers_ID"));
@@ -884,11 +1019,13 @@ public class QueryIO  {
 		callbackUser NewUser = new callbackUser(Callback.getUserName(),Callback.getUserPassword());		
 		
 		// Build query -----------------------------------------------------------
-		String SqlQuery1 = "SELECT * FROM Customers WHERE Email=(?)";
-		String SqlQuery2 = "INSERT INTO Customers VALUES((?),(?),(?),(?),(?),(?),(?),(?),(?),0,1)";
+		String SqlQuery1 = "SELECT Customers_ID FROM Customers WHERE Customers_ID=(?)";
+		String SqlQuery2 = "SELECT * FROM Customers WHERE Email=(?)";
+		String SqlQuery3 = "INSERT INTO Customers VALUES((?),(?),(?),(?),(?),(?),(?),(?),(?),0,1)";
 		try {
 			PreparedStatement ps1 = conn.prepareStatement(SqlQuery1);
-			PreparedStatement ps2=conn.prepareStatement(SqlQuery2);
+			PreparedStatement ps2 = conn.prepareStatement(SqlQuery2);
+			PreparedStatement ps3 = conn.prepareStatement(SqlQuery3);
 			
 		// Send query to DB  -----------------------------------------------------
 			
@@ -896,22 +1033,27 @@ public class QueryIO  {
 			if(Ucallback instanceof callback_Error) return Ucallback;
 			Callback = (callbackCustomer) Ucallback;
 			
-			//Check if email already exists	
-			ps1.setString(1, Callback.getEmail().trim());
+			//Check if customer already exists	
+			ps1.setInt(1, Callback.getCustomersID());
 			AnswerResult = ps1.executeQuery();			
-			if (AnswerResult.isLast()) return new callback_Error("Email belong to another customer.");
+			if (AnswerResult.next()) return new callback_Error("Customer already registered in system."); 
+			
+			//Check if email already exists	
+			ps2.setString(1, Callback.getEmail().trim());
+			AnswerResult = ps2.executeQuery();			
+			if (AnswerResult.next()) return new callback_Error("Email belong to another customer.");
 			
 			//Add new customer to DB
-			ps2.setInt(1, Callback.getUserID());
-			ps2.setString(2, Callback.getCustomerFirstName().trim());
-			ps2.setString(3, Callback.getCustomerLastName().trim());
-			ps2.setString(4, Callback.getCustomerType().trim());
-			ps2.setInt(5, Callback.getPlanID());
-			ps2.setInt(6, Callback.getUserID());
-			ps2.setString(7, Callback.getPhoneNumber().trim());
-			ps2.setString(8, Callback.getCreditCard().trim());
-			ps2.setString(9, Callback.getEmail().trim());			
-			ps2.executeUpdate();
+			ps3.setInt(1, Callback.getUserID());
+			ps3.setString(2, Callback.getCustomerFirstName().trim());
+			ps3.setString(3, Callback.getCustomerLastName().trim());
+			ps3.setString(4, Callback.getCustomerType().trim());
+			ps3.setInt(5, Callback.getPlanID());
+			ps3.setInt(6, Callback.getUserID());
+			ps3.setString(7, Callback.getPhoneNumber().trim());
+			ps3.setString(8, Callback.getCreditCard().trim());
+			ps3.setString(9, Callback.getEmail().trim());			
+			ps3.executeUpdate();
 			
 			
 		} catch (SQLException e) {
@@ -920,6 +1062,139 @@ public class QueryIO  {
 		}
 			return new callbackSuccess("Create new customer successfully.");					// 	Query succeed
 		
+	}
+	private CallBack setNewCar(callbackCar Callback){
+		// Set variables ---------------------------------------------------------
+
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps=conn.prepareStatement("INSERT INTO Cars VALUES(null,(?),(?),(?),(?),(?))");
+			
+		// Send query to DB  -----------------------------------------------------
+			
+				ps.setString(1, Callback.getCarNumber().trim());
+				ps.setInt(2, Callback.getCustomerID());
+				ps.setString(3, Callback.getYesNoNFC().trim());
+				ps.setInt(4, Callback.getFuelID());
+				ps.setInt(5, Callback.getCostingModelID());
+				ps.executeUpdate();
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");					// If query not succeed 
+		}
+			return (new callbackSuccess());					// 	Query not succeed
+		
+	}
+	private Object getCarDetailes(callbackCar Callback){
+		// Set variables ---------------------------------------------------------
+		callbackVector LocalVector = new callbackVector();
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Cars WHERE Customers_ID=(?)");
+			
+		// Send query to DB  -----------------------------------------------------
+			ps.setInt(1, Callback.getCustomerID());
+			AnswerResult = ps.executeQuery();
+			
+			while (AnswerResult.next()) { 					
+				callbackCar callback_Obj = new callbackCar();
+				callback_Obj.setCarID(AnswerResult.getInt("Car_ID"));
+				callback_Obj.setCarNumber(AnswerResult.getString("Car_Number"));
+				callback_Obj.setCostingModelID(AnswerResult.getInt("Costing_Model_ID"));
+				callback_Obj.setCustomerID(AnswerResult.getInt("Customers_ID"));
+				callback_Obj.setFuelID(AnswerResult.getInt("Fuel_ID"));
+				callback_Obj.setYesNoNFC(AnswerResult.getString("NFC"));				
+				LocalVector.add(callback_Obj);
+			}
+			if (LocalVector.size() == 0) 
+				return LocalVector.add( new callback_Error("No records of cars for this customer."));
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");					// If query not succeed 
+		}
+			return LocalVector;					// 	Query not succeed
+		
+	}
+	private CallBack getCarDetailes(callbackStringArray Callback){
+		// Set variables ---------------------------------------------------------
+		ResultSetMetaData LocalResult;
+		Object[][] Data;
+		String[] Headers;
+		int ColNum;
+		int RowNum =0;
+		String[] Combo;
+		String[][] ComboWithIndex;
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Cars WHERE Customers_ID=(?)");
+			
+		// Send query to DB  -----------------------------------------------------
+			ps.setInt(1, (int) Callback.getVariance()[0]);
+			AnswerResult = ps.executeQuery();
+			
+			LocalResult = AnswerResult.getMetaData();
+			Callback.setColCount(ColNum = LocalResult.getColumnCount());
+			
+			AnswerResult.last();
+			Callback.setRowCount(AnswerResult.getRow());
+			AnswerResult.beforeFirst();
+			Data = new String[Callback.getRowCount()][ColNum+1];
+			Headers = new String[ColNum];
+			Combo = new String[Callback.getRowCount()];
+			ComboWithIndex = new String[Callback.getRowCount()][2];
+			
+			for(int i=0;i<ColNum;i++)
+				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
+			Callback.setColHeaders(Headers);
+			/**
+			 * Create the report callback structure
+			 */
+			while (AnswerResult.next()) { 				
+				for (int i = 0; i < ColNum; i++) 
+					Data[RowNum][i] = AnswerResult.getString(i + 1);
+				Combo[RowNum] = AnswerResult.getString("Car_Number");
+				ComboWithIndex[RowNum][0] = AnswerResult.getString("Car_ID");
+				ComboWithIndex[RowNum][1] = AnswerResult.getString("Car_Number");
+				RowNum++;
+			}
+
+			Callback.setData(Data);
+			Callback.setComboBoxStringArray(Combo);
+			Callback.setVarianceMatrix(ComboWithIndex);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");					// If query not succeed 
+		}
+			return Callback;					// 	Query not succeed
+		
+	}
+	private Object getCustomerDetailes(callbackCustomer Callback){
+		// Set variables ---------------------------------------------------------
+			CallBack returnCallback;
+			Object[] Var = new Object[1];
+			Var[0] = (int)Callback.getCustomersID();
+			callbackStringArray NSCB = new callbackStringArray(Var);
+			callbackVector LocalVector = new callbackVector();
+		// Build query -----------------------------------------------------------
+			
+		// Send query to DB  -----------------------------------------------------
+			returnCallback = getCustomer(Callback);
+			if (returnCallback instanceof callback_Error) return returnCallback;
+			Callback = (callbackCustomer) getCustomer(Callback);
+			LocalVector.add(Callback);
+			
+			returnCallback = getCarDetailes(NSCB);
+			if (returnCallback instanceof callback_Error) return returnCallback;
+			NSCB = (callbackStringArray) returnCallback;
+			LocalVector.add(NSCB);
+			return LocalVector;
 	}
 	
 /**
@@ -940,13 +1215,14 @@ public class QueryIO  {
 		// Send query to DB  -----------------------------------------------------
 			//Create new sale 			
 			ps1.setInt(1, Callback.getFuelID());
-			ps1.setInt(2, Callback.getFuelAmount());
+			ps1.setFloat(2, Callback.getFuelAmount());
 			ps1.setFloat(3, Callback.getPayment());
 			ps1.setInt(4, Callback.getCustomersID());
 			ps1.executeUpdate();
 			//Get SaleID
 			ps2.setInt(1, Callback.getCustomersID());
 			AnswerResult = ps2.executeQuery();
+			AnswerResult.next();
 			SaleID = AnswerResult.getInt("Sales_ID");
 			//Enter new home fuel sale
 			ps3.setInt(1, SaleID);
@@ -1084,6 +1360,345 @@ public class QueryIO  {
 			return Callback;					// 	Query not succeed
 		
 	}	
+
+/**
+ * Station	
+ */
+	private CallBack getSaleDiscount(callbackSale Callback){
+		// Set variables ---------------------------------------------------------
+		int UserRate=0;
+		callbackCampaign CampaignDiscount = new callbackCampaign();
+		// Build query -----------------------------------------------------------
+		
+		
+		String SqlQuery1 = "SELECT Carrent_Rate FROM Customers WHERE Customers_ID=(?)";	
+		
+		String SqlQuery2 = "SELECT A.Campaign_ID "+
+				", A.Start_Campaign "+
+				", A.End_Campaign "+
+				", A.IS_Active "+
+				", A.Campaign_Description "+
+			    ", A.Calculation_Method "+
+			    ", (?)*A.Discount_Percentage AS Discount_Percentage "+
+			    ", MIN((?) - (?)*A.Discount_Percentage ) AS Price_After_Discount "+
+			    "FROM ( "+
+			"/*Amount_Discount*/ "+
+			"SELECT A.Campaign_ID "+
+				", A.Start_Campaign "+
+				", A.End_Campaign "+
+				", A.IS_Active "+
+				", A.Campaign_Description "+
+			    ", A.Calculation_Method "+
+			    ", A.Discount_Percentage "+
+			"FROM Campaigns_Amount B "+
+			"LEFT OUTER JOIN All_Campaign_On_System A ON A.Campaign_Patterns_ID=B.Campaign_Patterns_ID "+
+			"WHERE A.IS_Active='Yes' "+
+			"AND B.Amount < (?) "+
+			
+			"UNION  "+
+			
+			"/*Date_Discount*/ "+
+			"SELECT A.Campaign_ID "+
+				", A.Start_Campaign "+
+				", A.End_Campaign "+
+				", A.IS_Active "+
+				", A.Campaign_Description "+
+			    ", A.Calculation_Method "+
+			    ", A.Discount_Percentage "+			
+			"FROM Campaigns_Date B "+
+			"LEFT OUTER JOIN All_Campaign_On_System A ON A.Campaign_Patterns_ID=B.Campaign_Patterns_ID "+
+			"WHERE A.IS_Active='Yes' "+
+			"AND NOW() BETWEEN A.Start_Campaign AND A.End_Campaign "+
+			
+			"UNION "+
+			
+			"/*Gas_Station_Discount*/ "+
+			"SELECT A.Campaign_ID "+
+				", A.Start_Campaign "+
+				", A.End_Campaign "+
+				", A.IS_Active "+
+				", A.Campaign_Description "+
+			    ", A.Calculation_Method "+
+			    ", A.Discount_Percentage "+
+			"FROM Campaigns_Gas_Station B "+
+			"LEFT OUTER JOIN All_Campaign_On_System A ON A.Campaign_Patterns_ID=B.Campaign_Patterns_ID "+
+			"WHERE A.IS_Active='Yes' "+
+			"AND B.Gas_Station_ID = (?) "+
+			
+			"UNION "+
+			
+			"/*Gas_Type_Discount*/ "+
+			"SELECT A.Campaign_ID "+
+				", A.Start_Campaign "+
+				", A.End_Campaign "+
+				", A.IS_Active "+
+				", A.Campaign_Description "+
+			    ", A.Calculation_Method "+
+			    ", A.Discount_Percentage "+
+			"FROM Campaigns_Gas_Type B "+
+			"LEFT OUTER JOIN All_Campaign_On_System A ON A.Campaign_Patterns_ID=B.Campaign_Patterns_ID "+
+			"WHERE A.IS_Active='Yes' "+
+			"AND B.Fuel_ID = (?) "+
+			
+			"UNION  "+
+			
+			"/*Hours_Discount*/ "+
+			"SELECT A.Campaign_ID "+
+				", A.Start_Campaign "+
+				", A.End_Campaign "+
+				", A.IS_Active "+
+				", A.Campaign_Description "+
+			    ", A.Calculation_Method "+
+			    ", A.Discount_Percentage  "+
+			"FROM Campaigns_hours B "+
+			"LEFT OUTER JOIN All_Campaign_On_System A ON A.Campaign_Patterns_ID=B.Campaign_Patterns_ID "+
+			"WHERE A.IS_Active='Yes' "+
+			"AND TIME(NOW()) BETWEEN B.Start_Hour AND B.End_Hour "+
+			
+			"UNION "+
+			
+			"/*Customer_Rate_Discount*/ "+
+			"SELECT A.Campaign_ID "+
+				", A.Start_Campaign "+
+				", A.End_Campaign "+
+				", A.IS_Active "+
+				", A.Campaign_Description "+
+			    ", A.Calculation_Method "+
+			    ", A.Discount_Percentage "+
+			"FROM Campaigns_Rate B "+
+			"LEFT OUTER JOIN All_Campaign_On_System A ON A.Campaign_Patterns_ID=B.Campaign_Patterns_ID "+
+			"WHERE A.IS_Active='Yes' "+
+			"AND B.Customer_Rate <= (?) "+
+			") A";
+		
+		try {
+			PreparedStatement ps1=conn.prepareStatement(SqlQuery1);						
+			PreparedStatement ps2=conn.prepareStatement(SqlQuery2);
+		// Send query to DB  -----------------------------------------------------
+			//Get customer rate			
+			ps1.setInt(1, Callback.getCustomersID());
+			AnswerResult = ps1.executeQuery();
+			if(!AnswerResult.next())
+				UserRate = AnswerResult.getInt("Carrent_Rate");
+			
+			//Get best discount
+			ps2.setFloat(1, Callback.getPayment());
+			ps2.setFloat(2, Callback.getPayment());
+			ps2.setFloat(3, Callback.getPayment());
+			ps2.setFloat(4, Callback.getFuelAmount());
+			ps2.setInt(5, Callback.getGasStationID());
+			ps2.setInt(6, Callback.getFuelID());
+			ps2.setInt(7, UserRate);
+			AnswerResult = ps2.executeQuery();
+			
+			if(!AnswerResult.next())
+				return new callbackSuccess("No discount, please pay full price.");
+						
+			CampaignDiscount.setCampaignID(AnswerResult.getInt("Campaign_ID"));
+			CampaignDiscount.setStartCampaignDate(AnswerResult.getString("Start_Campaign"));
+			CampaignDiscount.setEndCampaignDate(AnswerResult.getString("End_Campaign"));
+			CampaignDiscount.setCampaignDescription(AnswerResult.getString("Campaign_Description"));
+			CampaignDiscount.setCalculationMethod(AnswerResult.getString("Calculation_Method"));
+			CampaignDiscount.setDiscountPercentage(AnswerResult.getFloat("Discount_Percentage"));
+			CampaignDiscount.setPriceAfterDiscount(AnswerResult.getFloat("Price_After_Discount"));
+	
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");					// If query not succeed 
+		}
+			return CampaignDiscount;					// 	Query not succeed
+		
+	}	
+	private CallBack getCarWithNFC(callbackCar Callback){
+		// Set variables ---------------------------------------------------------
+
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Cars WHERE Car_Number = (?)");
+			
+		// Send query to DB  -----------------------------------------------------
+			
+				ps.setString(1, Callback.getCarNumber().trim());
+				AnswerResult = ps.executeQuery();
+			
+				if(!AnswerResult.next()) return new callback_Error("Car not exists.");
+				
+				Callback.setCarID(AnswerResult.getInt("Car_ID"));
+				Callback.setCarNumber(AnswerResult.getString("Car_Number"));
+				Callback.setCostingModelID(AnswerResult.getInt("Costing_Model_ID"));
+				Callback.setCustomerID(AnswerResult.getInt("Customers_ID"));
+				Callback.setFuelID(AnswerResult.getInt("Fuel_ID"));
+				Callback.setYesNoNFC(AnswerResult.getString("NFC"));	
+	
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");					// If query not succeed 
+		}
+			return Callback;
+		
+	}
+	private CallBack setNewGasStationSale(callbackSale Callback){
+		// Set variables ---------------------------------------------------------
+			int SaleID;
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps1=conn.prepareStatement(
+					"INSERT INTO Sales VALUES(null,(?),NOW(),(?),(?),(?))");
+			PreparedStatement ps2=conn.prepareStatement(
+					"SELECT Sales_ID, MAX(Sale_Date) AS Sale_Date FROM Sales WHERE Customers_ID = (?)");										
+			PreparedStatement ps3=conn.prepareStatement(
+					"INSERT INTO Gas_Stations_Sales VALUES((?),(?),(?),(?),(?))");
+			PreparedStatement ps4=conn.prepareStatement(
+					"UPDATE Fuel_Per_Station SET Current_Amount=Current_Amount-(?) "+
+						"WHERE Gas_Station_ID=(?) AND Fuel_ID=(?)");
+		// Send query to DB  -----------------------------------------------------
+			//Create new sale 			
+			ps1.setInt(1, Callback.getFuelID());
+			ps1.setFloat(2, Callback.getFuelAmount());
+			ps1.setFloat(3, Callback.getPayment());
+			ps1.setInt(4, Callback.getCustomersID());
+			ps1.executeUpdate();
+			//Get SaleID
+			ps2.setInt(1, Callback.getCustomersID());
+			AnswerResult = ps2.executeQuery();
+			
+			AnswerResult.next();
+			SaleID = AnswerResult.getInt("Sales_ID");
+			//Enter new gas station sale
+			ps3.setInt(1, SaleID);
+			ps3.setString(2,Callback.getDriverName());
+			ps3.setInt(3, Callback.getCarID());
+			ps3.setInt(4, Callback.getGasStationID());
+			ps3.setInt(5, Callback.getCampaignID());
+			ps3.executeUpdate();
+			
+			ps4.setFloat(1, Callback.getFuelAmount());
+			ps4.setInt(2, Callback.getGasStationID());
+			ps4.setInt(3, Callback.getFuelID());
+			ps4.executeUpdate();
+			
+			/*Initiate Thread*/
+			ThreadSale = Callback;
+			new Thread(this);
+			/*---------------*/
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
+		}
+			return new callbackSuccess("Add sale to DB.");					
+		
+	}
+	private Vector<?> getFuelPerStation(callbackStationFuels Callback){
+		// Set variables ---------------------------------------------------------
+		callbackVector LocalVector = new callbackVector();	
+		int row;
+		// Build query -----------------------------------------------------------
+		String SqlQueryGetID = "SELECT Gas_Station_ID FROM Gas_Stations WHERE User_Interface_ID=(?)";
+		String SqlQuery = "SELECT * FROM Fuel_For_Gas_Station WHERE Gas_Station_ID=(?)";
+		
+		// Send query to DB and get result ---------------------------------------
+		try {
+			PreparedStatement ps1=conn.prepareStatement(SqlQueryGetID);
+			ps1.setInt(1, Callback.getGasStationID());
+			AnswerResult = ps1.executeQuery();
+			AnswerResult.next();
+			
+			PreparedStatement ps2=conn.prepareStatement(SqlQuery);
+			ps2.setInt(1, AnswerResult.getInt("Gas_Station_ID"));			
+			AnswerResult = ps2.executeQuery();
+			
+			/**
+			 * Create the report callback structure
+			 */
+					while (AnswerResult.next()) { 					
+						callbackStationFuels callback_Obj = new callbackStationFuels();
+						callback_Obj.setGasStationID(AnswerResult.getInt("Gas_Station_ID"));
+						callback_Obj.setFuelID(AnswerResult.getInt("Fuel_ID"));
+						callback_Obj.setThresholdLimit(AnswerResult.getInt("Threshold_Limit"));
+						callback_Obj.setCurrentAmount(AnswerResult.getFloat("Current_Amount"));
+						callback_Obj.setCapacity(AnswerResult.getInt("Capacity"));
+						callback_Obj.setFuelDescription(AnswerResult.getString("Fuel_Description"));
+						callback_Obj.setMaxPrice(AnswerResult.getFloat("Max_Price"));
+						callback_Obj.setCurrentPrice(AnswerResult.getFloat("Current_Price"));
+						LocalVector.add(callback_Obj);
+					}
+				
+					} catch (SQLException e) {
+						LocalVector.add(new callback_Error("Problem has occurred, query not valid or not connection to DB."));					
+				e.printStackTrace();
+			}
+		row = LocalVector.size();
+		return LocalVector;
+		
+	}
+
+/**
+ * Station Manager
+ */
+	
+	private CallBack getStationSuppliesOrder(callbackStringArray Callback){
+		// Set variables ---------------------------------------------------------
+		ResultSetMetaData LocalResult;
+		Object[][] Data;
+		String[] Headers;
+		int ColNum;
+		int RowNum =0;
+		Object[] Confirm = {"Waiting","Yes","No"};
+		// Build query -----------------------------------------------------------
+		
+		try {
+			
+			PreparedStatement ps1=conn.prepareStatement(
+					"UPDATE Fuel_Orders SET Showed_To_Manager='Yes' WHERE Gas_Station_ID=(?) AND Order_Confirmation = 'Waiting'");
+			PreparedStatement ps2=conn.prepareStatement(
+					"SELECT Order_ID, Gas_Station_ID, Fuel_ID, Fuel_Description "+
+					", Amount_To_Order, Current_Amount, Order_Date, Order_Confirmation, Showed_To_Manager "+
+					"FROM Fuel_Orders_For_Stations WHERE Gas_Station_ID = (?) AND Order_Confirmation = 'Waiting'");
+			
+		// Send query to DB  ----------------------------------------------------- 	
+		
+			ps1.setInt(1, (int) Callback.getVariance()[0]);
+			ps1.executeUpdate();
+			
+			ps2.setInt(1, (int) Callback.getVariance()[0]);
+			AnswerResult = ps2.executeQuery();
+
+			
+			LocalResult = AnswerResult.getMetaData();
+			Callback.setColCount(ColNum = LocalResult.getColumnCount());
+			
+			AnswerResult.last();
+			Callback.setRowCount(AnswerResult.getRow());
+			AnswerResult.beforeFirst();
+			Data = new String[Callback.getRowCount()][ColNum];
+			Headers = new String[ColNum];
+			
+			for(int i=0;i<ColNum;i++)
+				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
+			Callback.setColHeaders(Headers);
+			/**
+			 * Create the report callback structure
+			 */
+			while (AnswerResult.next()) { 				
+				for (int i = 0; i < ColNum; i++) 
+					Data[RowNum][i] = AnswerResult.getString(i + 1);
+				RowNum++;
+			}
+			Callback.setComboBoxStringArray(Confirm);
+			Callback.setData(Data);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
+		}
+			return Callback;					
+		
+	}
+	
+	
 /**
  * Variance
  */
@@ -1113,11 +1728,78 @@ public class QueryIO  {
 
 		// Send query to DB  -----------------------------------------------------
 			try {
-				st.executeUpdate("UPDATE Users SET Logged_In='No' where User_Type_Id<>2;");
+				st.executeUpdate("UPDATE Users SET Logged_In='No' WHERE User_Type_Id<>2;");
 			} catch (SQLException e) {
 				
 				e.printStackTrace();
 			}	
+		
+	}
+	@Override
+	public void run() {
+		
+		callbackSale LocalSale = ThreadSale;
+		ResultSet NotificationResultSet, LocalResult = AnswerResult;
+		int ThresholdLimit,Capacity,StationManagerUserID;
+		String FuelDescription;
+		float CurrentAmount;
+		try {
+			Thread.sleep(20);						//Let the result back to the client
+			/*Prepare all queries*/
+			
+			PreparedStatement ps1=conn.prepareStatement(
+					"SELECT A.* ,B.Fuel_Description FROM Fuel_Per_Station A "+
+					"LEFT OUTER JOIN Fuels B ON A.Fuel_ID = B.Fuel_ID WHERE Gas_Station_ID=(?) AND Fuel_ID=(?)");
+			PreparedStatement ps2=conn.prepareStatement(
+					"SELECT Order_ID, Fuel_ID, Gas_Station_ID, Amount, MAX(Order_Date) AS Order_Date, Order_Confirmation, Showed_To_Manager "+
+					"FROM Fuel_Orders WHERE Fuel_ID = (?) AND Gas_Station_ID = (?) AND Order_Confirmation = 'Waiting'");
+			PreparedStatement ps3=conn.prepareStatement(
+					"INSERT INTO Fuel_Orders VALUES(NULL,(?),(?),(?),NOW(),DEFAULT,DEFAULT)");
+			PreparedStatement ps4=conn.prepareStatement(
+					"UPDATE Fuel_Orders SET Amount = (?) WHERE Gas_Station_ID=(?) AND Fuel_ID=(?)");
+			PreparedStatement ps5=conn.prepareStatement(
+					"SELECT B.User_Id FROM Gas_Stations A "+
+					"LEFT OUTER JOIN Workers B ON A.Gas_Station_Manager_ID=B.Worker_ID "+
+					"WHERE A.Gas_Station_ID = (?)");
+			
+			/*Check current fuel limit after sale*/
+			ps1.setInt(1, LocalSale.getGasStationID());
+			ps1.setInt(2, LocalSale.getFuelID());
+			LocalResult = ps1.executeQuery();
+			LocalResult.next();
+			ThresholdLimit = LocalResult.getInt("Threshold_Limit");
+			Capacity = LocalResult.getInt("Capacity");
+			CurrentAmount = LocalResult.getFloat("Current_Amount");
+			FuelDescription = LocalResult.getString("Fuel_Description");
+			
+			if(CurrentAmount <= ThresholdLimit){
+				ps2.setInt(1, LocalSale.getFuelID());
+				ps2.setInt(2, LocalSale.getGasStationID());
+				LocalResult = ps2.executeQuery();
+				/*Set new fuel order*/
+				if(!LocalResult.next()) {
+					ps3.setInt(1, LocalSale.getFuelID());
+					ps3.setInt(2, LocalSale.getGasStationID());
+					ps3.setFloat(3, Capacity - CurrentAmount);
+					ps3.executeUpdate();
+					/*Update new notification*/
+					ps5.setInt(1, LocalSale.getGasStationID());
+					NotificationResultSet = ps5.executeQuery();
+					NotificationResultSet.next();
+					setNotifications(NotificationResultSet.getInt("User_Id"),"A new order for "+FuelDescription+" fuel is waiting For approval."); 
+				}
+				/*Update exists order*/
+				else {
+					ps4.setFloat(1, Capacity - CurrentAmount);
+					ps4.setInt(2, LocalSale.getGasStationID());	
+					ps4.setInt(3, LocalSale.getFuelID());
+					ps4.executeUpdate();
+				}		
+			}		
+		} catch (SQLException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	

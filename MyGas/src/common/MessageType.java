@@ -16,6 +16,8 @@ public enum MessageType {
 	updateUserLogout,
 	getCheckExistsUserPass,
 	getContacts,
+	getNotifications,
+	updateNotifications,
 /*Marketing Manager*/	
 	getCommentsForMarketionCampaign,
 	getFuelsDetailes,
@@ -30,8 +32,18 @@ public enum MessageType {
 	getCustomer,
 	getIsUserNameExists,
 	setCreateNewCustomer,
+	setNewCar,
+	getCarDetailes,
+	getCustomerDetailes,
 /*Customer*/
 	setNewHomeFuelSale,
-	getHomeFuelOrders
+	getHomeFuelOrders,
+/*Station*/
+	getSaleDiscount,
+	getCarWithNFC,
+	setNewGasStationSale,
+	getFuelPerStation,
+/*Station Manager*/
+	getStationSuppliesOrder
 
 }

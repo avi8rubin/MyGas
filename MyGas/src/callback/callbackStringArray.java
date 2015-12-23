@@ -19,7 +19,8 @@ public class callbackStringArray extends CallBack {
 	private Object[][] Data;
 	private String[] colHeaders;
 	private Object[] ComboBoxString;
-	private Object[] Variance;
+	private Object[] Variance;							//Free object
+	private Object[][] VarianceMatrix;					//Free object
 	
 	public callbackStringArray(MessageType WhatToDo){
 		super(WhatToDo);
@@ -27,6 +28,9 @@ public class callbackStringArray extends CallBack {
 	public callbackStringArray(Object[][] Data, String[] Headers){
 		setData(Data);
 		setColHeaders(Headers);
+	}
+	public callbackStringArray(Object[] Variance){
+		this.Variance = Variance;
 	}
 	public JTable getJTableObject(){
 		return new JTable(Data,colHeaders);
@@ -87,5 +91,11 @@ public class callbackStringArray extends CallBack {
 		for(int i=0 ; i<Index.length ; i++)
 			obj[i] = Data[Index[i]];
 		return obj;
+	}
+	public Object[][] getVarianceMatrix() {
+		return VarianceMatrix;
+	}
+	public void setVarianceMatrix(Object[][] varianceMatrix) {
+		VarianceMatrix = varianceMatrix;
 	}
 }

@@ -11,7 +11,7 @@ public class callbackSale extends CallBack {
 	private int SaleID;
 	private int FuelID;
 	private String SaleDate;
-	private int FuelAmount;
+	private float FuelAmount;
 	private float Payment;
 	private int CustomersID;
 //For home fuel sale
@@ -20,6 +20,11 @@ public class callbackSale extends CallBack {
 	private String DeliveryTime;
 	private String Address;
 	private String OrderStatus;
+//For gas station sale
+	private String DriverName;
+	private int CarID;
+	private int GasStationID;
+	private int CampaignID = 0;
 	
 	public callbackSale(){};
 	public callbackSale(MessageType WhatToDo){
@@ -43,7 +48,7 @@ public class callbackSale extends CallBack {
 	public void setSaleDate(String saleDate) {
 		SaleDate = saleDate;
 	}
-	public int getFuelAmount() {
+	public float getFuelAmount() {
 		return FuelAmount;
 	}
 	public void setFuelAmount(int fuelAmount) {
@@ -100,6 +105,30 @@ public class callbackSale extends CallBack {
 	}
 	public void setDeliveryTime(String deliveryTime) {
 		DeliveryTime = deliveryTime;
+	}
+	public String getDriverName() {
+		return DriverName;
+	}
+	public void setDriverName(String driverName) {
+		DriverName = driverName;
+	}
+	public int getCarID() {
+		return CarID;
+	}
+	public void setCarID(int carID) {
+		CarID = carID;
+	}
+	public int getGasStationID() {
+		return GasStationID;
+	}
+	public void setGasStationID(int gasStationID) {
+		GasStationID = gasStationID;
+	}
+	public int getCampaignID() {
+		return CampaignID;
+	}
+	public void setCampaignID(int campaignID) {
+		CampaignID = campaignID;
 	}
 	
 	

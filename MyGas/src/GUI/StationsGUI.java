@@ -8,18 +8,26 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Vector;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import javax.swing.text.MaskFormatter;
 
 import callback.callbackBuffer;
+import callback.callbackCar;
+import callback.callbackStringArray;
 import callback.callbackUser;
 import client.Client;
 
@@ -37,7 +45,8 @@ public class StationsGUI extends abstractPanel_GUI{
 	private JButton PayButton;
 	private JButton LogoutButton2;
 	private JButton StartFuelingButton;
-	public JLabel car;
+	
+	private JLabel car;
 	private JLabel ErrorMassage=new JLabel();
 	private	JLabel GreenHand;
 	private	JLabel BlueHand;
@@ -47,7 +56,11 @@ public class StationsGUI extends abstractPanel_GUI{
 	private JLabel GreenHandFlip;
 	private JLabel GasStationHome;
 	private JLabel DiscountTextBox;
+	private JLabel NFCLabel;
+	 
+
 	
+	private JFormattedTextField NFCTextField;
 	private JTextField PasswordTextField = new JPasswordField();
 	private JTextField LiterLabel = new JTextField();
 	private JTextField PriceLabel = new JTextField();
@@ -63,11 +76,10 @@ public class StationsGUI extends abstractPanel_GUI{
 		/**
 		 * Station Login Layer maker
 		 */
-		
-		
+
 		LogoutButton2 = new JButton("User Logout");
 		LogoutButton2.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		LogoutButton2.setBounds(978, 13, 158, 38);
+		LogoutButton2.setBounds(978, 64, 158, 38);
 		LogoutButton2.setVisible(false);
 		TopPanel.add(LogoutButton2);
 		
@@ -76,7 +88,7 @@ public class StationsGUI extends abstractPanel_GUI{
 		StationUserLoginLayer.setName("StationUserLoginLayer");
 		CenterCardContainer.add(StationUserLoginLayer,"StationUserLoginLayer");
 		//MyGas Icon
-		JLabel MyGasIcon = new JLabel("CEO");
+		JLabel MyGasIcon = new JLabel("");
 		MyGasIcon.setIcon(new ImageIcon(Login_GUI.class.getResource("/images/Main_Login_empty.png")));
 		MyGasIcon.setBounds(343, 13, 294, 303);
 		StationUserLoginLayer.add(MyGasIcon);
@@ -84,29 +96,51 @@ public class StationsGUI extends abstractPanel_GUI{
 		//User Name Label
 		JLabel UserNameLabel = new JLabel("User Name:");
 		UserNameLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		UserNameLabel.setBounds(343, 353, 123, 35);
+		UserNameLabel.setBounds(343, 320, 123, 35);
 		StationUserLoginLayer.add(UserNameLabel);
 		
 		//Password Label
 		JLabel PasswordLabel = new JLabel("Password:");
 		PasswordLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		PasswordLabel.setBounds(343, 412, 123, 35);
+		PasswordLabel.setBounds(343, 370, 123, 35);
 		StationUserLoginLayer.add(PasswordLabel);
-		UserNameTextField.setText("CEO");
+		UserNameTextField.setText("Nir");
 		
 		//User Name Text Field
 		UserNameTextField.setToolTipText("Enter User Name");
 		UserNameTextField.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		UserNameTextField.setBounds(478, 353, 165, 38);
+		UserNameTextField.setBounds(479, 320, 164, 39);
 		StationUserLoginLayer.add(UserNameTextField);
 		
 		//Password Text Field
 		LoginButton=new JButton();
 		PasswordTextField.setToolTipText("Enter Password");
 		PasswordTextField.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		PasswordTextField.setBounds(479, 410, 164, 39);
+		PasswordTextField.setBounds(478, 370, 165, 38);
 		StationUserLoginLayer.add(PasswordTextField);
 		LoginButton.setText("Login");
+		
+		//NFC TextLabel
+		NFCLabel=new JLabel("NFC:");
+		NFCLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		NFCLabel.setBounds(343,430,50,24);
+		StationUserLoginLayer.add(NFCLabel);
+		
+		//NFC TextField
+		MaskFormatter fmt = null;
+		try {
+			fmt = new MaskFormatter("**-***-**");
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		NFCTextField=new JFormattedTextField(fmt);
+		
+		NFCTextField.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		NFCTextField.setBounds(478, 430, 165, 38);
+		NFCTextField.setHorizontalAlignment(SwingConstants.CENTER);
+		NFCTextField.setValue("__-___-__");
+		StationUserLoginLayer.add(NFCTextField);
 		
 		// Login Button
 		LoginButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
@@ -116,7 +150,7 @@ public class StationsGUI extends abstractPanel_GUI{
 		// Error Massage
 		ErrorMassage.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		ErrorMassage.setForeground(Color.RED);
-		ErrorMassage.setBounds(375, 575, 242, 32);
+		ErrorMassage.setBounds(670, 430, 250, 38);
 		StationUserLoginLayer.add(ErrorMassage);
 		
 		// Gas station 1
@@ -134,8 +168,13 @@ public class StationsGUI extends abstractPanel_GUI{
 		LogoImage.setBounds(37, 313, 239, 242);
 		left_car.add(LogoImage);
 		
+		
+
+		
 		CarNumberCombobox = new JComboBox();
-		CarNumberCombobox.setBounds(25, 30, 251, 40);
+		CarNumberCombobox.setAlignmentX(CENTER_ALIGNMENT);
+		CarNumberCombobox.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		CarNumberCombobox.setBounds(80, 35, 120, 40);
 		left_car.add(CarNumberCombobox);
 		
 		StartFuelingButton = new JButton("Start Fueling");
@@ -151,6 +190,7 @@ public class StationsGUI extends abstractPanel_GUI{
 		LiterLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		LiterLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		LiterLabel.setText("0");
+		LiterLabel.setEditable(false);
 		LiterLabel.setBounds(171, 218-70, 117, 40);
 		left_car.add(LiterLabel);
 		LiterLabel.setColumns(10);
@@ -162,6 +202,7 @@ public class StationsGUI extends abstractPanel_GUI{
 		
 		
 		PriceLabel.setText("0");
+		PriceLabel.setEditable(false);
 		PriceLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		PriceLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		PriceLabel.setColumns(10);
@@ -223,7 +264,7 @@ public class StationsGUI extends abstractPanel_GUI{
 		GasFuelingCenterPanel.add(GreenHandFlip);
 		
 		GasStationHome = new JLabel("");
-		GasStationHome.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Gas_Station_Empty.png")));
+		GasStationHome.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Gas_Station_Empty_scoter.png")));
 		GasStationHome.setBounds(477, 0, 444, 508);
 		GasFuelingCenterPanel.add(GasStationHome);
 		
@@ -233,7 +274,8 @@ public class StationsGUI extends abstractPanel_GUI{
 		GasFuelingCenterPanel.add(car);
 		
 		DiscountTextBox = new JLabel("");
-		DiscountTextBox.setBounds(3, 13, 491, 33);
+		DiscountTextBox.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		DiscountTextBox.setBounds(10, 40, 491, 45);
 		GasFuelingCenterPanel.add(DiscountTextBox);
 	}
 	
@@ -249,6 +291,18 @@ public class StationsGUI extends abstractPanel_GUI{
 	public void IllegalPassword(){
 		ErrorMassage.setText("*You Enter Illegal Password.");
 		//PasswordTextField.setText("Illegal");
+	}
+	public void IllegalNFC(){
+		ErrorMassage.setText("*You Enter Illegal NFC input.");
+	}
+	public void NFCNotExist(){
+		ErrorMassage.setText("*NFC Number is not exist in DB.");
+	}
+	public void IllegalCustomerID(){
+		ErrorMassage.setText("*Error With CustomerID.");
+	}
+	public void IllegalCustomerHasNoCars(){
+		ErrorMassage.setText("*No Records Of Cars For This Customer.");
 	}
 	public void ClearErrorMessage(){
 		ErrorMassage.setText("");
@@ -286,6 +340,29 @@ public class StationsGUI extends abstractPanel_GUI{
 	}
 	public JComboBox getCarNumberComboBox(){
 		return this.CarNumberCombobox;
+	}
+	public void setCombobox(String str){
+		Object[] CarNumber = new Object[1];
+		CarNumber[0]=str;
+		DefaultComboBoxModel<?> combopatternModel=new DefaultComboBoxModel<Object>(CarNumber);
+		this.CarNumberCombobox.setModel(combopatternModel);
+		
+	
+	}
+	public void setCombobox(ArrayList arr){
+		Object[] CarNumber=new Object[arr.size()];
+		for(int i=0;i<arr.size();i++)
+		{
+			CarNumber[i]=((callbackCar)arr.get(i)).getCarNumber();
+		}
+		DefaultComboBoxModel<?> combopatternModel=new DefaultComboBoxModel<Object>(CarNumber);
+		CarNumberCombobox.setModel(combopatternModel);
+		CarNumberCombobox.addItem("Select Car");
+		CarNumberCombobox.setSelectedItem("Select Car");
+	}
+	
+	public void setComboboxedit(boolean t){
+		this.CarNumberCombobox.setEnabled(t);
 	}
 
 	public JButton getUserLogoutButton(){
@@ -343,5 +420,25 @@ public class StationsGUI extends abstractPanel_GUI{
 	}
 	public JTextField getPriceLabel(){
 		return this.PriceLabel;
+	}
+	public callbackUser getStationUser(){
+		return this.User;
+	}
+
+	public JFormattedTextField getNFCTextField() {
+		return this.NFCTextField;
+	}
+
+	public void setNFCTextField(String str) {
+		NFCTextField.setText(str);;
+	}
+	public void setPassword(String str){
+		this.PasswordTextField.setText(str);
+	}
+	public void setPriceLabel(String str){
+		this.PriceLabel.setText(str);
+	}
+	public String getComboboxCarSelect(){
+		return (String) this.CarNumberCombobox.getSelectedItem();
 	}
 }

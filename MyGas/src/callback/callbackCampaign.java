@@ -1,9 +1,6 @@
 package callback;
 
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-
 import common.MessageType;
 
 public class callbackCampaign extends CallBack{
@@ -17,6 +14,12 @@ public class callbackCampaign extends CallBack{
 	private String StartCampaignDate;
 	private String EndCampaignDate;
 	private String ISActive;
+	private String CampaignDescription;
+	private String CalculationMethod;
+	private Float DiscountPercentage;
+	private Float PriceAfterDiscount;
+	
+	
 	
 	public callbackCampaign(){};
 	public callbackCampaign(MessageType WhatToDo){
@@ -34,7 +37,6 @@ public class callbackCampaign extends CallBack{
 	public void setCampaignPatternsID(int campaignPatternsID) {
 		CampaignPatternsID = campaignPatternsID;
 	}
-
 	public String getStartCampaignDate() {
 		return StartCampaignDate;
 	}
@@ -61,6 +63,30 @@ public class callbackCampaign extends CallBack{
 		if(iSActive == true)
 			ISActive = "Yes";
 		else ISActive = "No";
+	}
+	public String getCampaignDescription() {
+		return CampaignDescription;
+	}
+	public void setCampaignDescription(String campaignDescription) {
+		CampaignDescription = campaignDescription;
+	}
+	public String getCalculationMethod() {
+		return CalculationMethod;
+	}
+	public void setCalculationMethod(String calculationMethod) {
+		CalculationMethod = calculationMethod;
+	}
+	public Float getDiscountPercentage() {
+		return DiscountPercentage;
+	}
+	public void setDiscountPercentage(Float discountPercentage) {
+		DiscountPercentage = discountPercentage;
+	}
+	public Float getPriceAfterDiscount() {
+		return PriceAfterDiscount;
+	}
+	public void setPriceAfterDiscount(Float priceAfterDiscount) {
+		PriceAfterDiscount = priceAfterDiscount;
 	}
 	
 }
