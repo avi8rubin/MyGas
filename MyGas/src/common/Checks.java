@@ -67,7 +67,8 @@ public class Checks {
 		return true;
 	}
 	public static boolean isNumeric(String str)  
-	{  
+	{ 
+		str=str.replace("-","");
 	  try  
 	  {  
 	    int d = Integer.parseInt(str);  
