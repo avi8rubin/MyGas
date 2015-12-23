@@ -79,7 +79,7 @@ public class StationsGUI extends abstractPanel_GUI{
 
 		LogoutButton2 = new JButton("User Logout");
 		LogoutButton2.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		LogoutButton2.setBounds(978, 64, 158, 38);
+		LogoutButton2.setBounds(986, 64, 150, 38);
 		LogoutButton2.setVisible(false);
 		TopPanel.add(LogoutButton2);
 		
@@ -163,30 +163,38 @@ public class StationsGUI extends abstractPanel_GUI{
 		left_car.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		left_car.setPreferredSize(new Dimension(300,200));
 		
+		//Logo
 		JLabel LogoImage = new JLabel("");
 		LogoImage.setIcon(new ImageIcon(abstractPanel_GUI_Tester.class.getResource("/images/Left_Panel_Logo22.jpg")));
 		LogoImage.setBounds(37, 313, 239, 242);
 		left_car.add(LogoImage);
 		
+		//"Car Number:"
+		JLabel CarNumberTxt = new JLabel("Car Number : ");
+		CarNumberTxt.setFont(new Font("Tahoma", Font.BOLD, 20));
+		CarNumberTxt.setBounds(10, 0, 153, 40);
+		left_car.add(CarNumberTxt);
 		
-
-		
+		//Combobox
 		CarNumberCombobox = new JComboBox();
 		CarNumberCombobox.setAlignmentX(CENTER_ALIGNMENT);
 		CarNumberCombobox.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		CarNumberCombobox.setBounds(80, 35, 120, 40);
+		CarNumberCombobox.setBounds(15, 35, 120, 40);
 		left_car.add(CarNumberCombobox);
 		
+		//Start/Stop Button
 		StartFuelingButton = new JButton("Start Fueling");
 		StartFuelingButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		StartFuelingButton.setBounds(56, 90, 185, 40);
+		StartFuelingButton.setBounds(170, 40, 150, 40);
 		left_car.add(StartFuelingButton);
 		
+		//"Liter Amount:"
 		JLabel AmountTxt = new JLabel("Liter Amount :");
 		AmountTxt.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		AmountTxt.setBounds(12, 217-70, 160, 40);
 		left_car.add(AmountTxt);
-
+		
+		// Liter Counter
 		LiterLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		LiterLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		LiterLabel.setText("0");
@@ -200,7 +208,6 @@ public class StationsGUI extends abstractPanel_GUI{
 		PriceTxt.setBounds(12, 270-70, 110, 40);
 		left_car.add(PriceTxt);
 		
-		
 		PriceLabel.setText("0");
 		PriceLabel.setEditable(false);
 		PriceLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -211,13 +218,10 @@ public class StationsGUI extends abstractPanel_GUI{
 		
 		PayButton = new JButton("Pay");
 		PayButton.setFont(new Font("Tahoma", Font.BOLD, 20));
-		PayButton.setBounds(103, 121+150, 92, 38);
+		PayButton.setBounds(103, 121+140, 92, 38);
 		left_car.add(PayButton);
 		
-		JLabel CarNumberTxt = new JLabel("Car Number : ");
-		CarNumberTxt.setFont(new Font("Tahoma", Font.BOLD, 20));
-		CarNumberTxt.setBounds(69, 0, 153, 40);
-		left_car.add(CarNumberTxt);
+
 		
 		//-------Gas fueling panel----////
 		
@@ -275,7 +279,7 @@ public class StationsGUI extends abstractPanel_GUI{
 		
 		DiscountTextBox = new JLabel("");
 		DiscountTextBox.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		DiscountTextBox.setBounds(10, 40, 491, 45);
+		DiscountTextBox.setBounds(10, 10, 491, 120);
 		GasFuelingCenterPanel.add(DiscountTextBox);
 	}
 	
