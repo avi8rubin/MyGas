@@ -8,6 +8,7 @@ public class callbackSale extends CallBack {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private int UserID;
 	private int SaleID;
 	private int FuelID;
 	private String SaleDate;
@@ -23,6 +24,7 @@ public class callbackSale extends CallBack {
 //For gas station sale
 	private String DriverName;
 	private int CarID;
+	private String CarNumber;
 	private int GasStationID;
 	private int CampaignID = 0;
 	
@@ -129,6 +131,18 @@ public class callbackSale extends CallBack {
 	}
 	public void setCampaignID(int campaignID) {
 		CampaignID = campaignID;
+	}
+	public int getUserID() {
+		return UserID;
+	}
+	public void setUserID(int userID) {
+		UserID = userID;
+	}
+	public String getCarNumber() {
+		return CarNumber;
+	}
+	public void setCarNumber(String carNumber) {
+		CarNumber = carNumber;
 	}
 	
 	

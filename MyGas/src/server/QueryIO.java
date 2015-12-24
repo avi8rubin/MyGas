@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.Vector;
 
 import callback.*;
@@ -1614,18 +1615,26 @@ public class QueryIO implements Runnable {
 			ps3.setString(2,Callback.getDriverName());
 			ps3.setInt(3, Callback.getCarID());
 			ps3.setInt(4, Callback.getGasStationID());
-			ps3.setInt(5, Callback.getCampaignID());
+			if( Callback.getCampaignID() == 0)
+				ps3.setNull(5, Types.INTEGER);
+			else ps3.setInt(5, Callback.getCampaignID());
 			ps3.executeUpdate();
+			
+			/*Initiate Thread*/
+			ThreadSale = Callback;
+			(new Thread(this)).start();
+			/*---------------*/
 			
 			ps4.setFloat(1, Callback.getFuelAmount());
 			ps4.setInt(2, Callback.getGasStationID());
 			ps4.setInt(3, Callback.getFuelID());
 			ps4.executeUpdate();
 			
-			/*Initiate Thread*/
-			ThreadSale = Callback;
-			new Thread(this);
-			/*---------------*/
+			//Set user notification
+			setNotifications(Callback.getUserID(), "Purchase details: car number "+Callback.getCarNumber()
+			+", "+Callback.getFuelAmount()+" liters, cost "+Callback.getPayment()+" shekels.");
+			
+			
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1778,9 +1787,15 @@ public class QueryIO implements Runnable {
 			}	
 		
 	}
+	
 	@Override
 	public void run() {
+		SetNewFuelOrder();	
 		
+		
+	}
+	
+	private void SetNewFuelOrder(){
 		callbackSale LocalSale = ThreadSale;
 		ResultSet NotificationResultSet, LocalResult = AnswerResult;
 		int ThresholdLimit,Capacity,StationManagerUserID;
@@ -1792,7 +1807,7 @@ public class QueryIO implements Runnable {
 			
 			PreparedStatement ps1=conn.prepareStatement(
 					"SELECT A.* ,B.Fuel_Description FROM Fuel_Per_Station A "+
-					"LEFT OUTER JOIN Fuels B ON A.Fuel_ID = B.Fuel_ID WHERE Gas_Station_ID=(?) AND Fuel_ID=(?)");
+					"LEFT OUTER JOIN Fuels B ON A.Fuel_ID = B.Fuel_ID WHERE A.Gas_Station_ID=(?) AND A.Fuel_ID=(?)");
 			PreparedStatement ps2=conn.prepareStatement(
 					"SELECT Order_ID, Fuel_ID, Gas_Station_ID, Amount, MAX(Order_Date) AS Order_Date, Order_Confirmation, Showed_To_Manager "+
 					"FROM Fuel_Orders WHERE Fuel_ID = (?) AND Gas_Station_ID = (?) AND Order_Confirmation = 'Waiting'");
@@ -1820,7 +1835,7 @@ public class QueryIO implements Runnable {
 				ps2.setInt(2, LocalSale.getGasStationID());
 				LocalResult = ps2.executeQuery();
 				/*Set new fuel order*/
-				if(!LocalResult.next()) {
+				if(!LocalResult.next() || LocalResult.getInt("Order_ID")==Types.NULL) {
 					ps3.setInt(1, LocalSale.getFuelID());
 					ps3.setInt(2, LocalSale.getGasStationID());
 					ps3.setFloat(3, Capacity - CurrentAmount);
@@ -1843,9 +1858,7 @@ public class QueryIO implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
-	
 }
 	
 

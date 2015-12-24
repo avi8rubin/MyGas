@@ -260,7 +260,7 @@ CREATE TABLE IF NOT EXISTS Gas_Stations_Sales (
     Gas_Station_ID INTEGER,
     Campaign_ID INTEGER DEFAULT NULL,
     PRIMARY KEY (Sales_ID),
-   FOREIGN KEY (Sales_ID) references Sales(Sales_ID),
+    FOREIGN KEY (Sales_ID) references Sales(Sales_ID),
     FOREIGN KEY (Car_ID) references Cars(Car_ID),
     FOREIGN KEY (Gas_Station_ID) references Gas_Stations(Gas_Station_ID),
     FOREIGN KEY (Campaign_ID) references Campaigns(Campaign_ID)
@@ -273,7 +273,7 @@ CREATE TABLE IF NOT EXISTS Notifications (
     NotificationsDescription VARCHAR(100),
     Notification_Date DATETIME NOT NULL DEFAULT NOW(),
     User_Saw ENUM('Yes','No') DEFAULT 'No',
-    PRIMARY KEY (User_ID),
+    PRIMARY KEY (User_ID, Notification_Date),
     FOREIGN KEY (User_ID) references Users(User_ID)
 );
 
@@ -368,35 +368,35 @@ INSERT INTO Gas_Stations VALUES(null,'Holon','aviv 7',8,9,3);
 INSERT INTO Gas_Stations VALUES(null,'Haifa','hadas 59',9,10,4);
 INSERT INTO Gas_Stations VALUES(null,'Natania','Or 777',10,11,4);
 
-INSERT INTO Fuel_Orders VALUES(null,1,1,600,'2015-1-1 12:12:00',3,2);
+INSERT INTO Fuel_Orders VALUES(null,1,1,600,'2015-1-1 12:12:00',1,2);
 INSERT INTO Fuel_Orders VALUES(null,2,2,200,'2015-2-2 12:12:00',2,1);
 INSERT INTO Fuel_Orders VALUES(null,2,3,400,'2015-3-7 12:12:00',2,1);
-INSERT INTO Fuel_Orders VALUES(null,1,1,100,'2015-3-23 12:12:00',3,2);
+INSERT INTO Fuel_Orders VALUES(null,1,1,100,'2015-3-23 12:12:00',2,2);
 INSERT INTO Fuel_Orders VALUES(null,2,2,400,'2015-4-24 12:12:00',2,1);
 INSERT INTO Fuel_Orders VALUES(null,1,5,500,'2015-5-25 12:12:00',1,1);
 INSERT INTO Fuel_Orders VALUES(null,4,6,400,'2015-6-17 12:12:00',2,1);
-INSERT INTO Fuel_Orders VALUES(null,4,4,30,'2015-7-12 12:12:00',3,2);
+INSERT INTO Fuel_Orders VALUES(null,4,4,30,'2015-7-12 12:12:00',31,2);
 INSERT INTO Fuel_Orders VALUES(null,2,5,300,'2014-8-11 12:12:00',2,1);
 INSERT INTO Fuel_Orders VALUES(null,4,2,200,'2014-12-16 12:12:00',2,1);
 INSERT INTO Fuel_Orders VALUES(null,4,5,100,'2014-11-17 12:12:00',2,1);
 INSERT INTO Fuel_Orders VALUES(null,1,6,600,'2014-10-10 12:12:00',2,1);
 INSERT INTO Fuel_Orders VALUES(null,2,1,800,'2014-9-7 12:12:00',2,1);
 INSERT INTO Fuel_Orders VALUES(null,1,2,600,'2014-5-8 12:12:00',1,1);
-INSERT INTO Fuel_Orders VALUES(null,1,4,700,'2014-5-7 12:12:00',3,2);
+INSERT INTO Fuel_Orders VALUES(null,1,4,700,'2014-5-7 12:12:00',2,2);
 INSERT INTO Fuel_Orders VALUES(null,2,5,900,'2011-5-9 12:12:00',1,1);
 INSERT INTO Fuel_Orders VALUES(null,4,3,500,'2011-5-5 12:12:00',1,1);
 INSERT INTO Fuel_Orders VALUES(null,4,4,700,'2011-3-7 12:12:00',2,1);
 INSERT INTO Fuel_Orders VALUES(null,1,5,700,'2011-8-11 12:12:00',2,1);
 INSERT INTO Fuel_Orders VALUES(null,2,6,800,'2011-7-27 12:12:00',2,1);
 INSERT INTO Fuel_Orders VALUES(null,2,2,600,'2011-9-26 12:12:00',2,1);
-INSERT INTO Fuel_Orders VALUES(null,1,4,650,'2011-10-24 12:12:00',3,2);
+INSERT INTO Fuel_Orders VALUES(null,1,4,650,'2011-10-24 12:12:00',2,2);
 INSERT INTO Fuel_Orders VALUES(null,4,4,640,'2015-12-4 12:12:00',2,1);
 INSERT INTO Fuel_Orders VALUES(null,4,6,630,'2015-5-8 12:12:00',2,1);
 INSERT INTO Fuel_Orders VALUES(null,2,2,620,'2015-3-14 12:12:00',2,1);
 INSERT INTO Fuel_Orders VALUES(null,1,4,610,'2015-2-17 12:12:00',1,1);
-INSERT INTO Fuel_Orders VALUES(null,2,6,680,'2015-2-21 12:12:00',3,2);
-INSERT INTO Fuel_Orders VALUES(null,4,2,690,'2015-12-13 12:12:00',3,2);
-INSERT INTO Fuel_Orders VALUES(null,2,4,640,'2015-11-14 12:12:00',3,2);
+INSERT INTO Fuel_Orders VALUES(null,2,6,680,'2015-2-21 12:12:00',1,2);
+INSERT INTO Fuel_Orders VALUES(null,4,2,690,'2015-12-13 12:12:00',2,2);
+INSERT INTO Fuel_Orders VALUES(null,2,4,640,'2015-11-14 12:12:00',1,2);
 INSERT INTO Fuel_Orders VALUES(null,1,3,620,'2015-10-6 12:12:00',1,1);
 INSERT INTO Fuel_Orders VALUES(null,1,5,650,'2015-9-7 12:12:00',2,1);
 
@@ -512,6 +512,7 @@ INSERT INTO Campaign_Type VALUES(null,'Campaign - Discount on spasific type of f
 INSERT INTO Campaign_Type VALUES(null,'Campaign - Discount on gas above spasific amount.');
 INSERT INTO Campaign_Type VALUES(null,'Campaign - Discount in gas station.');
 INSERT INTO Campaign_Type VALUES(null,'Campaign - Discount on customer rate.');
+INSERT INTO Campaign_Type VALUES(0,'No Campaign.');
 
 INSERT INTO Campaign_Patterns VALUES(null,'Discount of 10% between 2:00 - 4:00.',1,'0.1');
 INSERT INTO Campaign_Patterns VALUES(null,'Discount of 15% between 4:00 - 5:30',1,'0.15');
@@ -652,6 +653,7 @@ SELECT A.User_ID
     ,A.Customer_Type
     ,A.Costing_Model_ID
     ,E.Model_Type_Description
+    ,C.Plan_ID
     ,C.Plan_Name
     ,A.Phone_Number
     ,A.Credit_Card
@@ -699,6 +701,7 @@ SELECT A.Sales_ID
 ,G.Station_Address
 ,J.Gas_Company_Name
 ,F.Car_Number
+,D.Plan_ID
 ,D.Plan_Name
 ,C.Customers_ID
 ,C.Customer_First_Name
@@ -714,7 +717,6 @@ LEFT OUTER JOIN Gas_Stations G ON B.Gas_Station_ID=G.Gas_Station_ID
 LEFT OUTER JOIN Campaigns H ON B.Campaign_ID=H.Campaign_ID
 LEFT OUTER JOIN Campaign_Patterns I ON H.Campaign_Patterns_ID=I.Campaign_Patterns_ID
 LEFT OUTER JOIN Gas_Company J ON G.Gas_Company_ID=J.Gas_Company_ID
--- WHERE Customers_ID = /// User_ID = 
 ;
 
 /*Sales Home Fuel*/
