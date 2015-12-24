@@ -1,6 +1,7 @@
 package controller;
 
 import java.awt.CardLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -8,11 +9,15 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.security.auth.callback.Callback;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import GUI.StationsGUI;
 import callback.CallBack;
@@ -56,6 +61,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		private static CallBack Temp;
 		private static callbackCustomer Customer;
 		private static CallBack LocalUserCallBack = null;
+		private static callbackSale CurrentSale;
 		DecimalFormat myFormatter = new DecimalFormat("###.##");
 		
 		private Thread LiterCounter;
@@ -82,7 +88,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		private boolean FuelDiesel=false; //Blue
 		private boolean Fuel95IsExist,FuelScoterIsExist,FuelDieselIsExist;
 		private boolean NFCIsExist;
-		
+		private boolean ThreadRunFlag=true;
 		/**
 		 * Constratcor
 		 * @param Server - main server to send DB
@@ -109,12 +115,9 @@ public class StationsController extends Controller implements MouseListener,Runn
 		PriceLabel=GuiScreen.getPriceLabel();
 		StationCurrentUser=GuiScreen.getStationUser();
 		NFCTextField=GuiScreen.getNFCTextField();
-		
+		StationUserLoginGui.setCashCheacked();
 		/*--------Need GAS STATION ID!!!-----*/
-		//
-		//GasStationID=StationCurrentUser.
-		//	
-		//		
+		UpdateStationInfo();
 				
 		Customer=new callbackCustomer();
 		this.Liter=0;
@@ -222,195 +225,206 @@ public class StationsController extends Controller implements MouseListener,Runn
 	public void mouseClicked(MouseEvent e) {
 		
 		/*user enter in NFC - check if he can click right pump*/
-		if(NFCIsExist)
-		{
-			int UserFuel=UserCarNFC.getFuelID();
-			/*
-			 * 1=95
-			 * 2=Scooter Fuel
-			 * 4=Diesel
-			 */
-			if(e.getComponent()==BlueHand && FuelDieselIsExist){
-				if(!UserIsFueling){  //if user is not fuling
-					DiscountTextBox.setText("");
-					if(UserFuel!=4)
-					{
-						DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
-					}
-					else
-					{
-						UserIsFueling=true;
-						FuelDiesel=true;
-						this.Liter=0;
-						DiscountTextBox.setText("The Price Per Liter For Diesel is: "+FuelDieselPrice);
-						StartFuelingButton.setEnabled(true);
-						StationUserLoginGui.BluePumpShow();
-					}
-				}
-			}
-			if(e.getComponent()==BlueHandFlip)
-			{
-				if(!UserNeedToPay)
-				{
-					StationUserLoginGui.BluePumpNotShow(); //return the hand to the right palce
-					StartFuelingButton.setEnabled(false);
-					UserIsFueling=false;
-					DiscountTextBox.setText("");
-				}
-			}
-			if(e.getComponent()==RedHand && Fuel95IsExist){
-				if(!UserIsFueling){  //if user is not fuling
-					DiscountTextBox.setText("");
-					if(UserFuel!=1)
-					{
-						DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
-					}
-					else
-					{
-						UserIsFueling=true;
-						Fuel95=true;
-						this.Liter=0;
-						DiscountTextBox.setText("The Price Per Liter For 95 is: "+Fuel95Price);
-						StartFuelingButton.setEnabled(true);
-						StationUserLoginGui.RedPumpShow();
-					}
-				}
-			}
-			if(e.getComponent()==RedHandFlip){
-				if(!UserNeedToPay){
-					StationUserLoginGui.RedPumpNotShow();//return the hand to the right palce
-					StartFuelingButton.setEnabled(false);
-					UserIsFueling=false;
-					DiscountTextBox.setText("");
-				}
-			}
-			if(e.getComponent()==GreenHand && FuelScoterIsExist)
-				{
-				DiscountTextBox.setText("");
-					if(!UserIsFueling)
-					{  //if user is not fuling
-						if(UserFuel!=2)
-						{
-							DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
-						}
-						else
-						{
-							UserIsFueling=true;
-							FuelScoter=true;
-							this.Liter=0;
-							DiscountTextBox.setText("The Price Per Liter For Scooter Fuel is: "+FuelScoterPrice);
-							StartFuelingButton.setEnabled(true);
-							StationUserLoginGui.GreenPumpShow();
-						}
-					}
-				}
-			if(e.getComponent()==GreenHandFlip)
-				{
-					if(!UserNeedToPay)
-					{
-						StationUserLoginGui.GreenPumpNotShow();//return the hand to the right palce
-						StartFuelingButton.setEnabled(false);
-						UserIsFueling=false;
-						DiscountTextBox.setText("");
-					}
-				}
+		boolean SelectCar=false;
+		if(StationUserLoginGui.getComboboxCarSelect().equals("Select Car")) SelectCar=true;
 		
-		}
-		else
-		/* ---------Regular Fueling --------*/
-		{	
-			// Get Combobox Selcted Item
-			String currentcar=StationUserLoginGui.getComboboxCarSelect();
-			int fueltypecurrentcar=0;
-			fueltypecurrentcar=FindCarTypeByCarNumber(currentcar);   //Check car Fuel Type
-			/*
-			 * 1=95
-			 * 2=Scooter Fuel
-			 * 4=Diesel
-			 */
-			if(e.getComponent()==BlueHand && FuelDieselIsExist){
-				DiscountTextBox.setText("");
-				if(!UserIsFueling){  //if user is not fuling
-					if(fueltypecurrentcar!=4)
-					{
-						DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
+		 if((e.getComponent()==BlueHand || e.getComponent()==GreenHand || e.getComponent()==RedHand ) && SelectCar ) // select pump with no car number
+		 {
+			 DiscountTextBox.setText("*Select Car Number First To Begin.");
+		 }
+		 else
+		 { 
+				if(NFCIsExist)
+				{
+					int UserFuel=UserCarNFC.getFuelID();
+					/*
+					 * 1=95
+					 * 2=Scooter Fuel
+					 * 4=Diesel
+					 */
+					if(e.getComponent()==BlueHand && FuelDieselIsExist){
+						if(!UserIsFueling){  //if user is not fuling
+							DiscountTextBox.setText("");
+							if(UserFuel!=4)
+							{
+								DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
+							}
+							else
+							{
+								UserIsFueling=true;
+								FuelDiesel=true;
+								this.Liter=0;
+								DiscountTextBox.setText("The Price Per Liter For Diesel is: "+FuelDieselPrice);
+								StartFuelingButton.setEnabled(true);
+								StationUserLoginGui.BluePumpShow();
+							}
+						}
 					}
-					else
+					if(e.getComponent()==BlueHandFlip)
 					{
-						UserIsFueling=true;
-						FuelDiesel=true;
-						this.Liter=0;
-						DiscountTextBox.setText("The Price Per Liter For Diesel is: "+FuelDieselPrice);
-						StartFuelingButton.setEnabled(true);
-						StationUserLoginGui.BluePumpShow();
+						if(!UserNeedToPay)
+						{
+							StationUserLoginGui.BluePumpNotShow(); //return the hand to the right palce
+							StartFuelingButton.setEnabled(false);
+							UserIsFueling=false;
+							DiscountTextBox.setText("");
+						}
+					}
+					if(e.getComponent()==RedHand && Fuel95IsExist){
+						if(!UserIsFueling){  //if user is not fuling
+							DiscountTextBox.setText("");
+							if(UserFuel!=1)
+							{
+								DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
+							}
+							else
+							{
+								UserIsFueling=true;
+								Fuel95=true;
+								this.Liter=0;
+								DiscountTextBox.setText("The Price Per Liter For 95 is: "+Fuel95Price);
+								StartFuelingButton.setEnabled(true);
+								StationUserLoginGui.RedPumpShow();
+							}
+						}
+					}
+					if(e.getComponent()==RedHandFlip){
+						if(!UserNeedToPay){
+							StationUserLoginGui.RedPumpNotShow();//return the hand to the right palce
+							StartFuelingButton.setEnabled(false);
+							UserIsFueling=false;
+							DiscountTextBox.setText("");
+						}
+					}
+					if(e.getComponent()==GreenHand && FuelScoterIsExist)
+						{
+						DiscountTextBox.setText("");
+							if(!UserIsFueling)
+							{  //if user is not fuling
+								if(UserFuel!=2)
+								{
+									DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
+								}
+								else
+								{
+									UserIsFueling=true;
+									FuelScoter=true;
+									this.Liter=0;
+									DiscountTextBox.setText("The Price Per Liter For Scooter Fuel is: "+FuelScoterPrice);
+									StartFuelingButton.setEnabled(true);
+									StationUserLoginGui.GreenPumpShow();
+								}
+							}
+						}
+					if(e.getComponent()==GreenHandFlip)
+						{
+							if(!UserNeedToPay)
+							{
+								StationUserLoginGui.GreenPumpNotShow();//return the hand to the right palce
+								StartFuelingButton.setEnabled(false);
+								UserIsFueling=false;
+								DiscountTextBox.setText("");
+							}
+						}
+				
+				}
+				else
+				/* ---------Regular Fueling --------*/
+				{	
+					// Get Combobox Selcted Item
+					String currentcar=StationUserLoginGui.getComboboxCarSelect();
+					int fueltypecurrentcar=0;
+					fueltypecurrentcar=FindCarTypeByCarNumber(currentcar);   //Check car Fuel Type
+					/*
+					 * 1=95
+					 * 2=Scooter Fuel
+					 * 4=Diesel
+					 */
+					if(e.getComponent()==BlueHand && FuelDieselIsExist){
+						DiscountTextBox.setText("");
+						if(!UserIsFueling){  //if user is not fuling
+							if(fueltypecurrentcar!=4)
+							{
+								DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
+							}
+							else
+							{
+								UserIsFueling=true;
+								FuelDiesel=true;
+								this.Liter=0;
+								DiscountTextBox.setText("The Price Per Liter For Diesel is: "+FuelDieselPrice);
+								StartFuelingButton.setEnabled(true);
+								StationUserLoginGui.BluePumpShow();
+							}
+						}
+					}
+					if(e.getComponent()==BlueHandFlip){
+						if(!UserNeedToPay){
+							StationUserLoginGui.BluePumpNotShow(); //return the hand to the right palce
+							StartFuelingButton.setEnabled(false);
+							UserIsFueling=false;
+							DiscountTextBox.setText("");
+						}
+					}
+					if(e.getComponent()==RedHand && Fuel95IsExist){
+						DiscountTextBox.setText("");
+						if(!UserIsFueling){  //if user is not fuling
+							if(fueltypecurrentcar!=1)
+							{
+								DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
+							}
+							else
+							{
+								UserIsFueling=true;
+								Fuel95=true;
+								this.Liter=0;
+								DiscountTextBox.setText("The Price Per Liter For 95 is: "+Fuel95Price);
+								StartFuelingButton.setEnabled(true);
+								StationUserLoginGui.RedPumpShow();
+							}
+						}
+					}
+					if(e.getComponent()==RedHandFlip){
+						if(!UserNeedToPay){
+							StationUserLoginGui.RedPumpNotShow();//return the hand to the right palce
+							StartFuelingButton.setEnabled(false);
+							UserIsFueling=false;
+							DiscountTextBox.setText("");
+						}
+					}
+					if(e.getComponent()==GreenHand && FuelScoterIsExist){
+						DiscountTextBox.setText("");
+						if(!UserIsFueling){  //if user is not fuling
+							if(fueltypecurrentcar!=2)
+							{
+								DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
+							}
+							else
+							{
+								UserIsFueling=true;
+								FuelScoter=true;
+								this.Liter=0;
+								DiscountTextBox.setText("The Price Per Liter For Scooter Fuel is: "+FuelScoterPrice);
+								StartFuelingButton.setEnabled(true);
+								StationUserLoginGui.GreenPumpShow();
+							}
+						}
+					}
+					if(e.getComponent()==GreenHandFlip){
+						if(!UserNeedToPay){
+							StationUserLoginGui.GreenPumpNotShow();//return the hand to the right palce
+							StartFuelingButton.setEnabled(false);
+							UserIsFueling=false;
+							DiscountTextBox.setText("");
+						}
 					}
 				}
-			}
-			if(e.getComponent()==BlueHandFlip){
-				if(!UserNeedToPay){
-					StationUserLoginGui.BluePumpNotShow(); //return the hand to the right palce
-					StartFuelingButton.setEnabled(false);
-					UserIsFueling=false;
-					DiscountTextBox.setText("");
-				}
-			}
-			if(e.getComponent()==RedHand && Fuel95IsExist){
-				DiscountTextBox.setText("");
-				if(!UserIsFueling){  //if user is not fuling
-					if(fueltypecurrentcar!=1)
-					{
-						DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
-					}
-					else
-					{
-						UserIsFueling=true;
-						Fuel95=true;
-						this.Liter=0;
-						DiscountTextBox.setText("The Price Per Liter For 95 is: "+Fuel95Price);
-						StartFuelingButton.setEnabled(true);
-						StationUserLoginGui.RedPumpShow();
-					}
-				}
-			}
-			if(e.getComponent()==RedHandFlip){
-				if(!UserNeedToPay){
-					StationUserLoginGui.RedPumpNotShow();//return the hand to the right palce
-					StartFuelingButton.setEnabled(false);
-					UserIsFueling=false;
-					DiscountTextBox.setText("");
-				}
-			}
-			if(e.getComponent()==GreenHand && FuelScoterIsExist){
-				DiscountTextBox.setText("");
-				if(!UserIsFueling){  //if user is not fuling
-					if(fueltypecurrentcar!=2)
-					{
-						DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
-					}
-					else
-					{
-						UserIsFueling=true;
-						FuelScoter=true;
-						this.Liter=0;
-						DiscountTextBox.setText("The Price Per Liter For Scooter Fuel is: "+FuelScoterPrice);
-						StartFuelingButton.setEnabled(true);
-						StationUserLoginGui.GreenPumpShow();
-					}
-				}
-			}
-			if(e.getComponent()==GreenHandFlip){
-				if(!UserNeedToPay){
-					StationUserLoginGui.GreenPumpNotShow();//return the hand to the right palce
-					StartFuelingButton.setEnabled(false);
-					UserIsFueling=false;
-					DiscountTextBox.setText("");
-				}
-			}
-		}
+		 }
 	}
 /**
  * This function handle the Start/Stop Button
  */
+	@SuppressWarnings("deprecation")
 	public void FuelingProccess(){		
 		/*------User Press start fueling------*/
 		if(PressStartStopButtonFlag==true && UserIsFueling)
@@ -423,13 +437,19 @@ public class StationsController extends Controller implements MouseListener,Runn
 			Paybutton.setEnabled(false);
 			UserNeedToPay=true;
 			// start counting liters thread
+			//ThreadRunFlag=false;
+			LiterCounter=new Thread(this);
 			LiterCounter.start();
 		}
 		//User Stop the Pumping
 		else
 		{ 
+			
+			//ThreadRunFlag=true;
+			LiterCounter.interrupt();
 			LiterCounter.stop();
-			LiterCounter=new Thread(this);
+			//LiterCounter.stop();
+			//LiterCounter=new Thread(this);
 			/*
 			 * 1=95
 			 * 2=Scooter Fuel
@@ -439,7 +459,10 @@ public class StationsController extends Controller implements MouseListener,Runn
 			if(FuelDiesel) FuelID=4;
 			if(Fuel95) FuelID=1;
 			if(FuelScoter) FuelID=2;
-			DiscountCalulation(Float.valueOf(myFormatter.format(Price)), this.Liter, this.GasStationID, FuelID, Customer.getCustomersID());
+			String CurrentCarNumber;
+			CurrentCarNumber=StationUserLoginGui.getComboboxCarSelect();
+			CurrentCarNumber=CurrentCarNumber.replace("-","");
+			DiscountCalulation(Float.valueOf(myFormatter.format(Price)), this.Liter, FuelID, Customer.getCustomersID(),CurrentCarNumber);
 			//if User Have'nt Credit Card
 			if(Customer.getCreditCard().equals(""))
 			{
@@ -463,6 +486,46 @@ public class StationsController extends Controller implements MouseListener,Runn
 	public void PayProccess(){
 		if(UserNeedToPay==true){
 			/*---Pushed Pay button---*/
+			/*---set CurrentSale Detials---*/
+			CurrentSale.setWhatToDo(MessageType.setNewGasStationSale);
+			CurrentSale.setUserID(Customer.getUserID());
+			CurrentSale.setCarID( getCarIDByCarNumberr( StationUserLoginGui.getComboboxCarSelect() ) );
+			if(Customer.getCustomerType().equals("Commercial"))
+			{
+				String[] options = {"OK"};
+				JPanel panel = new JPanel();
+				JLabel lbl = new JLabel("Enter Driver name: ");
+				lbl.setFont((new Font("Tahoma", Font.PLAIN, 15)));
+				JTextField txt = new JTextField(10);
+				panel.add(lbl);
+				panel.add(txt);
+				int selectedOption = JOptionPane.showOptionDialog(null, panel, "Driver Input", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
+				String text=null;
+				if(selectedOption == 0)
+				{
+				    text = txt.getText();
+				    // ...
+				}
+				CurrentSale.setDriverName(text);
+			}
+			else
+			{
+				CurrentSale.setDriverName(Customer.getCustomerFirstName());
+			}
+
+			Server.handleMessageFromClient(CurrentSale);
+			Temp=(CallBack) getCallBackFromBuffer();
+			if(Temp instanceof callbackSuccess)
+			{
+				//*---Gas station sale send OK *//
+			}
+			if(Temp instanceof callback_Error)
+			{
+				System.out.println("Error With PAY");
+				/*--No successes to send DB--*/
+			}
+			
+			/*-------------------*/
 			ResetPumpSatation(); 
 		}
 		
@@ -492,7 +555,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 	public void run(){
 		while(true){
 			try{
-				
+				//while(ThreadRunFlag);
 				this.Liter+=0.13;
 				if(FuelDiesel)
 				{
@@ -548,13 +611,21 @@ public class StationsController extends Controller implements MouseListener,Runn
 		/*-----send Station ID-------*/
 		StationCurrentFuels = new callbackStationFuels(MessageType.getFuelPerStation); //create new CallbackStationFuels
 		StationCurrentFuels.setGasStationID(StationCurrentUser.getUserID()); //Enter Station UserID
-		Server.handleMessageFromClient(StationCurrentFuels);	//send to DB		
+		Server.handleMessageFromClient(StationCurrentFuels);	//send to DB
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		/*------get callback Fuels ------*/
 		FuelsInStation=(callbackVector)getCallBackVectorFromBuffer();					//Get from the common buffer new callback
 		int NumbersFuelsInCurrentGasStaion=FuelsInStation.size();
 		int index=0;
 		while(index<NumbersFuelsInCurrentGasStaion){
 			StationCurrentFuels=(callbackStationFuels)FuelsInStation.get(index);
+			GasStationID=StationCurrentFuels.getGasStationID();
 			if(StationCurrentFuels.getFuelID()==1) // there is 95 fuel
 			{
 				Fuel95IsExist=true;
@@ -668,19 +739,32 @@ public class StationsController extends Controller implements MouseListener,Runn
 							{
 							Customer=(callbackCustomer) LocalUserCallBack;
 							}
-							/*------ Move to the next screen ------*/		
-								StationUserLoginGui.ClearErrorMessage(); 		//Clear the error message if exists
-								GasStationSwitchLeftPanel();					// go to the next gui screen by user role
-								logoutflag=true;								//logout will return to this screen
-								MainLogoutButton.setEnabled(false);
-								StationUserLoginGui.setlogoutvisable(true);
-								StationUserLoginGui.setPassword("");
-								UpdateStationInfo();
-								ResetPumpSatation();
-								StationUserLoginGui.setCombobox(NFCTextField.getText());
-								StationUserLoginGui.setNFCTextField("");
-								StationUserLoginGui.setComboboxedit(false);
-								DiscountTextBox.setText("<html> Wellcome "+Customer.getCustomerFirstName()+" "+Customer.getCustomerLastName()+"</html>");
+							if(Customer.isAllowToEnterGasStation(this.GasStationID)) // if Costing model is oK!
+								{
+								/*------ Move to the next screen ------*/		
+										StationUserLoginGui.ClearErrorMessage(); 		//Clear the error message if exists
+										GasStationSwitchLeftPanel();					// go to the next gui screen by user role
+										logoutflag=true;								//logout will return to this screen
+										MainLogoutButton.setEnabled(false);
+										StationUserLoginGui.setlogoutvisable(true);
+										StationUserLoginGui.setPassword("");
+										UpdateStationInfo();
+										ResetPumpSatation();
+										StationUserLoginGui.setCombobox(NFCTextField.getText());
+										StationUserLoginGui.setNFCTextField("");
+										StationUserLoginGui.setComboboxedit(false);
+										UserCarsNumbers= new ArrayList<String>();
+										callbackCar onecar=new callbackCar();
+										onecar.setCarNumber(StationUserLoginGui.getComboboxCarSelect());
+										onecar.setCarID(UserCarNFC.getCarID());
+										UserCarsNumbers.add(onecar);
+										DiscountTextBox.setText("<html> Wellcome "+Customer.getCustomerFirstName()+" "+Customer.getCustomerLastName()+"</html>");
+								}	
+								else // Not Costing model
+								{
+									StationUserLoginGui.IllegalCostingmodel();
+								
+								}
 							}
 					}
 		}
@@ -734,18 +818,25 @@ public class StationsController extends Controller implements MouseListener,Runn
 						{
 						Customer=(callbackCustomer) LocalUserCallBack;
 						/* Get all Customer Cars*/
-						UserCarsNumbers= getAllUserCar(Customer.getCustomersID());
-						StationUserLoginGui.ClearErrorMessage(); 		//Clear the error message if exists
-						GasStationSwitchLeftPanel();					// go to the next gui screen by user role
-						logoutflag=true;								//logout will return to this screen
-						MainLogoutButton.setEnabled(false);
-						StationUserLoginGui.setlogoutvisable(true);
-						StationUserLoginGui.setPassword("");
-						StationUserLoginGui.setNFCTextField("");
-						UpdateStationInfo();
-						ResetPumpSatation();
-						StationUserLoginGui.setCombobox(UserCarsNumbers);
-						DiscountTextBox.setText("<html> Wellcome "+Customer.getCustomerFirstName()+" "+Customer.getCustomerLastName()+"</html>");
+						if(Customer.isAllowToEnterGasStation(this.GasStationID)) // if Costing model is oK!
+							{
+								UserCarsNumbers= getAllUserCar(Customer.getCustomersID());
+								StationUserLoginGui.ClearErrorMessage(); 		//Clear the error message if exists
+								GasStationSwitchLeftPanel();					// go to the next gui screen by user role
+								logoutflag=true;								//logout will return to this screen
+								MainLogoutButton.setEnabled(false);
+								StationUserLoginGui.setlogoutvisable(true);
+								StationUserLoginGui.setPassword("");
+								StationUserLoginGui.setNFCTextField("");
+								UpdateStationInfo();
+								ResetPumpSatation();
+								StationUserLoginGui.setCombobox(UserCarsNumbers);
+								DiscountTextBox.setText("<html> Wellcome "+Customer.getCustomerFirstName()+" "+Customer.getCustomerLastName()+"</html>");
+							}
+						else // Not Costing model
+						{
+							StationUserLoginGui.IllegalCostingmodel();
+						}
 						}
 					}
 				}
@@ -810,6 +901,18 @@ public class StationsController extends Controller implements MouseListener,Runn
 		return fuel;
 	}
 	
+	private int getCarIDByCarNumberr(String CarNUM){
+		for(int i=0;i<UserCarsNumbers.size();i++){
+			String s= String.valueOf(((callbackCar)UserCarsNumbers.get(i)).getCarNumber());
+			if(		s.equals(CarNUM) )	
+				{
+					return ((callbackCar)UserCarsNumbers.get(i)).getCarID();
+				}
+			
+		}
+		return 0;
+	}
+	
 	/**
 	 * This function check if user can enter to statio by his station costing model
 	 * @return true if is OK
@@ -830,8 +933,9 @@ public class StationsController extends Controller implements MouseListener,Runn
  * @param FuelID - 1=95, 2=Scooter Fuel, 4=Diesel
  * @param CustomerID - CusotmerID
  */
-	private void DiscountCalulation(float Payment,float FueAmount,int GasStationID,int FuelID,int CustomerID){
-		callbackSale CurrentSale=new callbackSale();
+	private void DiscountCalulation(float Payment,float FueAmount,int FuelID,int CustomerID,String CarNumber){
+		CurrentSale=new callbackSale();
+		CurrentSale.setCarNumber(CarNumber);
 		CurrentSale.setPayment(Payment);
 		CurrentSale.setFuelAmount(FueAmount);
 		CurrentSale.setGasStationID(GasStationID);
@@ -853,24 +957,15 @@ public class StationsController extends Controller implements MouseListener,Runn
 		{
 			Temp=(callbackCampaign)Temp;
 			Price=((callbackCampaign) Temp).getPriceAfterDiscount();
-			DiscountTextBox.setText("<html>You Need To Pay: "+myFormatter.format(Price)+" The Calcultion By "+((callbackCampaign) Temp).getCalculationMethod()+
-					" Discount = "+((callbackCampaign) Temp).getDiscountPercentage()+" By "+((callbackCampaign) Temp).getCampaignDescription()+"</html>");
+			DiscountTextBox.setText("<html>You Need To Pay: "+myFormatter.format(Price)+" Shekel"+"<br/>"
+			+" Discount = "+((callbackCampaign) Temp).getDiscountPercentage()+"<br/>"+
+			" By "+((callbackCampaign) Temp).getCampaignDescription()+"<br/>"+
+			"Calculation:"+((callbackCampaign) Temp).getCalculationMethod()
+			+"</html>");
 		/*----Send To DB Update*/
 		CurrentSale.setPayment(Price);
-		CurrentSale.setWhatToDo(MessageType.setNewGasStationSale);
-		Server.handleMessageFromClient(CurrentSale);
-		Temp=(CallBack) getCallBackFromBuffer();
-		if(Temp instanceof callback_Error)
-		{
-			/*----was Error in sending to DB*/
+		CurrentSale.setCampaignID(((callbackCampaign) Temp).getCampaignID());
 		}
-		if(Temp instanceof callbackSuccess)
-		{
-			/*---Success transfer to DB*/
-		}
-		}
-		
-	
 	}
 	
 	}
