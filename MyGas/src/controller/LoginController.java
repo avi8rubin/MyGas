@@ -1,5 +1,7 @@
 package controller;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -32,8 +34,10 @@ public class LoginController implements ActionListener{
 	private callbackBuffer CommonBuffer = null;
 	/**
 	 * The login GUI screen
+	 * And next GUI screen for closing (gas station problem)
 	 */
 	private Login_GUI LoginScreen;
+	private abstractPanel_GUI NextScreen;
 	
 	/**
 	 * Buttons from login Gui, use to set handler in controller
@@ -53,6 +57,7 @@ public class LoginController implements ActionListener{
 	 * Set connection Flag
 	 */
 	private boolean ConnectionFlag = false;
+	
 	
 //Constructors ****************************************************
 
@@ -85,6 +90,7 @@ public class LoginController implements ActionListener{
 		    		EnteredUser.setWhatToDo(MessageType.updateUserLogout);
 		    		Server.handleMessageFromClient(EnteredUser);
 		    	}*/
+		    	//NextScreen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		        System.exit(0);		        
 		    }
 		};
@@ -214,27 +220,27 @@ public class LoginController implements ActionListener{
 		switch(EnteredUser.getUserTypeId()){
 		case 1: 
 			new CustomerController(Server, CommonBuffer,
-					new CustomerGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+					(CustomerGUI) (NextScreen = new CustomerGUI(EnteredUser, Server, CommonBuffer, LoginScreen)));
 			break;
 		case 2: 
 			new StationsController(Server, CommonBuffer,
-					new StationsGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+					(StationsGUI) (NextScreen = new StationsGUI(EnteredUser, Server, CommonBuffer, LoginScreen)));
 			break;
 		case 3: 
 			new StationManagerController(Server, CommonBuffer,
-					new StationManagerGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+					(StationManagerGUI) (NextScreen = new StationManagerGUI(EnteredUser, Server, CommonBuffer, LoginScreen)));
 			break;
 		case 4: 
 			new CEOController(Server, CommonBuffer,
-					new CEOGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+					(CEOGUI) (NextScreen = new CEOGUI(EnteredUser, Server, CommonBuffer, LoginScreen)));
 			break;
 		case 5: 
 			new MarketingManagerController(Server, CommonBuffer,
-					new MarketingManagerGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+					(MarketingManagerGUI) (NextScreen = new MarketingManagerGUI(EnteredUser, Server, CommonBuffer, LoginScreen)));
 			break;
 		case 6: 
 			new MarketingRepresentativeController(Server, CommonBuffer,
-					new MarketingRepresentativeGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+					(MarketingRepresentativeGUI) (NextScreen = new MarketingRepresentativeGUI(EnteredUser, Server, CommonBuffer, LoginScreen)));
 			break;
 		}
 		

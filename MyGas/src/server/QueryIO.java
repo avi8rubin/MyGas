@@ -1,5 +1,4 @@
 package server;
-import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,6 +7,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.util.Calendar;
 import java.util.Vector;
 
 import callback.*;
@@ -17,13 +17,18 @@ import common.MessageType;
 public class QueryIO implements Runnable {
 	static Connection conn = null;
 	static Statement st = null;
+	static Calendar now = Calendar.getInstance();
 	private static ResultSet AnswerResult;
 	private static Object AnswerObject = null;
 	
 /**
  * Thread values
  */
-	callbackSale ThreadSale;
+	private callbackSale ThreadSale;
+	private int ThreadMission;
+	private static boolean SendBill = true;
+
+	
 
 	/**
 	 * This function create Driver connection
@@ -62,6 +67,7 @@ public class QueryIO implements Runnable {
 		return MessageType.statement_Succeded.toString();
 	}	
 	public Object CallbackResolver(Object SwitchCallback){		
+		
 		switch(((CallBack) SwitchCallback).getWhatToDo()){
 		
 /*Global Queries*/
@@ -197,10 +203,22 @@ public class QueryIO implements Runnable {
 				
 		} // END switch
 
+		TimeToSendBill();									//Check if the first day in the month is the current date and send bills
 		
 		return AnswerObject;
 	}
 
+	public void TimeToSendBill(){
+		if(now.get(Calendar.DAY_OF_MONTH) == 24 && SendBill){
+			/*Initiate Thread*/
+			ThreadMission=1;
+			(new Thread(this)).start();
+			SendBill = false;
+			/*---------------*/
+		}
+		if(now.get(Calendar.DAY_OF_MONTH) != 1) SendBill = true;
+	}
+	
 	public Object VectorResolver(Object SwitchCallback){
 		switch(((callbackVector) SwitchCallback).getWhatToDo()){
 
@@ -1640,6 +1658,7 @@ public class QueryIO implements Runnable {
 			
 			/*Initiate Thread*/
 			ThreadSale = Callback;
+			ThreadMission=0;
 			(new Thread(this)).start();
 			/*---------------*/
 			
@@ -1808,9 +1827,12 @@ public class QueryIO implements Runnable {
 	
 	@Override
 	public void run() {
-		SetNewFuelOrder();	
-		
-		
+		switch(ThreadMission){
+			case 0: SetNewFuelOrder();
+				break;
+			case 1: SendBillToCustomers();
+				break;
+		}	
 	}
 	
 	private void SetNewFuelOrder(){
@@ -1876,6 +1898,74 @@ public class QueryIO implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	private void SendBillToCustomers(){
+		
+		// Set variables ---------------------------------------------------------
+		int MonthBill;
+		ResultSet LocalResult;
+		
+		if((now.get(Calendar.MONTH)+1) == 1)
+			MonthBill = 12;
+		else MonthBill = now.get(Calendar.MONTH);
+		// Build query -----------------------------------------------------------
+
+			try {
+				Thread.sleep(20);						//Let the result back to the client
+				PreparedStatement ps1 = conn.prepareStatement(
+						"SELECT User_ID "+
+						", Customers_ID "+
+						", SUM(Fuel_Amount) AS Fuel_Total_Amount "+
+						", CASE Costing_Model_ID "+
+							"WHEN 3 THEN ROUND(SUM(Costing_Model_Discount) - SUM(Costing_Model_Discount)*0.1,2) "+
+							"WHEN 4 THEN ROUND(SUM(Costing_Model_Discount) - SUM(Costing_Model_Discount)*0.13,2) "+
+						   " ELSE ROUND(SUM(Costing_Model_Discount),2) "+
+						"END AS Price_After_Costing_Model_Discount "+
+						", Model_Type_Description "+
+						"FROM ( "+
+							"SELECT A.User_ID "+
+							", A.Customers_ID "+
+							", A.Car_Number "+
+							", A.Fuel_Description "+
+							", A.Sale_Date "+
+							", A.Fuel_Amount "+
+							", B.Costing_Model_ID "+
+							", B.Model_Type_Description, "+
+							"CASE Costing_Model_ID	 "+
+							"	WHEN 1 THEN A.Payment "+
+							"	ELSE A.Payment - A.Payment*0.04 "+
+							"END AS Costing_Model_Discount "+
+							"FROM all_gas_stations_sales A "+
+							"LEFT OUTER JOIN customer_detailes B ON A.User_ID=B.User_ID  "+
+						   " WHERE MONTH(A.Sale_Date) = (?) AND YEAR(Sale_Date) = (?) "+
+						   " ) A "+
+						"WHERE Costing_Model_ID <> 1 "+
+						"GROUP BY A.User_ID");
+				
+		// Send query to DB  -----------------------------------------------------	
+				ps1.setInt(1, MonthBill);
+				ps1.setInt(2, now.get(Calendar.YEAR));
+				LocalResult = ps1.executeQuery();
+				
+				while(LocalResult.next()){
+					setNotifications(LocalResult.getInt("User_ID"),"Monthly bill to date "+MonthBill+"/"+
+							now.get(Calendar.YEAR)%100+": price to pay "+LocalResult.getFloat("Price_After_Costing_Model_Discount")+
+							" on "+LocalResult.getFloat("Fuel_Total_Amount")+" liters."	);
+				}
+				
+				
+			} catch (SQLException | InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			
+			
+		
+		
+		
+		
 	}
 }
 	
