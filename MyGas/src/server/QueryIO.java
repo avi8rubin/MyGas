@@ -945,17 +945,22 @@ public class QueryIO implements Runnable {
  */
 	private CallBack getCustomer(callbackCustomer Callback){
 		// Set variables ---------------------------------------------------------
-
+			int RowNum =0;
+			int[] GasStationIDinPurchasePlan;
 		// Build query -----------------------------------------------------------
 		
 		try {
-			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Customer_Detailes WHERE User_ID = (?) OR Customers_ID=(?)");
+			PreparedStatement ps1=conn.prepareStatement("SELECT * FROM Customer_Detailes WHERE User_ID = (?) OR Customers_ID=(?)");
+			PreparedStatement ps2=conn.prepareStatement(
+					"SELECT A.User_ID ,A.Customers_ID ,B.Gas_Company_ID FROM customer_detailes A "+
+					"LEFT OUTER JOIN gas_station_detailes B ON A.Plan_ID = B.Plan_ID "+
+					"WHERE A.User_ID = (?) GROUP BY User_ID,Gas_Company_Name");
 			
 		// Send query to DB  -----------------------------------------------------
 						
-			ps.setInt(1, Callback.getUserID());
-			ps.setInt(2, Callback.getCustomersID());
-			AnswerResult = ps.executeQuery();
+			ps1.setInt(1, Callback.getUserID());
+			ps1.setInt(2, Callback.getCustomersID());
+			AnswerResult = ps1.executeQuery();
 			
 			if (!AnswerResult.next()) return new callback_Error("Customer not exists in DB.");
 			
@@ -977,6 +982,19 @@ public class QueryIO implements Runnable {
 			Callback.setCostingModelID(AnswerResult.getInt("Costing_Model_ID"));
 			Callback.setModelTypeDescription(AnswerResult.getString("Model_Type_Description"));
 			
+			//Get Gas Station ID in Purchase Plan
+			ps2.setInt(1, Callback.getUserID());
+			AnswerResult = ps2.executeQuery();
+			AnswerResult.last();			
+			GasStationIDinPurchasePlan = new int[AnswerResult.getRow()];
+			AnswerResult.beforeFirst();
+			
+			while(AnswerResult.next()){
+				GasStationIDinPurchasePlan[RowNum] = AnswerResult.getInt("Gas_Company_ID");
+				RowNum++;
+			}
+			Callback.setGasStationInPurchasePlan(GasStationIDinPurchasePlan);
+		
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 

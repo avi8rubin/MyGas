@@ -26,6 +26,7 @@ public class callbackCustomer extends CallBack{
 	private String UserPrivilege;
 	private int CostingModelID;
 	private String ModelTypeDescription;
+	private int[] GasStationInPurchasePlan;
 	
 	public callbackCustomer(){};
 	public callbackCustomer(MessageType WhatToDo){
@@ -138,5 +139,16 @@ public class callbackCustomer extends CallBack{
 	}
 	public void setModelTypeDescription(String modelTypeDescription) {
 		ModelTypeDescription = modelTypeDescription;
+	}
+	public int[] getGasStationInPurchasePlan() {
+		return GasStationInPurchasePlan;
+	}
+	public void setGasStationInPurchasePlan(int[] gasStationInPurchasePlan) {
+		GasStationInPurchasePlan = gasStationInPurchasePlan;
+	}
+	public boolean isAllowToEnterGasStation(int GasStationID) {
+		for (int i=0; i<GasStationInPurchasePlan.length ; i++)
+			if (GasStationInPurchasePlan[i] == GasStationID) return true;
+		return false;
 	}
 }
