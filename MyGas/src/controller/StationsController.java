@@ -652,6 +652,22 @@ public class StationsController extends Controller implements MouseListener,Runn
 							{
 							NFCIsExist=true;
 							Customer.setCustomersID(UserCarNFC.getCustomerID()); // NFC car callback -> Customer ID
+							
+							/*------send to DB User ID and get Customer id*/
+							Customer.setWhatToDo(MessageType.getCustomer);
+							Customer.setCustomersID(UserCarNFC.getCustomerID()); //Connect Customer.userID-> userID
+							Server.handleMessageFromClient(Customer);
+							
+							/*-------get Cusomter ID---------------------*/
+							LocalUserCallBack = (CallBack) getCallBackFromBuffer();
+							if(LocalUserCallBack instanceof callback_Error)
+							{
+								StationUserLoginGui.IllegalCustomerID();
+							}
+							else if(LocalUserCallBack instanceof callbackCustomer)
+							{
+							Customer=(callbackCustomer) LocalUserCallBack;
+							}
 							/*------ Move to the next screen ------*/		
 								StationUserLoginGui.ClearErrorMessage(); 		//Clear the error message if exists
 								GasStationSwitchLeftPanel();					// go to the next gui screen by user role
@@ -664,7 +680,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 								StationUserLoginGui.setCombobox(NFCTextField.getText());
 								StationUserLoginGui.setNFCTextField("");
 								StationUserLoginGui.setComboboxedit(false);
-								
+								DiscountTextBox.setText("<html> Wellcome "+Customer.getCustomerFirstName()+" "+Customer.getCustomerLastName()+"</html>");
 							}
 					}
 		}
@@ -859,3 +875,4 @@ public class StationsController extends Controller implements MouseListener,Runn
 	
 	}
 //	8565232
+// 2123650
