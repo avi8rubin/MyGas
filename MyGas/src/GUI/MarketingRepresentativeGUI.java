@@ -90,7 +90,9 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	private JLabel InvalidPhoneMesaageLabel;
 	private JLabel InvalidCreditCardMesaageLabel;
 
-
+// AddCars Center Layer Components
+	
+	
 
 	public MarketingRepresentativeGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer,
 			Login_GUI LoginScreen) {
@@ -253,8 +255,8 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		return CreditCardFormattedTextField;
 	}
 	
-	public String getComboBoxSelection(){
-		return (String)PurchasePlanComboBox.getSelectedItem();
+	public int getComboBoxSelection(){
+		return PurchasePlanComboBox.getSelectedIndex()+1;
 	}
 	
 	public void SetComboBoxSelection(callbackStringArray CampaignPatterns){
@@ -294,6 +296,12 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	public JLabel getInvalidCustomerIDMesaageLabel() {
 		return InvalidCustomerIDMesaageLabel;
 	}
+	
+	public void AddCarsCenterPanelLayer()
+	{
+		
+	}
+	
 	public void CreateNewUserCenterLayer()
 	{
 		
@@ -568,17 +576,17 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	public callbackCustomer getFullCallbackCustomer(){
 		callbackCustomer customerCallback = new callbackCustomer();
 		
-		customerCallback.setUserName(UserNametextField.getText());
-		customerCallback.setUserPassword(PasswordTextField.getText());
-		customerCallback.setCustomersID( Integer.valueOf(CustomerIDTextField.getText()) );
-		customerCallback.setCustomerFirstName(FirstNameTextField.getText());
-		customerCallback.setCustomerLastName(LastNameTextField.getText());
-		customerCallback.setEmail(EmailTextField.getText());
-		customerCallback.setPhoneNumber(PhoneFormattedTextField.getText());
-		customerCallback.setCreditCard(CreditCardFormattedTextField.getText());
+		customerCallback.setUserName(UserNametextField.getText().trim());
+		customerCallback.setUserPassword(PasswordPasswordField.getText().trim());
+		customerCallback.setCustomersID( Integer.valueOf(CustomerIDTextField.getText().trim()) );
+		customerCallback.setCustomerFirstName(FirstNameTextField.getText().trim());
+		customerCallback.setCustomerLastName(LastNameTextField.getText().trim());
+		customerCallback.setEmail(EmailTextField.getText().trim());
+		customerCallback.setPhoneNumber(PhoneFormattedTextField.getText().trim());
+		customerCallback.setCreditCard(CreditCardFormattedTextField.getText().trim());
 		if (PrivateCustomerRadioButton.isSelected()) customerCallback.setCustomerType("Private");
 		else customerCallback.setCustomerType("Commercial");
-		customerCallback.setPlanName( getComboBoxSelection() );
+		customerCallback.setPlanID(getComboBoxSelection());
 
 		return customerCallback;
 	}
