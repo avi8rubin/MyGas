@@ -11,6 +11,7 @@ import javax.security.auth.callback.Callback;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import GUI.StationsGUI;
@@ -206,6 +207,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 			EnteredUser.setUserID(Customer.getUserID());
 			Server.handleMessageFromClient(EnteredUser);
 			getCallBackFromBuffer();//Clean buffer
+			StationUserLoginGui.setUserName();
 			NFCTextField.setValue("__-___-__");
 			NFCIsExist=false;
 			StationUserLoginGui.setComboboxedit(true);
@@ -438,11 +440,18 @@ public class StationsController extends Controller implements MouseListener,Runn
 			if(Fuel95) FuelID=1;
 			if(FuelScoter) FuelID=2;
 			DiscountCalulation(Float.valueOf(myFormatter.format(Price)), this.Liter, this.GasStationID, FuelID, Customer.getCustomersID());
-			
+			//if User Have'nt Credit Card
+			if(Customer.getCreditCard().equals(""))
+			{
+				StationUserLoginGui.setCreditRadioButtonEdit(false); // Not Have NFC
+				StationUserLoginGui.setCashCheacked();
+			}
+			else
+				StationUserLoginGui.setCreditRadioButtonEdit(true); // have NFC
 			
 			PressStartStopButtonFlag=true;
 			Paybutton.setEnabled(true);
-			StartFuelingButton.setText("Start Fueling");
+			StartFuelingButton.setText("Start");
 			DiscountTextBox.setVisible(true);
 		}
 		
