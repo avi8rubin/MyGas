@@ -317,11 +317,12 @@ public class abstractPanel_GUI extends JFrame{
 		WindowListener exitListener = new WindowAdapter() {
 		    @Override
 		    public void windowClosing(WindowEvent e) {	    	
-		    	
-	    		User.setWhatToDo(MessageType.updateUserLogout);
-	    		NotificationThrerad.setNotificationFlag(false);	//Stop notification thread
-	    		Server.handleMessageFromClient(User);
-				getCallBackFromBuffer();
+		    	NotificationThrerad.setNotificationFlag(false);	//Stop notification thread
+		    	if(User.getUserTypeId()!=2){
+		    		User.setWhatToDo(MessageType.updateUserLogout);		    		
+		    		Server.handleMessageFromClient(User);
+					getCallBackFromBuffer();
+		    	}
 				LoginScreen.setVisible(true);
 				ThisScreen.setVisible(false);	
 				

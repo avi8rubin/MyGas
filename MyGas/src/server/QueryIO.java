@@ -948,11 +948,12 @@ public class QueryIO implements Runnable {
 		// Build query -----------------------------------------------------------
 		
 		try {
-			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Customer_Detailes WHERE User_ID = (?)");
+			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Customer_Detailes WHERE User_ID = (?) OR Customers_ID=(?)");
 			
 		// Send query to DB  -----------------------------------------------------
 						
 			ps.setInt(1, Callback.getUserID());
+			ps.setInt(2, Callback.getCustomersID());
 			AnswerResult = ps.executeQuery();
 			
 			if (!AnswerResult.next()) return new callback_Error("Customer not exists in DB.");
