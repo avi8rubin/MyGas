@@ -108,7 +108,7 @@ public class StationsGUI extends abstractPanel_GUI{
 		PasswordLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		PasswordLabel.setBounds(343, 370, 123, 35);
 		StationUserLoginLayer.add(PasswordLabel);
-		UserNameTextField.setText("Nir");
+		UserNameTextField.setText("");
 		
 		//User Name Text Field
 		UserNameTextField.setToolTipText("Enter User Name");
@@ -326,6 +326,9 @@ public class StationsGUI extends abstractPanel_GUI{
 	public void IllegalNFC(){
 		ErrorMassage.setText("*You Enter Illegal NFC input.");
 	}
+	public void IllegalCostingmodel(){
+		ErrorMassage.setText("<html>*Cosing Model Not Compatible With This Station.<html/>");
+	}
 	public void NFCNotExist(){
 		ErrorMassage.setText("*NFC Number is not exist in DB.");
 	}
@@ -341,7 +344,9 @@ public class StationsGUI extends abstractPanel_GUI{
 	public void AlreadyConnected(){
 		ErrorMassage.setText("*User Already Connected.");
 	}
-
+	public void setCashDefult(){
+		this.setCashCheacked();
+	}
 	public void NoConnectionToServer(){
 		ErrorMassage.setText("*No Connection To The Server.");
 	}
