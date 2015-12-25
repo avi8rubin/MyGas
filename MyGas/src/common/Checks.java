@@ -41,7 +41,7 @@ public class Checks {
 	 */
 	public static boolean isDateValid(String startDate, String endDate){
 
-		if(startDate==null || endDate==null)
+		if(startDate.equals("") || endDate.equals(""))
 			return false;
 		String startDay=startDate.substring(0, 2);
 		String EndDay=endDate.substring(0, 2);
@@ -49,8 +49,8 @@ public class Checks {
 		String startMonth=startDate.substring(3, 5);
 		String EndMonth=endDate.substring(3, 5);
 
-		String startYear=startDate.substring(8, 10);
-		String EndYear=endDate.substring(8, 10);
+		String startYear=startDate.substring(6,7);
+		String EndYear=endDate.substring(6,7);
 		
 		if(Integer.parseInt(EndYear)<Integer.parseInt(startYear))
 			return false;

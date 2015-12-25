@@ -1,27 +1,42 @@
 package controller;
 
+
 import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
+import javax.swing.plaf.synth.Region;
 import javax.swing.table.DefaultTableModel;
 
 import GUI.MarketingManagerGUI;
+import callback.CallBack;
 import callback.callbackBuffer;
+import callback.callbackCampaign;
 import callback.callbackStringArray;
+import callback.callback_Error;
 import client.Client;
 import common.Checks;
+import common.ExcelExporter;
 import common.MessageType;
 import common.TableModel;
 
 public class MarketingManagerController extends Controller {
-
 	/**
 	 * Marketing Manager GUI components 
 	 */
@@ -41,9 +56,15 @@ public class MarketingManagerController extends Controller {
 
 	private JComboBox<?> ComboBoxSelection;
 //
+	private JButton StartSale;
+	private JComboBox<?> ComboBoxSalePattern;
+	private Object[][] PatterWithID;
 	
+	
+	private JLabel Datelabel;
+	private JLabel Datelabel2;
 
-	
+
 	public MarketingManagerController(Client Server, callbackBuffer CommonBuffer, MarketingManagerGUI GuiScreen) {
 		super(Server, CommonBuffer, GuiScreen);
 		this.GuiScreen = GuiScreen;
@@ -53,22 +74,22 @@ public class MarketingManagerController extends Controller {
 		//Tariff update Button
 		TariffButton = GuiScreen.getTariffButton();
 		TariffButton.addActionListener(this);
-		TariffButton.setActionCommand("Tariff");								//Add action command
+		TariffButton.setActionCommand("Tariff");								
 		
 //		Tariff Update Button
 		UpdateButton = GuiScreen.getUpdateButton();
 		UpdateButton.addActionListener(this);
-		UpdateButton.setActionCommand("Update Button");								//Add action command
-
+		UpdateButton.setActionCommand("Update Button");								
+		
 		//Report Button
 		ReportButton = GuiScreen.getReportButton();
 		ReportButton.addActionListener(this);
-		ReportButton.setActionCommand("CreateReports");								//Add action command
+		ReportButton.setActionCommand("CreateReports");				
 
 		//Activate Sale Campaign Button
 		ActivateSaleCampaignButton = GuiScreen.getActivateSaleCampaignButton();
 		ActivateSaleCampaignButton.addActionListener(this);
-		ActivateSaleCampaignButton.setActionCommand("Activate Sale Campaign");								//Add action command
+		ActivateSaleCampaignButton.setActionCommand("Activate Sale Campaign");							
 		
 		//Customer Characterization Report
 		CustomerCharacterizationReportButton= GuiScreen.getCustomerCharacterizationReportButton();
@@ -79,6 +100,8 @@ public class MarketingManagerController extends Controller {
 		ExportButton2.addActionListener(this);
 		ExportButton2.setActionCommand("Export CustomerCharacterization Report");		
 
+		Datelabel=GuiScreen.getErrorDateLabel();
+				
 		//Comments For Marketing Campaign
 		CommentsForMarketingCampaignButton=GuiScreen.getCommentsForMarketingCampaignButton();
 		CommentsForMarketingCampaignButton.addActionListener(this);
@@ -91,6 +114,13 @@ public class MarketingManagerController extends Controller {
 		ComboBoxSelection=GuiScreen.getComboBox();
 		ComboBoxSelection.addActionListener(this);
 		ComboBoxSelection.setActionCommand("Change ComboBox selection");	
+		
+		//activate sale
+		StartSale=GuiScreen.getStartSaleButton();
+		StartSale.addActionListener(this);
+		StartSale.setActionCommand("start sale");
+		
+		Datelabel2=GuiScreen.getErrorDateLabel2();
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -109,11 +139,15 @@ public class MarketingManagerController extends Controller {
 		else if(e.getActionCommand().equals("Activate Sale Campaign")){
 			ContainerCardLeft.show(LeftCardContainer,"ActivateSaleLeftLayer");
 			ContainerCardCenter.show(CenterCardContainer,"ActivateSaleCenterLayer");
+			GuiScreen.setActivateDates();
+			Datelabel2.setText("");
 			HandleActivateSaleCampaignPressed();											
 		}
 		
 		else if(e.getActionCommand().equals("Customer Characterization")){
 			ContainerCardCenter.show(CenterCardContainer, "CustomerCharacterizationReport");
+			GuiScreen.setDates();
+			Datelabel.setText("");
 		}		
 		else if(e.getActionCommand().equals("Export CustomerCharacterization Report")){
 			HandleCustomerCharacterizationReport();											
@@ -126,17 +160,33 @@ public class MarketingManagerController extends Controller {
 		else if(e.getActionCommand().equals("Comments For Marketing Campaign")){
 			ContainerCardCenter.show(CenterCardContainer, "CommentsForMarketingCampaignReport");
 			HandleCommentsForMarketingCampaign();
-			//HandleActivateSaleCampaignCustomerCharacterizationReportButtonPressed();
 		}
 
 		else if(e.getActionCommand().equals("Export CommentsForMarketingCampaign Report")){
-			//HandleChangeCampaignFromComboBox();
-//			HandleCommentsForMarketingCampaignExportReport();											
+			HandleExportReport();
+		}
+		//
+		else if(e.getActionCommand().equals("start sale")){	
+			HandleActivateSaleCampaignButtonPressed();
 		}
 		
 		
 	}
 
+	private void HandleExportReport() 
+	{
+		try{
+			File file=new File("C:/Users/litaf/git/MyGas/MyGas/result.xls");
+			ExcelExporter excelExporter=new ExcelExporter();
+			excelExporter.exportTable(GuiScreen.getCommentsTable(), file);
+			}
+		catch(Exception FileNotFoundException)
+		{
+			JOptionPane.showMessageDialog(null, "Error, Faild to open excel file", 
+					"", JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+	
 	private void HandleTariffPressed(){
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getFuelsDetailes));
 		callbackStringArray TariffTable = (callbackStringArray) getCallBackFromBuffer();		
@@ -146,12 +196,24 @@ public class MarketingManagerController extends Controller {
 
 	private void HandleChangeCampaignFromComboBox(){
 		
+		DefaultTableModel table;
 		String patternSelected=GuiScreen.getComboBoxSelection();
+		int PattentIndex[] = new int[1]; 
+		PattentIndex[0]=GuiScreen.getPatternInt(patternSelected);
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCommentsForMarketionCampaign));
-		callbackStringArray CampaignTable = (callbackStringArray) getCallBackFromBuffer();		
-		GuiScreen.setCommentsForMarketingCampaignTable(CampaignTable.getDefaultTableModel(),patternSelected);
+		callbackStringArray CampaignTable = (callbackStringArray) getCallBackFromBuffer();	
+		if(patternSelected=="All Campaigns"){
+			table=CampaignTable.getDefaultTableModel();
+			GuiScreen.setCommentsForMarketingCampaignTable(table);
+		}
+		else
+		{
+			table=new DefaultTableModel(CampaignTable.getRowByIndex(PattentIndex),CampaignTable.getColHeaders());
+			GuiScreen.setCommentsForMarketingCampaignTable(table);
+
+		}
 	
-	}
+}
 
 	private void HandleCommentsForMarketingCampaign(){
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCommentsForMarketionCampaign));
@@ -161,16 +223,14 @@ public class MarketingManagerController extends Controller {
 	private void HandleCustomerCharacterizationReport(){
 		String startDate=GuiScreen.getStartDate(); 
 		String endDate=GuiScreen.getEndDate();
+		Datelabel.setText("");
 
 		boolean flag=Checks.isDateValid(startDate,endDate);
-		if(flag==false)
-			JOptionPane.showMessageDialog(null, "Error, Illegal Date\nPlease insert a different date", "", JOptionPane.INFORMATION_MESSAGE);
+		if(flag==false){
+			Datelabel.setText("*Error, Illegal Date");
+		}
 		else{
-		String startDateInFormat=String.format(startDate.substring(0,6)+startDate.substring(8,10));
-		String endDateInFormat=String.format(endDate.substring(0,6)+endDate.substring(8,10));
-
-		String[] dateArr={startDateInFormat,endDateInFormat};
-		
+		String[] dateArr={startDate,endDate};
 		callbackStringArray createCustomerTable=new callbackStringArray(MessageType.getCustomerCharacterizationByPeriod);
 		createCustomerTable.setColHeaders(dateArr);
 		Server.handleMessageFromClient(createCustomerTable);
@@ -179,15 +239,55 @@ public class MarketingManagerController extends Controller {
 		}
 	}
 	
+	private void SetCombo()
+	{		
+		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCampaignPatternAndActiveCampaign));
+		callbackStringArray Patterns = (callbackStringArray) getCallBackFromBuffer();
+		PatterWithID=Patterns.getVarianceMatrix();
+		GuiScreen.SetComboBoxPattern(Patterns);
+		
+	}
 	
 	private void HandleActivateSaleCampaignPressed() {
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCampaignPatternAndActiveCampaign));
-		callbackStringArray Patterns = (callbackStringArray) getCallBackFromBuffer();	
-		GuiScreen.SetComboBoxPattern(Patterns);
+		callbackStringArray activeSales = (callbackStringArray) getCallBackFromBuffer();	
+		GuiScreen.setActiveSalesTable(activeSales.getDefaultTableModel());
+		SetCombo();
 	}
-	private void HandleActivateSaleCampaignCustomerCharacterizationReportButtonPressed(){	
+	private void HandleActivateSaleCampaignButtonPressed(){
+		
+		String startDate=GuiScreen.getStartSaleDate();
+		String endDate=GuiScreen.getEndSaleDate();
+		String patternChoosen=GuiScreen.getComboBoxPattern();
+		Datelabel2.setText("");
+
+		Object patternID=GuiScreen.getSalePatternId(patternChoosen,PatterWithID);
+		Boolean flag=Checks.isDateValid(startDate, endDate);
+
+		if(flag==false){
+			Datelabel2.setText("*Error, Illegal Date");
+		}		
+		else{
+		String startDateToDB= startDate.substring(6,8)+"/"+startDate.substring(3,5)+"/"+startDate.substring(0,2);
+		String endDateToDB= endDate.substring(6,8)+"/"+endDate.substring(3,5)+"/"+endDate.substring(0,2);
+
+		callbackCampaign addSale=new callbackCampaign(MessageType.setNewCampaign);
+		addSale.setCampaignPatternsID(Integer.parseInt(patternID.toString()));
+		addSale.setEndCampaignDate(endDateToDB);
+		addSale.setStartCampaignDate(startDateToDB);
+		
+		CallBack temp;
+		
+		Server.handleMessageFromClient(addSale);
+		temp =  (CallBack) getCallBackFromBuffer();
+		if(temp instanceof callback_Error){
+			JOptionPane.showMessageDialog(null, "Error, Sale Didn't Saved", 
+					"", JOptionPane.INFORMATION_MESSAGE);
+			}
+		else {
+			HandleActivateSaleCampaignPressed();
+			}
+		}
 	}
-
-
 }
 
