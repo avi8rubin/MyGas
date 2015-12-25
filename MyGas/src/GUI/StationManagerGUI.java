@@ -2,11 +2,13 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -42,6 +44,19 @@ public class StationManagerGUI extends abstractPanel_GUI{
 	private JTable UpdateLimitTabel;
 	private JLayeredPane UpdateLimitLevelFuelLayer;
 	
+	
+	// Create Report
+	private JLayeredPane CreateReportLeftPanel;
+	private JLayeredPane QuartelyRepotyScreen;
+	private JLayeredPane PurchaseReportScreen;
+	private JLayeredPane StockReportScreen;
+
+	private JButton QuartelyRepotyButton;
+	private JButton PurchaseReportButton;
+	private JButton StockReportButton;
+	//Quartly report
+	private JComboBox YearSelectInQuarterlyReport;
+	private JButton QuartelyGenrateButton;
 	// Left screen
 	private final JLabel Error_Label;
 	
@@ -171,13 +186,112 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		UpdateLimitTabel.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
 		UpdateLimitTabel.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		
-		/*-----------------------------------------------Left Panel---------------------------------*/
+		/*----------------------------Center panel- Click -Create Report Screen---------------------------------*/
+		
+		
+		/*------- Create new center layer and add it to container --------*/
+		QuartelyRepotyScreen = new JLayeredPane();		//Global variable
+		QuartelyRepotyScreen.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		CenterCardContainer.add(QuartelyRepotyScreen, "QuartelyRepotyScreen");
+		QuartelyRepotyScreen.setOpaque(true);
+		QuartelyRepotyScreen.setName("QuartelyRepotyScreen");
+		
+		
+		/*------------------------Quartely Repot----------------------------------------*/
+		JLabel lblSelectQuarter = new JLabel("Select Quarter:");
+		lblSelectQuarter.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblSelectQuarter.setBounds(12, 13, 148, 25);
+		QuartelyRepotyScreen.add(lblSelectQuarter);
+		
+		JLabel lblSelectYear = new JLabel("Select Year:");
+		lblSelectYear.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblSelectYear.setBounds(247, 13, 148, 25);
+		QuartelyRepotyScreen.add(lblSelectYear);
+		
+		JComboBox comboBox = new JComboBox();
+		comboBox.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4"}));
+		comboBox.setBounds(181, 13, 39, 25);
+		QuartelyRepotyScreen.add(comboBox);
+		
+		YearSelectInQuarterlyReport = new JComboBox();
+		YearSelectInQuarterlyReport.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		YearSelectInQuarterlyReport.setBounds(378, 14, 85, 22);
+		QuartelyRepotyScreen.add(YearSelectInQuarterlyReport);
+		contentPane.add(ContactFrame, BorderLayout.SOUTH);
+		ContactFrame.setVisible(false);
+		ContactFrame.getContentPane().setLayout(null);
+		QuartelyRepotyScreen.setBounds(12, 13, 944, 593);
+		
+		QuartelyGenrateButton = new JButton("Genrate");
+		QuartelyGenrateButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		QuartelyGenrateButton.setBounds(490, 13, 113, 25);
+		QuartelyRepotyScreen.add(QuartelyGenrateButton);
+		
+		/*------- Create new center layer and add it to container --------*/
+		PurchaseReportScreen = new JLayeredPane();		//Global variable
+		PurchaseReportScreen.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		CenterCardContainer.add(PurchaseReportScreen, "PurchaseReportScreen");
+		PurchaseReportScreen.setOpaque(true);
+		PurchaseReportScreen.setName("PurchaseReportScreen");
+		
+		/*------- Create new center layer and add it to container --------*/
+		StockReportScreen = new JLayeredPane();		//Global variable
+		StockReportScreen.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		CenterCardContainer.add(StockReportScreen, "StockReportScreen");
+		StockReportScreen.setOpaque(true);
+		StockReportScreen.setName("StockReportScreen");
+		
+		
+		
+		
+		
+		/*-------------------------------------Left Panel Click -Create Report Screen---------------------------------*/
+		
+		
+		
+
+
+		
+
+		
+		CreateReportLeftPanel =new JLayeredPane();
+		CreateReportLeftPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		CreateReportLeftPanel.setBackground(new Color(169, 169, 169));
+		CreateReportLeftPanel.setPreferredSize(new Dimension(300,200));
+		LeftCardContainer.add(CreateReportLeftPanel,"CreateReportLeftPanel");
+		CreateReportLeftPanel.setOpaque(true);
+		
+		// Logo on left panel
+		JLabel LogoImage = new JLabel("");
+		LogoImage.setIcon(new ImageIcon(abstractPanel_GUI.class.getResource("/images/Left_Panel_Logo22.jpg")));
+		LogoImage.setBounds(38, 313, 239, 242);
+		CreateReportLeftPanel.add(LogoImage);
+		
+		CreateReportLeftPanel.setName("CreateReportLeftPanel");
+		
+		// add 3 buttons
+		QuartelyRepotyButton = new JButton("Quarterly Report");
+		QuartelyRepotyButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		QuartelyRepotyButton.setBounds(12, 26, 279, 38);
+		CreateReportLeftPanel.add(QuartelyRepotyButton);
+		
+		PurchaseReportButton = new JButton("Purchase Report");
+		PurchaseReportButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		PurchaseReportButton.setBounds(12, 77, 279, 38);
+		CreateReportLeftPanel.add(PurchaseReportButton);
+		
+		StockReportButton = new JButton("Stock Report");
+		StockReportButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		StockReportButton.setBounds(12, 128, 279, 38);
+		CreateReportLeftPanel.add(StockReportButton);
+		
 		
 		/*-------------Error Textbox------------------------*/
 		Error_Label = new JLabel("");
 		Error_Label.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		Error_Label.setBounds(12, 13, 264, 144);
-		EmptyLeftPanel.add(Error_Label);
+		EmptyCenterPanel.add(Error_Label);
 		
 		
 		
@@ -257,5 +371,30 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		DefaultTableCellRenderer CenterRenderer = new DefaultTableCellRenderer();
 		CenterRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		ApprovalSuppliesTable.setDefaultRenderer(Object.class, CenterRenderer);	
+	}
+	
+	public JButton getQuartelyRepotyButton() {
+		return QuartelyRepotyButton;
+	}
+	public void setQuartelyRepotyButton(JButton quartelyRepotyButton) {
+		QuartelyRepotyButton = quartelyRepotyButton;
+	}
+	public JButton getPurchaseReportButton() {
+		return PurchaseReportButton;
+	}
+	public void setPurchaseReportButton(JButton purchaseReportButton) {
+		PurchaseReportButton = purchaseReportButton;
+	}
+	public JButton getStockReportButton() {
+		return StockReportButton;
+	}
+	public void setStockReportButton(JButton stockReportButton) {
+		StockReportButton = stockReportButton;
+	}
+	public JButton getQuartelyGenrateButton() {
+		return QuartelyGenrateButton;
+	}
+	public void setQuartelyGenrateButton(JButton quartelyGenrateButton) {
+		QuartelyGenrateButton = quartelyGenrateButton;
 	}
 }

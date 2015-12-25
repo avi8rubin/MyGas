@@ -35,6 +35,10 @@ public class StationManagerController extends Controller{
 	private final JButton UpdateLimitButton;
 	//Approve
 	private final JButton UpdateApproveButton;
+	// Create Report 
+	private final JButton QuartelyRepotyButton;
+	private final JButton PurchaseReportButton;
+	private final JButton StockReportButton;
 	/**
 	 * Constracor
 	 * @param Server
@@ -61,7 +65,19 @@ public class StationManagerController extends Controller{
 		UpdateLimitButton = GuiScreen.getUpdateLimitButton();
 		UpdateLimitButton.addActionListener(this);
 		UpdateLimitButton.setActionCommand("UpdateLimitButton");
-	
+		
+		QuartelyRepotyButton= GuiScreen.getQuartelyRepotyButton();
+		QuartelyRepotyButton.addActionListener(this);
+		QuartelyRepotyButton.setActionCommand("QuartelyRepotyButton");
+		
+		PurchaseReportButton=GuiScreen.getPurchaseReportButton();
+		PurchaseReportButton.addActionListener(this);
+		PurchaseReportButton.setActionCommand("PurchaseReportButton");
+		
+		StockReportButton = GuiScreen.getStockReportButton();
+		StockReportButton.addActionListener(this);
+		StockReportButton.setActionCommand("StockReportButton");
+		
 		/*--------------------"Update"----------------------*/
 		UpdateApproveButton = GuiScreen.getUpdateApproveButton();
 		UpdateApproveButton.addActionListener(this);
@@ -81,6 +97,14 @@ public class StationManagerController extends Controller{
 			handleUpdateOnApproveScreen();
 		if(e.getActionCommand().equals("UpdateLimitButton"))
 			handleUpdateLimitLevelScreen();
+		if(e.getActionCommand().equals("CreateReportButton"))
+			handleCreateReportButton();
+		if(e.getActionCommand().equals("QuartelyRepotyButton"))
+			handleQuartelyRepotyButton();
+		if(e.getActionCommand().equals("PurchaseReportButton"))
+			handlePurchaseReportButton();
+		if(e.getActionCommand().equals("StockReportButton"))
+			handleStockReportButton();
 	}
 	/**
 	 * This function reset the main Manger window
@@ -158,6 +182,25 @@ public class StationManagerController extends Controller{
 			    			JOptionPane.ERROR_MESSAGE);		
 		}
 	}
+	/**
+	 * Show Quartely Repot Screen
+	 */
+	private void handleQuartelyRepotyButton(){
+		ContainerCard=(CardLayout)(CenterCardContainer.getLayout());
+		ContainerCard.show(CenterCardContainer,"QuartelyRepotyScreen");
+	}
+	/**
+	 * Show Purchase Report Screen
+	 */
+	private void handlePurchaseReportButton(){
+		
+	}
+	/**
+	 * Show Stock Report
+	 */
+	private void handleStockReportButton(){
+		
+	}
 	
 	/**
 	 * This function add value to table
@@ -222,4 +265,20 @@ public class StationManagerController extends Controller{
 			}
 		return false;
 	}
+	/**
+	 * Show CreateReport
+	 */
+	private void handleCreateReportButton(){
+		
+		ContainerCard=(CardLayout)(CenterCardContainer.getLayout());
+		ContainerCard.show(CenterCardContainer,"EmptyCenterPanel");
+		
+		ContainerCard=(CardLayout)(LeftCardContainer.getLayout());
+		ContainerCard.show(LeftCardContainer,"CreateReportLeftPanel");
+	}
+
+
+
+
+
 }
