@@ -424,7 +424,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 /**
  * This function handle the Start/Stop Button
  */
-	@SuppressWarnings("deprecation")
+	
 	public void FuelingProccess(){		
 		/*------User Press start fueling------*/
 		if(PressStartStopButtonFlag==true && UserIsFueling)
@@ -436,8 +436,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 			DiscountTextBox.setText("");
 			Paybutton.setEnabled(false);
 			UserNeedToPay=true;
-			// start counting liters thread
-			//ThreadRunFlag=false;
+
 			LiterCounter=new Thread(this);
 			LiterCounter.start();
 		}
@@ -497,10 +496,12 @@ public class StationsController extends Controller implements MouseListener,Runn
 				JLabel lbl = new JLabel("Enter Driver name: ");
 				lbl.setFont((new Font("Tahoma", Font.PLAIN, 15)));
 				JTextField txt = new JTextField(10);
+
 				panel.add(lbl);
 				panel.add(txt);
 				int selectedOption = JOptionPane.showOptionDialog(null, panel, "Driver Input", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
 				String text=null;
+				text=Customer.getCustomerFirstName();
 				if(selectedOption == 0)
 				{
 					while(txt.getText().equals(""))
@@ -523,6 +524,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 			if(Temp instanceof callbackSuccess)
 			{
 				//*---Gas station sale send OK *//
+				System.out.println("Succsses");
 			}
 			if(Temp instanceof callback_Error)
 			{
