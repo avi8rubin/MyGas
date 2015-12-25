@@ -503,6 +503,11 @@ public class StationsController extends Controller implements MouseListener,Runn
 				String text=null;
 				if(selectedOption == 0)
 				{
+					while(txt.getText().equals(""))
+					{
+						lbl.setText("Worng Driver Input, Try Again");
+						selectedOption = JOptionPane.showOptionDialog(null, panel, "Driver Input", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
+					}
 				    text = txt.getText();
 				    // ...
 				}
