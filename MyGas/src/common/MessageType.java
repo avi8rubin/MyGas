@@ -35,7 +35,7 @@ public enum MessageType {
 	setNewCar,
 	getCarDetailes,
 	getCustomerDetailes,
-	getPurchasePlans,
+	getMarketingRepresentativeComboBox,
 /*Customer*/
 	setNewHomeFuelSale,
 	getHomeFuelOrders,
@@ -45,6 +45,8 @@ public enum MessageType {
 	setNewGasStationSale,
 	getFuelPerStation,
 /*Station Manager*/
-	getStationSuppliesOrder
+	getStationSuppliesOrder,
+	getCurrentThresholdLimit,
+	setCurrentThresholdLimit
 
 }
