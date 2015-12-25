@@ -108,6 +108,7 @@ public class abstractPanel_GUI extends JFrame{
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.setResizable(false);
 		this.setVisible(true);
 		this.User = EnteredUser;
@@ -307,7 +308,7 @@ public class abstractPanel_GUI extends JFrame{
 		NotificationsTable.setDefaultRenderer(Object.class, CenterRenderer);
 		
 		/*Create notification thread*/
-		NotificationThrerad = new UpdateNotifications(ThisScreen, Server, User.getUserID());
+		NotificationThrerad = new UpdateNotifications(ThisScreen, CommonBuffer, Server, User.getUserID());
 		new Thread(NotificationThrerad).start();
 		
 
@@ -322,10 +323,9 @@ public class abstractPanel_GUI extends JFrame{
 		    		User.setWhatToDo(MessageType.updateUserLogout);		    		
 		    		Server.handleMessageFromClient(User);
 					getCallBackFromBuffer();
+					LoginScreen.setVisible(true);
+					ThisScreen.setVisible(false);
 		    	}
-				LoginScreen.setVisible(true);
-				ThisScreen.setVisible(false);	
-				
 		    }
 		};
 		this.addWindowListener(exitListener);
@@ -366,7 +366,7 @@ public class abstractPanel_GUI extends JFrame{
 	/**
 	 * @return The callback from the buffer
 	 */
-	public CallBack getCallBackFromBuffer(){
+	private CallBack getCallBackFromBuffer(){
 		CallBack ReturnCallback;
 		while (CommonBuffer.getHaveNewCallBack() == false); 			//Waits for new callback		
 		ReturnCallback = CommonBuffer.getBufferCallBack();				//Get the new callback	

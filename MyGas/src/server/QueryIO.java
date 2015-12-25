@@ -1,5 +1,4 @@
 package server;
-import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,22 +7,34 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.util.Calendar;
 import java.util.Vector;
 
 import callback.*;
 import common.MessageType;
 
-
+/**
+ * In this class you can find all queries that communicate with the database.
+ * All the requests from client goes into two methods, one handles object type CallBack
+ * and the second one handles callbackVector type witch extends Vector class.
+ * @author zinoohad
+ *
+ */
 public class QueryIO implements Runnable {
 	static Connection conn = null;
 	static Statement st = null;
+	static Calendar now = Calendar.getInstance();
 	private static ResultSet AnswerResult;
 	private static Object AnswerObject = null;
 	
 /**
  * Thread values
  */
-	callbackSale ThreadSale;
+	private callbackSale ThreadSale;
+	private int ThreadMission;
+	private static boolean SendBill = true;
+
+	
 
 	/**
 	 * This function create Driver connection
@@ -62,36 +73,31 @@ public class QueryIO implements Runnable {
 		return MessageType.statement_Succeded.toString();
 	}	
 	public Object CallbackResolver(Object SwitchCallback){		
+		
 		switch(((CallBack) SwitchCallback).getWhatToDo()){
 		
 /*Global Queries*/
 			case getCheckExistsUserPass:
 				AnswerObject = getCheckExistsUserPass((callbackUser)SwitchCallback);				
-				break;
-				
+				break;				
 			case updateChangeUserPassword:
 				AnswerObject = updateChangeUserPassword((callbackUser)SwitchCallback);			
-				break;	
-			
+				break;				
 			case updateUserLogin:
 				AnswerObject = updateUserLogin((callbackUser)SwitchCallback);				
-				break;
-				
+				break;				
 			case updateUserLogout:
 				AnswerObject = updateUserLogout((callbackUser)SwitchCallback);				
-				break;
-				
+				break;				
 			case getContacts:
 				if(SwitchCallback instanceof callbackWorkersDetailes)
 					AnswerObject = getContacts((callbackWorkersDetailes)SwitchCallback);	
 				else if (SwitchCallback instanceof callbackStringArray)
 					AnswerObject = getContacts((callbackStringArray)SwitchCallback);
-				break;
-				
+				break;				
 			case getNotifications:
 				AnswerObject = getNotifications((callbackStringArray)SwitchCallback);				
-				break;
-				
+				break;				
 			case updateNotifications:
 				AnswerObject = updateNotifications((callbackUser)SwitchCallback);				
 				break;
@@ -102,20 +108,16 @@ public class QueryIO implements Runnable {
 					AnswerObject = getCommentsForMarketionCampaign((callbackCommentsForMarketionCampaign)SwitchCallback);	
 				else if (SwitchCallback instanceof callbackStringArray)
 					AnswerObject = getCommentsForMarketionCampaign((callbackStringArray)SwitchCallback);
-				break;	
-				
+				break;					
 			case getCustomerCharacterizationByPeriod:
 				AnswerObject = getCustomerCharacterizationByPeriod((callbackStringArray)SwitchCallback);
-				break;
-				
+				break;				
 			case getFuelsDetailes:
 				AnswerObject = getFuelsDetailes((callbackStringArray)SwitchCallback);
-				break;
-				
+				break;				
 			case getCampaignPatternAndActiveCampaign:
 				AnswerObject = getCampaignPatternAndActiveCampaign((callbackStringArray)SwitchCallback);
-				break;
-				
+				break;				
 			case setNewCampaign:
 				AnswerObject = setNewCampaign((callbackCampaign)SwitchCallback);
 				break;
@@ -128,40 +130,30 @@ public class QueryIO implements Runnable {
 /*Marketing Representative*/				
 			case getCustomer:
 				AnswerObject = getCustomer((callbackCustomer)SwitchCallback);				
-				break;	
-				
+				break;					
 			case getIsUserNameExists:
 				AnswerObject = getIsUserNameExists((callbackUser)SwitchCallback);				
-				break;
-				
+				break;				
 			case setCreateNewCustomer:
 				AnswerObject = setCreateNewCustomer((callbackCustomer)SwitchCallback);				
-				break;	
-				
+				break;					
 			case setNewCar:
 				AnswerObject = setNewCar((callbackCar)SwitchCallback);				
-				break;
-				
+				break;				
 			case getHomeFuelOrders:
 				if(SwitchCallback instanceof callbackSale)
 					AnswerObject = getHomeFuelOrders((callbackSale)SwitchCallback);	
 				if(SwitchCallback instanceof callbackStringArray)
 					AnswerObject = getHomeFuelOrders((callbackStringArray)SwitchCallback);	
-				break;
-				
+				break;				
 			case getCustomerDetailes:
 				AnswerObject = getCustomerDetailes((callbackCustomer)SwitchCallback);				
-				break;
-				
-			case getPurchasePlans:
-				AnswerObject = getPurchasePlans((callbackStringArray)SwitchCallback);				
-				break;
+				break;							
 				
 /*Customer*/
 			case setNewHomeFuelSale:
 				AnswerObject = setNewHomeFuelSale((callbackSale)SwitchCallback);				
-				break;
-				
+				break;				
 			case getCarDetailes:
 				if(SwitchCallback instanceof callbackCar)
 					AnswerObject = getCarDetailes((callbackCar)SwitchCallback);	
@@ -171,16 +163,13 @@ public class QueryIO implements Runnable {
 /*Station*/		
 			case getSaleDiscount:
 				AnswerObject = getSaleDiscount((callbackSale)SwitchCallback);				
-				break;
-				
+				break;				
 			case getCarWithNFC:
 				AnswerObject = getCarWithNFC((callbackCar)SwitchCallback);				
-				break;
-				
+				break;				
 			case setNewGasStationSale:
 				AnswerObject = setNewGasStationSale((callbackSale)SwitchCallback);				
-				break;
-				
+				break;				
 			case getFuelPerStation:
 				AnswerObject = getFuelPerStation((callbackStationFuels)SwitchCallback);				
 				break;
@@ -188,6 +177,9 @@ public class QueryIO implements Runnable {
 /*Station Manager*/
 			case getStationSuppliesOrder:
 				AnswerObject = getStationSuppliesOrder((callbackStringArray)SwitchCallback);				
+				break;	
+			case getCurrentThresholdLimit:
+				AnswerObject = getCurrentThresholdLimit((callbackStringArray)SwitchCallback);				
 				break;	
 				
 				
@@ -197,10 +189,22 @@ public class QueryIO implements Runnable {
 				
 		} // END switch
 
+		TimeToSendBill();									//Check if the first day in the month is the current date and send bills
 		
 		return AnswerObject;
 	}
 
+	public void TimeToSendBill(){
+		if(now.get(Calendar.DAY_OF_MONTH) == 24 && SendBill){
+			/*Initiate Thread*/
+			ThreadMission=1;
+			(new Thread(this)).start();
+			SendBill = false;
+			/*---------------*/
+		}
+		if(now.get(Calendar.DAY_OF_MONTH) != 1) SendBill = true;
+	}
+	
 	public Object VectorResolver(Object SwitchCallback){
 		switch(((callbackVector) SwitchCallback).getWhatToDo()){
 
@@ -211,6 +215,16 @@ public class QueryIO implements Runnable {
 /*CEO*/
 			case setWaitingTariff:
 				AnswerObject = setWaitingTariff((callbackVector)SwitchCallback);
+				break;
+			
+/*Station Manager*/				
+			case setCurrentThresholdLimit:
+				AnswerObject = setCurrentThresholdLimit((callbackVector)SwitchCallback);				
+				break;				
+
+/*Marketing Representative*/					
+			case getMarketingRepresentativeComboBox:
+				AnswerObject = getMarketingRepresentativeComboBox((callbackVector)SwitchCallback);				
 				break;
 				
 		default:
@@ -1025,7 +1039,9 @@ public class QueryIO implements Runnable {
 		/**
 		 * Create the callback structure for user 
 		 */
-			AnswerResult = ps.executeQuery(SqlQuery2);
+			ps=conn.prepareStatement(SqlQuery2);
+			ps.setString(1, Callback.getUserName().trim());
+			AnswerResult = ps.executeQuery();
 			NewCustomer.setUserID(AnswerResult.getInt("User_ID"));
 			NewCustomer.setUserName(Callback.getUserName().trim());
 			NewCustomer.setUserPassword(Callback.getPassword().trim());
@@ -1061,12 +1077,12 @@ public class QueryIO implements Runnable {
 			//Check if customer already exists	
 			ps1.setInt(1, Callback.getCustomersID());
 			AnswerResult = ps1.executeQuery();			
-			if (AnswerResult.next()) return new callback_Error("Customer already registered in system."); 
+			if (AnswerResult.next() || AnswerResult.getInt("Customers_ID")!=Types.NULL) return new callback_Error("Customer already registered in system."); 
 			
 			//Check if email already exists	
 			ps2.setString(1, Callback.getEmail().trim());
 			AnswerResult = ps2.executeQuery();			
-			if (AnswerResult.next()) return new callback_Error("Email belong to another customer.");
+			if (AnswerResult.next() || AnswerResult.getInt("Customers_ID")!=Types.NULL) return new callback_Error("Email belong to another customer.");
 			
 			//Add new customer to DB
 			ps3.setInt(1, Callback.getUserID());
@@ -1220,44 +1236,65 @@ public class QueryIO implements Runnable {
 			LocalVector.add(NSCB);
 			return LocalVector;
 	}
-	private CallBack getPurchasePlans(callbackStringArray Callback){
+	private Vector<?> getMarketingRepresentativeComboBox(callbackVector Callback){
 		// Set variables ---------------------------------------------------------
 		int RowNum =0;
-		String[] Combo;
-		String[][] ComboWithIndex;
+		Vector<String[]> ComboBoxVector = new Vector<String[]>();
+		String[] PurchasePlan;
+		String[] FuelType;
+		String[] CostingModel;
 		// Build query -----------------------------------------------------------
 		
 		try {
 
 			
 		// Send query to DB  -----------------------------------------------------
-
-			AnswerResult = st.executeQuery("SELECT * FROM Purchase_Plan");
-						
+			//Set Purchase Plan
+			AnswerResult = st.executeQuery("SELECT * FROM Purchase_Plan");						
 			AnswerResult.last();
-			Callback.setRowCount(AnswerResult.getRow());
+			RowNum = AnswerResult.getRow();
 			AnswerResult.beforeFirst();
-			Combo = new String[Callback.getRowCount()];
-			ComboWithIndex = new String[Callback.getRowCount()][2];
-			
-			/**
-			 * Create the report callback structure
-			 */
-			while (AnswerResult.next()) { 				
-				Combo[RowNum] = AnswerResult.getString("Plan_Name");
-				ComboWithIndex[RowNum][0] = AnswerResult.getString("Plan_ID");
-				ComboWithIndex[RowNum][1] = AnswerResult.getString("Plan_Name");
+			PurchasePlan = new String[RowNum];
+			RowNum=0;
+			while (AnswerResult.next()) { 
+				PurchasePlan[RowNum] = AnswerResult.getString("Plan_Name");
 				RowNum++;
 			}
-
-			Callback.setComboBoxStringArray(Combo);
-			Callback.setVarianceMatrix(ComboWithIndex);
+			ComboBoxVector.add(PurchasePlan);
+			
+			//Set Fuels
+			AnswerResult = st.executeQuery("SELECT * FROM Fuels");						
+			AnswerResult.last();
+			RowNum = AnswerResult.getRow();
+			AnswerResult.beforeFirst();
+			FuelType = new String[RowNum];
+			RowNum=0;
+			while (AnswerResult.next()) { 
+				FuelType[RowNum] = AnswerResult.getString("Fuel_Description");
+				RowNum++;
+			}
+			ComboBoxVector.add(FuelType);
+			
+			//Set Costing Model 
+			AnswerResult = st.executeQuery("SELECT * FROM Costing_Model");						
+			AnswerResult.last();
+			RowNum = AnswerResult.getRow();
+			AnswerResult.beforeFirst();
+			CostingModel = new String[RowNum];
+			RowNum=0;
+			while (AnswerResult.next()) { 
+				CostingModel[RowNum] = AnswerResult.getString("Model_Type_Description");
+				RowNum++;
+			}
+			ComboBoxVector.add(CostingModel);
+			
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");					// If query not succeed 
+			Callback.add( new callback_Error("Problem has occurred, it's possible the connection to DB was lost or get error message from DB."));					// If query not succeed 
+			return Callback;
 		}
-			return Callback;					// 	Query not succeed
+			return ComboBoxVector;					// 	Query not succeed
 		
 	}
 /**
@@ -1292,6 +1329,10 @@ public class QueryIO implements Runnable {
 			ps3.setString(2,Callback.getDeliveryDateAndTime());
 			ps3.setString(3,Callback.getAddress());
 			ps3.executeUpdate();
+			
+			//Set user notification
+			setNotifications(Callback.getUserID(), "Purchase details: "+Callback.getFuelAmount()
+			+" liters of home fuel, cost "+Callback.getPayment()+" shekels.");
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1609,7 +1650,7 @@ public class QueryIO implements Runnable {
 			PreparedStatement ps1=conn.prepareStatement(
 					"INSERT INTO Sales VALUES(null,(?),NOW(),(?),(?),(?))");
 			PreparedStatement ps2=conn.prepareStatement(
-					"SELECT Sales_ID, MAX(Sale_Date) AS Sale_Date FROM Sales WHERE Customers_ID = (?)");										
+					"SELECT MAX(Sales_ID) AS Sales_ID FROM Sales WHERE Customers_ID = (?)");										
 			PreparedStatement ps3=conn.prepareStatement(
 					"INSERT INTO Gas_Stations_Sales VALUES((?),(?),(?),(?),(?))");
 			PreparedStatement ps4=conn.prepareStatement(
@@ -1640,6 +1681,7 @@ public class QueryIO implements Runnable {
 			
 			/*Initiate Thread*/
 			ThreadSale = Callback;
+			ThreadMission=0;
 			(new Thread(this)).start();
 			/*---------------*/
 			
@@ -1714,13 +1756,14 @@ public class QueryIO implements Runnable {
 		ResultSetMetaData LocalResult;
 		Object[][] Data;
 		String[] Headers;
-		int ColNum;
+		int ColNum, GasStationID;
 		int RowNum =0;
 		Object[] Confirm = {"Waiting","Yes","No"};
 		// Build query -----------------------------------------------------------
 		
 		try {
-			
+			PreparedStatement ps0=conn.prepareStatement("SELECT Gas_Station_ID FROM mygas.gas_stations A "+
+					"LEFT OUTER JOIN Workers B ON A.Gas_Station_Manager_ID=B.Worker_ID where B.User_Id =(?)");
 			PreparedStatement ps1=conn.prepareStatement(
 					"UPDATE Fuel_Orders SET Showed_To_Manager='Yes' WHERE Gas_Station_ID=(?) AND Order_Confirmation = 'Waiting'");
 			PreparedStatement ps2=conn.prepareStatement(
@@ -1729,11 +1772,15 @@ public class QueryIO implements Runnable {
 					"FROM Fuel_Orders_For_Stations WHERE Gas_Station_ID = (?) AND Order_Confirmation = 'Waiting'");
 			
 		// Send query to DB  ----------------------------------------------------- 	
-		
-			ps1.setInt(1, (int) Callback.getVariance()[0]);
+			ps0.setInt(1, (int) Callback.getVariance()[0]);
+			AnswerResult = ps0.executeQuery();
+			AnswerResult.next();
+			GasStationID=AnswerResult.getInt("Gas_Station_ID");
+			
+			ps1.setInt(1, GasStationID);
 			ps1.executeUpdate();
 			
-			ps2.setInt(1, (int) Callback.getVariance()[0]);
+			ps2.setInt(1, GasStationID);
 			AnswerResult = ps2.executeQuery();
 
 			
@@ -1767,7 +1814,77 @@ public class QueryIO implements Runnable {
 			return Callback;					
 		
 	}
-	
+	private CallBack getCurrentThresholdLimit(callbackStringArray Callback){
+		// Set variables ---------------------------------------------------------
+		ResultSetMetaData LocalResult;
+		Object[][] Data;
+		String[] Headers;
+		int ColNum;
+		int RowNum =0;
+		// Build query -----------------------------------------------------------
+		
+		try {
+			
+			PreparedStatement ps=conn.prepareStatement(
+					"SELECT Fuel_Description ,Fuel_ID ,Fuel_Description ,Capacity ,Threshold_Limit "+
+					"FROM fuel_for_gas_station WHERE Gas_Station_ID=(?)");
+			
+		// Send query to DB  ----------------------------------------------------- 	
+		
+			
+			ps.setInt(1, (int) Callback.getVariance()[0]);
+			AnswerResult = ps.executeQuery();
+
+			
+			LocalResult = AnswerResult.getMetaData();
+			Callback.setColCount(ColNum = LocalResult.getColumnCount());
+			
+			AnswerResult.last();
+			Callback.setRowCount(AnswerResult.getRow());
+			AnswerResult.beforeFirst();
+			Data = new String[Callback.getRowCount()][ColNum];
+			Headers = new String[ColNum];
+			
+			for(int i=0;i<ColNum;i++)
+				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
+			Callback.setColHeaders(Headers);
+			/**
+			 * Create the report callback structure
+			 */
+			while (AnswerResult.next()) { 				
+				for (int i = 0; i < ColNum; i++) 
+					Data[RowNum][i] = AnswerResult.getString(i + 1);
+				RowNum++;
+			}
+			Callback.setData(Data);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, NULL pointer back from DB or lost connection with DB.");					// If query not succeed 
+		}
+			return Callback;							
+	}
+	private CallBack setCurrentThresholdLimit(callbackVector Callback){
+		// Set variables ---------------------------------------------------------
+		int i;
+		// Build query -----------------------------------------------------------
+		try {
+			PreparedStatement ps=conn.prepareStatement("UPDATE Fuel_Per_Station SET Threshold_Limit=(?) WHERE Gas_Station_ID=(?) AND Fuel_ID=(?)");
+
+		// Send query to DB  -----------------------------------------------------
+			for(i=0;i<Callback.size();i++){				
+				ps.setInt(1, ((callbackStationFuels)Callback.get(i)).getThresholdLimit());
+				ps.setInt(2, ((callbackStationFuels)Callback.get(i)).getGasStationID());
+				ps.setInt(3, ((callbackStationFuels)Callback.get(i)).getFuelID());
+				ps.executeUpdate();			
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible server lost connection with DB.");					// If query not succeed 
+		}
+			return (new callbackSuccess());					// 	Query not succeed
+	}
 	
 /**
  * Variance
@@ -1808,9 +1925,12 @@ public class QueryIO implements Runnable {
 	
 	@Override
 	public void run() {
-		SetNewFuelOrder();	
-		
-		
+		switch(ThreadMission){
+			case 0: SetNewFuelOrder();
+				break;
+			case 1: SendBillToCustomers();
+				break;
+		}	
 	}
 	
 	private void SetNewFuelOrder(){
@@ -1876,6 +1996,74 @@ public class QueryIO implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	private void SendBillToCustomers(){
+		
+		// Set variables ---------------------------------------------------------
+		int MonthBill;
+		ResultSet LocalResult;
+		
+		if((now.get(Calendar.MONTH)+1) == 1)
+			MonthBill = 12;
+		else MonthBill = now.get(Calendar.MONTH);
+		// Build query -----------------------------------------------------------
+
+			try {
+				Thread.sleep(20);						//Let the result back to the client
+				PreparedStatement ps1 = conn.prepareStatement(
+						"SELECT User_ID "+
+						", Customers_ID "+
+						", SUM(Fuel_Amount) AS Fuel_Total_Amount "+
+						", CASE Costing_Model_ID "+
+							"WHEN 3 THEN ROUND(SUM(Costing_Model_Discount) - SUM(Costing_Model_Discount)*0.1,2) "+
+							"WHEN 4 THEN ROUND(SUM(Costing_Model_Discount) - SUM(Costing_Model_Discount)*0.13,2) "+
+						   " ELSE ROUND(SUM(Costing_Model_Discount),2) "+
+						"END AS Price_After_Costing_Model_Discount "+
+						", Model_Type_Description "+
+						"FROM ( "+
+							"SELECT A.User_ID "+
+							", A.Customers_ID "+
+							", A.Car_Number "+
+							", A.Fuel_Description "+
+							", A.Sale_Date "+
+							", A.Fuel_Amount "+
+							", B.Costing_Model_ID "+
+							", B.Model_Type_Description, "+
+							"CASE Costing_Model_ID	 "+
+							"	WHEN 1 THEN A.Payment "+
+							"	ELSE A.Payment - A.Payment*0.04 "+
+							"END AS Costing_Model_Discount "+
+							"FROM all_gas_stations_sales A "+
+							"LEFT OUTER JOIN customer_detailes B ON A.User_ID=B.User_ID  "+
+						   " WHERE MONTH(A.Sale_Date) = (?) AND YEAR(Sale_Date) = (?) "+
+						   " ) A "+
+						"WHERE Costing_Model_ID <> 1 "+
+						"GROUP BY A.User_ID");
+				
+		// Send query to DB  -----------------------------------------------------	
+				ps1.setInt(1, MonthBill);
+				ps1.setInt(2, now.get(Calendar.YEAR));
+				LocalResult = ps1.executeQuery();
+				
+				while(LocalResult.next()){
+					setNotifications(LocalResult.getInt("User_ID"),"Monthly bill to date "+MonthBill+"/"+
+							now.get(Calendar.YEAR)%100+": price to pay "+LocalResult.getFloat("Price_After_Costing_Model_Discount")+
+							" on "+LocalResult.getFloat("Fuel_Total_Amount")+" liters."	);
+				}
+				
+				
+			} catch (SQLException | InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			
+			
+		
+		
+		
+		
 	}
 }
 	
