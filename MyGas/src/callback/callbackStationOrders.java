@@ -11,7 +11,7 @@ public class callbackStationOrders extends CallBack{
 	private int OrderID;
 	private int GasStationID;
 	private int FuelID;
-	private int Amount;
+	private float Amount;
 	private String Confirmation;	
 	
 	public callbackStationOrders(){}
@@ -36,10 +36,10 @@ public class callbackStationOrders extends CallBack{
 	public void setFuelID(int fuelID) {
 		FuelID = fuelID;
 	}
-	public int getAmount() {
+	public float getAmount() {
 		return Amount;
 	}
-	public void setAmount(int amount) {
+	public void setAmount(float amount) {
 		Amount = amount;
 	}
 	public String getConfirmation() {

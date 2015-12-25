@@ -37,6 +37,7 @@ public enum MessageType {
 	getCustomerDetailes,
 	getMarketingRepresentativeComboBox,
 	getAnalyticSystemRatingCalculation,
+	updateAnalyticSystemRatingCalculation,
 /*Customer*/
 	setNewHomeFuelSale,
 	getHomeFuelOrders,

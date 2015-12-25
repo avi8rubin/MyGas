@@ -148,7 +148,14 @@ public class QueryIO implements Runnable {
 				break;				
 			case getCustomerDetailes:
 				AnswerObject = getCustomerDetailes((callbackCustomer)SwitchCallback);				
-				break;							
+				break;		
+			case getAnalyticSystemRatingCalculation:
+				AnswerObject = getAnalyticSystemRatingCalculation(1,(callbackStringArray)SwitchCallback);				
+				break;
+				
+			case updateAnalyticSystemRatingCalculation:
+				AnswerObject = getAnalyticSystemRatingCalculation(2,(callbackStringArray)SwitchCallback);				
+				break;
 				
 /*Customer*/
 			case setNewHomeFuelSale:
@@ -1042,6 +1049,7 @@ public class QueryIO implements Runnable {
 			ps=conn.prepareStatement(SqlQuery2);
 			ps.setString(1, Callback.getUserName().trim());
 			AnswerResult = ps.executeQuery();
+			AnswerResult.next();
 			NewCustomer.setUserID(AnswerResult.getInt("User_ID"));
 			NewCustomer.setUserName(Callback.getUserName().trim());
 			NewCustomer.setUserPassword(Callback.getPassword().trim());
@@ -1058,10 +1066,10 @@ public class QueryIO implements Runnable {
 		// Set variables ---------------------------------------------------------
 		CallBack Ucallback;			//Check User callback
 		callbackUser NewUser = new callbackUser(Callback.getUserName(),Callback.getUserPassword());		
-		
+		callbackCustomer Fcallback;
 		// Build query -----------------------------------------------------------
-		String SqlQuery1 = "SELECT Customers_ID FROM Customers WHERE Customers_ID=(?)";
-		String SqlQuery2 = "SELECT * FROM Customers WHERE Email=(?)";
+		String SqlQuery1 = "SELECT COUNT(*) FROM Customers WHERE Customers_ID=(?)";
+		String SqlQuery2 = "SELECT COUNT(*) FROM Customers WHERE Email=(?)";
 		String SqlQuery3 = "INSERT INTO Customers VALUES((?),(?),(?),(?),(?),(?),(?),(?),(?),0,1,(?))";
 		try {
 			PreparedStatement ps1 = conn.prepareStatement(SqlQuery1);
@@ -1070,19 +1078,22 @@ public class QueryIO implements Runnable {
 			
 		// Send query to DB  -----------------------------------------------------
 			
-			Ucallback = getIsUserNameExists(NewUser);
-			if(Ucallback instanceof callback_Error) return Ucallback;
-			Callback = (callbackCustomer) Ucallback;
-			
 			//Check if customer already exists	
 			ps1.setInt(1, Callback.getCustomersID());
-			AnswerResult = ps1.executeQuery();			
-			if (AnswerResult.next() || AnswerResult.getInt("Customers_ID")!=Types.NULL) return new callback_Error("Customer already registered in system."); 
+			AnswerResult = ps1.executeQuery();
+			AnswerResult.next();
+			if (AnswerResult.getInt(1)>0) return new callback_Error("Customer already registered in system."); 
 			
 			//Check if email already exists	
 			ps2.setString(1, Callback.getEmail().trim());
-			AnswerResult = ps2.executeQuery();			
-			if (AnswerResult.next() || AnswerResult.getInt("Customers_ID")!=Types.NULL) return new callback_Error("Email belong to another customer.");
+			AnswerResult = ps2.executeQuery();	
+			AnswerResult.next();
+			if (AnswerResult.getInt(1)>0) return new callback_Error("Email belong to another customer.");
+			
+			//Check if user exists, if not create new user
+			Ucallback = getIsUserNameExists(NewUser);
+			if(Ucallback instanceof callback_Error) return Ucallback;
+			Fcallback = (callbackCustomer) Ucallback;
 			
 			//Add new customer to DB
 			ps3.setInt(1, Callback.getUserID());
@@ -1090,7 +1101,7 @@ public class QueryIO implements Runnable {
 			ps3.setString(3, Callback.getCustomerLastName().trim());
 			ps3.setString(4, Callback.getCustomerType().trim());
 			ps3.setInt(5, Callback.getPlanID());
-			ps3.setInt(6, Callback.getUserID());
+			ps3.setInt(6, Fcallback.getUserID());
 			ps3.setString(7, Callback.getPhoneNumber().trim());
 			ps3.setString(8, Callback.getCreditCard().trim());
 			ps3.setString(9, Callback.getEmail().trim());		
@@ -1297,6 +1308,175 @@ public class QueryIO implements Runnable {
 			return ComboBoxVector;					// 	Query not succeed
 		
 	}
+	private CallBack getAnalyticSystemRatingCalculation(int SelectUpdate, callbackStringArray Callback){
+		// Set variables ---------------------------------------------------------
+		ResultSetMetaData LocalResult;
+		Object[][] Data;
+		String[] Headers;
+		CallBack ReturnCallback;
+		int ColNum;
+		int RowNum =0;
+		String[] Combo;
+		String[][] ComboWithIndex;
+		// Build query -----------------------------------------------------------
+		
+		String SqlQuery = 
+				"SELECT Customers_ID "+
+				", Customer_First_Name "+
+				", Customer_Last_Name "+
+				", Customer_Type "+
+				", Carrent_Rate "+
+				", ROUND(SUM(Costing_Model_Rate)) AS Costing_Model_Rate "+
+				", ROUND(SUM(Sale_Hour_Rate)) AS Sale_Hour_Rate "+
+				", ROUND(SUM(Price_Rate)) AS Price_Rate "+
+				", ROUND(SUM(Fuel_Type_Rate)) AS Fuel_Type_Rate "+
+				", ROUND(SUM(Costing_Model_Rate)) AS New_Rate "+
+				"FROM ( "+
+// Rate	|	Costing Model
+//-------------------------
+//	2.5	|	Casual Fueling-Max price		
+//	5	|	Monthly Fueling 1 car-4% discount price	
+//	7.5	|	Monthly Fueling cars-10% discount price	
+//	10	|	Full Monthly Fueling-3% discount price	
+				"	SELECT * "+
+				"	, CASE Costing_Model_ID "+
+				"		WHEN 1 THEN 2.5 "+
+				"		WHEN 2 THEN 5 "+
+				"		WHEN 3 THEN 7.5 "+
+				"		WHEN 4 THEN 10 "+
+				"	END*0.2 AS  Costing_Model_Rate "+
+				"    ,0 AS Sale_Hour_Rate "+
+				"    ,0 AS Price_Rate "+
+				"    ,0 AS Fuel_Type_Rate "+
+				"	FROM Customers "+
+
+				"	UNION "+
+//	Rate	|	Hour
+//	------------------------
+//	10		|	00:00:00-05:00:00
+//	8		|	05:01:00-07:00:00
+//	6		|	07:01:00-10:00:00
+//	4		|	10:01:00-18:00:00
+//	5		|	18:01:00-22:00:00
+//	8		|	22:01:00-23:59:59
+				"	SELECT A.*  "+
+				"    ,0 AS Costing_Model_Rate "+
+				"	, AVG(CASE  "+
+				"		WHEN TIME(B.Sale_Date) BETWEEN '00:00:00' AND '05:00:00' THEN 10 "+
+				"		WHEN TIME(B.Sale_Date) BETWEEN '05:01:00' AND '07:00:00' THEN 8 "+
+				"		WHEN TIME(B.Sale_Date) BETWEEN '07:01:00' AND '10:00:00' THEN 6 "+
+				"		WHEN TIME(B.Sale_Date) BETWEEN '10:01:00' AND '18:00:00' THEN 4 "+
+				"		WHEN TIME(B.Sale_Date) BETWEEN '18:01:00' AND '22:00:00' THEN 5 "+
+				"		WHEN TIME(B.Sale_Date) BETWEEN '22:01:00' AND '23:59:59' THEN 8 "+
+				"	END)*0.3 AS  Sale_Hour_Rate "+
+				"   ,0 AS Price_Rate "+
+				"    ,0 AS Fuel_Type_Rate "+
+				"	FROM mygas.customers A "+
+				"	LEFT OUTER JOIN sales B ON A.Customers_ID=B.Customers_ID "+
+				"	WHERE DATEDIFF(DATE(NOW()),B.Sale_Date) BETWEEN 0 AND 7 "+
+				"	GROUP BY A.Customers_ID "+
+
+				"	UNION "+
+//	Rate	|	Price
+//	------------------------
+//	1		|	0-100
+//	2		|	101-200
+//	.		|	.
+//	.		|	.
+//	9		|	801-900
+//	10		|	>900
+				"	SELECT A.*  "+
+				"   ,0 AS Costing_Model_Rate "+
+				"   ,0 AS Sale_Hour_Rate "+
+				"	, CASE "+
+				"		WHEN SUM(B.Payment) BETWEEN 0 AND 100 THEN 1 "+
+				"		WHEN SUM(B.Payment) BETWEEN 101 AND 200 THEN 2 "+
+				"		WHEN SUM(B.Payment) BETWEEN 201 AND 300 THEN 3 "+
+				"		WHEN SUM(B.Payment) BETWEEN 301 AND 400 THEN 4 "+
+				"		WHEN SUM(B.Payment) BETWEEN 401 AND 500 THEN 5 "+
+				"		WHEN SUM(B.Payment) BETWEEN 501 AND 600 THEN 6 "+
+				"		WHEN SUM(B.Payment) BETWEEN 601 AND 700 THEN 7 "+
+				"		WHEN SUM(B.Payment) BETWEEN 701 AND 800 THEN 8 "+
+				"		WHEN SUM(B.Payment) BETWEEN 801 AND 900 THEN 9 "+
+				"		WHEN SUM(B.Payment) > 900 THEN 10 "+
+				"	END*0.3 AS Price_Rate "+
+				"   ,0 AS Fuel_Type_Rate "+
+				"	FROM customers A "+
+				"	LEFT OUTER JOIN sales B ON A.Customers_ID=B.Customers_ID "+
+				"	WHERE DATEDIFF(DATE(NOW()),B.Sale_Date) BETWEEN 0 AND 7 "+
+				"	GROUP BY A.Customers_ID "+
+
+				"	UNION "+
+
+//	Rate	|	Fuel Type
+//----------------------------
+//	2.5		|	Scooters Fuel
+//	5		|	95
+//	7.5		|	Diesel
+//	10		|	Home Fuel
+				"	SELECT A.*  "+
+				"   ,0 AS Costing_Model_Rate "+
+				"   ,0 AS Sale_Hour_Rate "+
+				"	,0 AS Sale_Hour_Rate "+
+				"	, AVG(CASE B.Fuel_ID "+
+				"		WHEN 2 THEN 2.5 "+
+				"		WHEN 1 THEN 5 "+
+				"		WHEN 4 THEN 7.5 "+
+				"		WHEN 3 THEN 10 "+
+				"	END)*0.2 AS Fuel_Type_Rate "+
+				"	FROM customers A "+
+				"	LEFT OUTER JOIN sales B ON A.Customers_ID=B.Customers_ID "+
+				"	WHERE DATEDIFF(DATE(NOW()),B.Sale_Date) BETWEEN 0 AND 7 "+
+				"	GROUP BY A.Customers_ID) A "+
+				"GROUP BY A.Customers_ID";
+
+		try {
+			PreparedStatement ps1=conn.prepareStatement("UPDATE Customers SET Carrent_Rate=(?) WHERE Customers_ID=(?)");			
+		// Send query to DB  -----------------------------------------------------
+
+			AnswerResult = st.executeQuery(SqlQuery);
+			/*Create callbackStringArray and send back to client*/
+			if(SelectUpdate == 1){
+				
+				LocalResult = AnswerResult.getMetaData();
+				Callback.setColCount(ColNum = LocalResult.getColumnCount());
+				
+				AnswerResult.last();
+				Callback.setRowCount(AnswerResult.getRow());
+				AnswerResult.beforeFirst();
+				Data = new String[Callback.getRowCount()][ColNum+1];
+				Headers = new String[ColNum];
+				
+				for(int i=0;i<ColNum;i++)
+					Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
+				Callback.setColHeaders(Headers);
+			/**
+			 * Create the report callback structure
+			 */
+				while (AnswerResult.next()) { 				
+					for (int i = 0; i < ColNum; i++) 
+						Data[RowNum][i] = AnswerResult.getString(i + 1);
+					RowNum++;
+				}
+				Callback.setData(Data);
+				ReturnCallback = Callback;	
+			}	
+			/*Update new rating for all customers*/
+			else /*if(SelectUpdate == 2)*/{
+				while(AnswerResult.next()){
+					ps1.setInt(1, AnswerResult.getInt("New_Rate"));
+					ps1.setInt(2, AnswerResult.getInt("Customers_ID"));
+					ps1.executeUpdate();
+				}
+				ReturnCallback =  new callbackSuccess();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");					// If query not succeed 
+		}
+		return ReturnCallback;
+	}
+	
 /**
  * Customer	
  */
@@ -1749,8 +1929,29 @@ public class QueryIO implements Runnable {
 
 /**
  * Station Manager
- */
-	
+ */	
+	private int getStationIDByUserID(int StationID){
+		// Set variables ---------------------------------------------------------
+		int GasStationID;
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps1=conn.prepareStatement("SELECT Gas_Station_ID FROM mygas.gas_stations A "+
+					"LEFT OUTER JOIN Workers B ON A.Gas_Station_Manager_ID=B.Worker_ID where B.User_Id =(?)");
+			
+		// Send query to DB  ----------------------------------------------------- 	
+			ps1.setInt(1, StationID);
+			AnswerResult = ps1.executeQuery();
+			AnswerResult.next();
+			GasStationID=AnswerResult.getInt("Gas_Station_ID");		
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;					// If query not succeed 
+		}
+			return GasStationID;					
+		
+	}
 	private CallBack getStationSuppliesOrder(callbackStringArray Callback){
 		// Set variables ---------------------------------------------------------
 		ResultSetMetaData LocalResult;
@@ -1762,8 +1963,6 @@ public class QueryIO implements Runnable {
 		// Build query -----------------------------------------------------------
 		
 		try {
-			PreparedStatement ps0=conn.prepareStatement("SELECT Gas_Station_ID FROM mygas.gas_stations A "+
-					"LEFT OUTER JOIN Workers B ON A.Gas_Station_Manager_ID=B.Worker_ID where B.User_Id =(?)");
 			PreparedStatement ps1=conn.prepareStatement(
 					"UPDATE Fuel_Orders SET Showed_To_Manager='Yes' WHERE Gas_Station_ID=(?) AND Order_Confirmation = 'Waiting'");
 			PreparedStatement ps2=conn.prepareStatement(
@@ -1772,10 +1971,7 @@ public class QueryIO implements Runnable {
 					"FROM Fuel_Orders_For_Stations WHERE Gas_Station_ID = (?) AND Order_Confirmation = 'Waiting'");
 			
 		// Send query to DB  ----------------------------------------------------- 	
-			ps0.setInt(1, (int) Callback.getVariance()[0]);
-			AnswerResult = ps0.executeQuery();
-			AnswerResult.next();
-			GasStationID=AnswerResult.getInt("Gas_Station_ID");
+			GasStationID=getStationIDByUserID((int) Callback.getVariance()[0]);
 			
 			ps1.setInt(1, GasStationID);
 			ps1.executeUpdate();
@@ -1820,6 +2016,7 @@ public class QueryIO implements Runnable {
 		Object[][] Data;
 		String[] Headers;
 		int ColNum;
+		Object[] GasStationID = new Object[1];
 		int RowNum =0;
 		// Build query -----------------------------------------------------------
 		
@@ -1831,10 +2028,10 @@ public class QueryIO implements Runnable {
 			
 		// Send query to DB  ----------------------------------------------------- 	
 		
-			
-			ps.setInt(1, (int) Callback.getVariance()[0]);
+			GasStationID[0]=getStationIDByUserID((int) Callback.getVariance()[0]);
+			ps.setInt(1, (int)GasStationID[0]);
 			AnswerResult = ps.executeQuery();
-
+			Callback.setVariance(GasStationID);
 			
 			LocalResult = AnswerResult.getMetaData();
 			Callback.setColCount(ColNum = LocalResult.getColumnCount());
@@ -1904,8 +2101,6 @@ public class QueryIO implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
-	
 	
 	/**
 	 * Logout all users!
