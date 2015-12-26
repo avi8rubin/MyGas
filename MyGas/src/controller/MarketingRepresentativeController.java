@@ -2,8 +2,11 @@ package controller;
 
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
+import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JTextField;
@@ -12,9 +15,11 @@ import GUI.CEOGUI;
 import GUI.MarketingRepresentativeGUI;
 import callback.CallBack;
 import callback.callbackBuffer;
+import callback.callbackCar;
 import callback.callbackCustomer;
 import callback.callbackStringArray;
 import callback.callbackSuccess;
+import callback.callbackVector;
 import callback.callback_Error;
 import client.Client;
 import common.Checks;
@@ -47,6 +52,8 @@ public class MarketingRepresentativeController extends Controller{
 	
 	// AddPersonalDetails Center Layer Components	
 	private JButton CreateButton;
+	private JButton EditButton;
+	private JButton SaveButton;	
 	private JLabel InvalidCustomerIDMesaageLabel;
 	private JLabel InvalidEmailMesaageLabel;
 	private JLabel EmailExistMesaageLabel;
@@ -56,8 +63,21 @@ public class MarketingRepresentativeController extends Controller{
 	private JLabel MissedFieldsMessage;
 	private JLabel CustomerIDExistMesaageLabel;
 
+	// AddCars Center Layer Components		
+	private JButton AddButton;
+	private JLabel ExistCarNumberLabel;
+	private JFormattedTextField CarNumberFormattedTextField;
+	private JLabel MissedFieldMessageAddCarsLabel;
 	
-	
+	//CustomerDetailsLayer Left Layer Components	
+	private JLayeredPane CustomerDetailsLayer;
+	private JButton SearchButton;
+	private JTextField EnterCustomerIdTextField;
+	private JLabel InvalidcustomerIDMessageLabel;
+	private JLabel CustomerNotExistMessageLabel;
+	private callbackCustomer fullCallbackCustomer;
+
+
 	public MarketingRepresentativeController(Client Server, callbackBuffer CommonBuffer, MarketingRepresentativeGUI GuiScreen) {
 		super(Server, CommonBuffer, GuiScreen);
 		this.GuiScreen = GuiScreen;
@@ -85,6 +105,18 @@ public class MarketingRepresentativeController extends Controller{
 		AddCarDetailsButton.addActionListener(this);
 		AddCarDetailsButton.setActionCommand("AddCarDetails"); //Add action command	
 		
+		//Search Button
+		SearchButton = GuiScreen.getSearchButton();
+		SearchButton.addActionListener(this);
+		SearchButton.setActionCommand("Search"); //Add action command
+		
+		// get values for comboBoxs
+		Server.handleMessageFromClient(new callbackVector(MessageType.getMarketingRepresentativeComboBox));
+		Vector<String[]> ComboBoxs =  (Vector<String[]>) getCallBackVectorFromBuffer(); 
+		GuiScreen.SetComboBoxSelection(ComboBoxs.get(0));
+		GuiScreen.SetFuelIDComboBoxSelection(ComboBoxs.get(1));
+		GuiScreen.SetCostingModelComboBoxSelection(ComboBoxs.get(2));
+
 	}
 
 	@Override
@@ -95,11 +127,21 @@ public class MarketingRepresentativeController extends Controller{
 		/* -------- Check the source of the event ---------*/
 		
 		if(e.getActionCommand().equals("CreateNewCustomerAccount")){
+			AddCarDetailsButton.setVisible(false);
+			GuiScreen.setNewCustomerFlag(true);
 			CreateNewCustomerAccountLayer = GuiScreen.getCreateNewCustomerAccountLayer();
 			ContainerCardLeft.show(LeftCardContainer, "CreateNewCustomerAccountLeft");
 			ContainerCardCenter.show(CenterCardContainer, "EmptyCenterPanel");				//The CreateNewCustomerAccount layer will be display											
 		}
 
+		if(e.getActionCommand().equals("CustomerDetails")){
+			GuiScreen.setNewCustomerFlag(false);
+			CustomerDetailsLayer = GuiScreen.getCustomerDetailsLayer();
+			ContainerCardLeft.show(LeftCardContainer, "CustomerDetailsLayerLeft");
+			ContainerCardCenter.show(CenterCardContainer, "EmptyCenterPanel");				//The CustomerDetails layer will be display											
+		}		
+		
+		
 		if(e.getActionCommand().equals("CreateUser")){
 			HandleCreateUserPressed();
 		}		
@@ -109,23 +151,41 @@ public class MarketingRepresentativeController extends Controller{
 		}		
 
 		if(e.getActionCommand().equals("Create")){
-			HandleCreatePressed();
-			//ContainerCardCenter.show(CenterCardContainer, "EmptyCenterPanel");											
+			HandleCreatePressed();										
+		}			
+
+		if(e.getActionCommand().equals("AddCarDetails")){
+			HandleAddCarPressed();										
+		}		
+
+		if(e.getActionCommand().equals("Add")){
+			HandleAddPressed();										
+		}	
+		
+		if(e.getActionCommand().equals("Search")){
+			HandleSearchPressed();										
 		}			
 		
-
+		if(e.getActionCommand().equals("Edit")){
+			GuiScreen.EnableRelevantButtons(true);
+			ContainerCardCenter.show(CenterCardContainer, "CreateUserLayerCenter");	 //The CreateUser layer will be display
 		}	
-	
+		
+		if(e.getActionCommand().equals("Save"))
+			HandleCreatePressed();
+		
+		
+		}	
+
 	private void HandleCreateUserPressed(){
 		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
 		ContainerCardLeft	= (CardLayout)(LeftCardContainer.getLayout());
 		
 		GuiScreen.CreateNewUserCenterLayer();
 		
-
-		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCommentsForMarketionCampaign));
-		callbackStringArray purchasePlansNames = (callbackStringArray) getCallBackFromBuffer();	
-		GuiScreen.SetComboBoxSelection(purchasePlansNames);
+		GuiScreen.HideRelevantButtons();
+		if ( GuiScreen.getNewCustomerFlag() ) GuiScreen.EnableRelevantButtons(true);
+		else GuiScreen.EnableRelevantButtons(false);
 		
 		ContainerCardCenter.show(CenterCardContainer, "CreateUserLayerCenter");				//The CreateUser layer will be display											
 		
@@ -138,6 +198,16 @@ public class MarketingRepresentativeController extends Controller{
 		CreateButton = GuiScreen.getCreateButton();
 		CreateButton.addActionListener(this);
 		CreateButton.setActionCommand("Create"); //Add action command
+		
+		//Edit Button
+		EditButton = GuiScreen.getEditButton();
+		EditButton.addActionListener(this);
+		EditButton.setActionCommand("Edit"); //Add action command
+		
+		//Save Button
+		SaveButton = GuiScreen.getSaveButton();
+		SaveButton.addActionListener(this);
+		SaveButton.setActionCommand("Save"); //Add action command
 		
 	}
 	
@@ -160,20 +230,14 @@ public class MarketingRepresentativeController extends Controller{
 		
 		// If the input OK - checking if UserName exist in DB
 		if (!PasswordValidationFailedMessageLabel.isVisible()&&!MissedFieldsMessageLabel.isVisible())
-			ContainerCardCenter.show(CenterCardContainer, "AddPersonalDetailsCenter");				
-				
-		//ContainerCardCenter.show(CenterCardContainer, "AddPersonalDetailsCenter");				//The AddPersonalDetailsCenter layer will be display
-	
-		//		Server.handleMessageFromClient(new callbackStringArray(MessageType.getWaitingTariff));
-//		callbackStringArray TariffUpdateTable = (callbackStringArray) getCallBackFromBuffer();		
-//		GuiScreen.setTariffUpdateTable(new TableModel(TariffUpdateTable.getData(), TariffUpdateTable.getColHeaders()));		
+			ContainerCardCenter.show(CenterCardContainer, "AddPersonalDetailsCenter");					
 			
 	}
 
 	private void HandleCreatePressed(){
 		
 		InvalidEmailMesaageLabel = GuiScreen.getInvalidEmailMesaageLabel();
-//		EmailTextField = GuiScreen.getEmailTextField();
+		EmailTextField = GuiScreen.getEmailTextField();
 		InvalidPhoneMesaageLabel= GuiScreen.getInvalidPhoneMesaageLabel();
 		InvalidCreditCardMesaageLabel =  GuiScreen.getInvalidCreditCardMesaageLabel();
 		MissedFieldsMessage = GuiScreen.getMissedFieldsMessage();
@@ -211,8 +275,14 @@ public class MarketingRepresentativeController extends Controller{
 		{
 			CallBack LocalUserCallBack;
 			callbackCustomer fullCallbackCustomer = GuiScreen.getFullCallbackCustomer(); // Fill CallbackCustomer with GUI data
-			fullCallbackCustomer.setWhatToDo(MessageType.setCreateNewCustomer);
+			if (GuiScreen.getNewCustomerFlag() ) fullCallbackCustomer.setWhatToDo(MessageType.setCreateNewCustomer);
+			else fullCallbackCustomer.setWhatToDo(MessageType.setUpdateCustomer);
 			
+			//Update user data case
+			if (!GuiScreen.getNewCustomerFlag()) 
+				if (GuiScreen.getIsActiveCheckBox().isSelected()) fullCallbackCustomer.setISActive("Yes"); 
+				else fullCallbackCustomer.setISActive("No"); 
+				
 			//Send CallbackCustomer to DB
 			Server.handleMessageFromClient( fullCallbackCustomer);
 			LocalUserCallBack = (CallBack) getCallBackFromBuffer();
@@ -231,6 +301,7 @@ public class MarketingRepresentativeController extends Controller{
 				LocalErrorCallBack= (callback_Error)LocalUserCallBack;
 				
 				// UserNameExist error case
+				
 				if (LocalErrorCallBack.getErrorMassage().equals("User name already exists in DB."))
 				{
 					UserNameExistMesaageLabel.setVisible(true);
@@ -254,4 +325,98 @@ public class MarketingRepresentativeController extends Controller{
 			}		
 		}	
 	}
+	
+	private void HandleAddCarPressed() {
+		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
+		
+		GuiScreen.AddCarsCenterPanelLayer();
+		
+		ContainerCardCenter.show(CenterCardContainer, "AddCarLayerCenter");				//The AddCar layer will be display			
+		
+		//Add Button
+		AddButton = GuiScreen.getAddButton();
+		AddButton.addActionListener(this);
+		AddButton.setActionCommand("Add"); //Add action command
+	}
+	
+	private void HandleAddPressed() {
+		
+		CarNumberFormattedTextField = GuiScreen.getCarNumberFormattedTextField();
+		ExistCarNumberLabel = GuiScreen.getExistCarNumberLabel();
+		MissedFieldMessageAddCarsLabel = GuiScreen.getMissedFieldMessageAddCarsLabel();
+		
+		// Show/ don't show MissedFieldsMessage after checking that all fields filled		
+		if (CarNumberFormattedTextField.getText().equals("  -   -  "))
+			MissedFieldMessageAddCarsLabel.setVisible(true);
+		else MissedFieldMessageAddCarsLabel.setVisible(false);
+		
+		// send CarCallback to server check
+		if ( !MissedFieldMessageAddCarsLabel.isVisible() )
+		{
+			CallBack LocalUserCallBack;
+			callbackCar fullCallbackCar = GuiScreen.getFullCallbackCar(); // Fill CallbackCustomer with GUI data
+			fullCallbackCar.setWhatToDo(MessageType.setNewCar);
+			
+			//Send CallbackCar to DB
+			Server.handleMessageFromClient(fullCallbackCar);
+			LocalUserCallBack = (CallBack) getCallBackFromBuffer();
+			
+			// Success case
+			if  (LocalUserCallBack instanceof callbackSuccess)
+			{
+				GuiScreen.setSuccessAddingCarMessageLabel();
+				ExistCarNumberLabel.setVisible(false);
+			}
+			// Error case - car exist in DB
+			else ExistCarNumberLabel.setVisible(true);
+		
+		}
+				
+	}
+	
+	private void HandleSearchPressed() {
+		
+		EnterCustomerIdTextField = GuiScreen.getEnterCustomerIdTextField();
+		InvalidcustomerIDMessageLabel = GuiScreen.getInvalidcustomerIDMessageLabel();
+		CustomerNotExistMessageLabel = GuiScreen.getCustomerNotExistMessageLabel();
+		ContainerCardLeft = (CardLayout)(LeftCardContainer.getLayout());
+		CustomerNotExistMessageLabel.setVisible(false);
+	
+		// Show/ don't show InvalidcustomerIDMessageLabel after checking CustomerId is valid
+		if ( !checks.isNumeric(EnterCustomerIdTextField.getText() ) ) InvalidcustomerIDMessageLabel.setVisible(true);
+		else InvalidcustomerIDMessageLabel.setVisible(false);
+		
+		// send CustomerCallback to server check
+		if (!InvalidcustomerIDMessageLabel.isVisible())
+		{
+			CallBack LocalUserCallBack;
+			fullCallbackCustomer = GuiScreen.getCustomerIdCallbackCustomer(); // Fill CallbackCustomer with GUI data
+			fullCallbackCustomer.setWhatToDo(MessageType.getCustomer);	
+			
+			//Send CallbackCustomer to DB
+			Server.handleMessageFromClient( fullCallbackCustomer);
+			LocalUserCallBack = (CallBack) getCallBackFromBuffer();
+			
+			// Success case
+			if  (LocalUserCallBack instanceof callbackCustomer)
+			{
+				fullCallbackCustomer = (callbackCustomer) LocalUserCallBack;
+				GuiScreen.setFullCallbackCustomer(fullCallbackCustomer);
+				ContainerCardLeft.show(LeftCardContainer, "CreateNewCustomerAccountLeft"); //The CustomerDetailsLayer layer will be display
+			}
+			// Error case - customer ID not exist in DB
+			else CustomerNotExistMessageLabel.setVisible(true);			
+		}
+			
+		
+	}
+	
+	
+	
+	
+	
+	public callbackCustomer getFullCallbackCustomer() {
+		return fullCallbackCustomer;
+	}
 }
+
