@@ -59,9 +59,11 @@ public class Login_GUI extends JFrame {
 				
 		FirstLoginScreen.setBackground(UIManager.getColor("CheckBox.light"));
 		FirstLoginScreen.setOpaque(true);
+		setTitle("My Gas");		
 		contantPane.add(FirstLoginScreen, BorderLayout.NORTH);
 		contantPane.setPreferredSize(new Dimension(300,200));
 		FirstLoginScreen.setPreferredSize(new Dimension(300, 565));
+		setIconImage((new ImageIcon(Login_GUI.class.getResource("/images/Main_Login_empty.png"))).getImage());
 		
 		//MyGas Icon
 		JLabel MyGasIcon = new JLabel("");

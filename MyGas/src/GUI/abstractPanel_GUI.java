@@ -107,10 +107,13 @@ public class abstractPanel_GUI extends JFrame{
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
+		setTitle("My Gas - Create by: Avi Rubin, Litaf Kuppfer, Adir Notes & Ohad Zino.");
 		contentPane.setLayout(new BorderLayout(0, 0));
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.setResizable(false);
 		this.setVisible(true);
+		setIconImage((new ImageIcon(abstractPanel_GUI.class.getResource("/images/Main_Login_empty.png"))).getImage());
+		
 		this.User = EnteredUser;
 		this.Server = Server;
 		this.CommonBuffer = CommonBuffer;
