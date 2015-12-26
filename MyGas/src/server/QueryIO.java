@@ -1096,7 +1096,7 @@ public class QueryIO implements Runnable {
 			Fcallback = (callbackCustomer) Ucallback;
 			
 			//Add new customer to DB
-			ps3.setInt(1, Callback.getUserID());
+			ps3.setInt(1, Callback.getCustomersID());
 			ps3.setString(2, Callback.getCustomerFirstName().trim());
 			ps3.setString(3, Callback.getCustomerLastName().trim());
 			ps3.setString(4, Callback.getCustomerType().trim());

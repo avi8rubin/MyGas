@@ -19,8 +19,6 @@ import javax.swing.JLayeredPane;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumnModel;
-
 import callback.CallBack;
 import callback.callbackBuffer;
 import callback.callbackLostConnection;
@@ -159,10 +157,11 @@ public class abstractPanel_GUI extends JFrame{
 					User.setWhatToDo(MessageType.updateUserLogout);
 					Server.handleMessageFromClient(User);
 					getCallBackFromBuffer();									//Clean buffer
+					NotificationThrerad.setNotificationFlag(false);					//Stop notification thread
 				}
 				LoginScreen.setVisible(true);									//Go to login screen
 				ThisScreen.setVisible(false);									//Set invisible current screen
-				NotificationThrerad.setNotificationFlag(false);					//Stop notification thread
+				
 			}
 		});
 
@@ -193,7 +192,7 @@ public class abstractPanel_GUI extends JFrame{
 		//Notifications Button
 		NotificationsButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		NotificationsButton.setBounds(986, 13, 150, 38);
-		//NotificationsButton.setEnabled(false);
+		if(User.getUserTypeId()==2) NotificationsButton.setEnabled(false);
 		NotificationsButton.setActionCommand("Notifications");
 		TopPanel.add(NotificationsButton);
 		NotificationsButton.addActionListener(new ActionListener() {
@@ -311,8 +310,10 @@ public class abstractPanel_GUI extends JFrame{
 		NotificationsTable.setDefaultRenderer(Object.class, CenterRenderer);
 		
 		/*Create notification thread*/
-		NotificationThrerad = new UpdateNotifications(ThisScreen, CommonBuffer, Server, User.getUserID());
-		new Thread(NotificationThrerad).start();
+		if(User.getUserTypeId() != 2){
+			NotificationThrerad = new UpdateNotifications(ThisScreen, CommonBuffer, Server, User.getUserID());
+			new Thread(NotificationThrerad).start();
+		}
 		
 
 /**
@@ -321,8 +322,8 @@ public class abstractPanel_GUI extends JFrame{
 		WindowListener exitListener = new WindowAdapter() {
 		    @Override
 		    public void windowClosing(WindowEvent e) {	    	
-		    	NotificationThrerad.setNotificationFlag(false);	//Stop notification thread
 		    	if(User.getUserTypeId()!=2){
+		    		NotificationThrerad.setNotificationFlag(false);	//Stop notification thread
 		    		User.setWhatToDo(MessageType.updateUserLogout);		    		
 		    		Server.handleMessageFromClient(User);
 					getCallBackFromBuffer();
