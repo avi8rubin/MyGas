@@ -32,7 +32,6 @@ import callback.callbackStringArray;
 import callback.callback_Error;
 import client.Client;
 import common.Checks;
-import common.ExcelExporter;
 import common.MessageType;
 import common.TableModel;
 
@@ -173,18 +172,8 @@ public class MarketingManagerController extends Controller {
 		
 	}
 
-	private void HandleExportReport() 
-	{
-		try{
-			File file=new File("C:/Users/litaf/git/MyGas/MyGas/result.xls");
-			ExcelExporter excelExporter=new ExcelExporter();
-			excelExporter.exportTable(GuiScreen.getCommentsTable(), file);
-			}
-		catch(Exception FileNotFoundException)
-		{
-			JOptionPane.showMessageDialog(null, "Error, Faild to open excel file", 
-					"", JOptionPane.INFORMATION_MESSAGE);
-		}
+	private void HandleExportReport() {
+
 	}
 	
 	private void HandleTariffPressed(){
