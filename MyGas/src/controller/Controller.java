@@ -89,6 +89,12 @@ public abstract class Controller implements ActionListener{
 			frame.NoConnectionToServer();
 			new LoginController(frame,CommonBuffer);
 		}
+		if (ReturnCallback instanceof callbackVector){
+			return (callbackVector) ReturnCallback;
+		}
+		if (ReturnCallback instanceof Vector){
+			return (Vector<?>) ReturnCallback;
+		}
 		return (callbackVector) ReturnCallback; 	
 	}
 	

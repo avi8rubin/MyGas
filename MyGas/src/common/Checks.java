@@ -37,12 +37,12 @@ public class Checks {
 		return true;
 	}
 	
-	// Litaf
 	/**
-	 * 
+	 * Check if the entered date is a valid date
 	 * @param startDate
 	 * @param endDate
 	 * @return if dates are valid
+	 * @author Litaf
 	 */
 	public static boolean isDateValid(String startDate, String endDate){
 
@@ -85,6 +85,11 @@ public class Checks {
 	  return true;  
 	}
 	
+	/**
+	 * Resize the column of JTable to the ultimate size.
+	 * @param table
+	 * @author Ohad
+	 */
 	public static void resizeColumnWidth(JTable table) {
 	    final TableColumnModel columnModel = table.getColumnModel();
 	    for (int column = 0; column < table.getColumnCount(); column++) {

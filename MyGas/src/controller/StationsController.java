@@ -153,7 +153,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		
 		}
 	/**
-	 * This function set action listenter to login & logout buttons
+	 * This function set action listener to login & logout buttons
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource()==LoginButton){
@@ -171,7 +171,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		
 	}
 	/**
-	 * This function handel User login from gas station
+	 * This function handle User login from gas station
 	 */
 	private void LoginButtonHandler()
 	{

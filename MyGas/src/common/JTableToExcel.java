@@ -19,6 +19,20 @@ import java.io.IOException;
 /**
  * Class was made to export tables to excel files easily way.
  * Current author made changes to computable the class to MyGas needs.
+
+ *  An ERROR message pop-up when open the export excel file
+ * 
+ * "The file you are trying to open, '[filename]', is in a different format than specified by the file extension.
+ * Verify that the file is not corrupted and is from a trusted source before opening the file. 
+ * Do you want to open the file now?"  (Yes | No | Help)"
+ * 
+ * To solve that problem you need, NOT MUST, to do as follow:
+ *  Open your Registry (Start -> Run -> regedit.exe)
+ *  Navigate to HKEY_CURRENT_USER\SOFTWARE\MICROSOFT\OFFICE\12.0\EXCEL\SECURITY
+ * 	Right click in the right window and choose New -> DWORD
+ * 	Type “ExtensionHardening” as the name (without the quotes)
+ * 	Verify that the data has the value 0
+ * 
  * @author Zino Ohad 
  * Original author Mr. Xymon 
  */
