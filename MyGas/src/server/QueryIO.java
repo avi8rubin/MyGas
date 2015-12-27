@@ -2097,7 +2097,7 @@ public class QueryIO implements Runnable {
 		try {
 			
 			PreparedStatement ps=conn.prepareStatement(
-					"SELECT Fuel_Description ,Fuel_ID ,Fuel_Description ,Capacity ,Threshold_Limit "+
+					"SELECT Fuel_Description ,Fuel_ID ,Fuel_Description ,Capacity ,Threshold_Limit, "+
 					"FROM fuel_for_gas_station WHERE Gas_Station_ID=(?)");
 			
 		// Send query to DB  ----------------------------------------------------- 	
