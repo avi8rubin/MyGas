@@ -37,6 +37,7 @@ import callback.callbackBuffer;
 import callback.callbackStringArray;
 import callback.callbackUser;
 import client.Client;
+import common.JTableToExcel;
 import common.TableModel;
 
 public class MarketingManagerGUI extends abstractPanel_GUI{
@@ -231,7 +232,7 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		ContactFrame.getContentPane().add(ExportButton);
 		ExportButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		CreateCommentsReportsCenterLayer.add(ExportButton);
-
+		
 		/* ------- Adding label to comments report Panel -------- */		
 
 		HeadlineLabel = new JLabel("Comments For Marketing Campaign Report");				

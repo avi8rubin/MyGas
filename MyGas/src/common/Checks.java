@@ -1,6 +1,9 @@
 package common;
 
 import java.awt.Component;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -84,6 +87,80 @@ public class Checks {
 	  }  
 	  return true;  
 	}
+	
+	
+	/**
+	 * check if string is a float number
+	 * @param String
+	 * @author Litaf
+	 */
+	public static boolean isFloat(String str)  
+	{ 
+		try
+		{
+		if(Float.parseFloat(str)<0)
+			  return false;
+		}catch(NumberFormatException e){
+		  return false;
+		}
+		return true;
+	}
+	
+	
+	/**
+	 * check if Date for delivery is valid
+	 * @param String
+	 * @author Litaf
+	 */
+	public static boolean isDateValid(String deliveryDate)  
+	{ 
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
+		Date date = new Date();
+		String currDate=dateFormat.format(new Date()).toString();	
+		if(isDateValid(currDate,deliveryDate))
+			return true;
+		return false;  
+	}
+	
+	/**
+	 * check if Time of delivery is valid
+	 * @param String
+	 * @author Litaf
+	 */
+	public static boolean isTimeValid(String deliveryTime, String deliveryDate)  
+	{ 
+		DateFormat TimeFormat = new SimpleDateFormat("HH:mm");
+		DateFormat DateFormat = new SimpleDateFormat("dd/MM/yy");
+
+		String currTime=TimeFormat.format(new Date()).toString();	
+		String currDate=DateFormat.format(new Date()).toString();	
+		
+		try{
+			
+			int DeliveryHour=Integer.parseInt(deliveryTime.substring(0,2));
+			int DeliveryMin=Integer.parseInt(deliveryTime.substring(3,5));
+			//check if time inserted is valid
+			if( DeliveryHour>=0 && DeliveryHour<=24 && 
+				DeliveryMin>=0 && DeliveryMin<=59){
+				//check time inserted with current time for validation
+				int currHour=Integer.parseInt(currTime.substring(0,2));
+				int currMin=Integer.parseInt(currTime.substring(3,5));
+				if(DeliveryHour >= currHour){
+					return true;
+				}
+				else if(DeliveryHour == currHour){
+					if(DeliveryMin>=currMin)
+						return true;
+				}
+			}
+		}
+		catch(NumberFormatException e){
+			return false;
+		}
+
+		return false;  
+	}
+	
 	
 	/**
 	 * Resize the column of JTable to the ultimate size.

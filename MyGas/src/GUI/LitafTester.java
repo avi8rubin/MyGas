@@ -31,6 +31,8 @@ import java.awt.Label;
 import java.awt.Button;
 import javax.swing.JTextArea;
 import com.toedter.calendar.JCalendar;
+import com.toedter.components.JSpinField;
+import javax.swing.JProgressBar;
 
 public class LitafTester extends JFrame {
 
@@ -251,6 +253,18 @@ JLabel FuelAmountLabel = new JLabel("Fuel Amount:");
 		label.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		label.setBounds(277, 273, 212, 38);
 		CenterPanel.add(label);
+		
+		JLabel ErrorAddressLabel = new JLabel("*Incorrect Fuel Amount");
+		ErrorAddressLabel.setForeground(Color.RED);
+		ErrorAddressLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		ErrorAddressLabel.setBounds(277, 193, 212, 38);
+		CenterPanel.add(ErrorAddressLabel);
+		
+		JLabel ErrorDeliveryTimeLabel = new JLabel("*Incorrect Fuel Amount");
+		ErrorDeliveryTimeLabel.setForeground(Color.RED);
+		ErrorDeliveryTimeLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		ErrorDeliveryTimeLabel.setBounds(277, 353, 212, 38);
+		CenterPanel.add(ErrorDeliveryTimeLabel);
 		
 	////////////
 
