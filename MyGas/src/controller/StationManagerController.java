@@ -200,6 +200,9 @@ public class StationManagerController extends Controller{
 	 */
 	private void handleStockReportButton(){
 		
+		/*----------------Show 'Stock Report' Panel------------*/
+		ContainerCard=(CardLayout)(CenterCardContainer.getLayout());
+		ContainerCard.show(CenterCardContainer,"StockReportLayer");
 	}
 	
 	/**

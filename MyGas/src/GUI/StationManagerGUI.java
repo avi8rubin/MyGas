@@ -57,6 +57,9 @@ public class StationManagerGUI extends abstractPanel_GUI{
 	//Quartly report
 	private JComboBox YearSelectInQuarterlyReport;
 	private JButton QuartelyGenrateButton;
+	
+	//Stock Report
+	private  JLayeredPane StockReportLayer;
 	// Left screen
 	private final JLabel Error_Label;
 	
@@ -248,13 +251,7 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		
 		/*-------------------------------------Left Panel Click -Create Report Screen---------------------------------*/
 		
-		
-		
 
-
-		
-
-		
 		CreateReportLeftPanel =new JLayeredPane();
 		CreateReportLeftPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		CreateReportLeftPanel.setBackground(new Color(169, 169, 169));
@@ -295,8 +292,21 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		
 		
 		
+		/*--------------------------------------Center For Stock Report------------------------------*/
 		
+		/*------- Create new center layer and add it to container --------*/
+		StockReportLayer = new JLayeredPane();		//Global variable
+		StockReportLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		CenterCardContainer.add(StockReportLayer, "StockReportLayer");
+		StockReportLayer.setOpaque(true);
+		StockReportLayer.setName("StockReportLayer");
 		
+		/*------- Create new label on the new layer --------*/
+		JLabel StockReportLabel = new JLabel("Stock Report For This Gas Station");				
+		StockReportLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		StockReportLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
+		StockReportLabel.setBounds(177, 13, 608, 42);
+		StockReportLayer.add(StockReportLabel);
 		
 		
 	}
