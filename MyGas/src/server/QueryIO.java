@@ -156,6 +156,9 @@ public class QueryIO implements Runnable {
 			case updateAnalyticSystemRatingCalculation:
 				AnswerObject = getAnalyticSystemRatingCalculation(2,(callbackStringArray)SwitchCallback);				
 				break;
+			case setUpdateCustomer:
+				AnswerObject = setUpdateCustomer((callbackCustomer)SwitchCallback);				
+				break;
 				
 /*Customer*/
 			case setNewHomeFuelSale:
@@ -1475,6 +1478,77 @@ public class QueryIO implements Runnable {
 			return new callback_Error("Problem has occurred, it's possible the connection to DB was lost.");					// If query not succeed 
 		}
 		return ReturnCallback;
+	}
+	private CallBack setUpdateCustomer(callbackCustomer Callback){
+		// Set variables ---------------------------------------------------------
+		int user_id;
+		
+		// Build query -----------------------------------------------------------
+		String SqlQuery1 = "SELECT COUNT(*) FROM Users WHERE User_ID<>(?) AND User_Name=(?)";
+		String SqlQuery2 = "SELECT COUNT(*) FROM Customers WHERE Email=(?) AND Customers_ID<>(?)";
+		String SqlQuery3 = "UPDATE Customers SET Customer_First_Name=(?),Customer_Last_Name=(?),Customer_Type=(?),"
+							+ "Plan_ID=(?),Phone_Number=(?),Credit_Card=(?),Email=(?),IS_Active=(?),Costing_Model_ID=(?) "
+							+ "WHERE Customers_ID=(?)";	
+		String SqlQuery4 = "UPDATE Users SET User_Name=(?),User_Password=(?) WHERE User_ID=(?)";
+		String SqlQuery5 = "SELECT User_ID FROM Customers WHERE Customers_ID=(?)";
+		
+		try {
+			PreparedStatement ps1 = conn.prepareStatement(SqlQuery1);
+			PreparedStatement ps2 = conn.prepareStatement(SqlQuery2);
+			PreparedStatement ps3 = conn.prepareStatement(SqlQuery3);
+			PreparedStatement ps4 = conn.prepareStatement(SqlQuery4);
+			PreparedStatement ps5 = conn.prepareStatement(SqlQuery5);
+
+
+			
+		// Send query to DB  -----------------------------------------------------
+
+			//Get user_id from customers table
+			ps5.setInt(1, Callback.getCustomersID());
+			AnswerResult = ps5.executeQuery();	
+			AnswerResult.next();
+			user_id = AnswerResult.getInt(1);			
+					
+//			Check if user_name already exists in another user	
+			ps1.setInt(1, user_id);
+			ps1.setString(2, Callback.getUserName().trim());
+			AnswerResult = ps1.executeQuery();
+			AnswerResult.next();
+
+			if (AnswerResult.getInt(1)>0) return new callback_Error("User name already exists in DB."); 
+			
+			//Check if email already exists	in another user
+			ps2.setString(1, Callback.getEmail().trim());
+			ps2.setInt(2, Callback.getCustomersID());
+			AnswerResult = ps2.executeQuery();	
+			AnswerResult.next();
+			if (AnswerResult.getInt(1)>0) return new callback_Error("Email belong to another customer.");
+				
+			//Update user in DB	
+			ps4.setString(1, Callback.getUserName().trim());
+			ps4.setString(2, Callback.getUserPassword().trim());
+			ps4.setInt(3, user_id);
+			ps4.executeUpdate();
+			
+			//Update customer in DB	
+			ps3.setString(1, Callback.getCustomerFirstName().trim());
+			ps3.setString(2, Callback.getCustomerLastName().trim());
+			ps3.setString(3, Callback.getCustomerType().trim());
+			ps3.setInt(4, Callback.getPlanID());
+			ps3.setString(5, Callback.getPhoneNumber().trim());
+			ps3.setString(6, Callback.getCreditCard().trim());
+			ps3.setString(7, Callback.getEmail().trim());
+			ps3.setString(8, Callback.getISActive().trim());	
+			ps3.setInt(9, Callback.getCostingModelID());
+			ps3.setInt(10, Callback.getCustomersID());
+			ps3.executeUpdate();			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
+		}
+			return new callbackSuccess("Create new customer successfully.");					// 	Query succeed
+		
 	}
 	
 /**
