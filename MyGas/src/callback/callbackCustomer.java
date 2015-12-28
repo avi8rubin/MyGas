@@ -8,8 +8,8 @@ public class callbackCustomer extends CallBack{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int UserID=0;
-	private int CustomersID=0;
+	private int UserID =0;
+	private int CustomersID =0;
 	private String CustomerFirstName;
 	private String CustomerLastName;
 	private String CustomerType;

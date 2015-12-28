@@ -32,6 +32,7 @@ import callback.callbackStringArray;
 import callback.callback_Error;
 import client.Client;
 import common.Checks;
+import common.JTableToExcel;
 import common.MessageType;
 import common.TableModel;
 
@@ -162,7 +163,9 @@ public class MarketingManagerController extends Controller {
 		}
 
 		else if(e.getActionCommand().equals("Export CommentsForMarketingCampaign Report")){
-			HandleExportReport();
+			new JTableToExcel(GuiScreen.getExportButton(), GuiScreen.getCommentsTable());
+			
+			//HandleExportReport();
 		}
 		//
 		else if(e.getActionCommand().equals("start sale")){	
@@ -173,7 +176,7 @@ public class MarketingManagerController extends Controller {
 	}
 
 	private void HandleExportReport() {
-
+		
 	}
 	
 	private void HandleTariffPressed(){
