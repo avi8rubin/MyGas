@@ -194,6 +194,9 @@ public class QueryIO implements Runnable {
 			case getQuarterIncomesReport:
 				AnswerObject = getQuarterIncomesReport((callbackStringArray)SwitchCallback);				
 				break;	
+			case getQuarterPurchaseReport:
+				AnswerObject = getQuarterPurchaseReport((callbackStringArray)SwitchCallback);				
+				break;	
 				
 		default:
 			AnswerObject = new callback_Error("Not a callback object, send legal callback or you don't fill 'WhatToDo'.");
@@ -2099,7 +2102,7 @@ public class QueryIO implements Runnable {
 		try {
 			
 			PreparedStatement ps=conn.prepareStatement(
-					"SELECT Fuel_Description ,Fuel_ID ,Fuel_Description ,Capacity ,Threshold_Limit, "+
+					"SELECT Fuel_ID ,Fuel_Description ,Capacity ,Threshold_Limit, "+
 					"FROM fuel_for_gas_station WHERE Gas_Station_ID=(?)");
 			
 		// Send query to DB  ----------------------------------------------------- 	
@@ -2172,7 +2175,7 @@ public class QueryIO implements Runnable {
 		try {
 			
 			PreparedStatement ps1=conn.prepareStatement(
-					"SELECT YEAR(Sale_Date),QUARTER(Sale_Date),Fuel_Description,COUNT(Sales_ID) AS Customer_Number "+
+					"SELECT YEAR(Sale_Date) AS Sale_Year,QUARTER(Sale_Date) AS Sale_Quarter,Fuel_Description,COUNT(Sales_ID) AS Customer_Number "+
 					",SUM(Fuel_Amount) AS Fuel_Amount,SUM(Payment) AS Total_Profit "+
 					"FROM All_Gas_Stations_Sales WHERE Gas_Station_ID = (?) "+
 					"GROUP BY Gas_Station_ID,YEAR(Sale_Date),QUARTER(Sale_Date),Fuel_Description");
@@ -2231,6 +2234,80 @@ public class QueryIO implements Runnable {
 		}
 			return Callback;							
 	}
+	private CallBack getQuarterPurchaseReport(callbackStringArray Callback){
+		// Set variables ---------------------------------------------------------
+		ResultSetMetaData LocalResult;
+		Object[][] Data;
+		String[] Headers;
+		Object[] YearsComboBox;
+		int ColNum;
+		int GasStationID;
+		int RowNum =0;
+		// Build query -----------------------------------------------------------
+		
+		try {
+			
+			PreparedStatement ps1=conn.prepareStatement(
+					"SELECT YEAR(Order_Date) AS Order_Year ,QUARTER(Order_Date) AS Order_Quarter "+
+					",Fuel_Description ,SUM(Amount_To_Order) AS Total_Liters_To_Order "+
+					",COUNT(*) AS Number_Of_Orders "+
+					"FROM fuel_orders_for_stations "+
+					"WHERE Order_Confirmation = 'Yes' AND Gas_Station_ID = (?) "+
+					"GROUP BY Gas_Station_ID,YEAR(Order_Date),QUARTER(Order_Date),Fuel_Description");
+			PreparedStatement ps2=conn.prepareStatement(
+					"SELECT DISTINCT YEAR(Order_Date) AS Years_In_System  "+
+					"FROM mygas.fuel_orders_for_stations WHERE Gas_Station_ID=(?)");
+		// Send query to DB  ----------------------------------------------------- 	
+		
+			//Convert user id to stationID, made for station manager
+			GasStationID=getStationIDByUserID((int) Callback.getVariance()[0]);
+			
+			//Get report divide to years and quarters for station
+			ps1.setInt(1, GasStationID);
+			AnswerResult = ps1.executeQuery();		
+			
+			LocalResult = AnswerResult.getMetaData();
+			Callback.setColCount(ColNum = LocalResult.getColumnCount());
+			
+			AnswerResult.last();
+			Callback.setRowCount(AnswerResult.getRow());
+			AnswerResult.beforeFirst();
+			Data = new String[Callback.getRowCount()][ColNum];
+			Headers = new String[ColNum];
+			
+			for(int i=0;i<ColNum;i++)
+				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
+			Callback.setColHeaders(Headers);
+			
+			while (AnswerResult.next()) { 				
+				for (int i = 0; i < ColNum; i++) 
+					Data[RowNum][i] = AnswerResult.getString(i + 1);
+				RowNum++;
+			}
+			Callback.setData(Data);
+
+			//Get all years in the system to ComboBox
+			ps2.setInt(1, GasStationID);
+			AnswerResult = ps2.executeQuery();	
+			
+			AnswerResult.last();
+			RowNum = AnswerResult.getRow();
+			AnswerResult.beforeFirst();			
+			YearsComboBox = new Object[RowNum];
+			RowNum=0;
+			while (AnswerResult.next()) { 				
+				YearsComboBox[RowNum] = AnswerResult.getString("Years_In_System");
+				RowNum++;
+			}
+			Callback.setComboBoxStringArray(YearsComboBox);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, NULL pointer back from DB or lost connection with DB.");					// If query not succeed 
+		}
+			return Callback;							
+	}
+	
 /**
  * Variance
  */

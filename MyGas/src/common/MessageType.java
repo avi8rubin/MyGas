@@ -52,6 +52,7 @@ public enum MessageType {
 	getCurrentThresholdLimit,
 	setCurrentThresholdLimit,
 	setStationSuppliesOrder,
-	getQuarterIncomesReport
+	getQuarterIncomesReport,
+	getQuarterPurchaseReport
 
 }
