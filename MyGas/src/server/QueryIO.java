@@ -241,7 +241,10 @@ public class QueryIO implements Runnable {
 /*Station Manager*/				
 			case setCurrentThresholdLimit:
 				AnswerObject = setCurrentThresholdLimit((callbackVector)SwitchCallback);				
-				break;				
+				break;	
+			case setStationSuppliesOrder:
+				AnswerObject = setStationSuppliesOrder((callbackVector)SwitchCallback);				
+				break;	
 
 /*Marketing Representative*/					
 			case getMarketingRepresentativeComboBox:
@@ -2321,7 +2324,46 @@ public class QueryIO implements Runnable {
 		}
 			return Callback;							
 	}
+	private CallBack setStationSuppliesOrder(callbackVector Callback){
+		// Set variables ---------------------------------------------------------
+		int i;
+		callbackStationOrders Local;
+		// Build query -----------------------------------------------------------
+		try {
+			PreparedStatement ps1=conn.prepareStatement("UPDATE fuel_orders SET Order_Confirmation=(?) WHERE Order_ID=(?)");
+			PreparedStatement ps2=conn.prepareStatement("UPDATE fuel_per_station SET Current_Amount=Current_Amount+(?) WHERE Gas_Station_ID=(?) AND Fuel_ID=(?)");
+		// Send query to DB  -----------------------------------------------------
+			for(i=0;i<Callback.size();i++){		
+				Local=(callbackStationOrders) Callback.get(i);
+			
+				/*---------Only Update -----------------------*/
+				if(Local.getConfirmation().equals("No"))
+				{
+				ps1.setString(1,"No");
+				ps1.setInt(2, Local.getOrderID());
+				ps1.executeUpdate();
+				}
+				/*-------Update DB & Fill Gas Station Fuel----*/
+				if(Local.getConfirmation().equals("Yes"))
+				{
+					ps1.setString(1,"Yes");
+					ps1.setInt(2, Local.getOrderID());
+					ps1.executeUpdate();	
+					
+					ps2.setFloat(1, Local.getAmount());
+					ps2.setInt(2, Local.getGasStationID());
+					ps2.setInt(3, Local.getFuelID());
+					ps2.executeUpdate();
+				}
 	
+			}
+		
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible server lost connection with DB.");					// If query not succeed 
+		}
+		return (new callbackSuccess());
+	}
 /**
  * Variance
  */
