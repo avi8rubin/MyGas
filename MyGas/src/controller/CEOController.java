@@ -77,11 +77,8 @@ public class CEOController extends Controller {
 /**
  * Sends request to query from DB
  */
-	private void HandleTariffApprovalPressed(){
-		
+	private void HandleTariffApprovalPressed(){		
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getWaitingTariff));
-		//callbackStringArray TariffTable = (callbackStringArray) getCallBackFromBuffer();		
-		//GuiScreen.setTariffApprovalTable(TariffTable.getDefaultTableModel());
 	}
 /**
  * When 'Save' button pressed, send the relevant values to save in the DB
@@ -105,8 +102,6 @@ public class CEOController extends Controller {
 		/*Just if there was a change then update DB*/
 		if(UpdateTariff.size()>0){
 			Server.handleMessageFromClient(UpdateTariff);
-			//getCallBackFromBuffer();
-			//HandleTariffApprovalPressed();
 		}
 		else {
 			UIManager.put("OptionPane.messageFont", new Font("System", Font.PLAIN, 20));

@@ -923,7 +923,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 	}
 	
 	/**
-	 * This function check if user can enter to statio by his station costing model
+	 * This function check if user can enter to station by his station costing model
 	 * @return true if is OK
 	 */
 	private boolean CheckIfUserCanEnterToGasStationByCostingModel(callbackCustomer currentCustomer)
@@ -935,7 +935,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 	}
 
 /**
- * This funtion check & update discount for user
+ * This function check & update discount for user
  * @param Payment - Price
  * @param FueAmount - Liters
  * @param GasStationID - GasID
@@ -980,11 +980,29 @@ public class StationsController extends Controller implements MouseListener,Runn
 	public void update(Observable o, Object arg) {
 		if(arg instanceof CallBack){	
 			switch(((CallBack) arg).getWhatToDo()){
-				case getWaitingTariff:
+				case getCheckExistsUserPass:
 	
 					break;
-				case setWaitingTariff:
+				case updateUserLogout:
 				
+					break;
+				case setNewGasStationSale:
+					
+					break;
+				case getFuelPerStation:
+					
+					break;
+				case getCarWithNFC:
+					
+					break;
+				case getCustomer:
+					
+					break;
+				case updateUserLogin:
+					
+					break;
+				case getSaleDiscount:
+					
 					break;
 			/*Don't change!*/
 			default:
@@ -995,12 +1013,10 @@ public class StationsController extends Controller implements MouseListener,Runn
 		}
 		else if(arg instanceof callbackVector){
 				switch(((callbackVector) arg).getWhatToDo()){
-				case getWaitingTariff:
+				case getCarDetailes:
 		
 					break;
-				case setWaitingTariff:
-				
-					break;
+
 				default:
 					break;
 				
