@@ -1,5 +1,7 @@
 package callback;
 
+import common.MessageType;
+
 public class callbackSuccess extends CallBack{
 
 	private static final long serialVersionUID = 1L;
@@ -15,4 +17,10 @@ public class callbackSuccess extends CallBack{
 	public void setSuccessMassage(String successMassage) {
 		SuccessMassage = successMassage;
 	}
+	/*public void setWhatToDo(MessageType WhatToDo){
+		this.WhatToDo = WhatToDo;
+	}
+	public MessageType getWhatToDo(){
+		return WhatToDo;
+	}*/
 }

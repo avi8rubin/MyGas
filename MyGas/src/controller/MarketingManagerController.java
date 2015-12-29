@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
+import java.util.Observable;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -29,6 +31,7 @@ import callback.CallBack;
 import callback.callbackBuffer;
 import callback.callbackCampaign;
 import callback.callbackStringArray;
+import callback.callbackVector;
 import callback.callback_Error;
 import client.Client;
 import common.Checks;
@@ -280,6 +283,42 @@ public class MarketingManagerController extends Controller {
 			HandleActivateSaleCampaignPressed();
 			}
 		}
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if(arg instanceof CallBack){	
+			switch(((CallBack) arg).getWhatToDo()){
+				case getWaitingTariff:
+	
+					break;
+				case setWaitingTariff:
+				
+					break;
+			/*Don't change!*/
+			default:
+				super.update(o, arg);
+				break;
+			/*-------------*/
+			}
+	}
+	else if(arg instanceof callbackVector){
+			switch(((callbackVector) arg).getWhatToDo()){
+			case getWaitingTariff:
+	
+				break;
+			case setWaitingTariff:
+			
+				break;
+			default:
+				break;
+			
+			}
+	}
+	else if(arg instanceof Vector){
+	
+	}
+		
 	}
 }
 

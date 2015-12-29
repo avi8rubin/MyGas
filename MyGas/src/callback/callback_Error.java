@@ -2,6 +2,8 @@ package callback;
 
 import java.io.Serializable;
 
+import common.MessageType;
+
 public class callback_Error extends CallBack implements Serializable {
 	
 	/**
@@ -11,11 +13,20 @@ public class callback_Error extends CallBack implements Serializable {
 	private String ErrorMassage;
 	
 	public callback_Error(){}
+	public callback_Error(MessageType WhatToDo){
+		super(WhatToDo);
+	}
 	public callback_Error(String ErrorMassage){
 		this.ErrorMassage = ErrorMassage;
 	}
 	
 	public String getErrorMassage(){
 		return ErrorMassage;
+	}
+	public void setWhatToDo(MessageType WhatToDo){
+		this.WhatToDo = WhatToDo;
+	}
+	public MessageType getWhatToDo(){
+		return WhatToDo;
 	}
 }

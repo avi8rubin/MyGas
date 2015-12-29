@@ -3,6 +3,8 @@ package controller;
 import java.awt.CardLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.util.Observable;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -275,6 +277,41 @@ public class StationManagerController extends Controller{
 		
 		ContainerCard=(CardLayout)(LeftCardContainer.getLayout());
 		ContainerCard.show(LeftCardContainer,"CreateReportLeftPanel");
+	}
+	@Override
+	public void update(Observable o, Object arg) {
+		if(arg instanceof CallBack){	
+			switch(((CallBack) arg).getWhatToDo()){
+				case getWaitingTariff:
+	
+					break;
+				case setWaitingTariff:
+				
+					break;
+			/*Don't change!*/
+			default:
+				super.update(o, arg);
+				break;
+			/*-------------*/
+			}
+	}
+	else if(arg instanceof callbackVector){
+			switch(((callbackVector) arg).getWhatToDo()){
+			case getWaitingTariff:
+	
+				break;
+			case setWaitingTariff:
+			
+				break;
+			default:
+				break;
+			
+			}
+	}
+	else if(arg instanceof Vector){
+	
+	}
+		
 	}
 
 
