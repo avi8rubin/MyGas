@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -25,6 +26,7 @@ import javax.swing.table.TableColumn;
 import callback.callbackBuffer;
 import callback.callbackUser;
 import client.Client;
+import common.GasStationBarChart;
 
 public class StationManagerGUI extends abstractPanel_GUI{
 	//Global values
@@ -43,7 +45,8 @@ public class StationManagerGUI extends abstractPanel_GUI{
 	//Update Limit Level For Fuel Type
 	private JTable UpdateLimitTabel;
 	private JLayeredPane UpdateLimitLevelFuelLayer;
-	
+	private JButton UpdateLimitLevelButton;
+	private JLabel UpdateLimitTextError;
 	
 	// Create Report
 	private JLayeredPane CreateReportLeftPanel;
@@ -60,6 +63,7 @@ public class StationManagerGUI extends abstractPanel_GUI{
 	
 	//Stock Report
 	private  JLayeredPane StockReportLayer;
+	private Float[] StockGraphFloatArray;
 	// Left screen
 	private final JLabel Error_Label;
 	
@@ -107,30 +111,29 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		ApprovalSuppliesTable = new JTable(){
 			private static final long serialVersionUID = 1L;
 	        public boolean isCellEditable(int row, int column) { 
-	        	switch(column){
-	        	case 4:
-	                return true; 
-	        	default:
-	                return false;
-	        	}
+	        	if(column==4) return true;
+	        	return false;
 	        };
 		};
 		
 		/*------- Create new center layer and add it to container --------*/
 		ApproveSupplyLayer = new JLayeredPane();		//Global variable
 		ApproveSupplyLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
-		CenterCardContainer.add(ApproveSupplyLayer, "ApproveSupplyLayer");
 		ApproveSupplyLayer.setOpaque(true);
+		ApproveSupplyLayer.setLayout(null);
+		CenterCardContainer.add(ApproveSupplyLayer, "ApproveSupplyLayer");
 		ApproveSupplyLayer.setName("ApproveSupplyLayer");
 		
 		/*------- Create JTable surround with scroll pane and add it to TariffApprovalPanel --------*/
-		JScrollPane UpdateLevelScroll = new JScrollPane();
-		UpdateLevelScroll.setBounds(43, 58, 911, 438);
-		ApproveSupplyLayer.add(UpdateLevelScroll);		
+		JScrollPane approvetableScroll = new JScrollPane();
+		approvetableScroll.setBounds(40, 58, 900, 438);
+		ApproveSupplyLayer.add(approvetableScroll);		
 		
-		UpdateLevelScroll.setViewportView(ApprovalSuppliesTable);		
+		approvetableScroll.setViewportView(ApprovalSuppliesTable);	
 		ApprovalSuppliesTable.setRowHeight(23);
 		ApprovalSuppliesTable.setFillsViewportHeight(true);
+		ApprovalSuppliesTable.getTableHeader().setReorderingAllowed(false);
+		
 		ApprovalSuppliesTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		ApprovalSuppliesTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
 		ApprovalSuppliesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -148,10 +151,13 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		UpdateApproveButton.setBounds(840, 500, 112, 38);
 		ApproveSupplyLayer.add(UpdateApproveButton);
 		
+
+		
 		/*----------Message Label---------------------------*/
 		UpdateMessage = new JLabel("");
 		UpdateMessage.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		UpdateMessage.setBounds(83, 480, 575, 25);
+		UpdateMessage.setBounds(300, 500, 400, 38);
+		UpdateMessage.setForeground(Color.RED);
 		ApproveSupplyLayer.add(UpdateMessage);
 		
 		/*--------------------Center panel - Click "Update Level For Fuel Type"---------------------------*/
@@ -164,12 +170,19 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		UpdateLimitLevelFuelLayer.setOpaque(true);
 		UpdateLimitLevelFuelLayer.setName("UpdateLimitLevelFuelLayer");
 		
+		/*------- Create new label on the new layer --------*/
+		JLabel UpdateLabel = new JLabel("Update Threshold Limit");				
+		UpdateLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		UpdateLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
+		UpdateLabel.setBounds(177, 13, 608, 42);
+		UpdateLimitLevelFuelLayer.add(UpdateLabel);
+		
 		/*--------Create tabele---------------------------*/
 		UpdateLimitTabel = new JTable(){
 			private static final long serialVersionUID = 1L;
 	        public boolean isCellEditable(int row, int column) { 
 	        	switch(column){
-	        	case 3:
+	        	case 2:
 	                return true; 
 	        	default:
 	                return false;
@@ -179,15 +192,34 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		
 		/*------- Create JTable surround with scroll pane and add it to Update level Panel --------*/
 		JScrollPane UpdateLimitTabelScroll = new JScrollPane();
-		UpdateLimitTabelScroll.setBounds(0, 58, 911, 438);
-		ApproveSupplyLayer.add(UpdateLimitTabelScroll);		
+		UpdateLimitTabelScroll.setBounds(40, 58, 911, 438);
+		UpdateLimitLevelFuelLayer.add(UpdateLimitTabelScroll);		
 		
 		UpdateLimitTabelScroll.setViewportView(UpdateLimitTabel);		
 		UpdateLimitTabel.setRowHeight(23);
 		UpdateLimitTabel.setFillsViewportHeight(true);
+		UpdateLimitTabel.getTableHeader().setReorderingAllowed(false);
 		UpdateLimitTabel.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		UpdateLimitTabel.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
 		UpdateLimitTabel.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		
+		
+		/*-----------------------------Update Button------------*/
+		
+		
+		/*---------Create Update Button---------------------*/
+		UpdateLimitLevelButton = new JButton("Update");
+		UpdateLimitLevelButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		UpdateLimitLevelButton.setBounds(840, 500, 112, 38);
+		UpdateLimitLevelFuelLayer.add(UpdateLimitLevelButton);
+		
+		/*---------Update Error text box-------------------*/
+		
+		UpdateLimitTextError = new JLabel(); 
+		UpdateLimitTextError.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		UpdateLimitTextError.setBounds(300, 500, 400, 38);
+		UpdateLimitTextError.setForeground(Color.RED);
+		UpdateLimitLevelFuelLayer.add(UpdateLimitTextError);
 		
 		/*----------------------------Center panel- Click -Create Report Screen---------------------------------*/
 		
@@ -301,12 +333,8 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		StockReportLayer.setOpaque(true);
 		StockReportLayer.setName("StockReportLayer");
 		
-		/*------- Create new label on the new layer --------*/
-		JLabel StockReportLabel = new JLabel("Stock Report For This Gas Station");				
-		StockReportLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		StockReportLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
-		StockReportLabel.setBounds(177, 13, 608, 42);
-		StockReportLayer.add(StockReportLabel);
+		/*-------------------New Chart--------------------------------------------*/
+
 		
 		
 	}
@@ -352,11 +380,26 @@ public class StationManagerGUI extends abstractPanel_GUI{
 	public void ErrorEnterApproval(){
 		Error_Label.setText("<html>Error with Approval Table</html>");
 	}
+	public void ErrorEnterStockReport(){
+		Error_Label.setText("<html>Error with Stock Table</html>");
+	}
 	public void ErrorEnterUpdateLimitLevel(){
 		Error_Label.setText("<html>Error with Update Limit Table</html>");
 	}
+	public void ErrorNoChangeInUpdateLevel(){
+		this.UpdateLimitTextError.setText("*There Was No Changes In Records");
+	}
+	public void SuccessWasChangeUpdateLevel(){
+		this.UpdateLimitTextError.setText("*record inserted successfully");
+	}
+	public void ResetUpdateLimitTextError(){
+		this.UpdateLimitTextError.setText("");
+	}
 	public void UpdateSuccessMessage(){
 		UpdateMessage.setText("*Success To Update Order.");
+	}
+	public void ErrorNoChangeUpdateApprove(){
+		UpdateMessage.setText("*There Was No Changes In Records");
 	}
 	public void ResetErrorLabel(){
 		Error_Label.setText("");
@@ -374,13 +417,16 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		TableColumn col = UpdateLimitTabel.getColumnModel().getColumn( 4 );
 		col.setCellEditor( new DefaultCellEditor( value ) );
 		//Hide columns
-		//ApprovalSuppliesTable.removeColumn(ApprovalSuppliesTable.getColumnModel().getColumn( 0 ));
-		//ApprovalSuppliesTable.removeColumn(ApprovalSuppliesTable.getColumnModel().getColumn( 1 ));
+		UpdateLimitTabel.removeColumn(UpdateLimitTabel.getColumnModel().getColumn( 0 ));
+		//UpdateLimitTabel.removeColumn(UpdateLimitTabel.getColumnModel().getColumn( 0 ));
 		
 		//All values are in the center of the cell		
 		DefaultTableCellRenderer CenterRenderer = new DefaultTableCellRenderer();
 		CenterRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-		ApprovalSuppliesTable.setDefaultRenderer(Object.class, CenterRenderer);	
+		UpdateLimitTabel.setDefaultRenderer(Object.class, CenterRenderer);	
+	}
+	public JTable getUpdatelimitLevelTable(){
+		return this.UpdateLimitTabel;
 	}
 	
 	public JButton getQuartelyRepotyButton() {
@@ -407,4 +453,19 @@ public class StationManagerGUI extends abstractPanel_GUI{
 	public void setQuartelyGenrateButton(JButton quartelyGenrateButton) {
 		QuartelyGenrateButton = quartelyGenrateButton;
 	}
+	public void setStockGraphFloatArray(Float[] arr){
+
+		JPanel panel = (new GasStationBarChart(arr)).createBarChartPanel();
+		panel.setBounds(67, 65, 859, 457);
+		StockReportLayer.add(panel);
+		
+	}
+	public JButton getUpdateLimitLevelButton(){
+		return this.UpdateLimitLevelButton;
+	}
+	
+
+
+
+
 }

@@ -14,6 +14,7 @@ import GUI.CEOGUI;
 import GUI.StationManagerGUI;
 import callback.CallBack;
 import callback.callbackBuffer;
+import callback.callbackStationFuels;
 import callback.callbackStationOrders;
 import callback.callbackStringArray;
 import callback.callbackUser;
@@ -25,20 +26,31 @@ import common.MessageType;
 
 public class StationManagerController extends Controller{
 
+	//Global values
 	private static callbackUser EnteredUser=null;
 	private static CallBack Temp;
+	private static CallBack GasStationFuelLevel;
 	private StationManagerGUI GuiScreen;
-	private int GasStationID; // what gas staion this maganger is manage
-	//Top screen
+	private int GasStation;
+	//Top screen For Station Manager
 	private final JButton CreateReportButton;
 	private final JButton ApproveSupplyButton;
 	private final JButton UpdateLimitButton;
-	//Approve
+	
+	//Approve Supply Screen
 	private final JButton UpdateApproveButton;
-	// Create Report 
+	
+	//Update Level Limit Screen
+	private final JButton UpdateLimitLevelButton;
+	
+	// Create Report Screen
 	private final JButton QuartelyRepotyButton;
 	private final JButton PurchaseReportButton;
 	private final JButton StockReportButton;
+	
+	//Stock Report Screen
+	Float [] FloatArray;
+	
 	/**
 	 * Constracor
 	 * @param Server
@@ -52,7 +64,6 @@ public class StationManagerController extends Controller{
 		/*-----------------get Table from DB By user ID----------------------*/
 		EnteredUser = new callbackUser();
 		EnteredUser.setUserID(GuiScreen.getUserID());
-		
 		/*------------------Initialized Buttons Actions ----------- */
 		CreateReportButton = GuiScreen.getCreateReportButton();
 		CreateReportButton.addActionListener(this);
@@ -78,10 +89,15 @@ public class StationManagerController extends Controller{
 		StockReportButton.addActionListener(this);
 		StockReportButton.setActionCommand("StockReportButton");
 		
-		/*--------------------"Update"----------------------*/
+		/*--------------------"Update Order"----------------------*/
 		UpdateApproveButton = GuiScreen.getUpdateApproveButton();
 		UpdateApproveButton.addActionListener(this);
 		UpdateApproveButton.setActionCommand("UpdateApproveButton");
+		
+		/*--------------------"Update Limit-----------------*/
+		UpdateLimitLevelButton = GuiScreen.getUpdateLimitLevelButton();
+		UpdateLimitLevelButton.addActionListener(this);
+		UpdateLimitLevelButton.setActionCommand("UpdateLimitLevelButton");
 		
 		
 		StationManagerFirstLoginScreen();
@@ -105,6 +121,8 @@ public class StationManagerController extends Controller{
 			handlePurchaseReportButton();
 		if(e.getActionCommand().equals("StockReportButton"))
 			handleStockReportButton();
+		if(e.getActionCommand().equals("UpdateLimitLevelButton"))
+			handleUpdateLimitLevelButton();
 	}
 	/**
 	 * This function reset the main Manger window
@@ -117,9 +135,10 @@ public class StationManagerController extends Controller{
 		
 		ContainerCard=(CardLayout)(LeftCardContainer.getLayout());
 		ContainerCard.show(LeftCardContainer,"EmptyLeftPanel");
+		 // Reset//
 		GuiScreen.ResetErrorLabel();
 		GuiScreen.ResetUpdateMessage();
-		
+		GuiScreen.ResetUpdateLimitTextError();
 		
 	}
 	/**
@@ -127,6 +146,7 @@ public class StationManagerController extends Controller{
 	 */
 	private void handleApproveSupplyButtonButton()
 	{
+		GuiScreen. ResetUpdateMessage();
 		/*----------------get table info and display it-----------*/
 		if(setTableInApproveSuppliesOrders())
 		{
@@ -148,13 +168,15 @@ public class StationManagerController extends Controller{
 	{
 		/*-------------Read from Values from Table----*/
 		int i,RowNum;
+		String what;
 		JTable ApproveTable;
 		callbackVector UpdateApproveTable = new callbackVector(MessageType.setStationSuppliesOrder);
 		ApproveTable = GuiScreen.getApproveTable();
 		DefaultTableModel CurrentTableModel = (DefaultTableModel) ApproveTable.getModel();
 		RowNum = CurrentTableModel.getRowCount();
 		for(i=0 ; i < RowNum ; i++){
-			if(!CurrentTableModel.getValueAt(i, 7).equals("Waiting")){
+			what=(String) CurrentTableModel.getValueAt(i, 7);
+			if(!what.equals("Waiting")){
 				
 				/*--------------------Create new order & enter to callback vector-----------------------*/
 				callbackStationOrders NewOrder = new callbackStationOrders();
@@ -171,15 +193,11 @@ public class StationManagerController extends Controller{
 		if(UpdateApproveTable.size()>0){
 			Server.handleMessageFromClient(UpdateApproveTable);
 			getCallBackFromBuffer();
+			GuiScreen.UpdateSuccessMessage();
 			handleApproveSupplyButtonButton();
 		}
 		else {
-			UIManager.put("OptionPane.messageFont", new Font("System", Font.PLAIN, 20));
-			UIManager.put("OptionPane.buttonFont", new Font("System", Font.PLAIN, 18));
-				JOptionPane.showMessageDialog(GuiScreen,	
-					"There are no changes in the existing records.",
-						"Error Message",
-			    			JOptionPane.ERROR_MESSAGE);		
+			GuiScreen.ErrorNoChangeUpdateApprove();
 		}
 	}
 	/**
@@ -199,12 +217,206 @@ public class StationManagerController extends Controller{
 	 * Show Stock Report
 	 */
 	private void handleStockReportButton(){
-		
+		//handleUpdateOnApproveScreen();
+		if(setFloatArray()){
 		/*----------------Show 'Stock Report' Panel------------*/
 		ContainerCard=(CardLayout)(CenterCardContainer.getLayout());
 		ContainerCard.show(CenterCardContainer,"StockReportLayer");
+		}
+		else
+			GuiScreen.ErrorEnterStockReport();
+	}
+	/**
+	 * Update Limit Level
+	 */
+	private void handleUpdateLimitLevelButton(){
+		
+		/*-------------Read from Values from Table----*/
+		int i,RowNum,flagEdit=0;
+		Object[][] FuelData=new Object[3][];
+		Object[] tempVariance;
+		JTable LimitTable;
+		int NewLevel,what1,what2;
+		
+		
+		
+		if(UpdateGasStationFuelLevel())
+		{
+				FuelData=((callbackStringArray)GasStationFuelLevel).getData();
+				tempVariance=((callbackStringArray)GasStationFuelLevel).getVariance();
+				GasStation=(int) tempVariance[0];
+				//callbackVector UpdateApproveTable = new callbackVector(MessageType.setCurrentThresholdLimit);
+				callbackVector UpdateFuelLimit = new callbackVector(MessageType.setCurrentThresholdLimit);
+				
+				LimitTable = GuiScreen.getUpdatelimitLevelTable();
+				DefaultTableModel CurrentTableModel = (DefaultTableModel) LimitTable.getModel();
+				
+				//what (int)CurrentTableModel.get
+				RowNum = CurrentTableModel.getRowCount();
+				for(i=0 ; i < RowNum ; i++){
+					what1=Integer.valueOf((String) CurrentTableModel.getValueAt(i, 3));
+					what2=Integer.valueOf((String) FuelData[i][3]);
+					if(what1!=what2){
+						NewLevel =Integer.valueOf((String) CurrentTableModel.getValueAt(i, 3));
+						if(NewLevel>0)
+						{
+							callbackStationFuels UpdateFuel = new callbackStationFuels();
+							flagEdit=1;
+							UpdateFuel.setGasStationID(GasStation);
+							UpdateFuel.setThresholdLimit(NewLevel);
+							UpdateFuel.setFuelID( Integer.valueOf(   ((String) FuelData[i][0])  ));
+							UpdateFuelLimit.add(UpdateFuel);
+						}
+						else
+						{
+							UIManager.put("OptionPane.messageFont", new Font("System", Font.PLAIN, 20));
+							UIManager.put("OptionPane.buttonFont", new Font("System", Font.PLAIN, 18));
+								JOptionPane.showMessageDialog(GuiScreen,	
+									"Can't Enter Negative Level",
+										"Error Message",
+							    			JOptionPane.ERROR_MESSAGE);	
+						}
+					
+					}
+				}
+				/*Just is there was a change update DB---*/
+			if(flagEdit==1)
+			{
+				Server.handleMessageFromClient(UpdateFuelLimit);
+				getCallBackFromBuffer();
+				handleUpdateLimitLevelScreen();
+				GuiScreen.SuccessWasChangeUpdateLevel();
+			}
+			else 
+			{
+				GuiScreen.ErrorNoChangeInUpdateLevel();	
+			}
+		}
+	}
+
+	/**
+	 * This function show screen when "Update limit pressed"
+	 */
+	private void handleUpdateLimitLevelScreen(){
+		if(setTableInUpdateLimitFuel())
+		{
+		GuiScreen.ResetUpdateLimitTextError();
+		/*----------------Show 'Update Limit Level for fuel' screen------------*/
+		ContainerCard=(CardLayout)(CenterCardContainer.getLayout());
+		ContainerCard.show(CenterCardContainer,"UpdateLimitLevelFuelLayer");
+		
+		ContainerCard=(CardLayout)(LeftCardContainer.getLayout());
+		ContainerCard.show(LeftCardContainer,"EmptyLeftPanel");
+		}
+		else
+			GuiScreen.ErrorEnterUpdateLimitLevel();
+		
+	}
+	/**
+	 * This function set value in table by DB
+	 * @return if successes true
+	 */
+	private boolean setTableInUpdateLimitFuel()
+	{
+
+		/*-----------------Set Table values in Approval Table------------------*/
+		if(UpdateGasStationFuelLevel())
+			{		
+		GuiScreen.setUpdatelimitLevelTable(((callbackStringArray) GasStationFuelLevel).getDefaultTableModel());
+		return true;
+			}
+		return false;
+	}
+	/**
+	 * This function Only Update Global Value GasStationFuelLevel
+	 * @return true if Query was successful 
+	 */
+	private boolean UpdateGasStationFuelLevel(){
+		callbackStringArray LocalUserID=new callbackStringArray(MessageType.getCurrentThresholdLimit);
+		Object[] data = new Object[1];
+		data[0]=EnteredUser.getUserID();
+		LocalUserID.setVariance(data);
+		LocalUserID.setWhatToDo(MessageType.getCurrentThresholdLimit);
+		Server.handleMessageFromClient(LocalUserID);
+		GasStationFuelLevel=(CallBack) getCallBackFromBuffer();
+		if(GasStationFuelLevel instanceof callback_Error)
+			GuiScreen.ErrorEnterUpdateLimitLevel();
+		/*-----------------Set Table values in Approval Table------------------*/
+		if(GasStationFuelLevel instanceof callbackStringArray)
+			{		
+		return true;
+			}
+		return false;
 	}
 	
+	/**
+	 * Show CreateReport
+	 */
+	private void handleCreateReportButton(){
+		
+		ContainerCard=(CardLayout)(CenterCardContainer.getLayout());
+		ContainerCard.show(CenterCardContainer,"EmptyCenterPanel");
+		
+		ContainerCard=(CardLayout)(LeftCardContainer.getLayout());
+		ContainerCard.show(LeftCardContainer,"CreateReportLeftPanel");
+	}
+	/**
+	 * get Float Array of fuel for Stock report
+	 */
+	
+
+	
+	private boolean setFloatArray(){
+		FloatArray = new Float[6];
+
+		/*-----send Station ID-------*/
+		callbackStringArray StationCurrentFuels = new callbackStringArray(MessageType.getCurrentThresholdLimit); //create new CallbackStationFuels
+		Object[] data = new Object[1];
+		data[0]=EnteredUser.getUserID();
+		StationCurrentFuels.setVariance(data); //Enter Station UserID
+		
+		Server.handleMessageFromClient(StationCurrentFuels);	//send to DB
+		Temp = (CallBack) getCallBackFromBuffer();
+		/*-----------------Set Table values in Approval Table------------------*/
+		if(Temp instanceof callbackStringArray)
+			{		
+
+				
+				/*------get callback Fuels ------*/
+								//Get from the common buffer new callback
+				int NumbersFuelsInCurrentGasStaion=((callbackStringArray) Temp).getRowCount();
+				int index=0;
+				String[][] data1=new String[3][];
+				while(index<NumbersFuelsInCurrentGasStaion){
+					data1=(String[][]) ((callbackStringArray) Temp).getData();
+					if(data1[index][0].equals("95")) // there is 95 fuel
+					{
+						FloatArray[0]=Float.valueOf(data1[index][5]); //Current Amount
+						FloatArray[1]=Float.valueOf(data1[index][3]); //Capcity
+					}
+					if(data1[index][0].equals("Scooters Fuel")) // there is scooter fuel
+					{
+						FloatArray[2]=Float.valueOf(data1[index][5]); //Current Amount
+						FloatArray[3]=Float.valueOf(data1[index][3]); //Capcity
+					}
+					if(data1[index][0].equals("Diesel")) // there is diesel fuel
+					{
+						FloatArray[4]=Float.valueOf(data1[index][5]); //Current Amount
+						FloatArray[5]=Float.valueOf(data1[index][3]); //Capcity
+					}
+					index++;
+				}
+				
+			
+	
+			GuiScreen.setStockGraphFloatArray(FloatArray);
+
+		return true;
+			}
+		return false;
+		
+		
+	}
 	/**
 	 * This function add value to table
 	 */
@@ -227,57 +439,6 @@ public class StationManagerController extends Controller{
 		return true;
 			}
 		return false;
-	}
-	/**
-	 * This function show screen when "Update limit pressed"
-	 */
-	private void handleUpdateLimitLevelScreen(){
-		if(setTableInUpdateLimitFuel())
-		{
-		/*----------------Show 'Update Limit Level for fuel' screen------------*/
-		ContainerCard=(CardLayout)(CenterCardContainer.getLayout());
-		ContainerCard.show(CenterCardContainer,"UpdateLimitLevelFuelLayer");
-		
-		ContainerCard=(CardLayout)(LeftCardContainer.getLayout());
-		ContainerCard.show(LeftCardContainer,"EmptyLeftPanel");
-		}
-		else
-			GuiScreen.ErrorEnterUpdateLimitLevel();
-		
-	}
-	/**
-	 * This function set value in table by DB
-	 * @return if successes true
-	 */
-	private boolean setTableInUpdateLimitFuel()
-	{
-		callbackStringArray LocalUserID=new callbackStringArray(MessageType.getCurrentThresholdLimit);
-		Object[] data = new Object[1];
-		data[0]=EnteredUser.getUserID();
-		LocalUserID.setVariance(data);
-		LocalUserID.setWhatToDo(MessageType.getCurrentThresholdLimit);
-		Server.handleMessageFromClient(LocalUserID);
-		Temp=(CallBack) getCallBackFromBuffer();
-		if(Temp instanceof callback_Error)
-			GuiScreen.ErrorEnterUpdateLimitLevel();
-		/*-----------------Set Table values in Approval Table------------------*/
-		if(Temp instanceof callbackStringArray)
-			{		
-		GuiScreen.setUpdatelimitLevelTable(((callbackStringArray) Temp).getDefaultTableModel());
-		return true;
-			}
-		return false;
-	}
-	/**
-	 * Show CreateReport
-	 */
-	private void handleCreateReportButton(){
-		
-		ContainerCard=(CardLayout)(CenterCardContainer.getLayout());
-		ContainerCard.show(CenterCardContainer,"EmptyCenterPanel");
-		
-		ContainerCard=(CardLayout)(LeftCardContainer.getLayout());
-		ContainerCard.show(LeftCardContainer,"CreateReportLeftPanel");
 	}
 
 
