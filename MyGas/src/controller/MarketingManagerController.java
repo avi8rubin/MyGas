@@ -289,11 +289,20 @@ public class MarketingManagerController extends Controller {
 	public void update(Observable o, Object arg) {
 		if(arg instanceof CallBack){	
 			switch(((CallBack) arg).getWhatToDo()){
-				case getWaitingTariff:
+				case getFuelsDetailes:
 	
 					break;
-				case setWaitingTariff:
+				case getCommentsForMarketionCampaign:
 				
+					break;
+				case getCustomerCharacterizationByPeriod:
+					
+					break;
+				case getCampaignPatternAndActiveCampaign:
+				
+					break;
+				case setNewCampaign:
+					
 					break;
 			/*Don't change!*/
 			default:
