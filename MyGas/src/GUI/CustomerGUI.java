@@ -16,6 +16,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
 import com.toedter.calendar.JDateChooser;
@@ -60,6 +61,9 @@ public class CustomerGUI extends abstractPanel_GUI {
 	private JTextArea AddresstextArea;
 	private JTextArea CalcPricetextArea;
 	private JTextArea FuelAmounttextArea;
+	
+	private JLabel OrderDetailsLabel;
+	private JLabel ShowOrderDetailsLabel;
 	
 	
 	private static final long serialVersionUID = 1L;
@@ -208,6 +212,14 @@ public class CustomerGUI extends abstractPanel_GUI {
 		BuyHomeFuelCenterLayer.setOpaque(true);
 		BuyHomeFuelCenterLayer.setName("BuyHomeFuel");
 		
+		OrderDetailsLabel = new JLabel("");
+		OrderDetailsLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		OrderDetailsLabel.setBounds(609, 162, 146, 38);
+		BuyHomeFuelCenterLayer.add(OrderDetailsLabel);
+
+		ShowOrderDetailsLabel = new JLabel("");
+		ShowOrderDetailsLabel.setBounds(609, 207, 280, 233);
+		BuyHomeFuelCenterLayer.add(ShowOrderDetailsLabel);
 }
 	
 	public JButton getBuyHomeFuelButton() {
@@ -225,7 +237,6 @@ public class CustomerGUI extends abstractPanel_GUI {
 	public JButton getCancelButton() {
 		return Cancelbutton;
 	}
-	
 	public void setCalcPricetextArea(String price) {
 		CalcPricetextArea.setText(price);
 	}
@@ -238,15 +249,21 @@ public class CustomerGUI extends abstractPanel_GUI {
 	public String getTime() {
 		return DeliveryTimetextArea.getText();
 	}
-	public void setTime(){
-		DeliveryTimetextArea.setText("");
+	public void setTime(String str){
+		DeliveryTimetextArea.setText(str);
 	}
 	public String getFuelAmount(){
 		return FuelAmounttextArea.getText();
 	}
+	public void setFuelAmount(String str){
+		FuelAmounttextArea.setText(str);
+	}
 	public String getDate(){
 		return ((JTextField)dateChooser.getDateEditor().getUiComponent()).getText();
 	}
+	public void setDate(){
+	dateChooser.setCalendar(null);
+	}	
 	public JLabel ErrorAmoutLabel(){
 		return ErrorMassage;
 	}
@@ -262,6 +279,7 @@ public class CustomerGUI extends abstractPanel_GUI {
 	public JLabel DateLabel(){
 		return DateError;
 	}
+	
 	public void DisablePayButton(){
 		PayButton.setEnabled(false);
 	}
@@ -274,5 +292,14 @@ public class CustomerGUI extends abstractPanel_GUI {
 			BuyHomeFuelCenterLayer.getComponent(a).setEnabled(false) ;  
 		}
 	}
-
+	public void setOrderDetailsLabel(String str){
+		OrderDetailsLabel.setText(str);
+	}
+	public void setShowOrderDetailsLabel(String str){
+		ShowOrderDetailsLabel.setText(str);;
+	}
+	public void setHomeFuelOrdersTable(DefaultTableModel NewTableModel){		
+		HomeFuelOrdersTable.setModel(NewTableModel);
+	}
+	
 }
