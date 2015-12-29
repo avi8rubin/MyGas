@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -12,8 +13,10 @@ import javax.swing.JLayeredPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import javax.swing.text.MaskFormatter;
 
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JTextFieldDateEditor;
@@ -44,7 +47,10 @@ public class CustomerGUI extends abstractPanel_GUI {
 	
 	private JLabel ErrorMassage = new JLabel("");
 	private JLabel DateError =new JLabel("");
+	private JLabel ErrorAddressLabel =new JLabel("");
+	private JLabel ErrorDeliveryTimeLabel=new JLabel("");
 	private JLabel BuyHomeLabel;
+	private JLabel CheckOrders;
 	private JLabel Addresslabel;
 	private JLabel DeliveryDatelabel;
 	private JLabel FuelAmountLabel;
@@ -73,23 +79,29 @@ public class CustomerGUI extends abstractPanel_GUI {
 		CheckFuelOrdersButton.setBounds(217, 99, 200, 38);
 		TopPanel.add(CheckFuelOrdersButton);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
-//		/*------- Create JTable surround with scroll pane and add
-//		 * 				 it to CheckFuelOrders			 --------*/
-//		HomeFuelOrdersCenterLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
-//
-//		HomeFuelOrdersScrollPane.setBounds(38, 133, 600, 200);
-//		HomeFuelOrdersCenterLayer.add(HomeFuelOrdersScrollPane);
-//		
-//		HomeFuelOrdersScrollPane.setViewportView(HomeFuelOrdersTable);
-//		HomeFuelOrdersTable.setRowHeight(23);
-//		HomeFuelOrdersTable.setFillsViewportHeight(true);
-//		HomeFuelOrdersTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
-//		HomeFuelOrdersTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
-//		HomeFuelOrdersTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-//		
-//		CenterCardContainer.add(HomeFuelOrdersCenterLayer,"HomeFuelOrdersCenterLayer");
-//		HomeFuelOrdersCenterLayer.setOpaque(true);
-//		HomeFuelOrdersCenterLayer.setName("HomeFuelOrdersCenterLayer"); 
+		/*------- Create JTable surround with scroll pane and add
+		 * 				 it to CheckFuelOrders			 --------*/
+		HomeFuelOrdersCenterLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+
+		CheckOrders = new JLabel("Your Fuel Order");				
+		CheckOrders.setHorizontalAlignment(SwingConstants.CENTER);
+		CheckOrders.setFont(new Font("Tahoma", Font.PLAIN, 26));
+		CheckOrders.setBounds(177, 13, 608, 42);
+		HomeFuelOrdersCenterLayer.add(CheckOrders);
+		
+		HomeFuelOrdersScrollPane.setBounds(43, 58,  900, 400);
+		HomeFuelOrdersCenterLayer.add(HomeFuelOrdersScrollPane);
+		
+		HomeFuelOrdersScrollPane.setViewportView(HomeFuelOrdersTable);
+		HomeFuelOrdersTable.setRowHeight(23);
+		HomeFuelOrdersTable.setFillsViewportHeight(true);
+		HomeFuelOrdersTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		HomeFuelOrdersTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
+		HomeFuelOrdersTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		
+		CenterCardContainer.add(HomeFuelOrdersCenterLayer,"HomeFuelOrdersCenterLayer");
+		HomeFuelOrdersCenterLayer.setOpaque(true);
+		HomeFuelOrdersCenterLayer.setName("HomeFuelOrdersCenterLayer"); 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		BuyHomeFuelCenterLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		
@@ -119,7 +131,16 @@ public class CustomerGUI extends abstractPanel_GUI {
 		Cancelbutton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		BuyHomeFuelCenterLayer.add(Cancelbutton);
 		
-		DeliveryTimetextArea = new JFormattedTextField();
+		
+		MaskFormatter DeliveryTimeFormatter = null;
+		try {
+			DeliveryTimeFormatter = new MaskFormatter("** : **");
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		DeliveryTimetextArea=new JFormattedTextField(DeliveryTimeFormatter);
+//		DeliveryTimetextArea=new JFormattedTextField();
+
 		DeliveryTimetextArea.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		DeliveryTimetextArea.setHorizontalAlignment(SwingConstants.CENTER);
 		DeliveryTimetextArea.setBounds(277, 322, 200, 38);
@@ -163,16 +184,25 @@ public class CustomerGUI extends abstractPanel_GUI {
 		BuyHomeFuelCenterLayer.add(dateChooser);
 		
 		ErrorMassage.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		//ErrorMassage.setText("*Incorrect Fuel Amount");
 		ErrorMassage.setForeground(Color.RED);
 		ErrorMassage.setBounds(277, 116, 212, 38);
 		BuyHomeFuelCenterLayer.add(ErrorMassage);
 	
-		//DateError = new JLabel("*Incorrect Date");
 		DateError.setForeground(Color.RED);
 		DateError.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		DateError.setBounds(277, 273, 212, 38);
 		BuyHomeFuelCenterLayer.add(DateError);
+		
+		ErrorAddressLabel.setForeground(Color.RED);
+		ErrorAddressLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		ErrorAddressLabel.setBounds(277, 193, 212, 38);
+		BuyHomeFuelCenterLayer.add(ErrorAddressLabel);
+
+		ErrorDeliveryTimeLabel.setForeground(Color.RED);
+		ErrorDeliveryTimeLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		ErrorDeliveryTimeLabel.setBounds(277, 353, 212, 38);
+		BuyHomeFuelCenterLayer.add(ErrorDeliveryTimeLabel);
+
 		
 		CenterCardContainer.add(BuyHomeFuelCenterLayer, "BuyHomeFuel");
 		BuyHomeFuelCenterLayer.setOpaque(true);
@@ -195,28 +225,54 @@ public class CustomerGUI extends abstractPanel_GUI {
 	public JButton getCancelButton() {
 		return Cancelbutton;
 	}
+	
 	public void setCalcPricetextArea(String price) {
 		CalcPricetextArea.setText(price);
-	}
-	public JTextArea getFuelAmount() {
-		return FuelAmounttextArea;
 	}
 	public int getCurrentUserID() {
 		return this.User.getUserID();
 	}
 	public String getCurrentUserName() {
 		return String.format("%s %s", this.User.getFirstName(), this.User.getLastName());
+	}	
+	public String getTime() {
+		return DeliveryTimetextArea.getText();
+	}
+	public void setTime(){
+		DeliveryTimetextArea.setText("");
+	}
+	public String getFuelAmount(){
+		return FuelAmounttextArea.getText();
+	}
+	public String getDate(){
+		return ((JTextField)dateChooser.getDateEditor().getUiComponent()).getText();
+	}
+	public JLabel ErrorAmoutLabel(){
+		return ErrorMassage;
+	}
+	public String getAddrres() {
+		return AddresstextArea.getText();
+	}
+	public JLabel getErrorAddressLabel(){
+		return ErrorAddressLabel;
+	}
+	public JLabel getErrorDeliveryTimeLabel(){
+		return ErrorDeliveryTimeLabel;
+	}
+	public JLabel DateLabel(){
+		return DateError;
+	}
+	public void DisablePayButton(){
+		PayButton.setEnabled(false);
+	}
+	public void EnablePayButton(){
+		PayButton.setEnabled(true);
 	}
 	public void DisableAllComponents(){
 
-		DeliveryTimetextArea.setEditable(false);
-		AddresstextArea.setEditable(false);
-		CalcPricetextArea.setEditable(false);
-		FuelAmounttextArea.setEditable(false);
-//		PayButton.getDisabledSelectedIcon();
-//		Cancelbutton.getDisabledSelectedIcon();
-//		Calcbutton.getDisabledSelectedIcon();
-//		JTextFieldDateEditor editor = (JTextFieldDateEditor) dateChooser.getDateEditor();
-//		editor.setEditable(false);
+		for(int a = 0 ; a < BuyHomeFuelCenterLayer.getComponentCount() ; a ++){   
+			BuyHomeFuelCenterLayer.getComponent(a).setEnabled(false) ;  
 		}
+	}
+
 }

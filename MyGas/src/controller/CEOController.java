@@ -20,7 +20,10 @@ import callback.callbackWaitingTariff;
 import client.Client;
 import common.MessageType;
 import common.TableModel;
-
+/**
+ * CEO controller, literally, control the CEO gui
+ * @author Ohad
+ */
 public class CEOController extends Controller {
 	
 	/**
@@ -51,8 +54,6 @@ public class CEOController extends Controller {
 		//Tariff Save Button
 		TariffSaveButton = GuiScreen.getTariffSaveButton();
 		TariffSaveButton.addActionListener(this);
-		
-		
 		/* ------------------------------------------- */
 
 	}
@@ -68,8 +69,7 @@ public class CEOController extends Controller {
 		}
 		if(e.getSource() == TariffSaveButton){
 			HandleSavePressed();
-		}
-		
+		}		
 	}
 /**
  * Sends request to query from DB
@@ -99,7 +99,7 @@ public class CEOController extends Controller {
 				UpdateTariff.add(NewTariff);
 			}
 		}
-		/*Just is there was a change update DB*/
+		/*Just if there was a change then update DB*/
 		if(UpdateTariff.size()>0){
 			Server.handleMessageFromClient(UpdateTariff);
 			getCallBackFromBuffer();

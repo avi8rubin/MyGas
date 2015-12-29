@@ -156,6 +156,9 @@ public class QueryIO implements Runnable {
 			case updateAnalyticSystemRatingCalculation:
 				AnswerObject = getAnalyticSystemRatingCalculation(2,(callbackStringArray)SwitchCallback);				
 				break;
+			case setUpdateCustomer:
+				AnswerObject = setUpdateCustomer((callbackCustomer)SwitchCallback);				
+				break;
 				
 /*Customer*/
 			case setNewHomeFuelSale:
@@ -188,7 +191,12 @@ public class QueryIO implements Runnable {
 			case getCurrentThresholdLimit:
 				AnswerObject = getCurrentThresholdLimit((callbackStringArray)SwitchCallback);				
 				break;	
-				
+			case getQuarterIncomesReport:
+				AnswerObject = getQuarterIncomesReport((callbackStringArray)SwitchCallback);				
+				break;	
+			case getQuarterPurchaseReport:
+				AnswerObject = getQuarterPurchaseReport((callbackStringArray)SwitchCallback);				
+				break;	
 				
 		default:
 			AnswerObject = new callback_Error("Not a callback object, send legal callback or you don't fill 'WhatToDo'.");
@@ -1476,6 +1484,77 @@ public class QueryIO implements Runnable {
 		}
 		return ReturnCallback;
 	}
+	private CallBack setUpdateCustomer(callbackCustomer Callback){
+		// Set variables ---------------------------------------------------------
+		int user_id;
+		
+		// Build query -----------------------------------------------------------
+		String SqlQuery1 = "SELECT COUNT(*) FROM Users WHERE User_ID<>(?) AND User_Name=(?)";
+		String SqlQuery2 = "SELECT COUNT(*) FROM Customers WHERE Email=(?) AND Customers_ID<>(?)";
+		String SqlQuery3 = "UPDATE Customers SET Customer_First_Name=(?),Customer_Last_Name=(?),Customer_Type=(?),"
+							+ "Plan_ID=(?),Phone_Number=(?),Credit_Card=(?),Email=(?),IS_Active=(?),Costing_Model_ID=(?) "
+							+ "WHERE Customers_ID=(?)";	
+		String SqlQuery4 = "UPDATE Users SET User_Name=(?),User_Password=(?) WHERE User_ID=(?)";
+		String SqlQuery5 = "SELECT User_ID FROM Customers WHERE Customers_ID=(?)";
+		
+		try {
+			PreparedStatement ps1 = conn.prepareStatement(SqlQuery1);
+			PreparedStatement ps2 = conn.prepareStatement(SqlQuery2);
+			PreparedStatement ps3 = conn.prepareStatement(SqlQuery3);
+			PreparedStatement ps4 = conn.prepareStatement(SqlQuery4);
+			PreparedStatement ps5 = conn.prepareStatement(SqlQuery5);
+
+
+			
+		// Send query to DB  -----------------------------------------------------
+
+			//Get user_id from customers table
+			ps5.setInt(1, Callback.getCustomersID());
+			AnswerResult = ps5.executeQuery();	
+			AnswerResult.next();
+			user_id = AnswerResult.getInt(1);			
+					
+//			Check if user_name already exists in another user	
+			ps1.setInt(1, user_id);
+			ps1.setString(2, Callback.getUserName().trim());
+			AnswerResult = ps1.executeQuery();
+			AnswerResult.next();
+
+			if (AnswerResult.getInt(1)>0) return new callback_Error("User name already exists in DB."); 
+			
+			//Check if email already exists	in another user
+			ps2.setString(1, Callback.getEmail().trim());
+			ps2.setInt(2, Callback.getCustomersID());
+			AnswerResult = ps2.executeQuery();	
+			AnswerResult.next();
+			if (AnswerResult.getInt(1)>0) return new callback_Error("Email belong to another customer.");
+				
+			//Update user in DB	
+			ps4.setString(1, Callback.getUserName().trim());
+			ps4.setString(2, Callback.getUserPassword().trim());
+			ps4.setInt(3, user_id);
+			ps4.executeUpdate();
+			
+			//Update customer in DB	
+			ps3.setString(1, Callback.getCustomerFirstName().trim());
+			ps3.setString(2, Callback.getCustomerLastName().trim());
+			ps3.setString(3, Callback.getCustomerType().trim());
+			ps3.setInt(4, Callback.getPlanID());
+			ps3.setString(5, Callback.getPhoneNumber().trim());
+			ps3.setString(6, Callback.getCreditCard().trim());
+			ps3.setString(7, Callback.getEmail().trim());
+			ps3.setString(8, Callback.getISActive().trim());	
+			ps3.setInt(9, Callback.getCostingModelID());
+			ps3.setInt(10, Callback.getCustomersID());
+			ps3.executeUpdate();			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
+		}
+			return new callbackSuccess("Create new customer successfully.");					// 	Query succeed
+		
+	}
 	
 /**
  * Customer	
@@ -1930,7 +2009,7 @@ public class QueryIO implements Runnable {
 /**
  * Station Manager
  */	
-	private int getStationIDByUserID(int StationID){
+	private int getStationIDByUserID(int UserID){
 		// Set variables ---------------------------------------------------------
 		int GasStationID;
 		// Build query -----------------------------------------------------------
@@ -1940,7 +2019,7 @@ public class QueryIO implements Runnable {
 					"LEFT OUTER JOIN Workers B ON A.Gas_Station_Manager_ID=B.Worker_ID where B.User_Id =(?)");
 			
 		// Send query to DB  ----------------------------------------------------- 	
-			ps1.setInt(1, StationID);
+			ps1.setInt(1, UserID);
 			AnswerResult = ps1.executeQuery();
 			AnswerResult.next();
 			GasStationID=AnswerResult.getInt("Gas_Station_ID");		
@@ -2023,7 +2102,7 @@ public class QueryIO implements Runnable {
 		try {
 			
 			PreparedStatement ps=conn.prepareStatement(
-					"SELECT Fuel_Description ,Fuel_ID ,Fuel_Description ,Capacity ,Threshold_Limit "+
+					"SELECT Fuel_ID ,Fuel_Description ,Capacity ,Threshold_Limit, "+
 					"FROM fuel_for_gas_station WHERE Gas_Station_ID=(?)");
 			
 		// Send query to DB  ----------------------------------------------------- 	
@@ -2081,6 +2160,152 @@ public class QueryIO implements Runnable {
 			return new callback_Error("Problem has occurred, it's possible server lost connection with DB.");					// If query not succeed 
 		}
 			return (new callbackSuccess());					// 	Query not succeed
+	}
+	private CallBack getQuarterIncomesReport(callbackStringArray Callback){
+		// Set variables ---------------------------------------------------------
+		ResultSetMetaData LocalResult;
+		Object[][] Data;
+		String[] Headers;
+		Object[] YearsComboBox;
+		int ColNum;
+		int GasStationID;
+		int RowNum =0;
+		// Build query -----------------------------------------------------------
+		
+		try {
+			
+			PreparedStatement ps1=conn.prepareStatement(
+					"SELECT YEAR(Sale_Date) AS Sale_Year,QUARTER(Sale_Date) AS Sale_Quarter,Fuel_Description,COUNT(Sales_ID) AS Customer_Number "+
+					",SUM(Fuel_Amount) AS Fuel_Amount,SUM(Payment) AS Total_Profit "+
+					"FROM All_Gas_Stations_Sales WHERE Gas_Station_ID = (?) "+
+					"GROUP BY Gas_Station_ID,YEAR(Sale_Date),QUARTER(Sale_Date),Fuel_Description");
+			PreparedStatement ps2=conn.prepareStatement(
+					"SELECT DISTINCT YEAR(Sale_Date) AS Years_In_System "+
+					"FROM mygas.all_gas_stations_sales WHERE Gas_Station_ID=(?)");
+		// Send query to DB  ----------------------------------------------------- 	
+		
+			//Convert user id to stationID, made for station manager
+			GasStationID=getStationIDByUserID((int) Callback.getVariance()[0]);
+			
+			//Get report divide to years and quarters for station
+			ps1.setInt(1, GasStationID);
+			AnswerResult = ps1.executeQuery();		
+			
+			LocalResult = AnswerResult.getMetaData();
+			Callback.setColCount(ColNum = LocalResult.getColumnCount());
+			
+			AnswerResult.last();
+			Callback.setRowCount(AnswerResult.getRow());
+			AnswerResult.beforeFirst();
+			Data = new String[Callback.getRowCount()][ColNum];
+			Headers = new String[ColNum];
+			
+			for(int i=0;i<ColNum;i++)
+				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
+			Callback.setColHeaders(Headers);
+			
+			while (AnswerResult.next()) { 				
+				for (int i = 0; i < ColNum; i++) 
+					Data[RowNum][i] = AnswerResult.getString(i + 1);
+				RowNum++;
+			}
+			Callback.setData(Data);
+
+			//Get all years in the system to ComboBox
+			ps2.setInt(1, GasStationID);
+			AnswerResult = ps2.executeQuery();	
+			
+			AnswerResult.last();
+			RowNum = AnswerResult.getRow();
+			AnswerResult.beforeFirst();			
+			YearsComboBox = new Object[RowNum];
+			RowNum=0;
+			while (AnswerResult.next()) { 				
+				YearsComboBox[RowNum] = AnswerResult.getString("Years_In_System");
+				RowNum++;
+			}
+			Callback.setComboBoxStringArray(YearsComboBox);
+			
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, NULL pointer back from DB or lost connection with DB.");					// If query not succeed 
+		}
+			return Callback;							
+	}
+	private CallBack getQuarterPurchaseReport(callbackStringArray Callback){
+		// Set variables ---------------------------------------------------------
+		ResultSetMetaData LocalResult;
+		Object[][] Data;
+		String[] Headers;
+		Object[] YearsComboBox;
+		int ColNum;
+		int GasStationID;
+		int RowNum =0;
+		// Build query -----------------------------------------------------------
+		
+		try {
+			
+			PreparedStatement ps1=conn.prepareStatement(
+					"SELECT YEAR(Order_Date) AS Order_Year ,QUARTER(Order_Date) AS Order_Quarter "+
+					",Fuel_Description ,SUM(Amount_To_Order) AS Total_Liters_To_Order "+
+					",COUNT(*) AS Number_Of_Orders "+
+					"FROM fuel_orders_for_stations "+
+					"WHERE Order_Confirmation = 'Yes' AND Gas_Station_ID = (?) "+
+					"GROUP BY Gas_Station_ID,YEAR(Order_Date),QUARTER(Order_Date),Fuel_Description");
+			PreparedStatement ps2=conn.prepareStatement(
+					"SELECT DISTINCT YEAR(Order_Date) AS Years_In_System  "+
+					"FROM mygas.fuel_orders_for_stations WHERE Gas_Station_ID=(?)");
+		// Send query to DB  ----------------------------------------------------- 	
+		
+			//Convert user id to stationID, made for station manager
+			GasStationID=getStationIDByUserID((int) Callback.getVariance()[0]);
+			
+			//Get report divide to years and quarters for station
+			ps1.setInt(1, GasStationID);
+			AnswerResult = ps1.executeQuery();		
+			
+			LocalResult = AnswerResult.getMetaData();
+			Callback.setColCount(ColNum = LocalResult.getColumnCount());
+			
+			AnswerResult.last();
+			Callback.setRowCount(AnswerResult.getRow());
+			AnswerResult.beforeFirst();
+			Data = new String[Callback.getRowCount()][ColNum];
+			Headers = new String[ColNum];
+			
+			for(int i=0;i<ColNum;i++)
+				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
+			Callback.setColHeaders(Headers);
+			
+			while (AnswerResult.next()) { 				
+				for (int i = 0; i < ColNum; i++) 
+					Data[RowNum][i] = AnswerResult.getString(i + 1);
+				RowNum++;
+			}
+			Callback.setData(Data);
+
+			//Get all years in the system to ComboBox
+			ps2.setInt(1, GasStationID);
+			AnswerResult = ps2.executeQuery();	
+			
+			AnswerResult.last();
+			RowNum = AnswerResult.getRow();
+			AnswerResult.beforeFirst();			
+			YearsComboBox = new Object[RowNum];
+			RowNum=0;
+			while (AnswerResult.next()) { 				
+				YearsComboBox[RowNum] = AnswerResult.getString("Years_In_System");
+				RowNum++;
+			}
+			Callback.setComboBoxStringArray(YearsComboBox);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, NULL pointer back from DB or lost connection with DB.");					// If query not succeed 
+		}
+			return Callback;							
 	}
 	
 /**

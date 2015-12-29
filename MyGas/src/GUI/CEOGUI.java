@@ -16,6 +16,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+
 import callback.callbackBuffer;
 import callback.callbackUser;
 import client.Client;

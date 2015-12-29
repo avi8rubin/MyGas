@@ -38,7 +38,8 @@ public enum MessageType {
 	getMarketingRepresentativeComboBox,
 	getAnalyticSystemRatingCalculation,
 	updateAnalyticSystemRatingCalculation,
-/*Custo mer*/
+	setUpdateCustomer,
+/*Customer*/
 	setNewHomeFuelSale,
 	getHomeFuelOrders,
 /*Station*/
@@ -50,6 +51,8 @@ public enum MessageType {
 	getStationSuppliesOrder,
 	getCurrentThresholdLimit,
 	setCurrentThresholdLimit,
-	setStationSuppliesOrder
+	setStationSuppliesOrder,
+	getQuarterIncomesReport,
+	getQuarterPurchaseReport
 
 }
