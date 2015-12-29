@@ -1576,6 +1576,27 @@ public class QueryIO implements Runnable {
 /**
  * Customer	
  */
+	private int getCustomerIDByUserID(int UserID){
+		// Set variables ---------------------------------------------------------
+		int CustomerID;
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps1=conn.prepareStatement("SELECT Customers_ID FROM customers WHERE User_ID=(?)");
+			
+		// Send query to DB  ----------------------------------------------------- 	
+			ps1.setInt(1, UserID);
+			AnswerResult = ps1.executeQuery();
+			AnswerResult.next();
+			CustomerID=AnswerResult.getInt("Customers_ID");		
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;					// If query not succeed 
+		}
+			return CustomerID;					
+		
+	}	
 	private CallBack setNewHomeFuelSale(callbackSale Callback){
 		// Set variables ---------------------------------------------------------
 			int SaleID;
@@ -1672,7 +1693,7 @@ public class QueryIO implements Runnable {
 	}
 	private CallBack getHomeFuelOrders(callbackStringArray Callback){
 		// Set variables ---------------------------------------------------------
-			int CustomerID = (int) Callback.getVariance()[0];
+			int CustomerID = getCustomerIDByUserID((int) Callback.getVariance()[0]);
 			ResultSetMetaData LocalResult;
 			String[][] Data;
 			String[] Headers;

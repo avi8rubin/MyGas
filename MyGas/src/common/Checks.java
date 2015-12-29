@@ -143,13 +143,20 @@ public class Checks {
 			if( DeliveryHour>=0 && DeliveryHour<=24 && 
 				DeliveryMin>=0 && DeliveryMin<=59){
 				//check time inserted with current time for validation
+				if(deliveryDate.equals(""))
+					return true;
+				if(!deliveryDate.equals(currDate))
+					return true;
+				
 				int currHour=Integer.parseInt(currTime.substring(0,2));
 				int currMin=Integer.parseInt(currTime.substring(3,5));
-				if(DeliveryHour >= currHour){
+				if(DeliveryHour > currHour){
 					return true;
 				}
-				else if(DeliveryHour == currHour){
-					if(DeliveryMin>=currMin)
+				if(DeliveryHour < currHour)
+					return false;
+				if(DeliveryHour == currHour){
+					if(DeliveryMin>currMin)
 						return true;
 				}
 			}

@@ -2,6 +2,9 @@ package controller;
 
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Observable;
 import java.util.Vector;
 
@@ -16,7 +19,7 @@ import callback.callbackBuffer;
 import callback.callbackCustomer;
 import callback.callbackSale;
 import callback.callbackStringArray;
-import callback.callbackVector;
+import callback.callbackSuccess;
 import callback.callback_Error;
 import client.Client;
 import common.Checks;
@@ -26,7 +29,6 @@ public class CustomerController extends Controller{
 
 	private CustomerGUI GuiScreen;
 	private CardLayout ContainerCardCenter;
-
 	
 	private JButton BuyHomeFuelButton;
 	private JButton CheckFuelOrdersButton;
@@ -37,6 +39,11 @@ public class CustomerController extends Controller{
 	private JLabel DateLabel;
 	private JLabel ErrorAddressLabel;
 	private JLabel ErrorDeliveryTimeLabel;
+		
+	//calculate
+	private String FuelStr;
+	private String dateStr;
+	private String timeStr;
 
 	public CustomerController(Client Server, callbackBuffer CommonBuffer, CustomerGUI GuiScreen) {
 		super(Server, CommonBuffer,GuiScreen);
@@ -62,6 +69,8 @@ public class CustomerController extends Controller{
 		ErrorAmount=GuiScreen.ErrorAmoutLabel();
 		DateLabel=GuiScreen.DateLabel();
 		ErrorDeliveryTimeLabel=GuiScreen.getErrorDeliveryTimeLabel();
+		ErrorAddressLabel=GuiScreen.getErrorAddressLabel();
+		
 	}
 
 	@Override
@@ -70,6 +79,10 @@ public class CustomerController extends Controller{
 		/* -------- Check the source of the event ---------*/
 		if(e.getActionCommand().equals("Buy Home Fuel")){
 			ContainerCardCenter.show(CenterCardContainer, "BuyHomeFuel");
+			GuiScreen.DisablePayButton();
+			GuiScreen.setFuelAmount("");
+			GuiScreen.setDate();
+			GuiScreen.setTime("");
 			HandleCheckCustomerCreditCard();
 		}		
 		
@@ -93,63 +106,112 @@ public class CustomerController extends Controller{
 		ErrorAmount.setText("");
 		ErrorDeliveryTimeLabel.setText("");
 		DateLabel.setText("");
-			
+		
 		callbackSale sale= new callbackSale(MessageType.setNewHomeFuelSale);
 		sale.setFuelID(3);
 			
 		//check validation of fuel amount
-		String str= GuiScreen.getFuelAmount();
-		if(Checks.isFloat(str)){
+		String FuelStr= GuiScreen.getFuelAmount();
+		if(Checks.isFloat(FuelStr) && !FuelStr.equals("")){
 			ErrorAmount.setText("");
 			checkFields++;
-			sale.setFuelAmount(Float.parseFloat(str));
+			sale.setFuelAmount(Float.parseFloat(FuelStr));
 		}
 		else
 			ErrorAmount.setText("*Incorrect Fuel Amount");
+		
 		//check validation of delivery date
-		String dateStr=GuiScreen.getDate();
-		if(Checks.isDateValid(dateStr))
-		{
+		dateStr=GuiScreen.getDate();
+		if(Checks.isDateValid(dateStr) || !dateStr.equals("")){
 			checkFields++;
 			DateLabel.setText("");
 			sale.setDeliveryDate(dateStr);
 		}
 		else
 			DateLabel.setText("*Incorrect Date");
+	
 		//check Address exist
 		if(GuiScreen.getAddrres().equals(""))
 			ErrorAddressLabel.setText("*Address Missing");
 		else{
 			checkFields++;
 			sale.setAddress(GuiScreen.getAddrres());
+			ErrorAddressLabel.setText("");
 		}
+		
 		//check time validation
-		String timeStr=GuiScreen.getTime();
-		timeStr=timeStr.substring(0,2)+"/"+timeStr.substring(5,7);
-		if(timeStr.equals("")|| !Checks.isTimeValid(timeStr, dateStr))
-			ErrorDeliveryTimeLabel.setText("*Incorrect Time");
-		else
+		timeStr=GuiScreen.getTime();
+		timeStr=timeStr.substring(0,2)+":"+timeStr.substring(5,7);
+		if(Checks.isTimeValid(timeStr, dateStr) && !timeStr.equals("/") ){
 			checkFields++;
-			
-		if(checkFields==4) 
-			GuiScreen.EnablePayButton();
+			sale.setDeliveryTime(timeStr);
+			ErrorDeliveryTimeLabel.setText("");
+		}
+		else
+		ErrorDeliveryTimeLabel.setText("*Incorrect Time");
 
+		//check if all fields added successfully
+		if(checkFields==4) {
+			GuiScreen.EnablePayButton();
+			Server.handleMessageFromClient(new callbackStringArray(MessageType.getFuelsDetailes));
+		}
 		}
 		
-		
+
+			
+		private void Server_CalculatePayment(callbackStringArray TariffTable){
+				float FuelPrice=0;
+				float SumPrice=0;
+				int Differacne=0;
+				Object[][] arr=TariffTable.getData();
+				for(int i=0;i<arr.length;i++){
+					if(arr[i][1].toString().equals("Home Fuel"))
+						FuelPrice=Float.parseFloat(arr[i][3].toString());
+				}
+				//Immediate order: (within 6 hours) =Cost + 2% of the price of fuel
+				DateFormat TimeFormat = new SimpleDateFormat("HH:mm");
+				DateFormat DateFormat = new SimpleDateFormat("dd/MM/yy");
+				String currDate=DateFormat.format(new Date()).toString();
+
+				String currTimeHour=TimeFormat.format(new Date()).toString().substring(0,2);	
+				String currTimeMin=TimeFormat.format(new Date()).toString().substring(3,5);				
+				int DeliveryHour=Integer.parseInt(timeStr.substring(0,2));
+				int DeliveryMin=Integer.parseInt(timeStr.substring(3,5));
+				
+				if(currDate.equals(dateStr)){
+					Differacne=(DeliveryHour-Integer.parseInt(currTimeHour))*60+
+								(DeliveryMin-Integer.parseInt(currTimeMin));
+					if(Differacne<=360){
+						SumPrice=FuelPrice*Float.parseFloat(FuelStr);
+					//up to 6 hours -cost Shipping is an additional 2%
+						GuiScreen.setOrderDetailsLabel("Order Details:");
+						GuiScreen.setShowOrderDetailsLabel("<html>  Fuel Price:     "+FuelPrice+
+												"<br>+<br>"+
+												"  Liters:     "+FuelStr+
+												"\n  _____________\n"+
+												"\n  Sum:     "+SumPrice+
+												"+Shipping:     "+(SumPrice+SumPrice*0.02)+
+												"*Immediate order-within 6 hours\nis fuel cost +"
+												+ " 2% of the price</html>" );
+						
+						}	
+			}
+			
+		}
 		private void HandleCheckCustomerCreditCard(){
 			
 			ErrorAmount.setText("");
 			ErrorDeliveryTimeLabel.setText("");
 			DateLabel.setText("");
-			GuiScreen.setTime();
+			GuiScreen.setTime("");
 			
 			callbackCustomer customer=new callbackCustomer(MessageType.getCustomer);
 			customer.setUserID(GuiScreen.getCurrentUserID());
 			Server.handleMessageFromClient(customer);
-			customer =  (callbackCustomer) getCallBackFromBuffer();
+		}
+		
+		private void Server_HandleCheckCustomerCreditCard(callbackCustomer customer) {
 			if(customer.getCreditCard().equals("")){
-				
 				JOptionPane.showMessageDialog(null, "Customer "+GuiScreen.getCurrentUserName()+
 						"\nCan't buy home fuel because there is no credit card information"+
 						"in the system\nPlease contact a service representative to proceed", 
@@ -158,50 +220,63 @@ public class CustomerController extends Controller{
 				}
 			GuiScreen.DisablePayButton();
 		}
-		
 		private void HandlePayButton() {
 			
 		}	
 		
 		private void HandleCheckFuelOrder() {
 			
+			callbackSale orders=new callbackSale(MessageType.getHomeFuelOrders);
+			orders.setCustomersID(GuiScreen.getCurrentUserID());
+			Server.handleMessageFromClient(orders);
 			
 		}
-
 		@Override
 		public void update(Observable o, Object arg) {
 			if(arg instanceof CallBack){	
 				switch(((CallBack) arg).getWhatToDo()){
-					case getWaitingTariff:
-		
+					case getFuelsDetailes:
+						callbackStringArray TariffTable = (callbackStringArray) arg;		
+						Server_CalculatePayment(TariffTable);
 						break;
 					case setWaitingTariff:
-					
+						
+						break;
+
+					case setNewHomeFuelSale:
+						
+						break;
+						
+					case getCustomer:
+						callbackCustomer customer =  (callbackCustomer)arg;
+						Server_HandleCheckCustomerCreditCard(customer);
+						break;
+
+					case getHomeFuelOrders:
+						CallBack temp =  (CallBack) arg;
+						if(temp instanceof callbackSuccess){
+							JOptionPane.showMessageDialog(null, "No Orders to show", 
+									"", JOptionPane.INFORMATION_MESSAGE);
+							}
+						else {
+							callbackStringArray orders=(callbackStringArray) temp;
+							GuiScreen.setHomeFuelOrdersTable(orders.getDefaultTableModel());
+							}	
 						break;
 				/*Don't change!*/
 				default:
 					super.update(o, arg);
 					break;
 				/*-------------*/
+				}					
 				}
+			else if(arg instanceof Vector){
+				//
+
+					
+			}
 		}
-		else if(arg instanceof callbackVector){
-				switch(((callbackVector) arg).getWhatToDo()){
-				case getWaitingTariff:
-		
-					break;
-				case setWaitingTariff:
-				
-					break;
-				default:
-					break;
-				
-				}
-		}
-		else if(arg instanceof Vector){
-		
-		}
-			
-		}
+
+
 }
 		
