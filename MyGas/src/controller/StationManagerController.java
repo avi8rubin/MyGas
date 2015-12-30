@@ -3,6 +3,7 @@ package controller;
 import java.awt.CardLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -51,6 +52,13 @@ public class StationManagerController extends Controller{
 	//Stock Report Screen
 	Float [] FloatArray;
 	
+	//Quarterly Report Screen
+	callbackStringArray  QuartlyReport;
+	//Purchase Report Screen
+	callbackStringArray PurchaseReport;
+	
+	private final JButton GenerateInQuartlyReport;
+	private final JButton GeneratetInPurchaseReport;
 	/**
 	 * Constracor
 	 * @param Server
@@ -99,7 +107,15 @@ public class StationManagerController extends Controller{
 		UpdateLimitLevelButton.addActionListener(this);
 		UpdateLimitLevelButton.setActionCommand("UpdateLimitLevelButton");
 		
+		/*-------------------"Generate in Quarterly Report---------- */
+		GenerateInQuartlyReport=GuiScreen.getQuartelyGenrateButton();
+		GenerateInQuartlyReport.addActionListener(this);
+		GenerateInQuartlyReport.setActionCommand("GenerateInQuartlyReport");
 		
+		/*---------------------Generatet In Purchase Report---------*/
+		GeneratetInPurchaseReport=GuiScreen.getPurchaseGenrateButton();
+		GeneratetInPurchaseReport.addActionListener(this);
+		GeneratetInPurchaseReport.setActionCommand("GeneratetInPurchaseReport");
 		StationManagerFirstLoginScreen();
 	}
 	/**
@@ -123,6 +139,10 @@ public class StationManagerController extends Controller{
 			handleStockReportButton();
 		if(e.getActionCommand().equals("UpdateLimitLevelButton"))
 			handleUpdateLimitLevelButton();
+		if(e.getActionCommand().equals("GenerateInQuartlyReport"))
+			handleGenerateInQuartlyReport();
+		if(e.getActionCommand().equals("GeneratetInPurchaseReport"))
+			handleGeneratetInPurchaseReport();
 	}
 	/**
 	 * This function reset the main Manger window
@@ -146,7 +166,7 @@ public class StationManagerController extends Controller{
 	 */
 	private void handleApproveSupplyButtonButton()
 	{
-		GuiScreen. ResetUpdateMessage();
+		GuiScreen.ResetUpdateMessage();
 		/*----------------get table info and display it-----------*/
 		if(setTableInApproveSuppliesOrders())
 		{
@@ -201,17 +221,64 @@ public class StationManagerController extends Controller{
 		}
 	}
 	/**
-	 * Show Quartely Repot Screen
+	 * Show Quarterly Report Screen
 	 */
 	private void handleQuartelyRepotyButton(){
+		GuiScreen.ResetErrorLabel();
+		//ResetQuarterlyReportScreen();
+		if(getAllQuartelyRepot()){ // get the table data from DB
+	
+		GuiScreen.setYearSelectInQuarterlyReportComboBox(QuartlyReport.getComboBoxStringArray());	
 		ContainerCard=(CardLayout)(CenterCardContainer.getLayout());
 		ContainerCard.show(CenterCardContainer,"QuartelyRepotyScreen");
+		}
+		else
+			GuiScreen.ErrorEnterQuartReport();
+	}
+	
+	private boolean getAllQuartelyRepot(){
+		callbackStringArray Local = new callbackStringArray(MessageType.getQuarterIncomesReport);
+		Object[] data=new Object[1];
+		data[0]=EnteredUser.getUserID();
+		Local.setVariance(data);
+		Server.handleMessageFromClient(Local);
+		Temp=(CallBack) getCallBackFromBuffer();
+		if(Temp instanceof callbackStringArray)
+		{
+			QuartlyReport=(callbackStringArray) Temp;
+			return true;
+		}
+		return false;
+	
+	}
+	private boolean getAllPurchaseRepot(){
+		callbackStringArray Local = new callbackStringArray(MessageType.getQuarterPurchaseReport);
+		Object[] data=new Object[1];
+		data[0]=EnteredUser.getUserID();
+		Local.setVariance(data);
+		Server.handleMessageFromClient(Local);
+		Temp=(CallBack) getCallBackFromBuffer();
+		if(Temp instanceof callbackStringArray)
+		{
+			PurchaseReport=(callbackStringArray) Temp;
+			return true;
+		}
+		return false;
 	}
 	/**
 	 * Show Purchase Report Screen
 	 */
 	private void handlePurchaseReportButton(){
 		
+		if(getAllPurchaseRepot()){ // get the table data from DB
+	
+	
+		GuiScreen.setYearSelectInPurchasheReport(PurchaseReport.getComboBoxStringArray());
+		ContainerCard=(CardLayout)(CenterCardContainer.getLayout());
+		ContainerCard.show(CenterCardContainer,"PurchaseReportScreen");
+		}
+		else
+			GuiScreen.ErrorEnterPurchaseReportScreen();
 	}
 	/**
 	 * Show Stock Report
@@ -336,7 +403,6 @@ public class StationManagerController extends Controller{
 		Object[] data = new Object[1];
 		data[0]=EnteredUser.getUserID();
 		LocalUserID.setVariance(data);
-		LocalUserID.setWhatToDo(MessageType.getCurrentThresholdLimit);
 		Server.handleMessageFromClient(LocalUserID);
 		GasStationFuelLevel=(CallBack) getCallBackFromBuffer();
 		if(GasStationFuelLevel instanceof callback_Error)
@@ -363,9 +429,6 @@ public class StationManagerController extends Controller{
 	/**
 	 * get Float Array of fuel for Stock report
 	 */
-	
-
-	
 	private boolean setFloatArray(){
 		FloatArray = new Float[6];
 
@@ -389,20 +452,20 @@ public class StationManagerController extends Controller{
 				String[][] data1=new String[3][];
 				while(index<NumbersFuelsInCurrentGasStaion){
 					data1=(String[][]) ((callbackStringArray) Temp).getData();
-					if(data1[index][0].equals("95")) // there is 95 fuel
+					if(data1[index][1].equals("95")) // there is 95 fuel
 					{
-						FloatArray[0]=Float.valueOf(data1[index][5]); //Current Amount
-						FloatArray[1]=Float.valueOf(data1[index][3]); //Capcity
+						FloatArray[0]=Float.valueOf(data1[index][4]); //Current Amount
+						FloatArray[1]=Float.valueOf(data1[index][2]); //Capcity
 					}
-					if(data1[index][0].equals("Scooters Fuel")) // there is scooter fuel
+					if(data1[index][1].equals("Scooters Fuel")) // there is scooter fuel
 					{
-						FloatArray[2]=Float.valueOf(data1[index][5]); //Current Amount
-						FloatArray[3]=Float.valueOf(data1[index][3]); //Capcity
+						FloatArray[2]=Float.valueOf(data1[index][4]); //Current Amount
+						FloatArray[3]=Float.valueOf(data1[index][2]); //Capcity
 					}
-					if(data1[index][0].equals("Diesel")) // there is diesel fuel
+					if(data1[index][1].equals("Diesel")) // there is diesel fuel
 					{
-						FloatArray[4]=Float.valueOf(data1[index][5]); //Current Amount
-						FloatArray[5]=Float.valueOf(data1[index][3]); //Capcity
+						FloatArray[4]=Float.valueOf(data1[index][4]); //Current Amount
+						FloatArray[5]=Float.valueOf(data1[index][2]); //Capcity
 					}
 					index++;
 				}
@@ -440,9 +503,83 @@ public class StationManagerController extends Controller{
 			}
 		return false;
 	}
+	/**
+	 * This function get quarter and Year and Show Report
+	 */
+	private void handleGenerateInQuartlyReport(){
+		GuiScreen.ResetUpdateMessageQuarterlyReport();
+		/*-----------------get quarter-----------------------*/
+		int quarter  =1+new Integer(GuiScreen.getQuarterlycomboBoxInQuarterlyReport());
+		/*-----------------get Year--------------------------*/
+		int Year = GuiScreen.getYearSelectInQuarterlyReport();
+		/*-----------------Show Table------------------------*/
+		int i;
+		ArrayList<Integer> indexarry =new ArrayList<Integer>();
+		Object[][] Data=QuartlyReport.getData();
+		for(i=0;i<QuartlyReport.getData().length;i++)
+		{
+			if(quarter==Integer.parseInt(String.valueOf(Data[i][1])) && Year==Integer.parseInt( String.valueOf (Data[i][0]) ) )
+			{
+				indexarry.add(i);
+			}
+		}
+		if(indexarry.size()==0)
+		{
+			GuiScreen.EmptyRecordInQuarterlyReport();
+		}
+		else{
+		/*----------------Work with Global Table -QuartlyReport ---------------*/
+		GuiScreen.setQuarterlyReportTable(
+				new DefaultTableModel(QuartlyReport.getRowByIndex(ArrayListToArray(indexarry)), QuartlyReport.getColHeaders() ) );
+		}
+	}
+	private void handleGeneratetInPurchaseReport(){
+		
+		GuiScreen.ResetUpdateMessagePurchaseReport();
+		/*-----------------get quarter-----------------------*/
+		int quarter  =1+new Integer(GuiScreen.getQuarterlycomboBoxInPurchaseReport());	
+		/*-----------------get Year--------------------------*/
+		int Year = GuiScreen.getYearSelectInPurchaseReport();
+		/*-----------------Show Table------------------------*/
+		int i;
+		ArrayList<Integer> indexarry =new ArrayList<Integer>();
+		Object[][] Data=PurchaseReport.getData();
+		for(i=0;i<PurchaseReport.getData().length;i++)
+		{
+			if(quarter==Integer.parseInt(String.valueOf(Data[i][1])) && Year==Integer.parseInt( String.valueOf (Data[i][0]) ) )
+			{
+				if(!indexarry.contains(i))
+				{
+					indexarry.add(i);
+				}
+			}
+		}
+		/* if there is no report for this quarter*/
+		if(indexarry.size()==0)
+		{
+			GuiScreen.EmptyRecordInPurchase();
+		}
+		else
+		{
+		GuiScreen.setPurchaseReportTable(
+				new DefaultTableModel(PurchaseReport.getRowByIndex(ArrayListToArray(indexarry)), PurchaseReport.getColHeaders() ) );
+	
+		}
+	}
+	private int[] ArrayListToArray(ArrayList<Integer> e){
+	
+		int i;
+		int[] returnArray=new int[e.size()];
+		for (i=0;i<e.size();i++){
+			returnArray[i]=e.get(i);
+		}
+		return returnArray;
+	}
+	/**
+	 * Reset Combox & Table
+	 */
 
-
-
+	
 
 
 }
