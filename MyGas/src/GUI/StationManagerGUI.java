@@ -5,7 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
-
+import java.text.NumberFormat;
+import java.util.Vector;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -13,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -21,10 +23,10 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-
 import callback.callbackBuffer;
 import callback.callbackUser;
 import client.Client;
+import common.GasStationBarChart;
 
 public class StationManagerGUI extends abstractPanel_GUI{
 	//Global values
@@ -43,20 +45,36 @@ public class StationManagerGUI extends abstractPanel_GUI{
 	//Update Limit Level For Fuel Type
 	private JTable UpdateLimitTabel;
 	private JLayeredPane UpdateLimitLevelFuelLayer;
-	
+	private JButton UpdateLimitLevelButton;
+	private JLabel UpdateLimitTextError;
 	
 	// Create Report
 	private JLayeredPane CreateReportLeftPanel;
 	private JLayeredPane QuartelyRepotyScreen;
 	private JLayeredPane PurchaseReportScreen;
 	private JLayeredPane StockReportScreen;
-
 	private JButton QuartelyRepotyButton;
 	private JButton PurchaseReportButton;
 	private JButton StockReportButton;
-	//Quartly report
+	
+	//Quarterly report
 	private JComboBox YearSelectInQuarterlyReport;
 	private JButton QuartelyGenrateButton;
+	private JComboBox QuarterlycomboBoxInQuarterlyReport;
+	private JTable QuarterlyReportTable;
+	private JLabel UpdateMessageQuartelyRepot;
+	
+	//Purchase Report
+	private JComboBox QuarterlycomboBoxInPurchaseReport;
+	private JComboBox YearSelectInPurchaseReport;
+	private JButton PurchaseGenrateButton;
+	private JTable PurchaseReportTable;
+	private JLabel UpdateMessagePurchaseReport;
+	
+	//Stock Report
+	private  JLayeredPane StockReportLayer;
+	private Float[] StockGraphFloatArray;
+	
 	// Left screen
 	private final JLabel Error_Label;
 	
@@ -75,7 +93,9 @@ public class StationManagerGUI extends abstractPanel_GUI{
 			Login_GUI LoginScreen) {
 		super(EnteredUser, Server, CommonBuffer, LoginScreen);
 		ManagerUser=EnteredUser;
-		/*----------------------------------TOP Panel---------------------------------*/
+		/*-------------------------------------------------------------------------------------------------------------------*/
+		/*----------------------------------------------------Top Panel Buttons----------------------------------------------*/
+		/*-------------------------------------------------------------------------------------------------------------------*/
 		
 		// "Approve Supplies Orders"
 		ApproveSupplyButton = new JButton("Approve Supplies Orders");
@@ -98,36 +118,37 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		UpdateLimitButton.setBounds(504, 98, 365, 38);
 		this.TopPanel.add(UpdateLimitButton);
 		
-		/*---------------------------Center panel - Click "Approve Supplies Order"------------------------------------------*/
+		/*-------------------------------------------------------------------------------------------------------------------*/
+		/*----------------------------------------------------Approve Supply ------------------------------------------------*/
+		/*-------------------------------------------------------------------------------------------------------------------*/
 		
 		/*--------Create Table--------------------------------------------*/
 		ApprovalSuppliesTable = new JTable(){
 			private static final long serialVersionUID = 1L;
 	        public boolean isCellEditable(int row, int column) { 
-	        	switch(column){
-	        	case 4:
-	                return true; 
-	        	default:
-	                return false;
-	        	}
+	        	if(column==4) return true;
+	        	return false;
 	        };
 		};
 		
 		/*------- Create new center layer and add it to container --------*/
 		ApproveSupplyLayer = new JLayeredPane();		//Global variable
 		ApproveSupplyLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
-		CenterCardContainer.add(ApproveSupplyLayer, "ApproveSupplyLayer");
 		ApproveSupplyLayer.setOpaque(true);
+		ApproveSupplyLayer.setLayout(null);
+		CenterCardContainer.add(ApproveSupplyLayer, "ApproveSupplyLayer");
 		ApproveSupplyLayer.setName("ApproveSupplyLayer");
 		
 		/*------- Create JTable surround with scroll pane and add it to TariffApprovalPanel --------*/
-		JScrollPane UpdateLevelScroll = new JScrollPane();
-		UpdateLevelScroll.setBounds(43, 58, 911, 438);
-		ApproveSupplyLayer.add(UpdateLevelScroll);		
+		JScrollPane approvetableScroll = new JScrollPane();
+		approvetableScroll.setBounds(40, 58, 900, 438);
+		ApproveSupplyLayer.add(approvetableScroll);		
 		
-		UpdateLevelScroll.setViewportView(ApprovalSuppliesTable);		
+		approvetableScroll.setViewportView(ApprovalSuppliesTable);	
 		ApprovalSuppliesTable.setRowHeight(23);
 		ApprovalSuppliesTable.setFillsViewportHeight(true);
+		ApprovalSuppliesTable.getTableHeader().setReorderingAllowed(false);
+		
 		ApprovalSuppliesTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		ApprovalSuppliesTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
 		ApprovalSuppliesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -145,10 +166,13 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		UpdateApproveButton.setBounds(840, 500, 112, 38);
 		ApproveSupplyLayer.add(UpdateApproveButton);
 		
+
+		
 		/*----------Message Label---------------------------*/
 		UpdateMessage = new JLabel("");
 		UpdateMessage.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		UpdateMessage.setBounds(83, 480, 575, 25);
+		UpdateMessage.setBounds(300, 500, 400, 38);
+		UpdateMessage.setForeground(Color.RED);
 		ApproveSupplyLayer.add(UpdateMessage);
 		
 		/*--------------------Center panel - Click "Update Level For Fuel Type"---------------------------*/
@@ -161,12 +185,19 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		UpdateLimitLevelFuelLayer.setOpaque(true);
 		UpdateLimitLevelFuelLayer.setName("UpdateLimitLevelFuelLayer");
 		
+		/*------- Create new label on the new layer --------*/
+		JLabel UpdateLabel = new JLabel("Update Threshold Limit");				
+		UpdateLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		UpdateLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
+		UpdateLabel.setBounds(177, 13, 608, 42);
+		UpdateLimitLevelFuelLayer.add(UpdateLabel);
+		
 		/*--------Create tabele---------------------------*/
 		UpdateLimitTabel = new JTable(){
 			private static final long serialVersionUID = 1L;
 	        public boolean isCellEditable(int row, int column) { 
 	        	switch(column){
-	        	case 3:
+	        	case 2:
 	                return true; 
 	        	default:
 	                return false;
@@ -176,17 +207,38 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		
 		/*------- Create JTable surround with scroll pane and add it to Update level Panel --------*/
 		JScrollPane UpdateLimitTabelScroll = new JScrollPane();
-		UpdateLimitTabelScroll.setBounds(0, 58, 911, 438);
-		ApproveSupplyLayer.add(UpdateLimitTabelScroll);		
+		UpdateLimitTabelScroll.setBounds(40, 58, 911, 438);
+		UpdateLimitLevelFuelLayer.add(UpdateLimitTabelScroll);		
 		
 		UpdateLimitTabelScroll.setViewportView(UpdateLimitTabel);		
 		UpdateLimitTabel.setRowHeight(23);
 		UpdateLimitTabel.setFillsViewportHeight(true);
+		UpdateLimitTabel.getTableHeader().setReorderingAllowed(false);
 		UpdateLimitTabel.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		UpdateLimitTabel.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
 		UpdateLimitTabel.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		
-		/*----------------------------Center panel- Click -Create Report Screen---------------------------------*/
+		
+		/*-----------------------------Update Button------------*/
+		
+		
+		/*---------Create Update Button---------------------*/
+		UpdateLimitLevelButton = new JButton("Update");
+		UpdateLimitLevelButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		UpdateLimitLevelButton.setBounds(840, 500, 112, 38);
+		UpdateLimitLevelFuelLayer.add(UpdateLimitLevelButton);
+		
+		/*---------Update Error text box-------------------*/
+		
+		UpdateLimitTextError = new JLabel(); 
+		UpdateLimitTextError.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		UpdateLimitTextError.setBounds(300, 500, 400, 38);
+		UpdateLimitTextError.setForeground(Color.RED);
+		UpdateLimitLevelFuelLayer.add(UpdateLimitTextError);
+		
+		/*-------------------------------------------------------------------------------------------------------------------*/
+		/*----------------------------------------------------Quarterly Report------------------------------------------------*/
+		/*-------------------------------------------------------------------------------------------------------------------*/
 		
 		
 		/*------- Create new center layer and add it to container --------*/
@@ -196,24 +248,26 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		QuartelyRepotyScreen.setOpaque(true);
 		QuartelyRepotyScreen.setName("QuartelyRepotyScreen");
 		
-		
-		/*------------------------Quartely Repot----------------------------------------*/
+		//"Select Quarter:"
 		JLabel lblSelectQuarter = new JLabel("Select Quarter:");
 		lblSelectQuarter.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		lblSelectQuarter.setBounds(12, 13, 148, 25);
 		QuartelyRepotyScreen.add(lblSelectQuarter);
 		
+		//"Select Year:"
 		JLabel lblSelectYear = new JLabel("Select Year:");
 		lblSelectYear.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		lblSelectYear.setBounds(247, 13, 148, 25);
 		QuartelyRepotyScreen.add(lblSelectYear);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4"}));
-		comboBox.setBounds(181, 13, 39, 25);
-		QuartelyRepotyScreen.add(comboBox);
+		//CoboBox 1,2,3,4
+		QuarterlycomboBoxInQuarterlyReport = new JComboBox();
+		QuarterlycomboBoxInQuarterlyReport.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		QuarterlycomboBoxInQuarterlyReport.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4"}));
+		QuarterlycomboBoxInQuarterlyReport.setBounds(181, 13, 39, 25);
+		QuartelyRepotyScreen.add(QuarterlycomboBoxInQuarterlyReport);
 		
+		//ComboBox 2015,2014....
 		YearSelectInQuarterlyReport = new JComboBox();
 		YearSelectInQuarterlyReport.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		YearSelectInQuarterlyReport.setBounds(378, 14, 85, 22);
@@ -223,10 +277,53 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		ContactFrame.getContentPane().setLayout(null);
 		QuartelyRepotyScreen.setBounds(12, 13, 944, 593);
 		
-		QuartelyGenrateButton = new JButton("Genrate");
+		//Generate Button
+		QuartelyGenrateButton = new JButton("Generate");
 		QuartelyGenrateButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		QuartelyGenrateButton.setBounds(490, 13, 113, 25);
+		QuartelyGenrateButton.setBounds(490, 13, 125, 25);
 		QuartelyRepotyScreen.add(QuartelyGenrateButton);
+		
+		//Scroll Pane & Table
+		
+		/*--------Create Table--------------------------------------------*/
+		QuarterlyReportTable = new JTable(){
+			private static final long serialVersionUID = 1L;
+	        public boolean isCellEditable(int row, int column) { 
+	        	return false;
+	        };
+		};
+		
+		
+		/*------- Create JTable surround with scroll pane and add it to TariffApprovalPanel --------*/
+		JScrollPane QuarterlyReport = new JScrollPane();
+		QuarterlyReport.setBounds(40, 58, 900, 438);
+		QuartelyRepotyScreen.add(QuarterlyReport);		
+		
+		QuarterlyReport.setViewportView(QuarterlyReportTable);	
+		QuarterlyReportTable.setRowHeight(23);
+		QuarterlyReportTable.setFillsViewportHeight(true);
+		
+		QuarterlyReportTable.getTableHeader().setReorderingAllowed(false);
+		DefaultTableCellRenderer CenterRenderer = new DefaultTableCellRenderer();
+		CenterRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		QuarterlyReportTable.setDefaultRenderer(Object.class, CenterRenderer);
+		
+		QuarterlyReportTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		QuarterlyReportTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
+		QuarterlyReportTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		
+		
+		/*----------Message Label---------------------------*/
+		UpdateMessageQuartelyRepot = new JLabel("");
+		UpdateMessageQuartelyRepot.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		UpdateMessageQuartelyRepot.setBounds(300, 500, 400, 38);
+		UpdateMessageQuartelyRepot.setForeground(Color.RED);
+		QuartelyRepotyScreen.add(UpdateMessageQuartelyRepot);
+		
+		/*-------------------------------------------------------------------------------------------------------------------*/
+		/*----------------------------------------------------Purchase Report------------------------------------------------*/
+		/*-------------------------------------------------------------------------------------------------------------------*/
+		
 		
 		/*------- Create new center layer and add it to container --------*/
 		PurchaseReportScreen = new JLayeredPane();		//Global variable
@@ -234,6 +331,91 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		CenterCardContainer.add(PurchaseReportScreen, "PurchaseReportScreen");
 		PurchaseReportScreen.setOpaque(true);
 		PurchaseReportScreen.setName("PurchaseReportScreen");
+		
+		
+		//"Select Quarter:"
+		JLabel lblSelectQuarter1 = new JLabel("Select Quarter:");
+		lblSelectQuarter1.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblSelectQuarter1.setBounds(12, 13, 148, 25);
+		PurchaseReportScreen.add(lblSelectQuarter1);
+		
+		//"Select Year:"
+		JLabel lblSelectYear1 = new JLabel("Select Year:");
+		lblSelectYear1.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblSelectYear1.setBounds(247, 13, 148, 25);
+		PurchaseReportScreen.add(lblSelectYear1);
+		
+		//CoboBox 1,2,3,4
+		QuarterlycomboBoxInPurchaseReport = new JComboBox();
+		QuarterlycomboBoxInPurchaseReport.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		QuarterlycomboBoxInPurchaseReport.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4"}));
+		QuarterlycomboBoxInPurchaseReport.setBounds(181, 13, 39, 25);
+		PurchaseReportScreen.add(QuarterlycomboBoxInPurchaseReport);
+		
+		
+		
+		//ComboBox 2015,2014....
+		YearSelectInPurchaseReport = new JComboBox();
+		YearSelectInPurchaseReport.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		YearSelectInPurchaseReport.setBounds(378, 14, 85, 22);
+		PurchaseReportScreen.add(YearSelectInPurchaseReport);
+		contentPane.add(ContactFrame, BorderLayout.SOUTH);
+		ContactFrame.setVisible(false);
+		ContactFrame.getContentPane().setLayout(null);
+		PurchaseReportScreen.setBounds(12, 13, 944, 593);
+		
+		//Generate Button
+		PurchaseGenrateButton = new JButton("Generate");
+		PurchaseGenrateButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		PurchaseGenrateButton.setBounds(490, 13, 125, 25);
+		PurchaseReportScreen.add(PurchaseGenrateButton);
+		
+		//Scroll Pane & Table
+		
+		/*--------Create Table--------------------------------------------*/
+		PurchaseReportTable = new JTable(){
+			private static final long serialVersionUID = 1L;
+	        public boolean isCellEditable(int row, int column) { 
+	        	return false;
+	        };
+		};
+		
+		
+		/*------- Create JTable surround with scroll pane and add it to TariffApprovalPanel --------*/
+		JScrollPane PurchaseReportpane = new JScrollPane();
+		PurchaseReportpane.setBounds(40, 58, 900, 438);
+		PurchaseReportScreen.add(PurchaseReportpane);		
+		
+		PurchaseReportpane.setViewportView(PurchaseReportTable);	
+		PurchaseReportTable.setRowHeight(23);
+		PurchaseReportTable.setFillsViewportHeight(true);
+		
+		PurchaseReportTable.getTableHeader().setReorderingAllowed(false);
+		DefaultTableCellRenderer CenterRenderer1 = new DefaultTableCellRenderer();
+		CenterRenderer1.setHorizontalAlignment(SwingConstants.CENTER);
+		PurchaseReportTable.setDefaultRenderer(Object.class, CenterRenderer1);
+		
+		PurchaseReportTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		PurchaseReportTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
+		PurchaseReportTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
+		
+		/*----------Message Label---------------------------*/
+		UpdateMessagePurchaseReport = new JLabel("");
+		UpdateMessagePurchaseReport.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		UpdateMessagePurchaseReport.setBounds(300, 500, 400, 38);
+		UpdateMessagePurchaseReport.setForeground(Color.RED);
+		PurchaseReportScreen.add(UpdateMessagePurchaseReport);
+		
+		
+		
+		/*-------------------------------------------------------------------------------------------------------------------*/
+		/*----------------------------------------------------Stock Report---------------------------------------------------*/
+		/*-------------------------------------------------------------------------------------------------------------------*/
+		
+		
+		
+		
 		
 		/*------- Create new center layer and add it to container --------*/
 		StockReportScreen = new JLayeredPane();		//Global variable
@@ -246,15 +428,11 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		
 		
 		
+		
+		
 		/*-------------------------------------Left Panel Click -Create Report Screen---------------------------------*/
 		
-		
-		
 
-
-		
-
-		
 		CreateReportLeftPanel =new JLayeredPane();
 		CreateReportLeftPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		CreateReportLeftPanel.setBackground(new Color(169, 169, 169));
@@ -295,8 +473,17 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		
 		
 		
+		/*--------------------------------------Center For Stock Report------------------------------*/
 		
+		/*------- Create new center layer and add it to container --------*/
+		StockReportLayer = new JLayeredPane();		//Global variable
+		StockReportLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		CenterCardContainer.add(StockReportLayer, "StockReportLayer");
+		StockReportLayer.setOpaque(true);
+		StockReportLayer.setName("StockReportLayer");
 		
+		/*-------------------New Chart--------------------------------------------*/
+
 		
 		
 	}
@@ -342,11 +529,32 @@ public class StationManagerGUI extends abstractPanel_GUI{
 	public void ErrorEnterApproval(){
 		Error_Label.setText("<html>Error with Approval Table</html>");
 	}
+	public void ErrorEnterQuartReport(){
+		Error_Label.setText("<html>Error with Quart Report Table</html>");
+	}
+	public void ErrorEnterStockReport(){
+		Error_Label.setText("<html>Error with Stock Table</html>");
+	}
+	public void ErrorEnterPurchaseReportScreen(){
+		Error_Label.setText("<html>Error with Purchase Table</html>");
+	}
 	public void ErrorEnterUpdateLimitLevel(){
 		Error_Label.setText("<html>Error with Update Limit Table</html>");
 	}
+	public void ErrorNoChangeInUpdateLevel(){
+		this.UpdateLimitTextError.setText("*There Was No Changes In Records");
+	}
+	public void SuccessWasChangeUpdateLevel(){
+		this.UpdateLimitTextError.setText("*record inserted successfully");
+	}
+	public void ResetUpdateLimitTextError(){
+		this.UpdateLimitTextError.setText("");
+	}
 	public void UpdateSuccessMessage(){
 		UpdateMessage.setText("*Success To Update Order.");
+	}
+	public void ErrorNoChangeUpdateApprove(){
+		UpdateMessage.setText("*There Was No Changes In Records");
 	}
 	public void ResetErrorLabel(){
 		Error_Label.setText("");
@@ -364,27 +572,19 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		TableColumn col = UpdateLimitTabel.getColumnModel().getColumn( 4 );
 		col.setCellEditor( new DefaultCellEditor( value ) );
 		//Hide columns
-		//ApprovalSuppliesTable.removeColumn(ApprovalSuppliesTable.getColumnModel().getColumn( 0 ));
-		//ApprovalSuppliesTable.removeColumn(ApprovalSuppliesTable.getColumnModel().getColumn( 1 ));
-		
+		UpdateLimitTabel.removeColumn(UpdateLimitTabel.getColumnModel().getColumn( 0 ));
 		//All values are in the center of the cell		
 		DefaultTableCellRenderer CenterRenderer = new DefaultTableCellRenderer();
 		CenterRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-		ApprovalSuppliesTable.setDefaultRenderer(Object.class, CenterRenderer);	
+		UpdateLimitTabel.setDefaultRenderer(Object.class, CenterRenderer);	
 	}
-	
-	public JButton getQuartelyRepotyButton() {
-		return QuartelyRepotyButton;
+	public JTable getUpdatelimitLevelTable(){
+		return this.UpdateLimitTabel;
 	}
-	public void setQuartelyRepotyButton(JButton quartelyRepotyButton) {
-		QuartelyRepotyButton = quartelyRepotyButton;
-	}
-	public JButton getPurchaseReportButton() {
-		return PurchaseReportButton;
-	}
-	public void setPurchaseReportButton(JButton purchaseReportButton) {
-		PurchaseReportButton = purchaseReportButton;
-	}
+
+
+
+	/*--------------Stock Report Functions--------------*/
 	public JButton getStockReportButton() {
 		return StockReportButton;
 	}
@@ -394,7 +594,123 @@ public class StationManagerGUI extends abstractPanel_GUI{
 	public JButton getQuartelyGenrateButton() {
 		return QuartelyGenrateButton;
 	}
+	public void setStockGraphFloatArray(Float[] arr){
+
+		JPanel panel = (new GasStationBarChart(arr)).createBarChartPanel();
+		panel.setBounds(67, 65, 859, 457);
+		StockReportLayer.add(panel);
+		
+	}
+	public JButton getUpdateLimitLevelButton(){
+		return this.UpdateLimitLevelButton;
+	}
+
+	
+	/*--------------Quarterly Report Functions-----------*/
+	public void setQuarterlyReportTable(DefaultTableModel NewTableModel){
+		/*---Need To change float display---*/
+		Vector data=NewTableModel.getDataVector();
+		NumberFormat nf = NumberFormat.getInstance(); // get instance
+		nf.setMaximumFractionDigits(2); // set decimal places
+		String s ;
+		Vector<Object> cell;
+		Object icell;
+		for(int i=0;i<data.size();i++){
+			cell= (Vector<Object>) data.get(i);
+			icell= cell.elementAt(4);
+			s = nf.format((Double.valueOf((String)icell)));
+			cell.setElementAt(s, 4);
+			
+			icell= cell.elementAt(5);
+			s = nf.format((Double.valueOf((String)icell)));
+			cell.setElementAt(s, 5);
+
+		}
+		QuarterlyReportTable.setModel(NewTableModel);
+	}
+	public void ResetQuarterlycomboBoxInQuarterlyReport()
+	{
+		QuarterlycomboBoxInQuarterlyReport.setSelectedIndex(0);
+	}
+	public void setYearSelectInQuarterlyReportComboBox(Object[] data){
+		// Insert values to CombBox
+		int i;
+		this.YearSelectInQuarterlyReport.removeAllItems();
+		for (i=0;i<data.length;i++)
+		{
+			this.YearSelectInQuarterlyReport.addItem(data[i]);
+		}
+		//YearSelectInQuarterlyReport.
+	}
 	public void setQuartelyGenrateButton(JButton quartelyGenrateButton) {
 		QuartelyGenrateButton = quartelyGenrateButton;
 	}
+	public void setQuartelyRepotyButton(JButton quartelyRepotyButton) {
+		QuartelyRepotyButton = quartelyRepotyButton;
+	}
+	public void EmptyRecordInQuarterlyReport(){
+		UpdateMessageQuartelyRepot.setText("*No Record In This Quarter");
+	}
+	public void ResetUpdateMessageQuarterlyReport(){
+		this.UpdateMessageQuartelyRepot.setText("");
+	}
+	public JButton getQuartelyRepotyButton() {
+		return QuartelyRepotyButton;
+	}
+	public int getQuarterlycomboBoxInQuarterlyReport(){
+		return this.QuarterlycomboBoxInQuarterlyReport.getSelectedIndex();
+	}
+	public int getYearSelectInQuarterlyReport(){
+		return  Integer.parseInt(String.valueOf(this.YearSelectInQuarterlyReport.getSelectedItem()));
+	}
+	/*-------------Purchase Report Functions-------------*/
+	public void setPurchaseReportTable(DefaultTableModel NewTableModel){
+		/*---Need To change float display---*/
+		Vector data=NewTableModel.getDataVector();
+		NumberFormat nf = NumberFormat.getInstance(); // get instance
+		nf.setMaximumFractionDigits(2); // set decimal places
+		String s ;
+		Vector<Object> cell;
+		Object icell;
+		for(int i=0;i<data.size();i++){
+			cell= (Vector<Object>) data.get(i);
+			icell= cell.elementAt(3);
+			s = nf.format((Double.valueOf((String)icell)));
+			cell.setElementAt(s, 3);
+			
+
+
+		}
+		PurchaseReportTable.setModel(NewTableModel);
+	}
+	public void setYearSelectInPurchasheReport(Object[] data){
+		int i;
+		this.YearSelectInPurchaseReport.removeAllItems();
+		for (i=0;i<data.length;i++)
+		{
+			this.YearSelectInPurchaseReport.addItem(data[i]);
+		}
+	}
+	public void setPurchaseReportButton(JButton purchaseReportButton) {
+		PurchaseReportButton = purchaseReportButton;
+	}
+	public JButton getPurchaseReportButton() {
+		return PurchaseReportButton;
+	}
+	public int getQuarterlycomboBoxInPurchaseReport(){
+		return this.QuarterlycomboBoxInPurchaseReport.getSelectedIndex();
+	}
+	public int getYearSelectInPurchaseReport(){
+		return Integer.parseInt(String.valueOf(this.YearSelectInPurchaseReport.getSelectedItem()));
+	}
+	public JButton getPurchaseGenrateButton(){
+		return this.PurchaseGenrateButton;
+	}
+	public void EmptyRecordInPurchase(){
+		this.UpdateMessagePurchaseReport.setText("*No Record In This Quarter");
+	}
+	public void ResetUpdateMessagePurchaseReport(){
+		this.UpdateMessagePurchaseReport.setText("");
+	}
+
 }
