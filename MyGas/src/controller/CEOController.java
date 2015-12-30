@@ -3,6 +3,7 @@ package controller;
 import java.awt.CardLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.util.Observable;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -13,8 +14,10 @@ import javax.swing.plaf.FontUIResource;
 import javax.swing.table.DefaultTableModel;
 
 import GUI.CEOGUI;
+import callback.CallBack;
 import callback.callbackBuffer;
 import callback.callbackStringArray;
+import callback.callbackUser;
 import callback.callbackVector;
 import callback.callbackWaitingTariff;
 import client.Client;
@@ -77,8 +80,8 @@ public class CEOController extends Controller {
 	private void HandleTariffApprovalPressed(){
 		
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getWaitingTariff));
-		callbackStringArray TariffTable = (callbackStringArray) getCallBackFromBuffer();		
-		GuiScreen.setTariffApprovalTable(TariffTable.getDefaultTableModel());
+		//callbackStringArray TariffTable = (callbackStringArray) getCallBackFromBuffer();		
+		//GuiScreen.setTariffApprovalTable(TariffTable.getDefaultTableModel());
 	}
 /**
  * When 'Save' button pressed, send the relevant values to save in the DB
@@ -102,8 +105,8 @@ public class CEOController extends Controller {
 		/*Just if there was a change then update DB*/
 		if(UpdateTariff.size()>0){
 			Server.handleMessageFromClient(UpdateTariff);
-			getCallBackFromBuffer();
-			HandleTariffApprovalPressed();
+			//getCallBackFromBuffer();
+			//HandleTariffApprovalPressed();
 		}
 		else {
 			UIManager.put("OptionPane.messageFont", new Font("System", Font.PLAIN, 20));
@@ -114,6 +117,26 @@ public class CEOController extends Controller {
 			    			JOptionPane.ERROR_MESSAGE);		
 		}
 	}
+
+@Override
+public void update(Observable o, Object arg) {
+	if(arg instanceof CallBack){
+	
+		switch(((CallBack) arg).getWhatToDo()){
+			case getWaitingTariff:
+				callbackStringArray TariffTable = (callbackStringArray) arg;		
+				GuiScreen.setTariffApprovalTable(TariffTable.getDefaultTableModel());
+				break;
+			case setWaitingTariff:
+				HandleTariffApprovalPressed();
+				break;
+		default:
+			super.update(o, arg);
+			break;
+		}
+	}
+	
+}
 
 
 	

@@ -11,17 +11,20 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Observable;
+import java.util.Observer;
 
 import GUI.*;
 import callback.CallBack;
 import callback.callbackBuffer;
 import callback.callbackLostConnection;
+import callback.callbackStringArray;
 import callback.callbackUser;
 import callback.callback_Error;
 import client.Client;
 import common.MessageType;
 
-public class LoginController implements ActionListener{
+public class LoginController implements ActionListener,Observer{
 	
 //Instance variables **********************************************
 	/**
@@ -57,6 +60,7 @@ public class LoginController implements ActionListener{
 	 * Set connection Flag
 	 */
 	private boolean ConnectionFlag = false;
+	String Password;
 	
 	
 //Constructors ****************************************************
@@ -102,7 +106,7 @@ public class LoginController implements ActionListener{
  * Login button handler
  */
 	private void LoginButtonHandler(){
-		CallBack LocalUserCallBack = null;
+		
 		EnteredUser = null;
 		setConnectionToServer();										//Start the connection to server
 
@@ -110,44 +114,58 @@ public class LoginController implements ActionListener{
 			
 			/*------ Read fields from gui ------*/
 			EnteredUser = new callbackUser(MessageType.getCheckExistsUserPass,LoginScreen.getUserName(),LoginScreen.getPassword());
-			String Password = LoginScreen.getPassword();
+			Password = LoginScreen.getPassword();
 			
 			/*------Send user name and password query ------*/
 			Server.handleMessageFromClient(EnteredUser);					//Send query to DB			
 	
-			/*------Waiting for callback ------*/
-			LocalUserCallBack = getCallBackFromBuffer();					//Get from the common buffer new callback
-				
-			/*------ User not exists ------*/
-			if (LocalUserCallBack instanceof callback_Error){				//If the query back empty or the entered values not illegal
-				LoginScreen.IllegalUserName();	
-			}
-			/*------ User exists, check the reset parameters ------*/
-			else if (LocalUserCallBack instanceof callbackUser){
-				EnteredUser = (callbackUser) LocalUserCallBack;				//Casting to callbackUser
-				if (Password.equals(EnteredUser.getPassword())){			//Check if Password	correct
-					if (EnteredUser.getLoggedIn().equals("Yes")){			//Check if User Already Connected
-						LoginScreen.AlreadyConnected();
-					}
-			/*------ Move to the next screen ------*/
-					else{
-						if(EnteredUser.getUserTypeId()!=2){
-							EnteredUser.setWhatToDo(MessageType.updateUserLogin);
-							Server.handleMessageFromClient(EnteredUser);		//Update user is logged in, in the DB	
-							getCallBackFromBuffer();							//Emptying buffer		
-						}
-						LoginScreen.ClearErrorMessage(); 					//Clear the error message if exists
-						NextScreenByRole();									// go to the next gui screen by user role
-						
-						
-						//LoginScreen.setWelcomUserLabel(EnteredUser.getFirstName(), EnteredUser.getLastName());
-						//LoginScreen.SwitchScreen();
-					}
-				}
-				else LoginScreen.IllegalPassword();							//Display password error message
-			}
+			
 		}//END if
 	}
+	
+	private void CheckRegisteredUser(CallBack LocalUserCallBack){
+		//CallBack LocalUserCallBack = null;
+		/*------Waiting for callback ------*/
+		//LocalUserCallBack = getCallBackFromBuffer();					//Get from the common buffer new callback
+			
+		/*------ User not exists ------*/
+		if (LocalUserCallBack instanceof callback_Error){				//If the query back empty or the entered values not illegal
+			LoginScreen.IllegalUserName();	
+		}
+		/*------ User exists, check the reset parameters ------*/
+		else if (LocalUserCallBack instanceof callbackUser){
+			EnteredUser = (callbackUser) LocalUserCallBack;				//Casting to callbackUser
+			if (Password.equals(EnteredUser.getPassword())){			//Check if Password	correct
+				if (EnteredUser.getLoggedIn().equals("Yes")){			//Check if User Already Connected
+					LoginScreen.AlreadyConnected();
+				}
+		/*------ Move to the next screen ------*/
+				else{
+					if(EnteredUser.getUserTypeId()!=2){
+						EnteredUser.setWhatToDo(MessageType.updateUserLogin);
+						//Server.handleMessageFromClient(EnteredUser);		//Update user is logged in, in the DB	
+						//getCallBackFromBuffer();							//Emptying buffer		
+					}
+					LoginScreen.ClearErrorMessage(); 					//Clear the error message if exists
+					NextScreenByRole();									// go to the next gui screen by user role
+					
+					
+					//LoginScreen.setWelcomUserLabel(EnteredUser.getFirstName(), EnteredUser.getLastName());
+					//LoginScreen.SwitchScreen();
+				}
+			}
+			else LoginScreen.IllegalPassword();							//Display password error message
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Send query to DB that change the user password
 	 */
@@ -254,7 +272,8 @@ public class LoginController implements ActionListener{
 			/*----- Create Server Connection -----*/
 			try {
 				Server = new Client (LoginScreen.getServerIP(),DEFAULT_PORT,CommonBuffer);
-				Server.openConnection();											//Try open connection to server
+				Server.openConnection();	//Try open connection to server
+				Server.addObserver(this);
 				ConnectionFlag = true;												//Connection already set
 			} catch (IOException e1) {
 				LoginScreen.NoConnectionToServer(); 								//Set label on gui
@@ -262,5 +281,14 @@ public class LoginController implements ActionListener{
 				e1.printStackTrace();
 			}													
 		}
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		 if (arg instanceof CallBack){
+			if(((CallBack)arg).getWhatToDo() == MessageType.getCheckExistsUserPass)
+					CheckRegisteredUser((CallBack)arg);	
+		 }
+
 	}
 }

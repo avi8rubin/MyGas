@@ -1,6 +1,8 @@
 package common;
 
 import java.awt.Color;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JButton;
 import javax.swing.JTable;
@@ -9,10 +11,11 @@ import GUI.abstractPanel_GUI;
 import callback.CallBack;
 import callback.callbackBuffer;
 import callback.callbackStringArray;
+import callback.callbackUser;
 import callback.callback_Error;
 import client.Client;
 
-public class UpdateNotifications implements Runnable {
+public class UpdateNotifications implements Runnable,Observer {
 	private boolean NotificationFlag = true, ButtonBackground=true;
 	private boolean NewNotificationFlag = false;
 	private JTable NotificationsTable;
@@ -24,6 +27,7 @@ public class UpdateNotifications implements Runnable {
 	public UpdateNotifications(abstractPanel_GUI GUIScreen, callbackBuffer CommonBuffer ,Client Server, int UserID){
 		this.Server = Server;
 		this.CommonBuffer = CommonBuffer;
+		Server.addObserver(this);
 		NotificationsTable = GUIScreen.getNotificationsTable();
 		NotificationsButton = GUIScreen.getNotificationsButton();
 		Object[] User = new Object[1];
@@ -34,8 +38,8 @@ public class UpdateNotifications implements Runnable {
 	public void run() {
 		while(NotificationFlag){
 			Server.handleMessageFromClient(Notification);				
-			Notification = (callbackStringArray) getCallBackFromBuffer();
-			setNotificationsTable(Notification.getDefaultTableModel());
+			//Notification = (callbackStringArray) getCallBackFromBuffer();
+		//	setNotificationsTable(Notification.getDefaultTableModel());
 			CheckNewNotification();
 			while(NewNotificationFlag){
 				ChangeNotificationBackground();
@@ -99,5 +103,16 @@ public class UpdateNotifications implements Runnable {
 			System.out.println(((callback_Error) ReturnCallback).getErrorMassage());	
 		}	
 		return ReturnCallback; 	
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		switch(((CallBack) arg).getWhatToDo()){
+		
+			case getNotifications:
+				Notification = (callbackStringArray) arg;
+				setNotificationsTable(Notification.getDefaultTableModel());
+			break;
+		}
 	}
 }

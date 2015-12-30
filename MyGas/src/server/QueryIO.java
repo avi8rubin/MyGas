@@ -204,8 +204,14 @@ public class QueryIO implements Runnable {
 				
 		} // END switch
 
-		TimeToSendBill();									//Check if the first day in the month is the current date and send bills
 		
+		TimeToSendBill();									//Check if the first day in the month is the current date and send bills
+		/*Copy What to do*/
+		if (AnswerObject instanceof CallBack)
+			((CallBack) AnswerObject).setWhatToDo(((CallBack) SwitchCallback).getWhatToDo());
+		else if (AnswerObject instanceof callbackVector)
+			((callbackVector) AnswerObject).setWhatToDo(((CallBack) SwitchCallback).getWhatToDo());
+		/*---------------*/
 		return AnswerObject;
 	}
 
@@ -246,6 +252,14 @@ public class QueryIO implements Runnable {
 			AnswerObject = new callback_Error("Not a callbackVector object, send legal callbackVector or you don't fill 'WhatToDo'.");
 			break;
 		}
+		
+		/*Copy What to do*/	
+		if (AnswerObject instanceof CallBack)
+			((CallBack) AnswerObject).setWhatToDo(((callbackVector) SwitchCallback).getWhatToDo());
+		else if (AnswerObject instanceof callbackVector)
+			((callbackVector) AnswerObject).setWhatToDo(((callbackVector) SwitchCallback).getWhatToDo());
+		/*---------------*/
+		
 		
 		return AnswerObject;
 		
@@ -2102,7 +2116,7 @@ public class QueryIO implements Runnable {
 		try {
 			
 			PreparedStatement ps=conn.prepareStatement(
-					"SELECT Fuel_ID ,Fuel_Description ,Capacity ,Threshold_Limit, "+
+					"SELECT Fuel_ID ,Fuel_Description ,Capacity ,Threshold_Limit, Current_Amount "+
 					"FROM fuel_for_gas_station WHERE Gas_Station_ID=(?)");
 			
 		// Send query to DB  ----------------------------------------------------- 	

@@ -105,7 +105,7 @@ public class abstractPanel_GUI extends JFrame{
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		setTitle("My Gas - Create by: Avi Rubin, Litaf Kuppfer, Adir Notes & Ohad Zino.");
+		setTitle("My Gas - Created by: Avi Rubin, Litaf Kupfer, Adir Notes & Ohad Zino.");
 		contentPane.setLayout(new BorderLayout(0, 0));
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.setResizable(false);
@@ -156,7 +156,6 @@ public class abstractPanel_GUI extends JFrame{
 				if(User.getUserTypeId()!=2){
 					User.setWhatToDo(MessageType.updateUserLogout);
 					Server.handleMessageFromClient(User);
-					getCallBackFromBuffer();									//Clean buffer
 					NotificationThrerad.setNotificationFlag(false);					//Stop notification thread
 				}
 				LoginScreen.setVisible(true);									//Go to login screen
@@ -165,10 +164,7 @@ public class abstractPanel_GUI extends JFrame{
 			}
 		});
 
-		// Get Contact List - Send query and create the JTable
-		ContactList = new callbackStringArray(MessageType.getContacts);			//-----------------------------------
-		Server.handleMessageFromClient(ContactList);							//--------- Get contact list -------- 
-		ContactList = (callbackStringArray) getCallBackFromBuffer();			//----------------------------------- 
+
 		
 		
 		// Contact button
@@ -179,6 +175,10 @@ public class abstractPanel_GUI extends JFrame{
 		ContactsButton.addActionListener(new ActionListener() {				//Add action listener
 			public void actionPerformed(ActionEvent e) {
 		/*----- Replace Card -------*/		
+				// Get Contact List - Send query
+				ContactList = new callbackStringArray(MessageType.getContacts);			
+				Server.handleMessageFromClient(ContactList);
+				
 				ContainerCard = (CardLayout)(CenterCardContainer.getLayout());
 				if(!getLastComponent(CenterCardContainer.getComponents()).equals("Contacts")){
 					LastCard = getLastComponent(CenterCardContainer.getComponents());	//Set in global LastCard the current component
@@ -204,8 +204,7 @@ public class abstractPanel_GUI extends JFrame{
 					ContainerCard.show(CenterCardContainer, "NotificationsPanel");	
 					NotificationThrerad.StopNewNotification();
 					User.setWhatToDo(MessageType.updateNotifications);
-					Server.handleMessageFromClient(User);
-					getCallBackFromBuffer();												//Clean buffer					
+					Server.handleMessageFromClient(User);				
 				}			
 				else ContainerCard.show(CenterCardContainer,LastCardNot);				
 				/*--------------------------*/
@@ -260,7 +259,7 @@ public class abstractPanel_GUI extends JFrame{
 		ContactFrame.setVisible(true);
 		
 		//Contacts list table
-		ContactTable = new JTable(ContactList.getData(),ContactList.getColHeaders()){
+		ContactTable = new JTable(){
 			private static final long serialVersionUID = 1L;
 	        public boolean isCellEditable(int row, int column) {                
 	                return false;               
@@ -326,7 +325,6 @@ public class abstractPanel_GUI extends JFrame{
 		    		NotificationThrerad.setNotificationFlag(false);	//Stop notification thread
 		    		User.setWhatToDo(MessageType.updateUserLogout);		    		
 		    		Server.handleMessageFromClient(User);
-					getCallBackFromBuffer();
 					LoginScreen.setVisible(true);
 					ThisScreen.setVisible(false);
 		    	}
@@ -365,7 +363,12 @@ public class abstractPanel_GUI extends JFrame{
 	public JButton getNotificationsButton(){
 		return this.NotificationsButton;
 	}
-
+	public JTable getContactTable(){
+		return ContactTable;
+	}
+	public UpdateNotifications getNotificationThrerad(){
+		return NotificationThrerad;
+	}
 	
 	/**
 	 * @return The callback from the buffer

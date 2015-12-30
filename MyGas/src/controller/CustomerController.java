@@ -2,6 +2,8 @@ package controller;
 
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
+import java.util.Observable;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -14,6 +16,7 @@ import callback.callbackBuffer;
 import callback.callbackCustomer;
 import callback.callbackSale;
 import callback.callbackStringArray;
+import callback.callbackVector;
 import callback.callback_Error;
 import client.Client;
 import common.Checks;
@@ -162,6 +165,42 @@ public class CustomerController extends Controller{
 		
 		private void HandleCheckFuelOrder() {
 			
+			
+		}
+
+		@Override
+		public void update(Observable o, Object arg) {
+			if(arg instanceof CallBack){	
+				switch(((CallBack) arg).getWhatToDo()){
+					case getWaitingTariff:
+		
+						break;
+					case setWaitingTariff:
+					
+						break;
+				/*Don't change!*/
+				default:
+					super.update(o, arg);
+					break;
+				/*-------------*/
+				}
+		}
+		else if(arg instanceof callbackVector){
+				switch(((callbackVector) arg).getWhatToDo()){
+				case getWaitingTariff:
+		
+					break;
+				case setWaitingTariff:
+				
+					break;
+				default:
+					break;
+				
+				}
+		}
+		else if(arg instanceof Vector){
+		
+		}
 			
 		}
 }

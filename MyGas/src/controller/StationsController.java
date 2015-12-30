@@ -7,6 +7,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Vector;
 
 import javax.security.auth.callback.Callback;
 import javax.swing.ImageIcon;
@@ -973,6 +975,41 @@ public class StationsController extends Controller implements MouseListener,Runn
 		CurrentSale.setPayment(Price);
 		CurrentSale.setCampaignID(((callbackCampaign) Temp).getCampaignID());
 		}
+	}
+	@Override
+	public void update(Observable o, Object arg) {
+		if(arg instanceof CallBack){	
+			switch(((CallBack) arg).getWhatToDo()){
+				case getWaitingTariff:
+	
+					break;
+				case setWaitingTariff:
+				
+					break;
+			/*Don't change!*/
+			default:
+				super.update(o, arg);
+				break;
+			/*-------------*/
+			}
+		}
+		else if(arg instanceof callbackVector){
+				switch(((callbackVector) arg).getWhatToDo()){
+				case getWaitingTariff:
+		
+					break;
+				case setWaitingTariff:
+				
+					break;
+				default:
+					break;
+				
+				}
+		}
+		else if(arg instanceof Vector){
+		
+		}
+		
 	}
 	
 	}

@@ -10,7 +10,7 @@ import common.MessageType;
 * This class overrides some of the methods defined in the abstract
 * superclass in order to give more functionality to the client.
 */
-public class Client extends AbstractClient
+public class Client extends ObservableClient
 {
 //Instance variables **********************************************
 
@@ -47,7 +47,11 @@ public Client(String host, int port, callbackBuffer CommonBuffer) throws IOExcep
 */
 public void handleMessageFromServer(Object msg) 
 {	  
-
+		/************************/
+		super.setChanged();
+		super.notifyObservers(msg);
+		/************************/
+		/*
 		if ( msg instanceof CallBack){
 			CallBack Message = (CallBack) msg;
 			while (CommonBuffer.setNewCallBack(Message) == false);				// Set the new callback
@@ -56,8 +60,8 @@ public void handleMessageFromServer(Object msg)
 			Vector<?> NewCallBack = (Vector<?>) msg; 							// Casting to Vector object that received from server
 			//CallBack Message = (CallBack) NewCallBack.get(0);					// Casting to CallBack object
 			while (CommonBuffer.setNewCallBack(NewCallBack) == false);				// Set the new callback
-		}
-		  BufferInUse = true;													// Release client to read callback
+		}*/
+		  //BufferInUse = true;													// Release client to read callback
 }	
 
 /**
@@ -66,35 +70,35 @@ public void handleMessageFromServer(Object msg)
 */
 public void handleMessageFromClient(Object message)
 {
-		BufferInUse = false;
-		int ReleaseCounter = 50;
+		//BufferInUse = false;
+		//int ReleaseCounter = 50;
 		try {
 			sendToServer(message);
 		} catch (IOException e) {
 			System.out.println(MessageType.Connection_To_Server_Lost.toString()
 					+" | Class: Client | Function: handleMessageFromClient.");			
-			LostConnection();														//Close connection
+			//LostConnection();														//Close connection
 			e.printStackTrace();
 		}
 		
 		/*---- Wait until callback arrived from server -----*/
-		while(!BufferInUse && ReleaseCounter!=0){	
+		/*while(!BufferInUse && ReleaseCounter!=0){	
 			if(--ReleaseCounter == 0){ 												//Stop connection after long delay
 				System.out.println(MessageType.Connection_To_Server_Lost.toString()
 						+" | Class: Client | Function: handleMessageFromClient.");
-				LostConnection();													//Close connection
-			}
+				//LostConnection();													//Close connection
+			}*/
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
+		/*}
 		/*Force exit program and go back to login screen*/
-		if(ReleaseCounter == 0) {													//Enter to common buffer lost connection callback
+		/*if(ReleaseCounter == 0) {													//Enter to common buffer lost connection callback
 			CommonBuffer.getBufferCallBack();
 			CommonBuffer.setNewCallBack(new callbackLostConnection());
-		}
+		}*/
 }
 
 	/**
