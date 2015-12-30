@@ -23,7 +23,6 @@ public class GasStationBarChart extends JPanel{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JPanel jpanel;
 	private static Float[] AmountAndLevel;
 	
 	/**

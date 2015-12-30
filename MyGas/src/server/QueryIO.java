@@ -1600,6 +1600,7 @@ public class QueryIO implements Runnable {
 	private CallBack setNewHomeFuelSale(callbackSale Callback){
 		// Set variables ---------------------------------------------------------
 			int SaleID;
+			int CustomerID = getCustomerIDByUserID(Callback.getUserID());
 		// Build query -----------------------------------------------------------
 		
 		try {
@@ -1614,10 +1615,10 @@ public class QueryIO implements Runnable {
 			ps1.setInt(1, Callback.getFuelID());
 			ps1.setFloat(2, Callback.getFuelAmount());
 			ps1.setFloat(3, Callback.getPayment());
-			ps1.setInt(4, Callback.getCustomersID());
+			ps1.setInt(4, CustomerID);
 			ps1.executeUpdate();
 			//Get SaleID
-			ps2.setInt(1, Callback.getCustomersID());
+			ps2.setInt(1, CustomerID);
 			AnswerResult = ps2.executeQuery();
 			AnswerResult.next();
 			SaleID = AnswerResult.getInt("Sales_ID");
@@ -1640,16 +1641,18 @@ public class QueryIO implements Runnable {
 	}
 	private Object getHomeFuelOrders(callbackSale Callback){
 		// Set variables ---------------------------------------------------------
-			int CustomerID = Callback.getCustomersID();
+			int CustomerID = getCustomerIDByUserID(Callback.getUserID());
 			Vector <CallBack> LocalVector = new Vector <CallBack>();
+			String Sale_ID="(";
 		// Build query -----------------------------------------------------------
 		
 		try {
+			PreparedStatement ps0=conn.prepareStatement("SELECT Sales_ID FROM All_Home_Fuel_Sales WHERE Customers_ID =(?)");
 			PreparedStatement ps1=conn.prepareStatement(
 					"UPDATE Home_Fuel_Sales SET Order_Status = 'Delivered' "+
-					"WHERE Sales_ID IN (SELECT Sales_ID FROM All_Home_Fuel_Sales "+
-										"WHERE Customers_ID =(?)) "+
+					"WHERE Sales_ID IN (?) "+
 					"AND Delivery_Date < NOW()");
+			
 			PreparedStatement ps2=conn.prepareStatement(
 					"SELECT Sale_Date AS Sale_Date_And_Time "+
 					", Address "+
@@ -1663,9 +1666,19 @@ public class QueryIO implements Runnable {
 					"ORDER BY Sale_Date DESC");										
 
 		// Send query to DB  -----------------------------------------------------
-			//Update customer orders status 			
-			ps1.setInt(1, CustomerID);
-			ps1.executeUpdate();
+			//Create string with all sale id
+			ps0.setInt(1, CustomerID);
+			AnswerResult = ps0.executeQuery();
+			
+			while(AnswerResult.next()){
+				Sale_ID = Sale_ID+AnswerResult.getString("Sales_ID")+",";
+			}
+			if(!Sale_ID.equals("(")){	
+				Sale_ID = Sale_ID+"0)";
+				//Update customer orders status 			
+				ps1.setString(1, Sale_ID);
+				ps1.executeUpdate();
+			}
 			//Get customer orders
 			ps2.setInt(1, CustomerID);
 			AnswerResult = ps2.executeQuery();		
@@ -2226,7 +2239,7 @@ public class QueryIO implements Runnable {
 			
 			PreparedStatement ps1=conn.prepareStatement(
 					"SELECT YEAR(Sale_Date) AS Sale_Year,QUARTER(Sale_Date) AS Sale_Quarter,Fuel_Description,COUNT(Sales_ID) AS Customer_Number "+
-					",SUM(Fuel_Amount) AS Fuel_Amount,SUM(Payment) AS Total_Profit "+
+					",ROUND(SUM(Fuel_Amount),2) AS Fuel_Amount,ROUND(SUM(Payment),2) AS Total_Profit "+
 					"FROM All_Gas_Stations_Sales WHERE Gas_Station_ID = (?) "+
 					"GROUP BY Gas_Station_ID,YEAR(Sale_Date),QUARTER(Sale_Date),Fuel_Description");
 			PreparedStatement ps2=conn.prepareStatement(
@@ -2299,14 +2312,14 @@ public class QueryIO implements Runnable {
 			
 			PreparedStatement ps1=conn.prepareStatement(
 					"SELECT YEAR(Order_Date) AS Order_Year ,QUARTER(Order_Date) AS Order_Quarter "+
-					",Fuel_Description ,SUM(Amount_To_Order) AS Total_Liters_To_Order "+
+					",Fuel_Description ,ROUND(SUM(Amount_To_Order),2) AS Total_Liters_To_Order "+
 					",COUNT(*) AS Number_Of_Orders "+
 					"FROM fuel_orders_for_stations "+
 					"WHERE Order_Confirmation = 'Yes' AND Gas_Station_ID = (?) "+
 					"GROUP BY Gas_Station_ID,YEAR(Order_Date),QUARTER(Order_Date),Fuel_Description");
 			PreparedStatement ps2=conn.prepareStatement(
 					"SELECT DISTINCT YEAR(Order_Date) AS Years_In_System  "+
-					"FROM mygas.fuel_orders_for_stations WHERE Gas_Station_ID=(?)");
+					"FROM mygas.fuel_orders_for_stations WHERE Gas_Station_ID=(?) AND Order_Confirmation = 'Yes'");
 		// Send query to DB  ----------------------------------------------------- 	
 		
 			//Convert user id to stationID, made for station manager
