@@ -147,7 +147,6 @@ public class CustomerGUI extends abstractPanel_GUI {
 			e.printStackTrace();
 		}
 		DeliveryTimetextArea=new JFormattedTextField(DeliveryTimeFormatter);
-//		DeliveryTimetextArea=new JFormattedTextField();
 
 		DeliveryTimetextArea.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		DeliveryTimetextArea.setHorizontalAlignment(SwingConstants.CENTER);
@@ -182,6 +181,7 @@ public class CustomerGUI extends abstractPanel_GUI {
 	
 		CalcPricetextArea = new JTextArea();
 		CalcPricetextArea.setEditable(false);
+		CalcPricetextArea.setFont(new Font("Tahoma", Font.PLAIN, 16));		
 		CalcPricetextArea.setBounds(277, 402, 200, 38);
 		BuyHomeFuelCenterLayer.add(CalcPricetextArea);
 		
@@ -217,37 +217,37 @@ public class CustomerGUI extends abstractPanel_GUI {
 		BuyHomeFuelCenterLayer.setName("BuyHomeFuel");
 		
 		OrderDetailsLabel = new JLabel("");
-		OrderDetailsLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		OrderDetailsLabel.setBounds(609, 77, 146, 38);
+		OrderDetailsLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
+		OrderDetailsLabel.setBounds(609, 82, 146, 38);
 		BuyHomeFuelCenterLayer.add(OrderDetailsLabel);
 
 		ShowOrderDetailsLabel = new JLabel("");
-		ShowOrderDetailsLabel.setBounds(609, 162, 200, 163);
-		BuyHomeFuelCenterLayer.add(ShowOrderDetailsLabel);
+		ShowOrderDetailsLabel.setBounds(609, 142, 176, 163);
 		ShowOrderDetailsLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		BuyHomeFuelCenterLayer.add(ShowOrderDetailsLabel);
 		
 		FuelPriceLabel = new JLabel("");
-		FuelPriceLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		FuelPriceLabel.setBounds(715, 166, 94, 22);
+		FuelPriceLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		FuelPriceLabel.setBounds(755, 142, 94, 22);
 		BuyHomeFuelCenterLayer.add(FuelPriceLabel);
 		
 		LitersLabel = new JLabel("");
-		LitersLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		LitersLabel.setBounds(715, 209, 116, 22);
+		LitersLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		LitersLabel.setBounds(755, 188, 116, 22);
 		BuyHomeFuelCenterLayer.add(LitersLabel);
 
-		sumLabel = new JLabel("");
-		sumLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		sumLabel.setBounds(715, 251, 116, 22);
+		sumLabel = new JLabel("");		
+		sumLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		sumLabel.setBounds(755, 234, 116, 22);
 		BuyHomeFuelCenterLayer.add(sumLabel);
 		
 		ShippingLabel = new JLabel("");
-		ShippingLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		ShippingLabel.setBounds(715, 298, 116, 22);
+		ShippingLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		ShippingLabel.setBounds(755, 278, 116, 22);
 		BuyHomeFuelCenterLayer.add(ShippingLabel);
 		
 		RemaraksLabel = new JLabel("");
-		RemaraksLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		RemaraksLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		RemaraksLabel.setForeground(Color.BLUE);
 		RemaraksLabel.setBounds(609, 337, 200, 92);
 		BuyHomeFuelCenterLayer.add(RemaraksLabel);

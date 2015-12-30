@@ -267,7 +267,49 @@ JLabel FuelAmountLabel = new JLabel("Fuel Amount:");
 		CenterPanel.add(ErrorDeliveryTimeLabel);
 		
 	////////////
+		JLabel OrderDetailsLabel = new JLabel("Order Details:");
+		OrderDetailsLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
 
+		OrderDetailsLabel.setBounds(609, 82, 146, 38);
+		CenterPanel.add(OrderDetailsLabel);
+
+		JLabel ShowOrderDetailsLabel = new JLabel("<html><body> Fuel Price:<br>"
+				+ "+<br>"
+				+ "  Liters:<br>"
+				+ "		____________________<br>"
+				+ "  Sum:<br><br>"
+				+ "+Shipping:</body></html>");
+		ShowOrderDetailsLabel.setBounds(609, 142, 176, 163);
+		CenterPanel.add(ShowOrderDetailsLabel);
+		ShowOrderDetailsLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		
+		JLabel FuelPriceLabel = new JLabel("6.0");
+		FuelPriceLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		FuelPriceLabel.setBounds(755, 142, 94, 22);
+		CenterPanel.add(FuelPriceLabel);
+		
+		JLabel LitersLabel = new JLabel("100");
+		LitersLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		LitersLabel.setBounds(755, 188, 116, 22);
+		CenterPanel.add(LitersLabel);
+
+		JLabel sumLabel = new JLabel("600");
+		sumLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		sumLabel.setBounds(755, 234, 116, 22);
+		CenterPanel.add(sumLabel);
+		
+		JLabel ShippingLabel = new JLabel("2%");
+		ShippingLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		ShippingLabel.setBounds(755, 278, 116, 22);
+		CenterPanel.add(ShippingLabel);
+		
+		JLabel RemaraksLabel = new JLabel("<html>*Immediate order-within 6 hours "
+				 + "is fuel cost plus 2% shipping from the"
+				 + "fuel price</html>");
+		RemaraksLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		RemaraksLabel.setForeground(Color.BLUE);
+		RemaraksLabel.setBounds(609, 337, 200, 92);
+		CenterPanel.add(RemaraksLabel);
 		/////////////////////////
 		/* ------- Adding new button to Top Panel -------- */
 		/* ------- Adding new button to Top Panel -------- */
