@@ -263,7 +263,7 @@ public class MarketingRepresentativeController extends Controller{
 		if(arg instanceof CallBack){	
 			switch(((CallBack) arg).getWhatToDo()){
 				case getWaitingTariff:
-	
+					
 					break;
 				case setWaitingTariff:
 				

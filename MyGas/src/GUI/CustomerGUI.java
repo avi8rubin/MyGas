@@ -64,7 +64,11 @@ public class CustomerGUI extends abstractPanel_GUI {
 	
 	private JLabel OrderDetailsLabel;
 	private JLabel ShowOrderDetailsLabel;
-	
+	private JLabel RemaraksLabel;
+	private JLabel LitersLabel;
+	private JLabel FuelPriceLabel;
+	private JLabel ShippingLabel;
+	private JLabel sumLabel;
 	
 	private static final long serialVersionUID = 1L;
 
@@ -214,14 +218,56 @@ public class CustomerGUI extends abstractPanel_GUI {
 		
 		OrderDetailsLabel = new JLabel("");
 		OrderDetailsLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		OrderDetailsLabel.setBounds(609, 162, 146, 38);
+		OrderDetailsLabel.setBounds(609, 77, 146, 38);
 		BuyHomeFuelCenterLayer.add(OrderDetailsLabel);
 
 		ShowOrderDetailsLabel = new JLabel("");
-		ShowOrderDetailsLabel.setBounds(609, 207, 280, 233);
+		ShowOrderDetailsLabel.setBounds(609, 162, 200, 163);
 		BuyHomeFuelCenterLayer.add(ShowOrderDetailsLabel);
+		ShowOrderDetailsLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		
+		FuelPriceLabel = new JLabel("");
+		FuelPriceLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		FuelPriceLabel.setBounds(715, 166, 94, 22);
+		BuyHomeFuelCenterLayer.add(FuelPriceLabel);
+		
+		LitersLabel = new JLabel("");
+		LitersLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		LitersLabel.setBounds(715, 209, 116, 22);
+		BuyHomeFuelCenterLayer.add(LitersLabel);
+
+		sumLabel = new JLabel("");
+		sumLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		sumLabel.setBounds(715, 251, 116, 22);
+		BuyHomeFuelCenterLayer.add(sumLabel);
+		
+		ShippingLabel = new JLabel("");
+		ShippingLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		ShippingLabel.setBounds(715, 298, 116, 22);
+		BuyHomeFuelCenterLayer.add(ShippingLabel);
+		
+		RemaraksLabel = new JLabel("");
+		RemaraksLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		RemaraksLabel.setForeground(Color.BLUE);
+		RemaraksLabel.setBounds(609, 337, 200, 92);
+		BuyHomeFuelCenterLayer.add(RemaraksLabel);
+
 }
-	
+public void setFuelPriceLabel(String str){
+	FuelPriceLabel.setText(str);
+}
+public void setLitersLabel(String str){
+	LitersLabel.setText(str);
+}	
+public void setsumLabel(String str){
+	sumLabel.setText(str);
+}
+public void setShippingLabel(String str){
+	ShippingLabel.setText(str);
+}
+public void setRemaraksLabel(String str){
+	RemaraksLabel.setText(str);
+}
 	public JButton getBuyHomeFuelButton() {
 			return BuyHomeFuelButton;
 	}
@@ -296,7 +342,7 @@ public class CustomerGUI extends abstractPanel_GUI {
 		OrderDetailsLabel.setText(str);
 	}
 	public void setShowOrderDetailsLabel(String str){
-		ShowOrderDetailsLabel.setText(str);;
+		ShowOrderDetailsLabel.setText(str);
 	}
 	public void setHomeFuelOrdersTable(DefaultTableModel NewTableModel){		
 		HomeFuelOrdersTable.setModel(NewTableModel);

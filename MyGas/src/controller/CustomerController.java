@@ -79,6 +79,26 @@ public class CustomerController extends Controller{
 		/* -------- Check the source of the event ---------*/
 		if(e.getActionCommand().equals("Buy Home Fuel")){
 			ContainerCardCenter.show(CenterCardContainer, "BuyHomeFuel");
+			
+//			GuiScreen.setOrderDetailsLabel("Order Details:");
+//			GuiScreen.setShowOrderDetailsLabel("<html> Fuel Price:<br>"
+//												+ "+<br>"
+//												+ "  Liters:<br>"
+//												+ "		____________________<br>"
+//												+ "  Sum:<br><br>"
+//												+ "+Shipping:</html>");
+//			
+//			GuiScreen.setFuelPriceLabel(Float.toHexString((float) 100.5));
+//			GuiScreen.setLitersLabel(FuelStr);
+//			GuiScreen.setsumLabel(Float.toHexString((float) 1002.2));
+//			//SumPrice+=SumPrice*0.02;
+//			GuiScreen.setShippingLabel(Float.toHexString(102));
+//			GuiScreen.setRemaraksLabel("<html>*Immediate order-within 6 hours<br>"
+//									 + "is fuel cost plus 2% shipping from the"
+//									 + "fuel price</html>");
+//
+//			
+//			
 			GuiScreen.DisablePayButton();
 			GuiScreen.setFuelAmount("");
 			GuiScreen.setDate();
@@ -111,7 +131,7 @@ public class CustomerController extends Controller{
 		sale.setFuelID(3);
 			
 		//check validation of fuel amount
-		String FuelStr= GuiScreen.getFuelAmount();
+		FuelStr= GuiScreen.getFuelAmount();
 		if(Checks.isFloat(FuelStr) && !FuelStr.equals("")){
 			ErrorAmount.setText("");
 			checkFields++;
@@ -185,18 +205,24 @@ public class CustomerController extends Controller{
 						SumPrice=FuelPrice*Float.parseFloat(FuelStr);
 					//up to 6 hours -cost Shipping is an additional 2%
 						GuiScreen.setOrderDetailsLabel("Order Details:");
-						GuiScreen.setShowOrderDetailsLabel("<html>  Fuel Price:     "+FuelPrice+
-												"<br>+<br>"+
-												"  Liters:     "+FuelStr+
-												"\n  _____________\n"+
-												"\n  Sum:     "+SumPrice+
-												"+Shipping:     "+(SumPrice+SumPrice*0.02)+
-												"*Immediate order-within 6 hours\nis fuel cost +"
-												+ " 2% of the price</html>" );
+						GuiScreen.setShowOrderDetailsLabel("<html> Fuel Price:<br>"
+															+ "+<br>"
+															+ "  Liters:<br>"
+															+ "		____________________<br>"
+															+ "  Sum:<br>"
+															+ "+Shipping:</html>");
 						
-						}	
-			}
-			
+						GuiScreen.setFuelPriceLabel(Float.toHexString(FuelPrice));
+						GuiScreen.setLitersLabel(FuelStr);
+						GuiScreen.setsumLabel(Float.toHexString(SumPrice));
+						SumPrice+=SumPrice*0.02;
+						GuiScreen.setShippingLabel(Float.toHexString(SumPrice));
+						GuiScreen.setRemaraksLabel("*Immediate order-within 6 hours<br>"
+												 + "is fuel cost plus 2% shipping from the"
+												 + "fuel price</html>");
+
+					}
+				}
 		}
 		private void HandleCheckCustomerCreditCard(){
 			
@@ -226,8 +252,11 @@ public class CustomerController extends Controller{
 		
 		private void HandleCheckFuelOrder() {
 			
-			callbackSale orders=new callbackSale(MessageType.getHomeFuelOrders);
-			orders.setCustomersID(GuiScreen.getCurrentUserID());
+			Object[]arr= new Object[1];
+			callbackStringArray orders=new callbackStringArray(MessageType.getHomeFuelOrders);
+			arr[0]=GuiScreen.getCurrentUserID();
+			orders.setVariance(arr);
+
 			Server.handleMessageFromClient(orders);
 			
 		}
