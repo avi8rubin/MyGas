@@ -52,7 +52,6 @@ public class MarketingManagerController extends Controller {
 	private JLabel Datelabel;
 	private JLabel Datelabel2;
 
-	private boolean CampaignPatternFlag=false;
 	private boolean CommentsForMarketionFlag=false;
 
 	public MarketingManagerController(Client Server, callbackBuffer CommonBuffer, MarketingManagerGUI GuiScreen) {
@@ -171,32 +170,11 @@ public class MarketingManagerController extends Controller {
 	
 	private void HandleTariffPressed(){
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getFuelsDetailes));
-//		callbackStringArray TariffTable = (callbackStringArray) getCallBackFromBuffer();		
-//		GuiScreen.setTariffUpdateTable(TariffTable.getDefaultTableModel());
 	}
-
-
-	private void HandleChangeCampaignFromComboBox(){
-		
+	private void HandleChangeCampaignFromComboBox(){	
 		CommentsForMarketionFlag=false; 
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCommentsForMarketionCampaign));
-
-//		String patternSelected=GuiScreen.getComboBoxSelection();
-//		int PattentIndex[] = new int[1]; 
-//		PattentIndex[0]=GuiScreen.getPatternInt(patternSelected);
-//		DefaultTableModel table;
-//		callbackStringArray CampaignTable = (callbackStringArray) getCallBackFromBuffer();	
-//		if(patternSelected=="All Campaigns"){
-//			table=CampaignTable.getDefaultTableModel();
-//			GuiScreen.setCommentsForMarketingCampaignTable(table);
-//		}
-//		else
-//		{
-//			table=new DefaultTableModel(CampaignTable.getRowByIndex(PattentIndex),CampaignTable.getColHeaders());
-//			GuiScreen.setCommentsForMarketingCampaignTable(table);
-//
-//		}
-}
+	}
 	public void Server_ChangeCampaignFromComboBox(callbackStringArray CampaignTable){
 		String patternSelected=GuiScreen.getComboBoxSelection();
 		int PattentIndex[] = new int[1]; 
@@ -212,12 +190,9 @@ public class MarketingManagerController extends Controller {
 			GuiScreen.setCommentsForMarketingCampaignTable(table);
 		}
 	}
-
 	private void HandleCommentsForMarketingCampaignCombo(){
 		CommentsForMarketionFlag=true;
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCommentsForMarketionCampaign));
-//		callbackStringArray CampaignPatters = (callbackStringArray) getCallBackFromBuffer();	
-//		GuiScreen.SetComboBoxSelection(CampaignPatters);
 	}
 	private void HandleCustomerCharacterizationReport(){
 		String startDate=GuiScreen.getStartDate(); 
@@ -233,28 +208,10 @@ public class MarketingManagerController extends Controller {
 		callbackStringArray createCustomerTable=new callbackStringArray(MessageType.getCustomerCharacterizationByPeriod);
 		createCustomerTable.setColHeaders(dateArr);
 		Server.handleMessageFromClient(createCustomerTable);
-//		callbackStringArray customerTable = (callbackStringArray) getCallBackFromBuffer();	
-//		GuiScreen.setCustomerCharacterizationReportTable(customerTable.getDefaultTableModel());
 		}
-	}
-	
-//	private void SetCombo()
-//	{	
-//		CampaignPatternFlag=true;
-//		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCampaignPatternAndActiveCampaign));
-//		
-//		callbackStringArray Patterns = (callbackStringArray) getCallBackFromBuffer();
-//		PatterWithID=Patterns.getVarianceMatrix();
-//		GuiScreen.SetComboBoxPattern(Patterns);
-//		
-//	}
-	
+	}	
 	private void HandleActivateSaleCampaignPressed() {
-	//	CampaignPatternFlag=false;
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCampaignPatternAndActiveCampaign));
-		//callbackStringArray activeSales = (callbackStringArray) getCallBackFromBuffer();	
-		//GuiScreen.setActiveSalesTable(activeSales.getDefaultTableModel());
-		//SetCombo();
 	}
 	private void HandleActivateSaleCampaignButtonPressed(){
 		
@@ -278,17 +235,7 @@ public class MarketingManagerController extends Controller {
 		addSale.setEndCampaignDate(endDateToDB);
 		addSale.setStartCampaignDate(startDateToDB);
 		
-	//	CallBack temp;
-		
 		Server.handleMessageFromClient(addSale);
-//		temp =  (CallBack) getCallBackFromBuffer();
-//		if(temp instanceof callback_Error){
-//			JOptionPane.showMessageDialog(null, "Error, Sale Didn't Saved", 
-//					"", JOptionPane.INFORMATION_MESSAGE);
-//			}
-//		else {
-//			HandleActivateSaleCampaignPressed();
-//			}
 		}
 	}
 
@@ -337,7 +284,22 @@ public class MarketingManagerController extends Controller {
 			/*-------------*/
 			}
 	}
-
+	else if(arg instanceof callbackVector){
+			switch(((callbackVector) arg).getWhatToDo()){
+			case getWaitingTariff:
+	
+				break;
+			case setWaitingTariff:
+			
+				break;
+			default:
+				break;
+			
+			}
+	}
+	else if(arg instanceof Vector){
+	
+	}
 		
 	}
 }

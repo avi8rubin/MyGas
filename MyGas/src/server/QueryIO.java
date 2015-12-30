@@ -1699,13 +1699,14 @@ public class QueryIO implements Runnable {
 			String[] Headers;
 			int ColNum;
 			int RowNum =0;
+			String Sale_ID="(";
 		// Build query -----------------------------------------------------------
 		
 		try {
+			PreparedStatement ps0=conn.prepareStatement("SELECT Sales_ID FROM All_Home_Fuel_Sales WHERE Customers_ID =(?)");
 			PreparedStatement ps1=conn.prepareStatement(
 					"UPDATE Home_Fuel_Sales SET Order_Status = 'Delivered' "+
-					"WHERE Sales_ID IN (SELECT Sales_ID FROM All_Home_Fuel_Sales "+
-										"WHERE Customers_ID =(?)) "+
+					"WHERE Sales_ID IN (?) "+
 					"AND Delivery_Date < NOW()");
 			PreparedStatement ps2=conn.prepareStatement(
 					"SELECT Sale_Date AS Sale_Date_And_Time "+
@@ -1720,9 +1721,20 @@ public class QueryIO implements Runnable {
 					"ORDER BY Sale_Date DESC");										
 
 		// Send query to DB  -----------------------------------------------------
-			//Update customer orders status 			
-			ps1.setInt(1, CustomerID);
-			ps1.executeUpdate();
+			//Create string with all sale id
+			ps0.setInt(1, CustomerID);
+			AnswerResult = ps0.executeQuery();
+			
+			while(AnswerResult.next()){
+				Sale_ID = Sale_ID+AnswerResult.getString("Sales_ID")+",";
+			}
+			if(!Sale_ID.equals("(")){	
+				Sale_ID = Sale_ID+"0)";
+				//Update customer orders status 			
+				ps1.setString(1, Sale_ID);
+				ps1.executeUpdate();
+			}
+			
 			//Get customer orders
 			ps2.setInt(1, CustomerID);
 			AnswerResult = ps2.executeQuery();		
