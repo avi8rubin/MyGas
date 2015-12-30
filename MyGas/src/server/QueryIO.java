@@ -1607,7 +1607,7 @@ public class QueryIO implements Runnable {
 			PreparedStatement ps1=conn.prepareStatement(
 					"INSERT INTO Sales VALUES(null,(?),NOW(),(?),(?),(?))");
 			PreparedStatement ps2=conn.prepareStatement(
-					"SELECT Sales_ID, MAX(Sale_Date) AS Sale_Date FROM Sales WHERE Customers_ID = (?)");										
+					"SELECT MAX(Sales_ID) AS Sales_ID FROM Sales WHERE Customers_ID = (?)");										
 			PreparedStatement ps3=conn.prepareStatement(
 					"INSERT INTO Home_Fuel_Sales VALUES((?),(?),(?),'Not Delivered')");
 		// Send query to DB  -----------------------------------------------------
