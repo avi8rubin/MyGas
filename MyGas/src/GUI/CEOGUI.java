@@ -2,10 +2,13 @@ package GUI;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -32,7 +35,7 @@ public class CEOGUI extends abstractPanel_GUI{
 	 */
 	private JButton TariffApprovalButton;
 	private JLayeredPane TariffApprovalLayer;
-	
+	private JCheckBox checkBox = new JCheckBox("");
 	// Create JTable - that the last column is editable.
 	private JTable TariffApprovalTable = new JTable(){
 		private static final long serialVersionUID = 1L;
@@ -100,8 +103,13 @@ public class CEOGUI extends abstractPanel_GUI{
 		TariffApprovalLayer.add(TariffSaveButton);
 		
 		
+		checkBox.setBounds(957, 531, 21, 23);
+		TariffApprovalLayer.add(checkBox);
 	}
 	
+	public JCheckBox getCheckBox(){
+		return checkBox;
+	}
 	public JButton getTariffApprovalButton(){
 		return TariffApprovalButton;
 	}

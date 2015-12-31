@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS Workers (
     Worker_First_Name VARCHAR (20),
     Worker_Last_Name VARCHAR (20),
     Email VARCHAR (30),
+    Phone_Number VARCHAR (15) DEFAULT '',
     Organization ENUM ('Management','Station'),
     User_Id INTEGER NOT NULL,
     PRIMARY KEY (Worker_ID),
@@ -149,6 +150,7 @@ CREATE TABLE IF NOT EXISTS Cars (
     Customers_ID INTEGER,
     NFC ENUM('Yes','No') DEFAULT 'No',
     Fuel_ID INTEGER,
+    Active_Car ENUM('Yes','No') DEFAULT 'Yes',
     PRIMARY KEY (Car_ID,Car_Number,Customers_ID),
     FOREIGN KEY (Fuel_ID) references Fuels(Fuel_ID),
     FOREIGN KEY (Customers_ID) references Customers(Customers_ID)
@@ -349,17 +351,17 @@ INSERT INTO Users VALUES(null,'Nir','3',1,2);
 INSERT INTO Users VALUES(null,'Kfir','4',1,2);
 INSERT INTO Users VALUES(null,'Or','5',1,2);
 
-INSERT INTO Workers VALUES(1,'Avi','Rubin','avi8rubin@gmail.com','Station',1);
-INSERT INTO Workers VALUES(2,'Ohad','Zino','zinoohad@gmail.com','Station',2);
-INSERT INTO Workers VALUES(11,'Adir','Notes','adirnotes@gmail.com','Station',3);
-INSERT INTO Workers VALUES(3,'Litaf','kupfer','litafkupfer@gmail.com','Station',4);
-INSERT INTO Workers VALUES(4,'CEO-Name','CEO-Last Name','CEO@gmail.com','Management',5);
-INSERT INTO Workers VALUES(5,'Manager1','Manger lastname','Manger1@gmail.com','Management',12);
-INSERT INTO Workers VALUES(6,'Manager2','Manger lastname','Manger2@gmail.com','Management',13);
-INSERT INTO Workers VALUES(7,'Manager3','Manger lastname','Manger3@gmail.com','Management',14);
-INSERT INTO Workers VALUES(8,'Manager4','Manger lastname','Manger4@gmail.com','Management',15);
-INSERT INTO Workers VALUES(9,'Manager5','Manger lastname','Manger5@gmail.com','Management',16);
-INSERT INTO Workers VALUES(10,'Manager6','Manger lastname','Manger6@gmail.com','Management',17);
+INSERT INTO Workers VALUES(1,'Avi','Rubin','avi8rubin@gmail.com',DEFAULT,'Station',1);
+INSERT INTO Workers VALUES(2,'Ohad','Zino','zinoohad@gmail.com',DEFAULT,'Station',2);
+INSERT INTO Workers VALUES(11,'Adir','Notes','adirnotes@gmail.com',DEFAULT,'Station',3);
+INSERT INTO Workers VALUES(3,'Litaf','kupfer','litafkupfer@gmail.com',DEFAULT,'Station',4);
+INSERT INTO Workers VALUES(4,'CEO-Name','CEO-Last Name','CEO@gmail.com',DEFAULT,'Management',5);
+INSERT INTO Workers VALUES(5,'Manager1','Manger lastname','Manger1@gmail.com','052-4861116','Management',12);
+INSERT INTO Workers VALUES(6,'Manager2','Manger lastname','Manger2@gmail.com',DEFAULT,'Management',13);
+INSERT INTO Workers VALUES(7,'Manager3','Manger lastname','Manger3@gmail.com',DEFAULT,'Management',14);
+INSERT INTO Workers VALUES(8,'Manager4','Manger lastname','Manger4@gmail.com',DEFAULT,'Management',15);
+INSERT INTO Workers VALUES(9,'Manager5','Manger lastname','Manger5@gmail.com',DEFAULT,'Management',16);
+INSERT INTO Workers VALUES(10,'Manager6','Manger lastname','Manger6@gmail.com',DEFAULT,'Management',17);
 
 INSERT INTO Gas_Stations VALUES(null,'Carmiel','snonit 53',5,6,1);
 INSERT INTO Gas_Stations VALUES(null,'Tel Aviv','st.hashalom',6,7,1);
@@ -456,55 +458,55 @@ INSERT INTO Customers  VALUES(306216168,'Nir','Lod','Commercial',3,34,'052-02102
 INSERT INTO Customers  VALUES(359681680,'Kfir','Bill','Private',1,35,'052-3355996','2356-6589-4444-7852','Kfir@gmail.com',5,1,4);
 INSERT INTO Customers  VALUES(326594906,'Or','Levi','Private',2,36,'052-3266585','2345-6589-3333-7852','Or@gmail.com',6,1,4);
 
-INSERT INTO Cars VALUES(null,'85-659-85',956321568,Default,1);
-INSERT INTO Cars VALUES(null,'21-659-85',853629458,'No',2);
-INSERT INTO Cars VALUES(null,'85-652-32',302548695,'Yes',1);
-INSERT INTO Cars VALUES(null,'74-856-02',302541654,'No',4);
-INSERT INTO Cars VALUES(null,'32-958-74',984884621,'No',2);
-INSERT INTO Cars VALUES(null,'89-654-21',984651535,'No',1);
-INSERT INTO Cars VALUES(null,'11-555-54',513813213,'No',2);
-INSERT INTO Cars VALUES(null,'78-153-34',681135135,'No',4);
-INSERT INTO Cars VALUES(null,'87-563-55',026065065,'No',1);
-INSERT INTO Cars VALUES(null,'95-846-54',065161615,'No',1);
-INSERT INTO Cars VALUES(null,'12-234-45',329090511,'No',2);
-INSERT INTO Cars VALUES(null,'55-874-95',302929161,'Yes',4);
-INSERT INTO Cars VALUES(null,'21-035-95',302298198,'Yes',2);
-INSERT INTO Cars VALUES(null,'98-000-32',302926815,'No',2);
-INSERT INTO Cars VALUES(null,'78-555-96',302296816,'Yes',1);
-INSERT INTO Cars VALUES(null,'21-236-50',302561566,'Yes',4);
-INSERT INTO Cars VALUES(null,'12-985-44',306216168,'Yes',2);
-INSERT INTO Cars VALUES(null,'42-635-95',359681680,'No',1);
-INSERT INTO Cars VALUES(null,'78-542-63',326594906,'Yes',2);
-INSERT INTO Cars VALUES(null,'12-035-62',956321568,'No',4);
-INSERT INTO Cars VALUES(null,'78-953-20',853629458,'Yes',1);
-INSERT INTO Cars VALUES(null,'02-352-65',302548695,'No',1);
-INSERT INTO Cars VALUES(null,'45-652-35',302541654,'Yes',2);
-INSERT INTO Cars VALUES(null,'98-785-65',984884621,'No',4);
-INSERT INTO Cars VALUES(null,'25-632-50',984651535,'No',2);
-INSERT INTO Cars VALUES(null,'31-264-95',513813213,'No',2);
-INSERT INTO Cars VALUES(null,'32-659-84',681135135,'Yes',1);
-INSERT INTO Cars VALUES(null,'12-320-65',026065065,'No',4);
-INSERT INTO Cars VALUES(null,'98-632-95',065161615,'No',2);
-INSERT INTO Cars VALUES(null,'23-654-85',329090511,'No',1);
-INSERT INTO Cars VALUES(null,'32-456-85',302929161,'No',2);
-INSERT INTO Cars VALUES(null,'10-963-52',302298198,'No',4);
-INSERT INTO Cars VALUES(null,'10-842-95',302926815,'No',1);
-INSERT INTO Cars VALUES(null,'95-642-32',302296816,'No',1);
-INSERT INTO Cars VALUES(null,'12-632-85',302561566,'Yes',2);
-INSERT INTO Cars VALUES(null,'10-845-98',306216168,'Yes',4);
-INSERT INTO Cars VALUES(null,'23-468-95',359681680,'Yes',2);
-INSERT INTO Cars VALUES(null,'10-456-85',326594906,'No',2);
-INSERT INTO Cars VALUES(null,'20-352-61',956321568,'Yes',1);
-INSERT INTO Cars VALUES(null,'10-623-98',853629458,'No',4);
-INSERT INTO Cars VALUES(null,'79-852-30',302548695,'No',2);
-INSERT INTO Cars VALUES(null,'84-951-32',302541654,'No',1);
-INSERT INTO Cars VALUES(null,'75-842-91',984884621,'No',2);
-INSERT INTO Cars VALUES(null,'42-956-35',984651535,'No',4);
-INSERT INTO Cars VALUES(null,'20-951-86',513813213,'No',1);
-INSERT INTO Cars VALUES(null,'32-654-82',681135135,'Yes',1);
-INSERT INTO Cars VALUES(null,'12-030-95',026065065,'No',2);
-INSERT INTO Cars VALUES(null,'12-005-78',065161615,'Yes',4);
-INSERT INTO Cars VALUES(null,'32-000-65',329090511,'No',2);
+INSERT INTO Cars VALUES(null,'85-659-85',956321568,Default,1,DEFAULT);
+INSERT INTO Cars VALUES(null,'21-659-85',853629458,'No',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'85-652-32',302548695,'Yes',1,DEFAULT);
+INSERT INTO Cars VALUES(null,'74-856-02',302541654,'No',4,DEFAULT);
+INSERT INTO Cars VALUES(null,'32-958-74',984884621,'No',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'89-654-21',984651535,'No',1,DEFAULT);
+INSERT INTO Cars VALUES(null,'11-555-54',513813213,'No',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'78-153-34',681135135,'No',4,DEFAULT);
+INSERT INTO Cars VALUES(null,'87-563-55',026065065,'No',1,DEFAULT);
+INSERT INTO Cars VALUES(null,'95-846-54',065161615,'No',1,DEFAULT);
+INSERT INTO Cars VALUES(null,'12-234-45',329090511,'No',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'55-874-95',302929161,'Yes',4,DEFAULT);
+INSERT INTO Cars VALUES(null,'21-035-95',302298198,'Yes',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'98-000-32',302926815,'No',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'78-555-96',302296816,'Yes',1,DEFAULT);
+INSERT INTO Cars VALUES(null,'21-236-50',302561566,'Yes',4,DEFAULT);
+INSERT INTO Cars VALUES(null,'12-985-44',306216168,'Yes',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'42-635-95',359681680,'No',1,DEFAULT);
+INSERT INTO Cars VALUES(null,'78-542-63',326594906,'Yes',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'12-035-62',956321568,'No',4,DEFAULT);
+INSERT INTO Cars VALUES(null,'78-953-20',853629458,'Yes',1,DEFAULT);
+INSERT INTO Cars VALUES(null,'02-352-65',302548695,'No',1,DEFAULT);
+INSERT INTO Cars VALUES(null,'45-652-35',302541654,'Yes',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'98-785-65',984884621,'No',4,DEFAULT);
+INSERT INTO Cars VALUES(null,'25-632-50',984651535,'No',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'31-264-95',513813213,'No',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'32-659-84',681135135,'Yes',1,DEFAULT);
+INSERT INTO Cars VALUES(null,'12-320-65',026065065,'No',4,DEFAULT);
+INSERT INTO Cars VALUES(null,'98-632-95',065161615,'No',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'23-654-85',329090511,'No',1,DEFAULT);
+INSERT INTO Cars VALUES(null,'32-456-85',302929161,'No',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'10-963-52',302298198,'No',4,DEFAULT);
+INSERT INTO Cars VALUES(null,'10-842-95',302926815,'No',1,DEFAULT);
+INSERT INTO Cars VALUES(null,'95-642-32',302296816,'No',1,DEFAULT);
+INSERT INTO Cars VALUES(null,'12-632-85',302561566,'Yes',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'10-845-98',306216168,'Yes',4,DEFAULT);
+INSERT INTO Cars VALUES(null,'23-468-95',359681680,'Yes',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'10-456-85',326594906,'No',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'20-352-61',956321568,'Yes',1,DEFAULT);
+INSERT INTO Cars VALUES(null,'10-623-98',853629458,'No',4,DEFAULT);
+INSERT INTO Cars VALUES(null,'79-852-30',302548695,'No',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'84-951-32',302541654,'No',1,DEFAULT);
+INSERT INTO Cars VALUES(null,'75-842-91',984884621,'No',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'42-956-35',984651535,'No',4,DEFAULT);
+INSERT INTO Cars VALUES(null,'20-951-86',513813213,'No',1,DEFAULT);
+INSERT INTO Cars VALUES(null,'32-654-82',681135135,'Yes',1,DEFAULT);
+INSERT INTO Cars VALUES(null,'12-030-95',026065065,'No',2,DEFAULT);
+INSERT INTO Cars VALUES(null,'12-005-78',065161615,'Yes',4,DEFAULT);
+INSERT INTO Cars VALUES(null,'32-000-65',329090511,'No',2,DEFAULT);
 
 INSERT INTO Campaign_Type VALUES(null,'Campaign - Discount betweem hours.');
 INSERT INTO Campaign_Type VALUES(null,'Campaign - Discount betweem days (Date).');
@@ -749,6 +751,7 @@ SELECT A.*
 ,C.Customer_First_Name
 ,C.Customer_Last_Name
 ,C.Email
+,C.Phone_Number
 FROM Users A
 LEFT OUTER JOIN User_Type B ON A.User_Type_Id=B.User_Type_Id
 RIGHT OUTER JOIN Customers C ON A.User_ID=C.User_ID
@@ -760,6 +763,7 @@ SELECT A.*
 ,C.Worker_First_Name
 ,C.Worker_Last_Name
 ,C.Email
+,C.Phone_Number
 FROM Users A
 LEFT OUTER JOIN User_Type B ON A.User_Type_Id=B.User_Type_Id
 RIGHT OUTER JOIN Workers C ON A.User_ID=C.User_ID
@@ -770,7 +774,8 @@ SELECT A.*
 ,B.User_Privilege
 ,CONCAT('To ',C.Station_Name) AS Station_Name
 ,'Station' AS Worker_Last_Name
-,' ' AS Email
+,'' AS Email
+,'' AS Phone_Number
 FROM Users A
 LEFT OUTER JOIN User_Type B ON A.User_Type_Id=B.User_Type_Id
 RIGHT OUTER JOIN Gas_Stations C ON A.User_ID = C.User_Interface_ID

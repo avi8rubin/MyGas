@@ -20,6 +20,7 @@ import javax.swing.SwingConstants;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JTable;
+import javax.swing.JCheckBox;
 
 public class abstractPanel_GUI_Tester extends JFrame {
 
@@ -127,7 +128,7 @@ public class abstractPanel_GUI_Tester extends JFrame {
 		
 		// Contact list frame
 		
-		ContactFrame.setBounds(0, 0, 984, 555);
+		ContactFrame.setBounds(-227, 185, 984, 555);
 		ContactFrame.setVisible(false);
 		CenterPanel.add(ContactFrame);
 		ContactFrame.getContentPane().setLayout(null);
@@ -137,6 +138,14 @@ public class abstractPanel_GUI_Tester extends JFrame {
 		JScrollPane scrollPane = new JScrollPane(ContactTable);
 		scrollPane.setBounds(0, 612, 962, -612);
 		ContactFrame.getContentPane().add(scrollPane);
+		
+		JCheckBox checkBox = new JCheckBox("");
+		checkBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		checkBox.setBounds(957, 531, 21, 23);
+		CenterPanel.add(checkBox);
 		
 	}
 	public void setWelcomLabel(String FirstName, String LastName){

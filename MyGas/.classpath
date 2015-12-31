@@ -9,5 +9,12 @@
 	<classpathentry kind="lib" path="javax.mail.jar"/>
 	<classpathentry kind="lib" path="jcommon-1.0.23.jar"/>
 	<classpathentry kind="lib" path="jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="junit-4.12.jar" sourcepath="junit-4.12-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/zinoo/git/MyGas/MyGas/junit-4.12-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="CellactSMS.jar"/>
+	<classpathentry kind="lib" path="google-http-client-1.17.0-rc.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
