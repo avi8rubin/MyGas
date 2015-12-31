@@ -445,8 +445,8 @@ public class StationsController extends Controller implements MouseListener,Runn
 	{
 		UserCarsNumbers.add(e.get(i));
 	}
-	EnteredUser.setWhatToDo(MessageType.updateUserLogin);
-	Server.handleMessageFromClient(EnteredUser);	//Update user is logged in, in the DB
+	//EnteredUser.setWhatToDo(MessageType.updateUserLogin);
+	//Server.handleMessageFromClient(EnteredUser);	//Update user is logged in, in the DB
 	
 	StationUserLoginGui.ClearErrorMessage(); 		//Clear the error message if exists
 	GasStationSwitchScreen();					// go to the next gui screen by user role
@@ -481,9 +481,9 @@ public class StationsController extends Controller implements MouseListener,Runn
 			/*reset all buttons*/
 			StationUserLoginGui.setlogoutvisable(false);
 			MainLogoutButton.setEnabled(true); // Enable to logout from station
-			EnteredUser.setWhatToDo(MessageType.updateUserLogout);
-			EnteredUser.setUserID(Customer.getUserID());
-			Server.handleMessageFromClient(EnteredUser);
+			//EnteredUser.setWhatToDo(MessageType.updateUserLogout);
+			//EnteredUser.setUserID(Customer.getUserID());
+			//Server.handleMessageFromClient(EnteredUser);
 			StationUserLoginGui.setUserName();
 			NFCTextField.setValue("__-___-__");
 			NFCIsExist=false;
@@ -707,6 +707,9 @@ public class StationsController extends Controller implements MouseListener,Runn
  */
 	
 	public void FuelingProccess(){		
+		
+		//Send To DB StationID To get Fuel Type
+		SendUserIDToGetFuelPerStation();
 		/*------ start ------*/
 		if(PressStartStopButtonFlag==true && UserIsFueling)
 		{
@@ -805,13 +808,16 @@ public class StationsController extends Controller implements MouseListener,Runn
 	 * Main Thread count liter per 80 millisecond 
 	 */
 	public void run(){
-		while(true){
+		
+		boolean havefuel=true;
+		while(havefuel){
 			try{
 				this.Liter+=0.13;
 				if(FuelDiesel)
 				{
-					if(FuelDieselCurrentAmount-this.Liter<=0) 
+					if(FuelDieselCurrentAmount-this.Liter<=0.2) 
 					{
+						havefuel=false;
 						/*-------fuel tank is empty need to stop fueling*/
 						this.Liter-=0.13;
 						DiscountTextBox.setText("*Out of fuel");
@@ -820,8 +826,9 @@ public class StationsController extends Controller implements MouseListener,Runn
 				}
 				else if(Fuel95)
 				{
-					if(Fuel95CurrentAmount-this.Liter<=0) 
+					if(Fuel95CurrentAmount-this.Liter<=0.2) 
 					{
+						havefuel=false;
 						/*-------fuel tank is empty need to stop fueling*/
 						this.Liter-=0.13;
 						DiscountTextBox.setText("*Out of fuel");
@@ -830,8 +837,9 @@ public class StationsController extends Controller implements MouseListener,Runn
 				}
 				else if(FuelScoter)
 				{
-					if(FuelScoterCurrentAmount-this.Liter<=0) 
+					if(FuelScoterCurrentAmount-this.Liter<=0.2) 
 					{
+						havefuel=false;
 						/*-------fuel tank is empty need to stop fueling*/
 						this.Liter-=0.13;
 						DiscountTextBox.setText("*Out of fuel");
