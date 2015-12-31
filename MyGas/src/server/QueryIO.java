@@ -451,7 +451,7 @@ public class QueryIO implements Runnable {
 		int RowNum =0;
 		// Build query -----------------------------------------------------------
 		String SqlQuery1 = "DELETE FROM Notifications WHERE User_ID=(?) AND User_Saw = 'Yes' AND HOUR(TIMEDIFF(now(), Notification_Date))>48";
-		String SqlQuery2 = "SELECT Notification_Date, NotificationsDescription, User_Saw FROM Notifications WHERE User_ID=(?)";
+		String SqlQuery2 = "SELECT DATE_FORMAT(Notification_Date,'%d/%m/%Y %T') AS Notification_Date, NotificationsDescription, User_Saw FROM Notifications WHERE User_ID=(?)";
 		// Send query to DB and get result ---------------------------------------
 		try {
 			PreparedStatement ps1=conn.prepareStatement(SqlQuery1);
@@ -1750,7 +1750,7 @@ public class QueryIO implements Runnable {
 					"WHERE Sales_ID IN (?) "+
 					"AND Delivery_Date < NOW()");
 			PreparedStatement ps2=conn.prepareStatement(
-					"SELECT Sale_Date AS Sale_Date_And_Time "+
+					"SELECT DATE_FORMAT(Sale_Date,'%d/%m/%Y %T') AS Sale_Date_And_Time "+
 					", Address "+
 					", Fuel_Amount "+
 					", Payment AS Price "+
@@ -2138,7 +2138,7 @@ public class QueryIO implements Runnable {
 					"UPDATE Fuel_Orders SET Showed_To_Manager='Yes' WHERE Gas_Station_ID=(?) AND Order_Confirmation = 'Waiting'");
 			PreparedStatement ps2=conn.prepareStatement(
 					"SELECT Order_ID, Gas_Station_ID, Fuel_ID, Fuel_Description "+
-					", Amount_To_Order, Current_Amount, Order_Date, Order_Confirmation, Showed_To_Manager "+
+					", Amount_To_Order, Current_Amount, DATE_FORMAT(Order_Date,'%d/%m/%Y %T') AS Order_Date, Order_Confirmation, Showed_To_Manager "+
 					"FROM Fuel_Orders_For_Stations WHERE Gas_Station_ID = (?) AND Order_Confirmation = 'Waiting'");
 			
 		// Send query to DB  ----------------------------------------------------- 	
