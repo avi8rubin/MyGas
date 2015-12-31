@@ -1,4 +1,5 @@
 package server;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,6 +10,7 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.Calendar;
 import java.util.Vector;
+import cellact.*;
 
 import callback.*;
 import common.MessageType;
@@ -26,6 +28,7 @@ public class QueryIO implements Runnable {
 	static Calendar now = Calendar.getInstance();
 	private static ResultSet AnswerResult;
 	private static Object AnswerObject = null;
+	private CellactSMSSender SMS = new CellactSMSSender();
 	
 /**
  * Thread values
@@ -47,6 +50,7 @@ public class QueryIO implements Runnable {
 		} catch (ClassNotFoundException e1) {
 			return MessageType.No_Driver.toString()+"|Class:QueryIO| Function:SetDriver()|";
 		}
+		SMS.setPassword("Zino");
 		return MessageType.Driver_Succeded.toString();
 	}
 	/**
@@ -70,6 +74,7 @@ public class QueryIO implements Runnable {
 		} catch (SQLException e) {
 			return MessageType.Statement_Not_succeded.toString()+"|Class:QueryIO| Function:setStatement()|";
 		}
+		SMS.setUser("Ohad");
 		return MessageType.statement_Succeded.toString();
 	}	
 	public Object CallbackResolver(Object SwitchCallback){		
@@ -100,6 +105,9 @@ public class QueryIO implements Runnable {
 				break;				
 			case updateNotifications:
 				AnswerObject = updateNotifications((callbackUser)SwitchCallback);				
+				break;
+			case StartSender:
+					SMS.setFlag();		
 				break;
 				
 /*Marketing Manager*/
@@ -518,7 +526,27 @@ public class QueryIO implements Runnable {
 		return true; 
 		
 	}
+	private String getPhoneNumberByUserID(int UserID){
+		// Set variables ---------------------------------------------------------
 
+		// Build query -----------------------------------------------------------
+		
+		try {
+			PreparedStatement ps=conn.prepareStatement("SELECT Phone_Number FROM mygas.all_users_detailes WHERE User_ID=(?)");
+			
+		// Send query to DB  -----------------------------------------------------
+			
+				ps.setInt(1, UserID);
+				AnswerResult = ps.executeQuery();
+				if(AnswerResult.next()) return AnswerResult.getString("Phone_Number");
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+			return "";					// 	Query not succeed
+				
+	}
+	
 /**
  * Marketing Manager 	
  */	
@@ -1147,7 +1175,7 @@ public class QueryIO implements Runnable {
 		// Build query -----------------------------------------------------------
 		
 		try {
-			PreparedStatement ps=conn.prepareStatement("INSERT INTO Cars VALUES(null,(?),(?),(?),(?))");
+			PreparedStatement ps=conn.prepareStatement("INSERT INTO Cars VALUES(null,(?),(?),(?),(?),DEFAULT)");
 			
 		// Send query to DB  -----------------------------------------------------
 			
@@ -1171,7 +1199,7 @@ public class QueryIO implements Runnable {
 		// Build query -----------------------------------------------------------
 		
 		try {
-			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Cars WHERE Customers_ID=(?)");
+			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Cars WHERE Customers_ID=(?) AND Active_Car='Yes'");
 			
 		// Send query to DB  -----------------------------------------------------
 			ps.setInt(1, Callback.getCustomerID());
@@ -1208,7 +1236,7 @@ public class QueryIO implements Runnable {
 		// Build query -----------------------------------------------------------
 		
 		try {
-			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Cars WHERE Customers_ID=(?)");
+			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Cars WHERE Customers_ID=(?) AND Active_Car='Yes'");
 			
 		// Send query to DB  -----------------------------------------------------
 			ps.setInt(1, (int) Callback.getVariance()[0]);
@@ -1941,7 +1969,7 @@ public class QueryIO implements Runnable {
 		// Build query -----------------------------------------------------------
 		
 		try {
-			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Cars WHERE Car_Number = (?)");
+			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Cars WHERE Car_Number = (?) AND Active_Car='Yes'");
 			
 		// Send query to DB  -----------------------------------------------------
 			
@@ -1955,6 +1983,7 @@ public class QueryIO implements Runnable {
 				Callback.setCustomerID(AnswerResult.getInt("Customers_ID"));
 				Callback.setFuelID(AnswerResult.getInt("Fuel_ID"));
 				Callback.setYesNoNFC(AnswerResult.getString("NFC"));	
+				Callback.setActiveCar(AnswerResult.getString("Active_Car"));	
 	
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -2458,9 +2487,10 @@ public class QueryIO implements Runnable {
 	private void SetNewFuelOrder(){
 		callbackSale LocalSale = ThreadSale;
 		ResultSet NotificationResultSet, LocalResult = AnswerResult;
-		int ThresholdLimit,Capacity,StationManagerUserID;
+		int ThresholdLimit,Capacity,StationManagerUserID,UserID;
 		String FuelDescription;
 		float CurrentAmount;
+		
 		try {
 			Thread.sleep(20);						//Let the result back to the client
 			/*Prepare all queries*/
@@ -2504,7 +2534,12 @@ public class QueryIO implements Runnable {
 					ps5.setInt(1, LocalSale.getGasStationID());
 					NotificationResultSet = ps5.executeQuery();
 					NotificationResultSet.next();
-					setNotifications(NotificationResultSet.getInt("User_Id"),"A new order for "+FuelDescription+" fuel is waiting For approval."); 
+					setNotifications(UserID = NotificationResultSet.getInt("User_Id"),"A new order for "+FuelDescription+" fuel is waiting For approval."); 
+					
+					/*Send SMS to manager*/
+					SMS.setDestinationNumber(getPhoneNumberByUserID(UserID));
+					SMS.setMESSAGE("A new order for "+FuelDescription+" fuel is waiting For approval.");
+					SMS.SendSMS();
 				}
 				/*Update exists order*/
 				else {
@@ -2514,7 +2549,7 @@ public class QueryIO implements Runnable {
 					ps4.executeUpdate();
 				}		
 			}		
-		} catch (SQLException | InterruptedException e) {
+		} catch (SQLException | InterruptedException | IOException | SmsException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -2587,6 +2622,7 @@ public class QueryIO implements Runnable {
 		
 		
 	}
+
 }
 	
 

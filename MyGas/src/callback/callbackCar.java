@@ -13,6 +13,7 @@ public class callbackCar extends CallBack{
 	private int CustomerID;
 	private String NFC = "No";
 	private int FuelID;
+	private String ActiveCar;
 	
 		
 	public callbackCar(){}
@@ -57,6 +58,12 @@ public class callbackCar extends CallBack{
 	}
 	public void setFuelID(int fuelID) {
 		FuelID = fuelID;
+	}
+	public String getActiveCar() {
+		return ActiveCar;
+	}
+	public void setActiveCar(String activeCar) {
+		ActiveCar = activeCar;
 	}
 
 }

@@ -3,10 +3,12 @@ package controller;
 import java.awt.CardLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
@@ -17,6 +19,7 @@ import GUI.CEOGUI;
 import callback.CallBack;
 import callback.callbackBuffer;
 import callback.callbackStringArray;
+import callback.callbackSuccess;
 import callback.callbackUser;
 import callback.callbackVector;
 import callback.callbackWaitingTariff;
@@ -36,7 +39,7 @@ public class CEOController extends Controller {
 	private JButton TariffApprovalButton;
 	private JButton TariffSaveButton;
 	private JTable TariffApprovalTable;
-
+	private JCheckBox checkBox;
 	/**
 	 * Constractor - CEO Gui
 	 * @param Server
@@ -47,7 +50,7 @@ public class CEOController extends Controller {
 		super(Server, CommonBuffer,GuiScreen);
 		this.GuiScreen = GuiScreen;
 		GuiScreen.setVisible(true);
-		
+		checkBox = GuiScreen.getCheckBox();
 		/* ------ Add action listener to buttons ------ */
 		//Tariff Approval Button
 		TariffApprovalButton = GuiScreen.getTariffApprovalButton();
@@ -57,6 +60,13 @@ public class CEOController extends Controller {
 		//Tariff Save Button
 		TariffSaveButton = GuiScreen.getTariffSaveButton();
 		TariffSaveButton.addActionListener(this);
+		
+		//CheckBox
+		checkBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Server.handleMessageFromClient(new callbackSuccess(MessageType.StartSender));
+			}
+		});
 		/* ------------------------------------------- */
 
 	}
