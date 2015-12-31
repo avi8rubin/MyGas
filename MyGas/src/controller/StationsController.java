@@ -118,7 +118,12 @@ public class StationsController extends Controller implements MouseListener,Runn
 		StationCurrentUser=GuiScreen.getStationUser();
 		NFCTextField=GuiScreen.getNFCTextField();
 		StationUserLoginGui.setCashCheacked();
-
+		/*--------Need GAS STATION ID!!!-----*/
+		UpdateStationInfo();
+				
+		Customer=new callbackCustomer();
+		this.Liter=0;
+		this.Price=0;
 		/*-----Hand gui Icons-------*/
 		BlueHand=GuiScreen.getBlueHand();
 		BlueHandFlip=GuiScreen.getBlueHandFlip();
@@ -141,16 +146,9 @@ public class StationsController extends Controller implements MouseListener,Runn
 		UserLogoutButton.addActionListener(this);
 		
 		
-		LoginButton = GuiScreen.getLoginButton(); 	//Login Button on the main GUI
-		LoginButton.addActionListener(this);		//Add action listener
-
-			
-		Customer=new callbackCustomer();
-		this.Liter=0;
-		this.Price=0;
+		LoginButton = GuiScreen.getLoginButton(); 					//Login Button on the main GUI
+		LoginButton.addActionListener(this);							//Add action listener
 		
-		//Send To DB StationID To get Fuel Type
-		SendUserIDToGetFuelPerStation();
 		
 		ContainerCard=(CardLayout)(CenterCardContainer.getLayout());
 		ContainerCard.show(CenterCardContainer,"StationUserLoginLayer");
@@ -174,299 +172,28 @@ public class StationsController extends Controller implements MouseListener,Runn
 		}
 		
 	}
-
-	/*--------------------------------------------------------------------------------------------------*/
-	/*---------------------------------Global Function--------------------------------------------------*/
-	/*--------------------------------------------------------------------------------------------------*/
-	/**
-	 * Send To DB Request To Get All Fuel In Station
-	 */
-	private void SendUserIDToGetFuelPerStation(){
-
-		/*-----send Station ID-------*/
-		StationCurrentFuels = new callbackStationFuels(MessageType.getFuelPerStation); //create new CallbackStationFuels
-		StationCurrentFuels.setGasStationID(StationCurrentUser.getUserID()); //Enter Station UserID
-		Server.handleMessageFromClient(StationCurrentFuels);	//send to DB
-
-	}
-	/**
-	 * This Function update fuel for this station
-	 * @param e callbackVector with fuels
-	 */
-	private void UpdateFuelPerStation(callbackVector e ){
-		/*------get callback Fuels ------*/
-		FuelsInStation=e;					//Get from the common buffer new callback
-		int NumbersFuelsInCurrentGasStaion=FuelsInStation.size();
-		int index=0;
-		/*
-		 * 1=95
-		 * 2=Scooter Fuel
-		 * 4=Diesel
-		 */
-		while(index<NumbersFuelsInCurrentGasStaion){
-			StationCurrentFuels=(callbackStationFuels)FuelsInStation.get(index);
-			GasStationID=StationCurrentFuels.getGasStationID();
-			if(StationCurrentFuels.getFuelID()==1) // there is 95 fuel
-			{
-				Fuel95IsExist=true;
-				Fuel95CurrentAmount=StationCurrentFuels.getCurrentAmount();
-				Fuel95ThresholdLimit=StationCurrentFuels.getThresholdLimit();
-				Fuel95Price=StationCurrentFuels.getCurrentPrice();
-			}
-			if(StationCurrentFuels.getFuelID()==2) // there is scooter fuel
-			{
-				FuelScoterIsExist=true;
-				FuelScoterCurrentAmount=StationCurrentFuels.getCurrentAmount();
-				FuelScoterThresholdLimit=StationCurrentFuels.getThresholdLimit();
-				FuelScoterPrice=StationCurrentFuels.getCurrentPrice();
-			}
-			if(StationCurrentFuels.getFuelID()==4) // there is diesel fuel
-			{
-				FuelDieselIsExist=true;
-				FuelDieselCurrentAmount=StationCurrentFuels.getCurrentAmount();
-				FuelDieselThresholdLimit=StationCurrentFuels.getThresholdLimit();
-				FuelDieselPrice=StationCurrentFuels.getCurrentPrice();
-			}
-			index++;
-		}
-		
-		/*------Empty buffer ------*/
-		//getCallBackFromBuffer();//Emptying buffer
-		
-		
-		
-	}
-	
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub	
-	}
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	
-	
-	/*--------------------------------------------------------------------------------------------------*/
-	/*---------------------------------Login Function---------------------------------------------------*/
-	/*--------------------------------------------------------------------------------------------------*/
-
 	/**
 	 * This function handle User login from gas station
 	 */
 	private void LoginButtonHandler()
 	{
-	/*--Check if NFC is OK--*/
-	CheckNFC();
-	
-	/*--Check if User is OK--*/
-	CheckUser();
+			/*--Check if NFC is OK--*/
+			CheckNFC();
+			/*------ Read fields from gui ------*/
+			EnteredUser = new callbackUser(MessageType.getCheckExistsUserPass,StationUserLoginGui.getUserName(),StationUserLoginGui.getPassword());
+			/*--Check if User is OK--*/
+			CheckUser();
 	}
-
+			
 	/**
 	 * This function switch left window
 	 */
-	private void GasStationSwitchScreen(){
+	private void GasStationSwitchLeftPanel(){
 		ContainerCard=(CardLayout)(LeftCardContainer.getLayout());
 		ContainerCard.show(LeftCardContainer, "left_panel");
 		ContainerCard=(CardLayout)(CenterCardContainer.getLayout());
 		ContainerCard.show(CenterCardContainer,"GasFuelingCenterPanel");
 	}
-
-	/*--------------------------------------------------------------------------------------------------*/
-	/*---------------------------------NFC Function-----------------------------------------------------*/
-	/*--------------------------------------------------------------------------------------------------*/
-	
-	/**
-	 * Check NFC Input & Send To DB Car Number
-	 */
-	private void CheckNFC(){
-		
-		if(!NFCTextField.getText().equals("__-___-__") && !Checks.isNumeric(NFCTextField.getText())) //if nfc is not empty and enter illegal input
-		{
-			StationUserLoginGui.IllegalNFC();
-		}
-		
-		if( !NFCTextField.getText().equals("__-___-__") && Checks.isNumeric(NFCTextField.getText()) ) //if nfc is not empty
-		{ 
-				/*-----send NFC to DB----*/
-				UserCarNFC=new callbackCar(MessageType.getCarWithNFC);
-				UserCarNFC.setCarNumber(NFCTextField.getText() );
-				Server.handleMessageFromClient(UserCarNFC);
-
-		}
-	}
-	/**
-	 * Check Car have NFC & Send To DB Customer Info
-	 * @param e Car Callback
-	 */
-	private void ValidNFCNumber(callbackCar e)
-	{
-	UserCarNFC=e;
-	if(UserCarNFC.getYesNoNFC().equals("Yes"))
-	{
-	NFCIsExist=true;
-	Customer.setCustomersID(UserCarNFC.getCustomerID()); // NFC car callback -> Customer ID
-	/*------send to DB User ID and get Customer id*/
-	Customer.setWhatToDo(MessageType.getCustomer);
-	Customer.setCustomersID(UserCarNFC.getCustomerID()); //Connect Customer.userID-> userID
-	Server.handleMessageFromClient(Customer);
-	}
-	else 
-	StationUserLoginGui.IllegalNFC();
-	}
-	/**
-	 * Check if Costing Model allow Customer To Fuel In Gas Station 
-	 * @param e - Customer Callback
-	 */
-	private void CheakModelCostingNFC(callbackCustomer e){
-		Customer=e;
-		if(Customer.isAllowToEnterGasStation(this.GasStationID)) // if Costing model is oK!
-		{
-	/*------ Move to the next screen ------*/		
-			StationUserLoginGui.ClearErrorMessage(); 		//Clear the error message if exists
-			GasStationSwitchScreen();					// go to the next gui screen by user role
-			logoutflag=true;								//logout will return to this screen
-			MainLogoutButton.setEnabled(false);
-			StationUserLoginGui.setlogoutvisable(true);
-			StationUserLoginGui.setPassword("");
-			SendUserIDToGetFuelPerStation();
-			ResetPumpSatation();
-			StationUserLoginGui.setCombobox(NFCTextField.getText());
-			StationUserLoginGui.setNFCTextField("");
-			StationUserLoginGui.setComboboxedit(false);
-			UserCarsNumbers= new ArrayList<String>();
-			callbackCar onecar=new callbackCar();
-			onecar.setCarNumber(StationUserLoginGui.getComboboxCarSelect());
-			onecar.setCarID(UserCarNFC.getCarID());
-			UserCarsNumbers.add(onecar);
-			DiscountTextBox.setText("<html> Wellcome "+Customer.getCustomerFirstName()+" "+Customer.getCustomerLastName()+"</html>");
-		}	
-		else // Not Costing model
-		{
-			StationUserLoginGui.IllegalCostingmodel();
-		}
-		
-	}//End of funtion
-	
-	
-	/*--------------------------------------------------------------------------------------------------*/
-	/*---------------------------------NON-NFC Function-------------------------------------------------*/
-	/*--------------------------------------------------------------------------------------------------*/
-	
-	/**
-	 * Read Information form Gui And Send To DB
-	 */
-	private void CheckUser(){
-		EnteredUser = new callbackUser(MessageType.getCheckExistsUserPass,StationUserLoginGui.getUserName(),StationUserLoginGui.getPassword());
-		if(!StationUserLoginGui.getPassword().equals(""))
-		{
-			Server.handleMessageFromClient(EnteredUser);		
-		}
-		
-	}
-	/**
-	 * This Function Check If User PassWord Is ok
-	 * @param e - User CallBack
-	 */
-	private void CheckUserInfo(callbackUser e)
-	{
-		EnteredUser = e;				//Casting to callbackUser
-		String Password = StationUserLoginGui.getPassword();
-		
-		/*--------Try To Enter With Station User-------*/
-		if (EnteredUser.getLoggedIn().equals("Station"))
-		{			
-		StationUserLoginGui.IllegalUserName();
-		}
-		else if (Password.equals(EnteredUser.getPassword()))
-		{				
-		NFCIsExist=false;
-		/*------send to DB User ID and get Customer id*/
-		Customer.setWhatToDo(MessageType.getCustomer);
-		Customer.setUserID(EnteredUser.getUserID()); //Connect Customer.userID-> userID
-		Server.handleMessageFromClient(Customer);
-		}
-	}//End of function
-	/**
-	 * Check if User Can Enter To Gas Station With The Costing Model
-	 * @param e - Customer Callback
-	 */
-	private void CheckUserCostingModelNonNFC(callbackCustomer e){
-		Customer=e;
-		if(Customer.isAllowToEnterGasStation(this.GasStationID)) // if Costing model is oK!
-		{
-		getAllUserCar(Customer.getCustomersID());
-		}
-		else // Not Costing model
-		{
-			StationUserLoginGui.IllegalCostingmodel();
-		}
-	}
-	
-	/**
-	 * This function get userID and return array of car number strings
-	 * Build callback Car with Customer ID
-	 * return Vector with cars
-	 * @return 
-	 */
-	private void getAllUserCar(int CurrentCustomerID){
-		UserCarsNumbers=new ArrayList<>();
-		callbackVector LocalVector = new callbackVector();
-		CustomerCars=new callbackCar();
-		callbackVector TempVector = new callbackVector();
-		//callbackVector LocalVector = new callbackVector();
-		/*--- send to DB----*/
-		CustomerCars.setWhatToDo(MessageType.getCarDetailes);
-		CustomerCars.setCustomerID(CurrentCustomerID);
-		Server.handleMessageFromClient(CustomerCars);
-		
-
-	}
-
-	/**
-	 * This Funtion Move To Gas Station If all The Input Test Successes
-	 * @param e -Callback vector of Customer Cars
-	 */
-	private void EnterUserToGasStation(callbackVector e){
-	for(int i=0;i<e.size();i++)
-	{
-		UserCarsNumbers.add(e.get(i));
-	}
-	EnteredUser.setWhatToDo(MessageType.updateUserLogin);
-	Server.handleMessageFromClient(EnteredUser);	//Update user is logged in, in the DB
-	
-	StationUserLoginGui.ClearErrorMessage(); 		//Clear the error message if exists
-	GasStationSwitchScreen();					// go to the next gui screen by user role
-	logoutflag=true;								//logout will return to this screen
-	MainLogoutButton.setEnabled(false);
-	StationUserLoginGui.setlogoutvisable(true);
-	StationUserLoginGui.setPassword("");
-	StationUserLoginGui.setNFCTextField("");
-	SendUserIDToGetFuelPerStation();
-	ResetPumpSatation();
-	StationUserLoginGui.setCombobox(UserCarsNumbers);
-	DiscountTextBox.setText("<html> Wellcome "+Customer.getCustomerFirstName()+" "+Customer.getCustomerLastName()+"</html>");
-	}
-
-	
-	/*--------------------------------------------------------------------------------------------------*/
-	/*---------------------------------Logout Function--------------------------------------------------*/
-	/*--------------------------------------------------------------------------------------------------*/
-		
-
 	/**
 	 * This function handle logout window for User
 	 */
@@ -484,6 +211,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 			EnteredUser.setWhatToDo(MessageType.updateUserLogout);
 			EnteredUser.setUserID(Customer.getUserID());
 			Server.handleMessageFromClient(EnteredUser);
+			getCallBackFromBuffer();//Clean buffer
 			StationUserLoginGui.setUserName();
 			NFCTextField.setValue("__-___-__");
 			NFCIsExist=false;
@@ -492,13 +220,6 @@ public class StationsController extends Controller implements MouseListener,Runn
 			ResetPumpSatation();
 		}
 	}
-	
-	
-	/*--------------------------------------------------------------------------------------------------*/
-	/*---------------------------------Gas Station Function---------------------------------------------*/
-	/*--------------------------------------------------------------------------------------------------*/
-	
-	
 	/**
 	 * This function handle mouse click on Pump Hands
 	 * 
@@ -707,7 +428,7 @@ public class StationsController extends Controller implements MouseListener,Runn
  */
 	
 	public void FuelingProccess(){		
-		/*------ start ------*/
+		/*------User Press start fueling------*/
 		if(PressStartStopButtonFlag==true && UserIsFueling)
 		{
 			StationUserLoginGui.getUserLogoutButton().setEnabled(false);
@@ -717,14 +438,19 @@ public class StationsController extends Controller implements MouseListener,Runn
 			DiscountTextBox.setText("");
 			Paybutton.setEnabled(false);
 			UserNeedToPay=true;
+
 			LiterCounter=new Thread(this);
 			LiterCounter.start();
 		}
-		/*------ Stop ------*/
+		//User Stop the Pumping
 		else
 		{ 
+			
+			//ThreadRunFlag=true;
 			LiterCounter.interrupt();
 			LiterCounter.stop();
+			//LiterCounter.stop();
+			//LiterCounter=new Thread(this);
 			/*
 			 * 1=95
 			 * 2=Scooter Fuel
@@ -737,22 +463,20 @@ public class StationsController extends Controller implements MouseListener,Runn
 			String CurrentCarNumber;
 			CurrentCarNumber=StationUserLoginGui.getComboboxCarSelect();
 			CurrentCarNumber=CurrentCarNumber.replace("-","");
-
+			DiscountCalulation(Float.valueOf(myFormatter.format(Price)), this.Liter, FuelID, Customer.getCustomersID(),CurrentCarNumber);
+			//if User Have'nt Credit Card
 			if(Customer.getCreditCard().equals(""))
 			{
-				StationUserLoginGui.setCreditRadioButtonEdit(false); 
+				StationUserLoginGui.setCreditRadioButtonEdit(false); // Not Have NFC
 				StationUserLoginGui.setCashCheacked();
 			}
 			else
-			{
-				StationUserLoginGui.setCreditRadioButtonEdit(true); 
-			}
+				StationUserLoginGui.setCreditRadioButtonEdit(true); // have NFC
+			
 			PressStartStopButtonFlag=true;
 			Paybutton.setEnabled(true);
 			StartFuelingButton.setText("Start");
 			DiscountTextBox.setVisible(true);
-
-			DiscountCalulation(Float.valueOf(myFormatter.format(Price)), this.Liter, FuelID, Customer.getCustomersID(),CurrentCarNumber);
 		}
 		
 		
@@ -760,10 +484,8 @@ public class StationsController extends Controller implements MouseListener,Runn
 	/**
 	 * This function handle the payment - send data to DB and reset the station
 	 */
-	public void PayProccess()
-	{
-		if(UserNeedToPay==true)
-		{
+	public void PayProccess(){
+		if(UserNeedToPay==true){
 			/*---Pushed Pay button---*/
 			/*---set CurrentSale Detials---*/
 			CurrentSale.setWhatToDo(MessageType.setNewGasStationSale);
@@ -779,17 +501,19 @@ public class StationsController extends Controller implements MouseListener,Runn
 
 				panel.add(lbl);
 				panel.add(txt);
-				
-				txt.setText("");
-
 				int selectedOption = JOptionPane.showOptionDialog(null, panel, "Driver Input", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
+				String text=null;
+				text=Customer.getCustomerFirstName();
+				if(selectedOption == 0)
+				{
 					while(txt.getText().equals(""))
 					{
 						lbl.setText("Worng Driver Input, Try Again");
 						selectedOption = JOptionPane.showOptionDialog(null, panel, "Driver Input", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
 					}
-				  String text = txt.getText();
-				
+				    text = txt.getText();
+				    // ...
+				}
 				CurrentSale.setDriverName(text);
 			}
 			else
@@ -798,15 +522,49 @@ public class StationsController extends Controller implements MouseListener,Runn
 			}
 
 			Server.handleMessageFromClient(CurrentSale);
+			Temp=(CallBack) getCallBackFromBuffer();
+			if(Temp instanceof callbackSuccess)
+			{
+				//*---Gas station sale send OK *//
+				System.out.println("Succsses");
+			}
+			if(Temp instanceof callback_Error)
+			{
+				System.out.println("Error With PAY");
+				/*--No successes to send DB--*/
+			}
 			
+			/*-------------------*/
+			ResetPumpSatation(); 
 		}
-	}//End of funtion
+		
+	}
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub	
+	}
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 	/**
 	 * Main Thread count liter per 80 millisecond 
 	 */
 	public void run(){
 		while(true){
 			try{
+				//while(ThreadRunFlag);
 				this.Liter+=0.13;
 				if(FuelDiesel)
 				{
@@ -844,11 +602,67 @@ public class StationsController extends Controller implements MouseListener,Runn
 				LiterLabel.setText(String.valueOf(Liter));
 				Thread.sleep(80);
             } catch (InterruptedException e1) {
-  
-            	e1.printStackTrace();
-               
+                e1.printStackTrace();
             }
 		}
+		
+	}
+	/**
+	 * Update Station with the current fuels types, fuel price
+	 * 
+	 */
+	private void UpdateStationInfo(){
+		/*
+		 * 1=95
+		 * 2=Scooter Fuel
+		 * 4=Diesel
+		 */
+		/*-----send Station ID-------*/
+		StationCurrentFuels = new callbackStationFuels(MessageType.getFuelPerStation); //create new CallbackStationFuels
+		StationCurrentFuels.setGasStationID(StationCurrentUser.getUserID()); //Enter Station UserID
+		Server.handleMessageFromClient(StationCurrentFuels);	//send to DB
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		/*------get callback Fuels ------*/
+		FuelsInStation=(callbackVector)getCallBackVectorFromBuffer();					//Get from the common buffer new callback
+		int NumbersFuelsInCurrentGasStaion=FuelsInStation.size();
+		int index=0;
+		while(index<NumbersFuelsInCurrentGasStaion){
+			StationCurrentFuels=(callbackStationFuels)FuelsInStation.get(index);
+			GasStationID=StationCurrentFuels.getGasStationID();
+			if(StationCurrentFuels.getFuelID()==1) // there is 95 fuel
+			{
+				Fuel95IsExist=true;
+				Fuel95CurrentAmount=StationCurrentFuels.getCurrentAmount();
+				Fuel95ThresholdLimit=StationCurrentFuels.getThresholdLimit();
+				Fuel95Price=StationCurrentFuels.getCurrentPrice();
+			}
+			if(StationCurrentFuels.getFuelID()==2) // there is scooter fuel
+			{
+				FuelScoterIsExist=true;
+				FuelScoterCurrentAmount=StationCurrentFuels.getCurrentAmount();
+				FuelScoterThresholdLimit=StationCurrentFuels.getThresholdLimit();
+				FuelScoterPrice=StationCurrentFuels.getCurrentPrice();
+			}
+			if(StationCurrentFuels.getFuelID()==4) // there is diesel fuel
+			{
+				FuelDieselIsExist=true;
+				FuelDieselCurrentAmount=StationCurrentFuels.getCurrentAmount();
+				FuelDieselThresholdLimit=StationCurrentFuels.getThresholdLimit();
+				FuelDieselPrice=StationCurrentFuels.getCurrentPrice();
+			}
+			index++;
+		}
+		
+		/*------Empty buffer ------*/
+		//getCallBackFromBuffer();//Emptying buffer
+		
+		
 		
 	}
 	/**
@@ -889,7 +703,195 @@ public class StationsController extends Controller implements MouseListener,Runn
 		StationUserLoginGui.setComboboxedit(true);
 		
 	}
+	/**
+	 * Check if User have NFC by get his Car nubmer
+	 */
+	private void CheckNFC(){
+		
+		if( !NFCTextField.getText().equals("__-___-__") && Checks.isNumeric(NFCTextField.getText()) ) //if nfc is not empty
+		{ 
+			
+				/*-----send NFC to DB----*/
+				UserCarNFC=new callbackCar(MessageType.getCarWithNFC);
+				UserCarNFC.setCarNumber(NFCTextField.getText() );
+				Server.handleMessageFromClient(UserCarNFC);
 
+				/*------Waiting for callback ------*/
+				 Temp= (CallBack) getCallBackFromBuffer();
+				/*-------if NFC Not Exist---*/ 
+					if(Temp instanceof callback_Error)
+					{
+						StationUserLoginGui.NFCNotExist();
+					}
+				/*-------if NFC Exist---*/ 
+				//			
+					else  
+					{
+						UserCarNFC=(callbackCar) Temp;
+						if(UserCarNFC.getYesNoNFC().equals("Yes"))
+							{
+							NFCIsExist=true;
+							Customer.setCustomersID(UserCarNFC.getCustomerID()); // NFC car callback -> Customer ID
+							
+							/*------send to DB User ID and get Customer id*/
+							Customer.setWhatToDo(MessageType.getCustomer);
+							Customer.setCustomersID(UserCarNFC.getCustomerID()); //Connect Customer.userID-> userID
+							Server.handleMessageFromClient(Customer);
+							
+							/*-------get Cusomter ID---------------------*/
+							LocalUserCallBack = (CallBack) getCallBackFromBuffer();
+							if(LocalUserCallBack instanceof callback_Error)
+							{
+								StationUserLoginGui.IllegalCustomerID();
+							}
+							else if(LocalUserCallBack instanceof callbackCustomer)
+							{
+							Customer=(callbackCustomer) LocalUserCallBack;
+							}
+							if(Customer.isAllowToEnterGasStation(this.GasStationID)) // if Costing model is oK!
+								{
+								/*------ Move to the next screen ------*/		
+										StationUserLoginGui.ClearErrorMessage(); 		//Clear the error message if exists
+										GasStationSwitchLeftPanel();					// go to the next gui screen by user role
+										logoutflag=true;								//logout will return to this screen
+										MainLogoutButton.setEnabled(false);
+										StationUserLoginGui.setlogoutvisable(true);
+										StationUserLoginGui.setPassword("");
+										UpdateStationInfo();
+										ResetPumpSatation();
+										StationUserLoginGui.setCombobox(NFCTextField.getText());
+										StationUserLoginGui.setNFCTextField("");
+										StationUserLoginGui.setComboboxedit(false);
+										UserCarsNumbers= new ArrayList<String>();
+										callbackCar onecar=new callbackCar();
+										onecar.setCarNumber(StationUserLoginGui.getComboboxCarSelect());
+										onecar.setCarID(UserCarNFC.getCarID());
+										UserCarsNumbers.add(onecar);
+										DiscountTextBox.setText("<html> Wellcome "+Customer.getCustomerFirstName()+" "+Customer.getCustomerLastName()+"</html>");
+								}	
+								else // Not Costing model
+								{
+									StationUserLoginGui.IllegalCostingmodel();
+								
+								}
+							}
+					}
+		}
+		if(!NFCTextField.getText().equals("__-___-__") && !Checks.isNumeric(NFCTextField.getText())) //if nfc is not empty and enter illegal input
+		{
+			StationUserLoginGui.IllegalNFC();
+		}
+	}//End of funtion
+	/**
+	 * Check if Username & Password are correct
+	 */
+	private void CheckUser(){
+		if(!StationUserLoginGui.getPassword().equals("")){
+			/*------Send user name and password query ------*/
+			Server.handleMessageFromClient(EnteredUser);					//Send query to DB			
+	
+			/*------Waiting for callback ------*/
+			LocalUserCallBack = (CallBack) getCallBackFromBuffer();					//Get from the common buffer new callback
+				
+			/*------ User not exists ------*/
+			if (LocalUserCallBack instanceof callback_Error){				//If the query back empty or the entered values not illegal
+				StationUserLoginGui.IllegalUserName();	
+			}
+			/*------ User exists, check the reset parameters ------*/
+			else if (LocalUserCallBack instanceof callbackUser){
+				EnteredUser = (callbackUser) LocalUserCallBack;				//Casting to callbackUser
+				String Password = StationUserLoginGui.getPassword();
+				if (Password.equals(EnteredUser.getPassword())){			//Check if Password	correct
+					if (EnteredUser.getLoggedIn().equals("Station")){			//Check if User Already Connected
+						StationUserLoginGui.IllegalUserName();
+					}
+			/*------ Move to the next screen ------*/
+					else{
+						EnteredUser.setWhatToDo(MessageType.updateUserLogin);
+						Server.handleMessageFromClient(EnteredUser);	//Update user is logged in, in the DB	
+						getCallBackFromBuffer();						//Emptying buffer	
+						NFCIsExist=false;
+						
+						/*------send to DB User ID and get Customer id*/
+						Customer.setWhatToDo(MessageType.getCustomer);
+						Customer.setUserID(EnteredUser.getUserID()); //Connect Customer.userID-> userID
+						Server.handleMessageFromClient(Customer);
+						
+						/*-------get Cusomter ID---------------------*/
+						LocalUserCallBack = (CallBack) getCallBackFromBuffer();
+						if(LocalUserCallBack instanceof callback_Error)
+						{
+							StationUserLoginGui.IllegalCustomerID();
+						}
+						else if(LocalUserCallBack instanceof callbackCustomer)
+						{
+						Customer=(callbackCustomer) LocalUserCallBack;
+						/* Get all Customer Cars*/
+						if(Customer.isAllowToEnterGasStation(this.GasStationID)) // if Costing model is oK!
+							{
+								UserCarsNumbers= getAllUserCar(Customer.getCustomersID());
+								StationUserLoginGui.ClearErrorMessage(); 		//Clear the error message if exists
+								GasStationSwitchLeftPanel();					// go to the next gui screen by user role
+								logoutflag=true;								//logout will return to this screen
+								MainLogoutButton.setEnabled(false);
+								StationUserLoginGui.setlogoutvisable(true);
+								StationUserLoginGui.setPassword("");
+								StationUserLoginGui.setNFCTextField("");
+								UpdateStationInfo();
+								ResetPumpSatation();
+								StationUserLoginGui.setCombobox(UserCarsNumbers);
+								DiscountTextBox.setText("<html> Wellcome "+Customer.getCustomerFirstName()+" "+Customer.getCustomerLastName()+"</html>");
+							}
+						else // Not Costing model
+						{
+							StationUserLoginGui.IllegalCostingmodel();
+						}
+						}
+					}
+				}
+				else StationUserLoginGui.IllegalPassword();							//Display password error message
+			}
+		}
+	}
+	/**
+	 * This function get userID and return array of car number strings
+	 * Build callback Car with Customer ID
+	 * return Vector with cars
+	 * @return 
+	 */
+	private ArrayList getAllUserCar(int CurrentCustomerID){
+		UserCarsNumbers=new ArrayList<>();
+		callbackVector LocalVector = new callbackVector();
+		CustomerCars=new callbackCar();
+		callbackVector TempVector = new callbackVector();
+		//callbackVector LocalVector = new callbackVector();
+		/*--- send to DB----*/
+		CustomerCars.setWhatToDo(MessageType.getCarDetailes);
+		CustomerCars.setCustomerID(CurrentCustomerID);
+		Server.handleMessageFromClient(CustomerCars);
+		/*----get buffer-----*/
+		LocalVector = (callbackVector) getCallBackVectorFromBuffer();
+		
+		/*Error user have no cars or Customer error*/
+		if(LocalVector.get(0) instanceof callback_Error)
+		{
+			if(((callback_Error) LocalUserCallBack).getErrorMassage().equals("No records of cars for this customer."))
+			StationUserLoginGui.IllegalCustomerHasNoCars();
+			else
+				StationUserLoginGui.IllegalCustomerID();
+		}
+		/*Success User have cars*/
+		if(LocalVector.get(0) instanceof callbackCar)
+		{
+			for(int i=0;i<LocalVector.size();i++)
+			{
+			
+			UserCarsNumbers.add(LocalVector.get(i));
+			}
+			
+		}
+		return UserCarsNumbers;
+	}
 	/**
 	 * This function find the right car to number
 	 * @param CarToFind - input car number " XX-XXX-XX"
@@ -920,6 +922,18 @@ public class StationsController extends Controller implements MouseListener,Runn
 		return 0;
 	}
 	
+	/**
+	 * This function check if user can enter to station by his station costing model
+	 * @return true if is OK
+	 */
+	private boolean CheckIfUserCanEnterToGasStationByCostingModel(callbackCustomer currentCustomer)
+
+	{
+		//"Sonol"/"Paz".... 
+		/*--------need Qurey---- */
+		return true;
+	}
+
 /**
  * This function check & update discount for user
  * @param Payment - Price
@@ -942,16 +956,15 @@ public class StationsController extends Controller implements MouseListener,Runn
 		CurrentSale.setCustomersID(CustomerID);
 		CurrentSale.setWhatToDo(MessageType.getSaleDiscount);
 		Server.handleMessageFromClient(CurrentSale);
-		 
-	}
-	private void UpdateSalePrice(CallBack e){
-		if(e instanceof callbackSuccess) // No Discount
+		Temp=(CallBack) getCallBackFromBuffer();
+
+		if(Temp instanceof callbackSuccess) // No Discount
 		{
 			DiscountTextBox.setText(" You Need To Pay: "+myFormatter.format(Price)+" Shekel *No Discount");
 		}
-		if(e instanceof callbackCampaign) // Was Discount
+		if(Temp instanceof callbackCampaign) // Was Discount
 		{
-			Temp=(callbackCampaign)e;
+			Temp=(callbackCampaign)Temp;
 			Price=((callbackCampaign) Temp).getPriceAfterDiscount();
 			DiscountTextBox.setText("<html>You Need To Pay: "+myFormatter.format(Price)+" Shekel"+"<br/>"
 			+" Discount = "+((callbackCampaign) Temp).getDiscountPercentage()+"<br/>"+
@@ -963,78 +976,33 @@ public class StationsController extends Controller implements MouseListener,Runn
 		CurrentSale.setCampaignID(((callbackCampaign) Temp).getCampaignID());
 		}
 	}
-	
 	@Override
 	public void update(Observable o, Object arg) {
 		if(arg instanceof CallBack){	
 			switch(((CallBack) arg).getWhatToDo()){
 				case getCheckExistsUserPass:
-						if(arg instanceof callback_Error)
-						{
-							StationUserLoginGui.IllegalUserName();
-						}
-						if(arg instanceof callbackUser)
-						{
-							CheckUserInfo((callbackUser) arg);
-						}
-						
+	
 					break;
 				case updateUserLogout:
 				
 					break;
 				case setNewGasStationSale:
-					if(arg instanceof callback_Error)
-					{
-						DiscountTextBox.setText("Error With Payment");
-					}
-					if (arg instanceof callbackSuccess)
-					{
-						ResetPumpSatation();
-					}
+					
 					break;
 				case getFuelPerStation:
 					
 					break;
 				case getCarWithNFC:
-					if(arg instanceof callback_Error)
-					{
-						StationUserLoginGui.NFCNotExist();
-					}
-					if(arg instanceof callbackCar)
-					{
-						ValidNFCNumber((callbackCar) arg);
-					}
+					
 					break;
 				case getCustomer:
-					if(NFCIsExist)
-					{
-						if(arg instanceof callback_Error)
-						{
-							StationUserLoginGui.IllegalCustomerID();
-						}
-						if(arg instanceof callbackCustomer)
-						{
-							CheakModelCostingNFC((callbackCustomer) arg);
-						}
-					}
-					if(!NFCIsExist)
-					{
-						if(arg instanceof callback_Error)
-						{
-							StationUserLoginGui.IllegalCustomerID();
-						}
-						if(arg instanceof callbackCustomer)
-						{
-							CheckUserCostingModelNonNFC((callbackCustomer) arg);
-						}
-					}
-						
+					
 					break;
 				case updateUserLogin:
 					
 					break;
 				case getSaleDiscount:
-					UpdateSalePrice((CallBack) arg);
+					
 					break;
 			/*Don't change!*/
 			default:
@@ -1045,20 +1013,10 @@ public class StationsController extends Controller implements MouseListener,Runn
 		}
 		else if(arg instanceof callbackVector){
 				switch(((callbackVector) arg).getWhatToDo()){
-				case getFuelPerStation:
-					UpdateFuelPerStation((callbackVector) arg);
-					break;
 				case getCarDetailes:
-					/*Error user have no cars or Customer error*/
-					if(((callbackVector) arg).get(0) instanceof callback_Error)
-					{
-						StationUserLoginGui.IllegalCustomerHasNoCars();
-					}
-					if(((callbackVector) arg).get(0) instanceof callbackCar)
-					{
-						EnterUserToGasStation((callbackVector) arg);
-					}
+		
 					break;
+
 				default:
 					break;
 				
@@ -1071,3 +1029,5 @@ public class StationsController extends Controller implements MouseListener,Runn
 	}
 	
 	}
+//	8565232
+// 2123650
