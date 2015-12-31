@@ -77,6 +77,7 @@ public class StationManagerGUI extends abstractPanel_GUI{
 	//Stock Report
 	private  JLayeredPane StockReportLayer;
 	private Float[] StockGraphFloatArray;
+	private JPanel Stockpanel;
 	// Left screen
 	private final JLabel Error_Label;
 	
@@ -416,7 +417,7 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		/*-------------------------------------------------------------------------------------------------------------------*/
 		
 		
-		
+		Stockpanel = (new GasStationBarChart(StockGraphFloatArray)).createBarChartPanel();
 		
 		
 		/*------- Create new center layer and add it to container --------*/
@@ -599,10 +600,11 @@ public void SuccessWasChangeUpdateLevel(){
 	}
 
 	public void setStockGraphFloatArray(Float[] arr){
+		StockGraphFloatArray=arr;
 
-		JPanel panel = (new GasStationBarChart(arr)).createBarChartPanel();
-		panel.setBounds(67, 65, 859, 457);
-		StockReportLayer.add(panel);
+		Stockpanel.repaint();
+		Stockpanel.setBounds(67, 65, 859, 457);
+		StockReportLayer.add(Stockpanel);
 		
 	}
 	public JButton getUpdateLimitLevelButton(){
