@@ -193,6 +193,10 @@ public class Login_GUI extends JFrame {
 	public void ClearErrorMessage(){
 		ErrorMassage.setText("");
 	}
+	public void ClearFields(){
+		PasswordTextField.setText("");
+		UserNameTextField.setText("");
+	}
 	public void AlreadyConnected(){
 		ErrorMassage.setText("*User Already Connected.");
 	}
