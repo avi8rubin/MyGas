@@ -14,7 +14,11 @@ public class Client extends ObservableClient
 {
 //Instance variables **********************************************
 
-
+	/**
+	 * This buffer will allows the transfer of the callback, back to the application
+	 */
+	private callbackBuffer CommonBuffer = null;
+	private volatile Boolean BufferInUse;
 	
 //Constructors ****************************************************
 
@@ -28,7 +32,10 @@ public class Client extends ObservableClient
 public Client(String host, int port, callbackBuffer CommonBuffer) throws IOException 
 { 
 	 super(host, port); 									//Call the superclass constructor
-
+	 this.CommonBuffer=CommonBuffer;
+	 BufferInUse = CommonBuffer.getBufferInUse(); 			//Common synchronized send/receive flag
+	 
+	 
 }
 
 
@@ -44,6 +51,17 @@ public void handleMessageFromServer(Object msg)
 		super.setChanged();
 		super.notifyObservers(msg);
 		/************************/
+		/*
+		if ( msg instanceof CallBack){
+			CallBack Message = (CallBack) msg;
+			while (CommonBuffer.setNewCallBack(Message) == false);				// Set the new callback
+		}
+		else if (msg instanceof Vector){
+			Vector<?> NewCallBack = (Vector<?>) msg; 							// Casting to Vector object that received from server
+			//CallBack Message = (CallBack) NewCallBack.get(0);					// Casting to CallBack object
+			while (CommonBuffer.setNewCallBack(NewCallBack) == false);				// Set the new callback
+		}*/
+		  //BufferInUse = true;													// Release client to read callback
 }	
 
 /**
@@ -52,7 +70,8 @@ public void handleMessageFromServer(Object msg)
 */
 public void handleMessageFromClient(Object message)
 {
-
+		//BufferInUse = false;
+		//int ReleaseCounter = 50;
 		try {
 			sendToServer(message);
 		} catch (IOException e) {
@@ -62,13 +81,24 @@ public void handleMessageFromClient(Object message)
 			e.printStackTrace();
 		}
 		
-
+		/*---- Wait until callback arrived from server -----*/
+		/*while(!BufferInUse && ReleaseCounter!=0){	
+			if(--ReleaseCounter == 0){ 												//Stop connection after long delay
+				System.out.println(MessageType.Connection_To_Server_Lost.toString()
+						+" | Class: Client | Function: handleMessageFromClient.");
+				//LostConnection();													//Close connection
+			}*/
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-
+		/*}
+		/*Force exit program and go back to login screen*/
+		/*if(ReleaseCounter == 0) {													//Enter to common buffer lost connection callback
+			CommonBuffer.getBufferCallBack();
+			CommonBuffer.setNewCallBack(new callbackLostConnection());
+		}*/
 }
 
 	/**
