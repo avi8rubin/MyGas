@@ -1682,7 +1682,7 @@ public class QueryIO implements Runnable {
 					"AND Delivery_Date < NOW()");
 			
 			PreparedStatement ps2=conn.prepareStatement(
-					"SELECT Sale_Date AS Sale_Date_And_Time "+
+					"SELECT DATE_FORMAT(Sale_Date,'%d/%m/%Y %T') AS Sale_Date_And_Time "+
 					", Address "+
 					", Fuel_Amount "+
 					", Payment AS Price "+
