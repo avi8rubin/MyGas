@@ -417,7 +417,7 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		/*-------------------------------------------------------------------------------------------------------------------*/
 		
 		
-		Stockpanel = (new GasStationBarChart(StockGraphFloatArray)).createBarChartPanel();
+		
 		
 		
 		/*------- Create new center layer and add it to container --------*/
@@ -600,9 +600,8 @@ public void SuccessWasChangeUpdateLevel(){
 	}
 
 	public void setStockGraphFloatArray(Float[] arr){
-		StockGraphFloatArray=arr;
-
-		Stockpanel.repaint();
+		Stockpanel=null;
+		Stockpanel = (new GasStationBarChart(arr)).createBarChartPanel();
 		Stockpanel.setBounds(67, 65, 859, 457);
 		StockReportLayer.add(Stockpanel);
 		
