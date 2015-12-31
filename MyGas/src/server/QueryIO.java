@@ -560,9 +560,9 @@ public class QueryIO implements Runnable {
 				",DATE_FORMAT(A.Start_Campaign,'%d/%m/%Y') AS Start_Campaign "+
 				",DATE_FORMAT(A.End_Campaign,'%d/%m/%Y') AS End_Campaign "+
 				",CONCAT(A.Campaign_Description,' (',CAST(DATE_FORMAT(A.Start_Campaign,'%d/%m/%Y') AS CHAR),' - ',CAST(DATE_FORMAT(A.End_Campaign,'%d/%m/%Y') AS CHAR),')') AS Campaign_Description "+ 
-				",COUNT(*) AS NumberOfCoustomer "+
-				",SUM(B.Payment) AS TotalProfit "+
-				",SUM(B.Fuel_Amount) AS TotalFuelAmount "+
+				",COUNT(*) AS Number_Of_Coustomer "+
+				",ROUND(SUM(B.Payment),2) AS Total_Profit "+
+				",ROUND(SUM(B.Fuel_Amount),2) AS Total_Fuel_Amount "+
 				"FROM All_Campaign_On_System A "+
 				"LEFT OUTER JOIN All_Gas_Stations_Sales B ON A.Campaign_ID=B.Campaign_ID "+
 				"WHERE IS_Active = 'Yes' "+
@@ -607,9 +607,9 @@ public class QueryIO implements Runnable {
 				",DATE_FORMAT(A.Start_Campaign,'%d/%m/%Y') AS Start_Campaign "+
 				",DATE_FORMAT(A.End_Campaign,'%d/%m/%Y') AS End_Campaign "+
 				",CONCAT(A.Campaign_Description,' (',CAST(DATE_FORMAT(A.Start_Campaign,'%d/%m/%Y') AS CHAR),' - ',CAST(DATE_FORMAT(A.End_Campaign,'%d/%m/%Y') AS CHAR),')') AS Campaign_Description "+ 
-				",COUNT(*) AS NumberOfCoustomer "+
-				",SUM(B.Payment) AS TotalProfit "+
-				",SUM(B.Fuel_Amount) AS TotalFuelAmount "+
+				",COUNT(*) AS Number_Of_Coustomer "+
+				",ROUND(SUM(B.Payment),2) AS Total_Profit "+
+				",ROUND(SUM(B.Fuel_Amount),2) AS Total_Fuel_Amount "+
 				"FROM All_Campaign_On_System A "+
 				"LEFT OUTER JOIN All_Gas_Stations_Sales B ON A.Campaign_ID=B.Campaign_ID "+
 				"WHERE IS_Active = 'Yes' "+
@@ -1597,7 +1597,7 @@ public class QueryIO implements Runnable {
 			e.printStackTrace();
 			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
 		}
-			return new callbackSuccess("Create new customer successfully.");					// 	Query succeed
+			return new callbackSuccess("Update customer successfully.");					// 	Query succeed
 		
 	}
 	

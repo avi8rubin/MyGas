@@ -147,12 +147,6 @@ public class LoginController implements ActionListener,Observer{
 	
 	
 	
-	
-	
-	
-	
-	
-	
 	/**
 	 * Send query to DB that change the user password
 	 */
@@ -241,7 +235,7 @@ public class LoginController implements ActionListener,Observer{
 		if (!ConnectionFlag){	
 			/*----- Create Server Connection -----*/
 			try {
-				Server = new Client (LoginScreen.getServerIP(),DEFAULT_PORT,CommonBuffer);
+				Server = new Client (LoginScreen.getServerIP(),DEFAULT_PORT);
 				Server.openConnection();	//Try open connection to server
 				Server.addObserver(this);
 				ConnectionFlag = true;												//Connection already set

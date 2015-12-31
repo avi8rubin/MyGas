@@ -38,8 +38,6 @@ public class UpdateNotifications implements Runnable,Observer {
 	public void run() {
 		while(NotificationFlag){
 			Server.handleMessageFromClient(Notification);				
-			//Notification = (callbackStringArray) getCallBackFromBuffer();
-		//	setNotificationsTable(Notification.getDefaultTableModel());
 			CheckNewNotification();
 			while(NewNotificationFlag){
 				ChangeNotificationBackground();
@@ -68,9 +66,7 @@ public class UpdateNotifications implements Runnable,Observer {
 		NotificationsTable.setModel(NewTableModel);
 		//Hide columns
 		NotificationsTable.removeColumn(NotificationsTable.getColumnModel().getColumn( 2 ));
-		//Checks.resizeColumnWidth(NotificationsTable);
-		//TableColumnModel tcm = NotificationsTable.getColumnModel();
-		//tcm.getColumn(0).setPreferredWidth(40);
+
 	}
 	private void CheckNewNotification(){
 		String[][] Table = (String[][]) Notification.getData();
@@ -92,27 +88,17 @@ public class UpdateNotifications implements Runnable,Observer {
 			e.printStackTrace();
 		}
 	}
-	/**
-	 * @return The callback from the buffer
-	 */
-	private CallBack getCallBackFromBuffer(){
-		CallBack ReturnCallback;
-		while (CommonBuffer.getHaveNewCallBack() == false); 			//Waits for new callback		
-		ReturnCallback = CommonBuffer.getBufferCallBack();				//Get the new callback	
-		if (ReturnCallback instanceof callback_Error){					//If the query back empty or the entered values not illegal
-			System.out.println(((callback_Error) ReturnCallback).getErrorMassage());	
-		}	
-		return ReturnCallback; 	
-	}
+
 
 	@Override
 	public void update(Observable o, Object arg) {
-		switch(((CallBack) arg).getWhatToDo()){
-		
-			case getNotifications:
-				Notification = (callbackStringArray) arg;
-				setNotificationsTable(Notification.getDefaultTableModel());
-			break;
+		if(arg instanceof CallBack){
+			switch(((CallBack) arg).getWhatToDo()){			
+				case getNotifications:
+					Notification = (callbackStringArray) arg;
+					setNotificationsTable(Notification.getDefaultTableModel());
+				break;
+			}
 		}
 	}
 }

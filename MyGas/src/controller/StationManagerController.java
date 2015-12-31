@@ -492,6 +492,7 @@ public class StationManagerController extends Controller{
 		GuiScreen.ResetErrorLabel();
 		StockFlag=true;
 		SendUserIDStockReport();	
+		ChangeScreenToStockReport();
 	}
 	/**
 	 * Send ManagerID To DB with request to get Stock Report
@@ -579,7 +580,7 @@ public class StationManagerController extends Controller{
 						if(arg instanceof callbackStringArray)
 						{
 							PrintStockReport((callbackStringArray) arg);
-							ChangeScreenToStockReport();
+							
 						}
 					}
 					else
