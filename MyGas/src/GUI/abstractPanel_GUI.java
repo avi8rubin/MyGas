@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.SystemColor;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -101,7 +102,8 @@ public class abstractPanel_GUI extends JFrame{
 	 */
 
 	public abstractPanel_GUI(callbackUser EnteredUser, Client Server,callbackBuffer CommonBuffer, Login_GUI LoginScreen) {
-		setBounds(100, 100, 1300, 750);
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		setBounds((screenSize.width-1300)/2,(screenSize.height-750)/2, 1300, 750);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
