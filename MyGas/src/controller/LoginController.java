@@ -89,10 +89,17 @@ public class LoginController implements ActionListener,Observer{
 		WindowListener exitListener = new WindowAdapter() {
 		    @Override
 		    public void windowClosing(WindowEvent e) {	  
+		    	/*
+		    	if(ConnectionFlag) {
+		    		EnteredUser.setWhatToDo(MessageType.updateUserLogout);
+		    		Server.handleMessageFromClient(EnteredUser);
+		    	}*/
+		    	//NextScreen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		        System.exit(0);		        
 		    }
 		};
-		LoginScreen.addWindowListener(exitListener);				
+		LoginScreen.addWindowListener(exitListener);			
+		
 	}
 	
 /**
@@ -117,6 +124,9 @@ public class LoginController implements ActionListener,Observer{
 	}
 	
 	private void CheckRegisteredUser(CallBack LocalUserCallBack){
+		//CallBack LocalUserCallBack = null;
+		/*------Waiting for callback ------*/
+		//LocalUserCallBack = getCallBackFromBuffer();					//Get from the common buffer new callback
 			
 		/*------ User not exists ------*/
 		if (LocalUserCallBack instanceof callback_Error){				//If the query back empty or the entered values not illegal
@@ -133,10 +143,13 @@ public class LoginController implements ActionListener,Observer{
 				else{
 					if(EnteredUser.getUserTypeId()!=2){
 						EnteredUser.setWhatToDo(MessageType.updateUserLogin);
-
+						//Server.handleMessageFromClient(EnteredUser);		//Update user is logged in, in the DB	
+						//getCallBackFromBuffer();							//Emptying buffer		
 					}
 					LoginScreen.ClearErrorMessage(); 					//Clear the error message if exists
 					NextScreenByRole();									// go to the next gui screen by user role
+					
+					
 					//LoginScreen.setWelcomUserLabel(EnteredUser.getFirstName(), EnteredUser.getLastName());
 					//LoginScreen.SwitchScreen();
 				}
@@ -166,13 +179,13 @@ public class LoginController implements ActionListener,Observer{
 			Server.handleMessageFromClient(EnteredUser);
 			
 			/*------Waiting for callback ------*/
-			//LocalUserCallBack = getCallBackFromBuffer();					//Get from the common buffer new callback
+			LocalUserCallBack = getCallBackFromBuffer();					//Get from the common buffer new callback
 			if (LocalUserCallBack instanceof callback_Error)				//An error has occurred
 				LoginScreen.ChangePasswordError();
 			else {															//Password change successfully
 				EnteredUser.setWhatToDo(MessageType.updateUserLogout);		
 				Server.handleMessageFromClient(EnteredUser);				//Update user is logged out, in the DB	
-				//getCallBackFromBuffer();									//Emptying buffer
+				getCallBackFromBuffer();									//Emptying buffer
 				LoginScreen.ClearErrorMessage();
 				LoginScreen.SwitchScreen();
 			}
@@ -182,6 +195,23 @@ public class LoginController implements ActionListener,Observer{
 			LoginScreen.NoConnectionToServer();
 
 		}
+	}
+	/**
+	 * @return The callback from the buffer
+	 */
+	private CallBack getCallBackFromBuffer(){
+		CallBack ReturnCallback;
+		while (CommonBuffer.getHaveNewCallBack() == false); 			//Waits for new callback		
+		ReturnCallback = CommonBuffer.getBufferCallBack();				//Get the new callback	
+		if (ReturnCallback instanceof callback_Error){				//If the query back empty or the entered values not illegal
+			System.out.println(((callback_Error) ReturnCallback).getErrorMassage());	
+		}	
+		if (ReturnCallback instanceof callbackLostConnection){
+			LoginScreen.GoToLoginWindow();
+			LoginScreen.NoConnectionToServer();
+			ConnectionFlag=false;
+		}
+		return ReturnCallback; 						
 	}
 
 	/**
@@ -258,23 +288,7 @@ public class LoginController implements ActionListener,Observer{
 		 if (arg instanceof CallBack){
 			if(((CallBack)arg).getWhatToDo() == MessageType.getCheckExistsUserPass)
 					CheckRegisteredUser((CallBack)arg);	
-			if(((CallBack)arg).getWhatToDo() == MessageType.updateUserLogout)
-				RestartConnection();		
 		 }
+
 	}
-	/**
-	 * Close the connection and delete observer
-	 */
-	private void RestartConnection(){
-		ConnectionFlag=false;
-		Server.deleteObserver(this);
-		LoginScreen.ClearFields();
-		try {
-			Server.closeConnection();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 }

@@ -2,11 +2,15 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.text.NumberFormat;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
+
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -23,6 +27,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
 import callback.callbackBuffer;
 import callback.callbackUser;
 import client.Client;
@@ -53,28 +58,25 @@ public class StationManagerGUI extends abstractPanel_GUI{
 	private JLayeredPane QuartelyRepotyScreen;
 	private JLayeredPane PurchaseReportScreen;
 	private JLayeredPane StockReportScreen;
+
 	private JButton QuartelyRepotyButton;
 	private JButton PurchaseReportButton;
 	private JButton StockReportButton;
-	
 	//Quarterly report
 	private JComboBox YearSelectInQuarterlyReport;
 	private JButton QuartelyGenrateButton;
 	private JComboBox QuarterlycomboBoxInQuarterlyReport;
 	private JTable QuarterlyReportTable;
 	private JLabel UpdateMessageQuartelyRepot;
-	
 	//Purchase Report
 	private JComboBox QuarterlycomboBoxInPurchaseReport;
 	private JComboBox YearSelectInPurchaseReport;
 	private JButton PurchaseGenrateButton;
 	private JTable PurchaseReportTable;
 	private JLabel UpdateMessagePurchaseReport;
-	
 	//Stock Report
 	private  JLayeredPane StockReportLayer;
 	private Float[] StockGraphFloatArray;
-	
 	// Left screen
 	private final JLabel Error_Label;
 	
@@ -538,13 +540,14 @@ public class StationManagerGUI extends abstractPanel_GUI{
 	public void ErrorEnterPurchaseReportScreen(){
 		Error_Label.setText("<html>Error with Purchase Table</html>");
 	}
-	public void ErrorEnterUpdateLimitLevel(){
+public void ErrorEnterUpdateLimitLevel(){
 		Error_Label.setText("<html>Error with Update Limit Table</html>");
 	}
 	public void ErrorNoChangeInUpdateLevel(){
 		this.UpdateLimitTextError.setText("*There Was No Changes In Records");
 	}
-	public void SuccessWasChangeUpdateLevel(){
+	
+public void SuccessWasChangeUpdateLevel(){
 		this.UpdateLimitTextError.setText("*record inserted successfully");
 	}
 	public void ResetUpdateLimitTextError(){
@@ -594,6 +597,7 @@ public class StationManagerGUI extends abstractPanel_GUI{
 	public JButton getQuartelyGenrateButton() {
 		return QuartelyGenrateButton;
 	}
+
 	public void setStockGraphFloatArray(Float[] arr){
 
 		JPanel panel = (new GasStationBarChart(arr)).createBarChartPanel();
@@ -605,6 +609,10 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		return this.UpdateLimitLevelButton;
 	}
 
+
+
+
+	
 	
 	/*--------------Quarterly Report Functions-----------*/
 	public void setQuarterlyReportTable(DefaultTableModel NewTableModel){

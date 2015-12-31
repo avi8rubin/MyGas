@@ -11,6 +11,8 @@ import GUI.abstractPanel_GUI;
 import callback.CallBack;
 import callback.callbackBuffer;
 import callback.callbackStringArray;
+import callback.callbackUser;
+import callback.callback_Error;
 import client.Client;
 
 public class UpdateNotifications implements Runnable,Observer {
@@ -18,11 +20,13 @@ public class UpdateNotifications implements Runnable,Observer {
 	private boolean NewNotificationFlag = false;
 	private JTable NotificationsTable;
 	private Client Server;
+	private callbackBuffer CommonBuffer;
 	private JButton NotificationsButton;
 	private callbackStringArray Notification = new callbackStringArray(MessageType.getNotifications);
 	
 	public UpdateNotifications(abstractPanel_GUI GUIScreen, callbackBuffer CommonBuffer ,Client Server, int UserID){
 		this.Server = Server;
+		this.CommonBuffer = CommonBuffer;
 		Server.addObserver(this);
 		NotificationsTable = GUIScreen.getNotificationsTable();
 		NotificationsButton = GUIScreen.getNotificationsButton();
@@ -34,6 +38,8 @@ public class UpdateNotifications implements Runnable,Observer {
 	public void run() {
 		while(NotificationFlag){
 			Server.handleMessageFromClient(Notification);				
+			//Notification = (callbackStringArray) getCallBackFromBuffer();
+		//	setNotificationsTable(Notification.getDefaultTableModel());
 			CheckNewNotification();
 			while(NewNotificationFlag){
 				ChangeNotificationBackground();
@@ -62,7 +68,9 @@ public class UpdateNotifications implements Runnable,Observer {
 		NotificationsTable.setModel(NewTableModel);
 		//Hide columns
 		NotificationsTable.removeColumn(NotificationsTable.getColumnModel().getColumn( 2 ));
-
+		//Checks.resizeColumnWidth(NotificationsTable);
+		//TableColumnModel tcm = NotificationsTable.getColumnModel();
+		//tcm.getColumn(0).setPreferredWidth(40);
 	}
 	private void CheckNewNotification(){
 		String[][] Table = (String[][]) Notification.getData();
@@ -83,6 +91,18 @@ public class UpdateNotifications implements Runnable,Observer {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+	/**
+	 * @return The callback from the buffer
+	 */
+	private CallBack getCallBackFromBuffer(){
+		CallBack ReturnCallback;
+		while (CommonBuffer.getHaveNewCallBack() == false); 			//Waits for new callback		
+		ReturnCallback = CommonBuffer.getBufferCallBack();				//Get the new callback	
+		if (ReturnCallback instanceof callback_Error){					//If the query back empty or the entered values not illegal
+			System.out.println(((callback_Error) ReturnCallback).getErrorMassage());	
+		}	
+		return ReturnCallback; 	
 	}
 
 	@Override
