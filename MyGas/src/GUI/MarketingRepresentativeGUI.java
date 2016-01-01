@@ -3,32 +3,49 @@ package GUI;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Vector;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
 import javax.swing.text.MaskFormatter;
 
+import callback.CallBack;
 import callback.callbackBuffer;
+import callback.callbackCar;
 import callback.callbackCustomer;
 import callback.callbackStringArray;
+import callback.callbackSuccess;
 import callback.callbackUser;
+import callback.callbackVector;
 import client.Client;
+import common.MessageType;
 
 public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	
 	
 	private static final long serialVersionUID = 1L;
+	private static boolean newCustomerFlag=true;
 	
 	/**
 	 * Gui variables
@@ -53,9 +70,9 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	private JPasswordField PasswordValidatePasswordField;
 	private JLabel UserNameExistMesaageLabel;
 	private JLabel PasswordValidationFailedMessageLabel;
-	private JTextField PasswordValidateTextField;
-	private JTextField PasswordTextField;
 	private JTextField UserNametextField;
+	private JLabel IsActiveLabel;
+	private JCheckBox IsActiveCheckBox;	
 	private JButton NextButton;
 	private JLabel MissedFieldsMessageLabel;
 	
@@ -85,13 +102,53 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	private JRadioButton PrivateCustomerRadioButton;
 	private JRadioButton CommercialCustomerRadioButton;
 	private JComboBox PurchasePlanComboBox;
+	private JComboBox CostingModelComboBox;
 	private JButton CreateButton;
+	private JButton EditButton;
+	private JButton SaveButton;
 	private JLabel MissedFieldsMessage;
 	private JLabel InvalidPhoneMesaageLabel;
 	private JLabel InvalidCreditCardMesaageLabel;
 
 // AddCars Center Layer Components
-	
+	private JLayeredPane AddCarPanel;
+	private JLabel CarNumberLabel1;
+	private JLabel FuelIDLabel;
+	private JLabel NFCLabel;
+	private JLabel CostingModelLabel;
+	private JFormattedTextField CarNumberFormattedTextField;
+	private JComboBox FuelIDComboBox;
+	private JCheckBox NFCNewCheckBox;
+	private JButton AddButton;
+	private JLabel ExistCarNumberLabel;
+	private MaskFormatter CarNumberMask;
+	private JLabel MissedFieldMessageAddCarsLabel;
+	private JLabel SuccessAddingCarMessageLabel;
+	// Create JTable - that the last column is editable.
+	private JTable CarsViewTable = new JTable(){
+		private static final long serialVersionUID = 1L;
+        public boolean isCellEditable(int row, int column) { 
+//        	switch(column){
+//        	case 3:
+//                return true; 
+//        	default:
+//                return false;
+//        	}
+        	return true;
+        };
+	};
+	private JLabel CarsViewLabel;
+	private JButton CarsViewSaveButton;
+
+	//CustomerDetailsLayer Left Layer Components
+	private JLayeredPane CustomerDetailsLayer;
+	private JTextField EnterCustomerIdTextField;
+	private JButton SearchButton;
+	private JLabel InvalidcustomerIDMessageLabel;
+	private JLabel CustomerNotExistMessageLabel;
+	private callbackCustomer fullCallbackCustomer ;
+
+
 	
 
 	public MarketingRepresentativeGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer,
@@ -126,12 +183,12 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		/* ------- Adding new layer to CreateNewCustomerAccount Panel -------- */
 		
 
-		/* ------- Adding Left layer to CreateNewCustomerAccount Panel -------- */
+		/* ------- Adding CreateNewCustomer Left layer to CreateNewCustomerAccount Panel -------- */
 		CreateNewCustomerAccountLayer = new JLayeredPane();
 		CreateNewCustomerAccountLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		CreateNewCustomerAccountLayer.setBackground(new Color(169, 169, 169));
 
-		//add to left container
+		//add left CreateNewCustomer Layer
 		LeftCardContainer.add(CreateNewCustomerAccountLayer, "CreateNewCustomerAccountLeft");
 		CreateNewCustomerAccountLayer.setOpaque(true);
 		CreateNewCustomerAccountLayer.setName("CreateNewCustomerAccountLeft");
@@ -155,21 +212,92 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		CreateNewCustomerAccountLayer.add(AddCarDetailsButton);
 		CreateNewCustomerAccountLayer.add(LogoImage);
 		
+		
+		/* ------- Adding CustomerDetails Left layer to CreateNewCustomerAccount Panel -------- */
+		CustomerDetailsLayer = new JLayeredPane();
+		CustomerDetailsLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		CustomerDetailsLayer.setBackground(new Color(169, 169, 169));
+
+		//add left CustomerDetails Layer 
+		LeftCardContainer.add(CustomerDetailsLayer, "CustomerDetailsLayerLeft");
+		CustomerDetailsLayer.setOpaque(true);
+		CustomerDetailsLayer.setName("CustomerDetailsLayerLeft");
+		
+		//Components in CustomerDetails left layer
+		JLabel EnterCustomerIdLabel = new JLabel("Enter customer ID :");
+		EnterCustomerIdLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		EnterCustomerIdLabel.setBounds(54, 11, 187, 31);
+		CustomerDetailsLayer.add(EnterCustomerIdLabel);
+		
+		EnterCustomerIdTextField = new JTextField();
+		EnterCustomerIdTextField.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		EnterCustomerIdTextField.setBounds(38, 44, 222, 31);
+		CustomerDetailsLayer.add(EnterCustomerIdTextField);
+		EnterCustomerIdTextField.setColumns(10);
+		
+		SearchButton = new JButton("Search");
+		SearchButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		SearchButton.setBounds(75, 86, 125, 38);
+		CustomerDetailsLayer.add(SearchButton);
+		
+		InvalidcustomerIDMessageLabel = new JLabel("Invalid customer ID inserted");
+		InvalidcustomerIDMessageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
+		InvalidcustomerIDMessageLabel.setForeground(Color.RED);
+		InvalidcustomerIDMessageLabel.setEnabled(false);
+		InvalidcustomerIDMessageLabel.setVisible(false);
+		InvalidcustomerIDMessageLabel.setBounds(10, 126, 265, 46);
+		CustomerDetailsLayer.add(InvalidcustomerIDMessageLabel);
+		
+		
+		CustomerNotExistMessageLabel = new JLabel("Customer is not exist");
+		CustomerNotExistMessageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
+		CustomerNotExistMessageLabel.setEnabled(false);
+		CustomerNotExistMessageLabel.setVisible(false);
+		CustomerNotExistMessageLabel.setBounds(54, 126, 210, 46);
+		CustomerDetailsLayer.add(CustomerNotExistMessageLabel);
+		
+		LogoImage = new JLabel("");
+		LogoImage.setIcon(new ImageIcon(abstractPanel_GUI.class.getResource("/images/Left_Panel_Logo22.jpg")));
+		LogoImage.setBounds(38, 313, 239, 242);
+		CustomerDetailsLayer.add(LogoImage);
+		
+		// define  comboBoxs		
+		PurchasePlanComboBox = new JComboBox();
+		PurchasePlanComboBox.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		PurchasePlanComboBox.setBounds(179, 438, 460, 27);
+		
+		CostingModelComboBox = new JComboBox();
+		CostingModelComboBox.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		CostingModelComboBox.setBounds(179, 484, 233, 27);
+		
+		FuelIDComboBox = new JComboBox();
+		FuelIDComboBox.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		FuelIDComboBox.setBounds(154, 74, 158, 27);
+		
 		CreateNewUserCenterLayer();
-		
-		
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// display changes till the controller will build- please don't delete (Adir)
-//		CardLayout ContainerCardCenter;
-//		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
-//		ContainerCardCenter.show(CenterCardContainer,"CreateUserLayerCenter");
-	//	CardLayout ContainerCardLeft;
-	//	ContainerCardLeft	= (CardLayout)(LeftCardContainer.getLayout());
-	//	ContainerCardLeft.show(LeftCardContainer, "CreateNewCustomerAccountLeft");			
-	}
-		
-//Create User Account 
+				
+	} 
 	
+	public JTextField getEnterCustomerIdTextField() {
+		return EnterCustomerIdTextField;
+	}
+
+	public JButton getSearchButton() {
+		return SearchButton;
+	}
+
+	public JLabel getInvalidcustomerIDMessageLabel() {
+		return InvalidcustomerIDMessageLabel;
+	}
+
+	public JLabel getCustomerNotExistMessageLabel() {
+		return CustomerNotExistMessageLabel;
+	}
+
+	public JLayeredPane getCustomerDetailsLayer() {
+		return CustomerDetailsLayer;
+	}
+
 	public JButton getCreateNewCustomerAccountButton(){
 		return CreateNewCustomerAccountButton;
 	}	
@@ -178,6 +306,13 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		return CustomerDetailsButton;
 	}	
 	
+	public boolean getNewCustomerFlag() {
+		return newCustomerFlag;
+	}
+
+	public void setNewCustomerFlag(boolean newCustomerFlag1) {
+		newCustomerFlag = newCustomerFlag1;
+	}
 	
 	public JLayeredPane getCreateNewCustomerAccountLayer(){
 		return CreateNewCustomerAccountLayer;
@@ -256,11 +391,11 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	}
 	
 	public int getComboBoxSelection(){
-		return PurchasePlanComboBox.getSelectedIndex()+1;
+		return PurchasePlanComboBox.getSelectedIndex();
 	}
 	
-	public void SetComboBoxSelection(callbackStringArray CampaignPatterns){
-		Object[]pattern=CampaignPatterns.getComboBoxStringArray();
+	public void SetComboBoxSelection(String[] PurchasePlan){
+		Object[]pattern=PurchasePlan;
 		DefaultComboBoxModel<?> combopatternModel=new DefaultComboBoxModel(pattern);
 		PurchasePlanComboBox.setModel(combopatternModel);	
 	}	
@@ -268,6 +403,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	public JComboBox<?> getComboBox(){
 		return PurchasePlanComboBox;
 	}
+	
 	
 	public JLabel getInvalidPhoneMesaageLabel() {
 		return InvalidPhoneMesaageLabel;
@@ -300,12 +436,161 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	public void AddCarsCenterPanelLayer()
 	{
 		
+		/* ------- Adding AddCar Center Layer -------- */
+
+		AddCarPanel = new JLayeredPane();
+		AddCarPanel.setLayout(null);
+		AddCarPanel.setOpaque(true);
+		AddCarPanel.setName("EmptyCenterPanel");
+		AddCarPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		CenterCardContainer.add(AddCarPanel, "AddCarLayerCenter");
+		
+		/*------- add labels, textFields and buttons 
+		 * 						to AddCarLayer --------*/
+		
+		JLabel AddNewCarLabel = new JLabel("Add new car :");
+		AddNewCarLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		AddNewCarLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		AddNewCarLabel.setBounds(51, 0, 164, 34);
+		AddCarPanel.add(AddNewCarLabel);
+		
+		CarNumberLabel1 = new JLabel("Car Number : ");
+		CarNumberLabel1.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		CarNumberLabel1.setEnabled(false);
+		CarNumberLabel1.setBounds(21, 32, 115, 34);
+		AddCarPanel.add(CarNumberLabel1);
+		
+		FuelIDLabel = new JLabel("Fuel ID : ");
+		FuelIDLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		FuelIDLabel.setEnabled(false);
+		FuelIDLabel.setBounds(21, 67, 115, 34);
+		AddCarPanel.add(FuelIDLabel);
+		
+		NFCLabel = new JLabel("NFC :");
+		NFCLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		NFCLabel.setEnabled(false);
+		NFCLabel.setBounds(21, 105, 115, 34);
+		AddCarPanel.add(NFCLabel);
+				
+        try {
+            //
+            // Create a MaskFormatter for accepting car number, the # symbol accept
+            // only a number. We can also set the empty value with a place holder
+            // character.
+            //
+        	 CarNumberMask = new MaskFormatter("##-###-##");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+		
+		CarNumberFormattedTextField = new JFormattedTextField(CarNumberMask);
+		CarNumberFormattedTextField.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		CarNumberFormattedTextField.setToolTipText("Car number have to written with 7 digits. For example: 11-222-33");
+		CarNumberFormattedTextField.setBounds(155, 36, 103, 27);
+		AddCarPanel.add(CarNumberFormattedTextField);
+		
+		AddCarPanel.add(FuelIDComboBox);
+		
+		NFCNewCheckBox = new JCheckBox("");
+		NFCNewCheckBox.setBounds(155, 116, 97, 23);
+		AddCarPanel.add(NFCNewCheckBox);
+		
+		AddButton = new JButton("Add");
+		AddButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		AddButton.setBounds(21, 150, 97, 38);
+		AddCarPanel.add(AddButton);
+		
+		ExistCarNumberLabel = new JLabel("This car already in system");
+		ExistCarNumberLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
+		ExistCarNumberLabel.setEnabled(false);
+		ExistCarNumberLabel.setBounds(264, 26, 244, 46);
+		ExistCarNumberLabel.setVisible(false);
+		AddCarPanel.add(ExistCarNumberLabel);
+
+	    MissedFieldMessageAddCarsLabel = new JLabel("There is one or more missed fields");
+		MissedFieldMessageAddCarsLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
+		MissedFieldMessageAddCarsLabel.setEnabled(false);
+		MissedFieldMessageAddCarsLabel.setBounds(137, 147, 329, 46);
+		MissedFieldMessageAddCarsLabel.setVisible(false);
+		AddCarPanel.add(MissedFieldMessageAddCarsLabel);
+		
+		SuccessAddingCarMessageLabel = new JLabel("lol gadol");
+		SuccessAddingCarMessageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
+		SuccessAddingCarMessageLabel.setEnabled(false);
+		SuccessAddingCarMessageLabel.setBounds(10, 183, 532, 46);
+		SuccessAddingCarMessageLabel.setVisible(false);
+		AddCarPanel.add(SuccessAddingCarMessageLabel);
+		
+		
+		
+		/*------- Create JTable surround with scroll pane and add it to AddCarPanel --------*/
+		JScrollPane CarsViewScroll = new JScrollPane();
+		CarsViewScroll.setBounds(43, 264, 764, 287);
+		AddCarPanel.add(CarsViewScroll);		
+		
+		CarsViewScroll.setViewportView(CarsViewTable);		
+		CarsViewTable.setRowHeight(23);
+		CarsViewTable.setFillsViewportHeight(true);
+		CarsViewTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		CarsViewTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
+		CarsViewTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		
+		/*------- Create new label on the new table --------*/
+		CarsViewLabel = new JLabel("Cars table of customer :");				
+		CarsViewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		CarsViewLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		CarsViewLabel.setBounds(241, 228, 329, 42);
+		AddCarPanel.add(CarsViewLabel);
+		
+		/* ------- Adding new button to carsView layer -------- */
+		CarsViewSaveButton = new JButton("Save");													//Global variable
+		CarsViewSaveButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		CarsViewSaveButton.setBounds(839, 360, 112, 38);
+		AddCarPanel.add(CarsViewSaveButton);
+		
 	}
+	
+	public int getCostingModelComboBoxSelection(){
+		return CostingModelComboBox.getSelectedIndex();
+	}
+	
+	
+	public void SetCostingModelComboBoxSelection(String[] CostingModels){
+		Object[]pattern=CostingModels;
+		DefaultComboBoxModel<?> combopatternModel=new DefaultComboBoxModel(pattern);
+		CostingModelComboBox.setModel(combopatternModel);	
+	}	
+	
+	public int getFuelIDComboBoxSelection(){
+		return FuelIDComboBox.getSelectedIndex();
+	}
+	
+	public void SetFuelIDComboBoxSelection(String[] FuelID){
+		Object[]pattern=FuelID;
+		DefaultComboBoxModel<?> combopatternModel=new DefaultComboBoxModel(pattern);
+		FuelIDComboBox.setModel(combopatternModel);	
+	}		
+	
+	public JLabel getExistCarNumberLabel() {
+		return ExistCarNumberLabel;
+	}	
+
+	public JLabel getMissedFieldMessageAddCarsLabel() {
+		return MissedFieldMessageAddCarsLabel;
+	}		
+	
+	public JFormattedTextField getCarNumberFormattedTextField() {
+		return CarNumberFormattedTextField;
+	}	
+	
+	public JButton getAddButton(){
+		return AddButton;
+	}			
 	
 	public void CreateNewUserCenterLayer()
 	{
-		
-		AddCarDetailsButton.setVisible(false);
+		// show AddCarDetailsButton only in new customer case
+		if (newCustomerFlag) AddCarDetailsButton.setVisible(false);
 		/* ------- Adding CreateUser Center Layer -------- */
 		CreateUserLayer = new JLayeredPane();
 		CreateUserLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
@@ -344,6 +629,17 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		PasswordValidatePasswordField.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		PasswordValidatePasswordField.setBounds(179, 161, 201, 27);
 		CreateUserLayer.add(PasswordValidatePasswordField);
+		
+		IsActiveLabel = new JLabel("Is Active ");
+		IsActiveLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		IsActiveLabel.setEnabled(false);
+		IsActiveLabel.setBounds(27, 193, 132, 46);
+		CreateUserLayer.add(IsActiveLabel);
+		
+		IsActiveCheckBox = new JCheckBox("");
+		IsActiveCheckBox.setBounds(179, 204, 97, 23);
+		IsActiveCheckBox.setSelected(true);
+		CreateUserLayer.add(IsActiveCheckBox);
 
 		// Message to marketing representative - display only in User name existance case
 		UserNameExistMesaageLabel = new JLabel("User name already exist in system");
@@ -439,6 +735,12 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		PurchasePlanLabel.setBounds(39, 427, 163, 46);
 		AddPersonalDetails.add(PurchasePlanLabel);
 
+		CostingModelLabel = new JLabel("Costing Model :");
+		CostingModelLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		CostingModelLabel.setEnabled(false);
+		CostingModelLabel.setBounds(39, 480, 115, 34);
+		AddPersonalDetails.add(CostingModelLabel);
+		
 		InvalidCustomerIDMesaageLabel = new JLabel("Invalid Customer ID ");
 		InvalidCustomerIDMesaageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
 		InvalidCustomerIDMesaageLabel.setEnabled(false);
@@ -539,20 +841,28 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		PurchasePlanButtonGroup.add(PrivateCustomerRadioButton);
 		PurchasePlanButtonGroup.add(CommercialCustomerRadioButton);
 		
-		PurchasePlanComboBox = new JComboBox();
-		PurchasePlanComboBox.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		PurchasePlanComboBox.setBounds(179, 438, 295, 27);
 		AddPersonalDetails.add(PurchasePlanComboBox);
+		AddPersonalDetails.add(CostingModelComboBox);
 		
 		CreateButton = new JButton("Create");
 		CreateButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		CreateButton.setBounds(678, 496, 125, 38);	
 		AddPersonalDetails.add(CreateButton);
 		
+		EditButton = new JButton("Edit");
+		EditButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		EditButton.setBounds(678, 438, 125, 38);
+		AddPersonalDetails.add(EditButton);
+		
+		SaveButton = new JButton("Save");
+		SaveButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		SaveButton.setBounds(678, 496, 125, 38);
+		AddPersonalDetails.add(SaveButton);
+		
 		MissedFieldsMessage = new JLabel("There is one or more missed fields");
 		MissedFieldsMessage.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
 		MissedFieldsMessage.setEnabled(false);
-		MissedFieldsMessage.setBounds(320, 493, 348, 46);
+		MissedFieldsMessage.setBounds(320, 505, 348, 46);
 		MissedFieldsMessage.setVisible(false);
 		AddPersonalDetails.add(MissedFieldsMessage);
 		
@@ -570,10 +880,79 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		InvalidCreditCardMesaageLabel.setVisible(false);
 		AddPersonalDetails.add(InvalidCreditCardMesaageLabel);
 		
+		//show customer details on GUI
+		if (!newCustomerFlag)
+		{			
+			UserNametextField.setText( fullCallbackCustomer.getUserName() );
+			PasswordPasswordField.setText( fullCallbackCustomer.getUserPassword() );
+			PasswordValidatePasswordField.setText( fullCallbackCustomer.getUserPassword() );
+			if ( fullCallbackCustomer.getISActive().equals("Yes") ) IsActiveCheckBox.setSelected(true);
+			else IsActiveCheckBox.setSelected(false);	
+			CustomerIDTextField.setText( String.valueOf(fullCallbackCustomer.getCustomersID()) );
+			FirstNameTextField.setText( fullCallbackCustomer.getCustomerFirstName() );
+			LastNameTextField.setText( fullCallbackCustomer.getCustomerLastName() );
+			EmailTextField.setText( fullCallbackCustomer.getEmail() );	
+			PhoneFormattedTextField.setText( fullCallbackCustomer.getPhoneNumber() );
+			CreditCardFormattedTextField.setText( fullCallbackCustomer.getCreditCard() );	
+			if ( fullCallbackCustomer.getCustomerType().equals("Private") ) PrivateCustomerRadioButton.setSelected(true);
+			else CommercialCustomerRadioButton.setSelected(true);
+			PurchasePlanComboBox.setSelectedIndex(fullCallbackCustomer.getPlanID()-1);
+			CostingModelComboBox.setSelectedIndex(fullCallbackCustomer.getCostingModelID()-1);
 			
+		}
+		
+		
 	}
 
-	public callbackCustomer getFullCallbackCustomer(){
+	public void HideRelevantButtons()
+	{
+		if(newCustomerFlag)
+		{
+			IsActiveLabel.setVisible(false);
+			IsActiveCheckBox.setVisible(false);
+			CustomerIDTextField.setEnabled(true);
+			CreateButton.setVisible(true);
+			EditButton.setVisible(false);
+			SaveButton.setVisible(false);
+		}
+		else
+		{
+			IsActiveLabel.setVisible(true);
+			IsActiveCheckBox.setVisible(true);
+			CustomerIDTextField.setEnabled(false);
+			CreateButton.setVisible(false);
+			EditButton.setVisible(true);
+			SaveButton.setVisible(true);			
+		}
+		
+	}
+	
+ 	public JButton getEditButton() {
+		return EditButton;
+	}
+
+	public void EnableRelevantButtons(boolean res)
+	{
+			PasswordPasswordField.setEnabled(res);
+			PasswordValidatePasswordField.setEnabled(res);
+			UserNametextField.setEnabled(res);
+			IsActiveCheckBox.setEnabled(res);
+			FirstNameTextField.setEnabled(res);
+			LastNameTextField.setEnabled(res);
+			EmailTextField.setEnabled(res);
+			PhoneFormattedTextField.setEnabled(res);
+			CreditCardFormattedTextField.setEnabled(res);
+			PrivateCustomerRadioButton.setEnabled(res);
+			CommercialCustomerRadioButton.setEnabled(res);
+			PurchasePlanComboBox.setEnabled(res);
+			CostingModelComboBox.setEnabled(res);
+	}
+ 	
+ 	public JButton getSaveButton() {
+		return SaveButton;
+	}
+ 	
+ 	public callbackCustomer getFullCallbackCustomer(){
 		callbackCustomer customerCallback = new callbackCustomer();
 		
 		customerCallback.setUserName(UserNametextField.getText().trim());
@@ -586,17 +965,121 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		customerCallback.setCreditCard(CreditCardFormattedTextField.getText().trim());
 		if (PrivateCustomerRadioButton.isSelected()) customerCallback.setCustomerType("Private");
 		else customerCallback.setCustomerType("Commercial");
-		customerCallback.setPlanID(getComboBoxSelection());
+		customerCallback.setPlanID(getComboBoxSelection()+1);
+		customerCallback.setCostingModelID(getCostingModelComboBoxSelection()+1);
+		
+		//Update user data case
+		if (!getNewCustomerFlag()) 
+			if (getIsActiveCheckBox().isSelected()) customerCallback.setISActive("Yes"); 
+			else customerCallback.setISActive("No"); 
 
 		return customerCallback;
 	}
 
+ 	public callbackCustomer getCustomerIdCallbackCustomer(){
+		callbackCustomer customerCallback = new callbackCustomer();
+		
+		customerCallback.setCustomersID( Integer.valueOf(EnterCustomerIdTextField.getText().trim()) );
 
+		return customerCallback;
+	}
+ 	
+	public callbackCar getFullCallbackCar() {
+		
+		callbackCar carCallback = new callbackCar();
+		
+		carCallback.setCarNumber(CarNumberFormattedTextField.getText().trim());
+		carCallback.setFuelID(FuelIDComboBox.getSelectedIndex()+1);
+		carCallback.setNFC(NFCNewCheckBox.isSelected());
+		carCallback.setCustomerID(Integer.parseInt(CustomerIDTextField.getText().trim()));
 
+		return carCallback;		
 
+	}
 
+	public void setSuccessAddingCarMessageLabel(){
+		SuccessAddingCarMessageLabel.setText("Car number " + CarNumberFormattedTextField.getText().trim() + " added successfully to system");
+		SuccessAddingCarMessageLabel.setVisible(true);
+	}
 
+	public void setFullCallbackCustomer(callbackCustomer fullCallbackCustomer) {
+		this.fullCallbackCustomer = fullCallbackCustomer;
+	}
+
+	public callbackCustomer getCallbackCustomerUpdated() {
+		return fullCallbackCustomer;
+	}
 	
+	public boolean isCustomerChanged(callbackCustomer afterChange ){
+		callbackCustomer beforeChange=fullCallbackCustomer;
+		if ( !beforeChange.getUserName().equals(afterChange.getUserName() ) ) return false;
+		if ( !beforeChange.getUserPassword().equals(afterChange.getUserPassword() ) ) return false;
+		if ( !beforeChange.getISActive().equals(afterChange.getISActive() ) ) return false;
+		if ( !beforeChange.getCustomerFirstName().equals(afterChange.getCustomerFirstName() ) ) return false;
+		if ( !beforeChange.getCustomerLastName().equals(afterChange.getCustomerLastName() ) ) return false;
+		if ( !beforeChange.getEmail().equals(afterChange.getEmail() ) ) return false;
+		if ( !beforeChange.getPhoneNumber().equals(afterChange.getPhoneNumber() ) ) return false;
+		if ( !beforeChange.getCreditCard().equals(afterChange.getCreditCard() ) ) return false;
+		if ( !beforeChange.getCustomerType().equals(afterChange.getCustomerType() ) ) return false;
+		if ( beforeChange.getPlanID() != afterChange.getPlanID()  ) return false;
+		if ( beforeChange.getCostingModelID() != afterChange.getCostingModelID()  ) return false;
+		return true;
+	}
+	
+ 	public JCheckBox getIsActiveCheckBox() {
+		return IsActiveCheckBox;
+	}
+
+	public JTable getCarsViewTable(){
+		return CarsViewTable;
+	}
+ 	
+	public void setCarsViewTable(DefaultTableModel NewTableModel){
+		//Create combo box
+		Object[] value = { "Choose", "Edit"};
+
+		CarsViewTable.setModel(NewTableModel);
+
+		
+		Vector data=NewTableModel.getDataVector();
+
+//		Vector<Object> cell;
+//		String nfcCell;
+//		JCheckBox NFCCheckBox;
+//		for(int i=0;i<data.size();i++){
+//			cell= (Vector<Object>) data.get(i);
+//			nfcCell= (String)cell.elementAt(3); // NFC 
+//			NFCCheckBox = new JCheckBox("");
+//			if (nfcCell.equals("Yes")) NFCCheckBox.setSelected(true);
+//			else NFCCheckBox.setSelected(false);
+			
+//			TableColumn col = CarsViewTable.getColumnModel().getColumn( 3 );
+//			col.setCellEditor( new DefaultCellEditor( NFCCheckBox ) );			
+			
+	
+//			cell.setElementAt(NFCCheckBox, 3);
+			
+//			NFCNewCheckBox.setBounds(155, 116, 97, 23);
+//			s = nf.format((Double.valueOf((String)icell)));
+//		}
+		
+		
+//		CarsViewTable.setModel(NewTableModel);
+//		DefaultComboBoxModel<?> comboModel = new DefaultComboBoxModel( value );
+//		JComboBox combo = new JComboBox();
+//		combo.setModel( comboModel );
+//		TableColumn col = CarsViewTable.getColumnModel().getColumn( 5 ); /// need to be 6
+//		col.setCellEditor( new DefaultCellEditor( combo ) );
+		
+		
+		//Hide columns
+//		CarsViewTable.removeColumn(CarsViewTable.getColumnModel().getColumn( 0 ));
+//		CarsViewTable.removeColumn(CarsViewTable.getColumnModel().getColumn( 1 ));
+		//All values are in the center of the cell		
+		DefaultTableCellRenderer CenterRenderer = new DefaultTableCellRenderer();
+		CenterRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		CarsViewTable.setDefaultRenderer(Object.class, CenterRenderer);
+	}
 
 	
 }
