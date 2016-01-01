@@ -1,7 +1,9 @@
 package controller;
 
 import java.awt.CardLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.util.Observable;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -9,7 +11,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import GUI.CEOGUI;
 import GUI.MarketingRepresentativeGUI;
@@ -112,10 +116,6 @@ public class MarketingRepresentativeController extends Controller{
 		
 		// get values for comboBoxs
 		Server.handleMessageFromClient(new callbackVector(MessageType.getMarketingRepresentativeComboBox));
-		Vector<String[]> ComboBoxs =  (Vector<String[]>) getCallBackVectorFromBuffer(); 
-		GuiScreen.SetComboBoxSelection(ComboBoxs.get(0));
-		GuiScreen.SetFuelIDComboBoxSelection(ComboBoxs.get(1));
-		GuiScreen.SetCostingModelComboBoxSelection(ComboBoxs.get(2));
 
 	}
 
@@ -127,9 +127,11 @@ public class MarketingRepresentativeController extends Controller{
 		/* -------- Check the source of the event ---------*/
 		
 		if(e.getActionCommand().equals("CreateNewCustomerAccount")){
-			AddCarDetailsButton.setVisible(false);
 			GuiScreen.setNewCustomerFlag(true);
 			CreateNewCustomerAccountLayer = GuiScreen.getCreateNewCustomerAccountLayer();
+			AddCarDetailsButton.setVisible(false);
+			CreateUserButton.setText("<html>Create User</html>");
+			AddCarDetailsButton.setText("<html>Add Car Details</html>");
 			ContainerCardLeft.show(LeftCardContainer, "CreateNewCustomerAccountLeft");
 			ContainerCardCenter.show(CenterCardContainer, "EmptyCenterPanel");				//The CreateNewCustomerAccount layer will be display											
 		}
@@ -137,6 +139,9 @@ public class MarketingRepresentativeController extends Controller{
 		if(e.getActionCommand().equals("CustomerDetails")){
 			GuiScreen.setNewCustomerFlag(false);
 			CustomerDetailsLayer = GuiScreen.getCustomerDetailsLayer();
+			CreateUserButton.setText("<html>Edit User</html>");
+			AddCarDetailsButton.setText("<html>Edit Cars Details</html>");
+			AddCarDetailsButton.setVisible(true);
 			ContainerCardLeft.show(LeftCardContainer, "CustomerDetailsLayerLeft");
 			ContainerCardCenter.show(CenterCardContainer, "EmptyCenterPanel");				//The CustomerDetails layer will be display											
 		}		
@@ -210,7 +215,7 @@ public class MarketingRepresentativeController extends Controller{
 		SaveButton.setActionCommand("Save"); //Add action command
 		
 	}
-	
+
 	private void HandleNextPressed(){
 		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
 		PasswordValidationFailedMessageLabel = GuiScreen.getPasswordValidationFailedMessageLabel();
@@ -277,72 +282,91 @@ public class MarketingRepresentativeController extends Controller{
 			callbackCustomer fullCallbackCustomer = GuiScreen.getFullCallbackCustomer(); // Fill CallbackCustomer with GUI data
 			if (GuiScreen.getNewCustomerFlag() ) fullCallbackCustomer.setWhatToDo(MessageType.setCreateNewCustomer);
 			else fullCallbackCustomer.setWhatToDo(MessageType.setUpdateCustomer);
-			
-			//Update user data case
-			if (!GuiScreen.getNewCustomerFlag()) 
-				if (GuiScreen.getIsActiveCheckBox().isSelected()) fullCallbackCustomer.setISActive("Yes"); 
-				else fullCallbackCustomer.setISActive("No"); 
 				
-			//Send CallbackCustomer to DB
-			Server.handleMessageFromClient( fullCallbackCustomer);
-			LocalUserCallBack = (CallBack) getCallBackFromBuffer();
-			
-			ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
-			
-			// Success case
-			if  (LocalUserCallBack instanceof callbackSuccess)
-			{
-				ContainerCardCenter.show(CenterCardContainer, "EmptyCenterPanel");
-				AddCarDetailsButton.setVisible(true);
+			//  show error message in no_changes case of update customer details
+			if ( !GuiScreen.getNewCustomerFlag() && GuiScreen.isCustomerChanged(fullCallbackCustomer) ) {
+				UIManager.put("OptionPane.messageFont", new Font("System", Font.PLAIN, 20));
+				UIManager.put("OptionPane.buttonFont", new Font("System", Font.PLAIN, 18));
+					JOptionPane.showMessageDialog(GuiScreen,	
+						"There are no changes in the existing records.",
+							"Error Message",
+				    			JOptionPane.ERROR_MESSAGE);					
 			}
-			else 
+			else  //Send CallbackCustomer to DB
 			{
-				callback_Error LocalErrorCallBack;
-				LocalErrorCallBack= (callback_Error)LocalUserCallBack;
-				
-				// UserNameExist error case
-				
-				if (LocalErrorCallBack.getErrorMassage().equals("User name already exists in DB."))
-				{
-					UserNameExistMesaageLabel.setVisible(true);
-					ContainerCardCenter.show(CenterCardContainer, "CreateUserLayerCenter");	 //The CreateUser layer will be display	
-				}
-				else UserNameExistMesaageLabel.setVisible(false);
-				
-				
-				// CustomerID error case
-				CustomerIDExistMesaageLabel = GuiScreen.getCustomerIDExistMesaageLabel();
-				if (LocalErrorCallBack.getErrorMassage().equals("Customer already registered in system."))
-					CustomerIDExistMesaageLabel.setVisible(true);
-				else CustomerIDExistMesaageLabel.setVisible(false);	
-				
-				// EmailExist error case
-				EmailExistMesaageLabel = GuiScreen.getEmailExistMesaageLabel();
-				if (LocalErrorCallBack.getErrorMassage().equals("Email belong to another customer."))
-					EmailExistMesaageLabel.setVisible(true);
-				else EmailExistMesaageLabel.setVisible(false);				
-					
-			}		
+				this.fullCallbackCustomer = fullCallbackCustomer;
+				Server.handleMessageFromClient( fullCallbackCustomer);
+			}
 		}	
+	}
+	
+	private void HandleCreatePressedBackFromServer(CallBack LocalUserCallBack){
+		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
+		
+		// Success case
+		if  (LocalUserCallBack instanceof callbackSuccess)
+		{
+			GuiScreen.setFullCallbackCustomer(fullCallbackCustomer);
+			ContainerCardCenter.show(CenterCardContainer, "EmptyCenterPanel");
+			AddCarDetailsButton.setVisible(true);
+		}
+		else 
+		{
+			callback_Error LocalErrorCallBack;
+			LocalErrorCallBack= (callback_Error)LocalUserCallBack;
+			
+			// UserNameExist error case
+			
+			if (LocalErrorCallBack.getErrorMassage().equals("User name already exists in DB."))
+			{
+				UserNameExistMesaageLabel.setVisible(true);
+				ContainerCardCenter.show(CenterCardContainer, "CreateUserLayerCenter");	 //The CreateUser layer will be display	
+			}
+			else UserNameExistMesaageLabel.setVisible(false);
+			
+			
+			// CustomerID error case
+			CustomerIDExistMesaageLabel = GuiScreen.getCustomerIDExistMesaageLabel();
+			if (LocalErrorCallBack.getErrorMassage().equals("Customer already registered in system."))
+				CustomerIDExistMesaageLabel.setVisible(true);
+			else CustomerIDExistMesaageLabel.setVisible(false);	
+			
+			// EmailExist error case
+			EmailExistMesaageLabel = GuiScreen.getEmailExistMesaageLabel();
+			if (LocalErrorCallBack.getErrorMassage().equals("Email belong to another customer."))
+				EmailExistMesaageLabel.setVisible(true);
+			else EmailExistMesaageLabel.setVisible(false);				
+				
+		}			
+	
 	}
 	
 	private void HandleAddCarPressed() {
 		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
-		
+		Object[] idAraay = {GuiScreen.getCallbackCustomerUpdated().getCustomersID()};
 		GuiScreen.AddCarsCenterPanelLayer();
-		
-		ContainerCardCenter.show(CenterCardContainer, "AddCarLayerCenter");				//The AddCar layer will be display			
 		
 		//Add Button
 		AddButton = GuiScreen.getAddButton();
 		AddButton.addActionListener(this);
 		AddButton.setActionCommand("Add"); //Add action command
+		
+		callbackStringArray CarsViewTable = new callbackStringArray(MessageType.getCarDetailes);
+		CarsViewTable.setVariance(idAraay);
+//		CarsViewTable.setColCount(GuiScreen.getCallbackCustomerUpdated().getCustomersID());
+		Server.handleMessageFromClient(CarsViewTable);			
+	}
+	
+	private void HandleAddCarPressedBackFromServer(callbackStringArray CarsViewTable1) {
+		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
+		
+		GuiScreen.setCarsViewTable(CarsViewTable1.getDefaultTableModel());
+		ContainerCardCenter.show(CenterCardContainer, "AddCarLayerCenter");				//The AddCar layer will be display			
 	}
 	
 	private void HandleAddPressed() {
 		
 		CarNumberFormattedTextField = GuiScreen.getCarNumberFormattedTextField();
-		ExistCarNumberLabel = GuiScreen.getExistCarNumberLabel();
 		MissedFieldMessageAddCarsLabel = GuiScreen.getMissedFieldMessageAddCarsLabel();
 		
 		// Show/ don't show MissedFieldsMessage after checking that all fields filled		
@@ -353,25 +377,26 @@ public class MarketingRepresentativeController extends Controller{
 		// send CarCallback to server check
 		if ( !MissedFieldMessageAddCarsLabel.isVisible() )
 		{
-			CallBack LocalUserCallBack;
 			callbackCar fullCallbackCar = GuiScreen.getFullCallbackCar(); // Fill CallbackCustomer with GUI data
 			fullCallbackCar.setWhatToDo(MessageType.setNewCar);
 			
 			//Send CallbackCar to DB
-			Server.handleMessageFromClient(fullCallbackCar);
-			LocalUserCallBack = (CallBack) getCallBackFromBuffer();
-			
-			// Success case
-			if  (LocalUserCallBack instanceof callbackSuccess)
-			{
-				GuiScreen.setSuccessAddingCarMessageLabel();
-				ExistCarNumberLabel.setVisible(false);
-			}
-			// Error case - car exist in DB
-			else ExistCarNumberLabel.setVisible(true);
-		
+			Server.handleMessageFromClient(fullCallbackCar);					
 		}
 				
+	}
+	
+	private void HandleAddPressedBackFromServer(CallBack LocalUserCallBack) {
+		
+		ExistCarNumberLabel = GuiScreen.getExistCarNumberLabel();
+		// Success case
+		if  (LocalUserCallBack instanceof callbackSuccess)
+		{
+			GuiScreen.setSuccessAddingCarMessageLabel();
+			ExistCarNumberLabel.setVisible(false);
+		}
+		// Error case - car exist in DB
+		else ExistCarNumberLabel.setVisible(true);
 	}
 	
 	private void HandleSearchPressed() {
@@ -379,7 +404,6 @@ public class MarketingRepresentativeController extends Controller{
 		EnterCustomerIdTextField = GuiScreen.getEnterCustomerIdTextField();
 		InvalidcustomerIDMessageLabel = GuiScreen.getInvalidcustomerIDMessageLabel();
 		CustomerNotExistMessageLabel = GuiScreen.getCustomerNotExistMessageLabel();
-		ContainerCardLeft = (CardLayout)(LeftCardContainer.getLayout());
 		CustomerNotExistMessageLabel.setVisible(false);
 	
 		// Show/ don't show InvalidcustomerIDMessageLabel after checking CustomerId is valid
@@ -394,26 +418,64 @@ public class MarketingRepresentativeController extends Controller{
 			fullCallbackCustomer.setWhatToDo(MessageType.getCustomer);	
 			
 			//Send CallbackCustomer to DB
-			Server.handleMessageFromClient( fullCallbackCustomer);
-			LocalUserCallBack = (CallBack) getCallBackFromBuffer();
-			
-			// Success case
-			if  (LocalUserCallBack instanceof callbackCustomer)
-			{
-				fullCallbackCustomer = (callbackCustomer) LocalUserCallBack;
-				GuiScreen.setFullCallbackCustomer(fullCallbackCustomer);
-				ContainerCardLeft.show(LeftCardContainer, "CreateNewCustomerAccountLeft"); //The CustomerDetailsLayer layer will be display
+			Server.handleMessageFromClient( fullCallbackCustomer);				
+		}	
+	}
+	
+	private void HandleSearchPressedBackFromServer(CallBack LocalUserCallBack) {
+		
+		ContainerCardLeft = (CardLayout)(LeftCardContainer.getLayout());
+
+		// Success case
+		if  (LocalUserCallBack instanceof callbackCustomer)
+		{
+			fullCallbackCustomer = (callbackCustomer) LocalUserCallBack;
+			GuiScreen.setFullCallbackCustomer(fullCallbackCustomer);
+			ContainerCardLeft.show(LeftCardContainer, "CreateNewCustomerAccountLeft"); //The CustomerDetailsLayer layer will be display
+		}
+		// Error case - customer ID not exist in DB
+		else CustomerNotExistMessageLabel.setVisible(true);		
+	}
+	
+	@Override
+	public void update(Observable o, Object arg) {
+		if(arg instanceof CallBack){
+		
+			switch(((CallBack) arg).getWhatToDo()){
+				case setCreateNewCustomer:
+					HandleCreatePressedBackFromServer((CallBack) arg);
+					break;
+				case setUpdateCustomer:
+					HandleCreatePressedBackFromServer((CallBack) arg);
+					break;
+				case setNewCar:
+					HandleAddPressedBackFromServer((CallBack) arg);
+					break;
+				case getCustomer:
+					HandleSearchPressedBackFromServer((CallBack) arg);
+					break;
+				case getCarDetailes:
+					HandleAddCarPressedBackFromServer((callbackStringArray) arg);
+					break;					
+					
+			default:
+				super.update(o, arg);
+				break;
 			}
-			// Error case - customer ID not exist in DB
-			else CustomerNotExistMessageLabel.setVisible(true);			
+		}
+		
+		
+		// getMarketingRepresentativeComboBox  only case
+		if(arg instanceof Vector<?>){
+			Vector<String[]> ComboBoxs = (Vector<String[]>) arg;
+			GuiScreen.SetComboBoxSelection(ComboBoxs.get(0));
+			GuiScreen.SetFuelIDComboBoxSelection(ComboBoxs.get(1));
+			GuiScreen.SetCostingModelComboBoxSelection(ComboBoxs.get(2));
 		}
 			
 		
+		
 	}
-	
-	
-	
-	
 	
 	public callbackCustomer getFullCallbackCustomer() {
 		return fullCallbackCustomer;
