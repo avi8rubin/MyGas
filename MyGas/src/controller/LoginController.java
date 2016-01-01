@@ -101,19 +101,21 @@ public class LoginController implements ActionListener,Observer{
 	private void LoginButtonHandler(){
 		
 		EnteredUser = null;
-		setConnectionToServer();										//Start the connection to server
 
-		if(ConnectionFlag){
+		
+		if(Server!=null && Server.isConnected()){
 			
 			/*------ Read fields from gui ------*/
 			EnteredUser = new callbackUser(MessageType.getCheckExistsUserPass,LoginScreen.getUserName(),LoginScreen.getPassword());
 			Password = LoginScreen.getPassword();
 			
 			/*------Send user name and password query ------*/
-			Server.handleMessageFromClient(EnteredUser);					//Send query to DB			
-	
-			
+			Server.handleMessageFromClient(EnteredUser);					//Send query to DB				
 		}//END if
+		else {
+			setConnectionToServer();										//Start the connection to server
+			LoginButtonHandler();
+		}
 	}
 	
 	private void CheckRegisteredUser(CallBack LocalUserCallBack){
@@ -232,7 +234,7 @@ public class LoginController implements ActionListener,Observer{
 	 * Initiate the connection to server 
 	 */
 	private void setConnectionToServer(){
-		if (!ConnectionFlag){	
+		//if (!ConnectionFlag){	
 			/*----- Create Server Connection -----*/
 			try {
 				Server = new Client (LoginScreen.getServerIP(),DEFAULT_PORT);
@@ -244,7 +246,7 @@ public class LoginController implements ActionListener,Observer{
 				ConnectionFlag = false;												//Can't succeed to make a connection
 				e1.printStackTrace();
 			}													
-		}
+		//}
 	}
 
 	@Override
@@ -260,15 +262,15 @@ public class LoginController implements ActionListener,Observer{
 	 * Close the connection and delete observer
 	 */
 	private void RestartConnection(){
-		ConnectionFlag=false;
-		Server.deleteObserver(this);
+		//ConnectionFlag=false;
+		//Server.deleteObserver(this);
 		LoginScreen.ClearFields();
-		try {
+		/*try {
 			Server.closeConnection();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 }

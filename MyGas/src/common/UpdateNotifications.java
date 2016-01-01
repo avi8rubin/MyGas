@@ -61,6 +61,7 @@ public class UpdateNotifications implements Runnable,Observer {
 	}
 	public void setNotificationFlag(boolean notificationFlag) {
 		NotificationFlag = notificationFlag;
+		Server.deleteObserver(this);
 	}
 	private void setNotificationsTable(DefaultTableModel NewTableModel){
 		NotificationsTable.setModel(NewTableModel);

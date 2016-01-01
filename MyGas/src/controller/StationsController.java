@@ -987,9 +987,6 @@ public class StationsController extends Controller implements MouseListener,Runn
 						}
 						
 					break;
-				case updateUserLogout:
-				
-					break;
 				case setNewGasStationSale:
 					if(arg instanceof callback_Error)
 					{
@@ -1071,11 +1068,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 					break;
 				
 				}
-		}
-		else if(arg instanceof Vector){
-		
-		}
-		
+		}		
 	}
 	
 	}

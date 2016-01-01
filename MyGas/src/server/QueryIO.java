@@ -356,7 +356,7 @@ public class QueryIO implements Runnable {
 				
 		// Build query -----------------------------------------------------------
 		try {
-			PreparedStatement ps=conn.prepareStatement("UPDATE Users SET Logged_In='No' WHERE User_ID=(?);");
+			PreparedStatement ps=conn.prepareStatement("UPDATE Users SET Logged_In='No' WHERE User_ID=(?) AND User_Type_ID<>2;");
 			
 		// Send query to DB  -----------------------------------------------------
 			ps.setInt(1, User.getUserID());			

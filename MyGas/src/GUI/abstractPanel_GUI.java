@@ -154,7 +154,7 @@ public class abstractPanel_GUI extends JFrame{
 		LogoutButton.setBounds(1148, 13, 112, 38);
 		TopPanel.add(LogoutButton);
 		LogoutButton.addActionListener(new ActionListener() { 					//Add action listener
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {			
 				if(User.getUserTypeId()!=2){
 					User.setWhatToDo(MessageType.updateUserLogout);
 					Server.handleMessageFromClient(User);

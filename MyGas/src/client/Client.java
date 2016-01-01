@@ -62,11 +62,11 @@ public void handleMessageFromClient(Object message)
 			//LostConnection();														//Close connection
 			e.printStackTrace();
 		}
-		/*	try {
+			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}*/
+			}
 
 }
 
