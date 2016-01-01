@@ -11,8 +11,6 @@ import GUI.abstractPanel_GUI;
 import callback.CallBack;
 import callback.callbackBuffer;
 import callback.callbackStringArray;
-import callback.callbackUser;
-import callback.callback_Error;
 import client.Client;
 
 public class UpdateNotifications implements Runnable,Observer {
@@ -20,13 +18,11 @@ public class UpdateNotifications implements Runnable,Observer {
 	private boolean NewNotificationFlag = false;
 	private JTable NotificationsTable;
 	private Client Server;
-	private callbackBuffer CommonBuffer;
 	private JButton NotificationsButton;
 	private callbackStringArray Notification = new callbackStringArray(MessageType.getNotifications);
 	
-	public UpdateNotifications(abstractPanel_GUI GUIScreen, callbackBuffer CommonBuffer ,Client Server, int UserID){
+	public UpdateNotifications(abstractPanel_GUI GUIScreen ,Client Server, int UserID){
 		this.Server = Server;
-		this.CommonBuffer = CommonBuffer;
 		Server.addObserver(this);
 		NotificationsTable = GUIScreen.getNotificationsTable();
 		NotificationsButton = GUIScreen.getNotificationsButton();

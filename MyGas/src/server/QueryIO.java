@@ -37,11 +37,8 @@ public class QueryIO implements Runnable {
 	private int ThreadMission;
 	private static boolean SendBill = true;
 
-	
-
 	/**
-	 * This function create Driver connection
-	 * @return MessageType
+	 * Set Driver connection to MySQL
 	 */
 	public String SetDriver(){
 		try {
@@ -54,20 +51,27 @@ public class QueryIO implements Runnable {
 		return MessageType.Driver_Succeded.toString();
 	}
 	/**
-	 * This function create the connection to Database
-	 * @param Url
-	 * @param Name
-	 * @param Password
+	 * Create connection to Database
+	 * @param Url - Path to DB (Example: "jdbc:mysql://localhost/MyGas")
+	 * @param Name - DB user name (Example: "root")
+	 * @param Password - DB password (Example: "1234")
 	 * @return Message if connection succeeded or not
 	 */
 	public String SetConnectionToDB(String Url,String Name,String Password){
 		try {
 			conn = DriverManager.getConnection(Url, Name, Password);
 		} catch (SQLException e) {
+			System.out.println("SQLException: " + e.getMessage());
+            System.out.println("SQLState: " + e.getSQLState());
+            System.out.println("VendorError: " + e.getErrorCode());
 		return MessageType.No_Connection_To_Database.toString()+"|Class:QueryIO| Function:SetConnectionToDB|";
 		}	
 		return MessageType.Connection_To_Database_Succeded.toString();
 	}
+	/**
+	 * Create global connection to send queries to DB.
+	 * @return
+	 */
 	public String setStatement(){	
 		try {
 			st =  conn.createStatement();
@@ -77,6 +81,12 @@ public class QueryIO implements Runnable {
 		SMS.setUser("Ohad");
 		return MessageType.statement_Succeded.toString();
 	}	
+
+/**
+ * Callback Resolver determine what is the purpose of the callback and redirects to the right place. 
+ * @param SwitchCallback
+ * @return Object (Vector/CallBack)
+ */
 	public Object CallbackResolver(Object SwitchCallback){		
 		
 		switch(((CallBack) SwitchCallback).getWhatToDo()){
@@ -222,18 +232,6 @@ public class QueryIO implements Runnable {
 		/*---------------*/
 		return AnswerObject;
 	}
-
-	public void TimeToSendBill(){
-		if(now.get(Calendar.DAY_OF_MONTH) == 24 && SendBill){
-			/*Initiate Thread*/
-			ThreadMission=1;
-			(new Thread(this)).start();
-			SendBill = false;
-			/*---------------*/
-		}
-		if(now.get(Calendar.DAY_OF_MONTH) != 1) SendBill = true;
-	}
-	
 	public Object VectorResolver(Object SwitchCallback){
 		switch(((callbackVector) SwitchCallback).getWhatToDo()){
 
@@ -275,7 +273,21 @@ public class QueryIO implements Runnable {
 		return AnswerObject;
 		
 	}
-	
+
+/**
+ * Initiate thread that send bill for all customers
+ */
+	public void TimeToSendBill(){
+		if(now.get(Calendar.DAY_OF_MONTH) == 1 && SendBill){
+			/*Initiate Thread*/
+			ThreadMission=1;
+			(new Thread(this)).start();
+			SendBill = false;
+			/*---------------*/
+		}
+		if(now.get(Calendar.DAY_OF_MONTH) != 1) SendBill = true;
+	}
+
 /**
  * Global queries 	
  */	
@@ -1044,6 +1056,7 @@ public class QueryIO implements Runnable {
 			Callback.setCustomerLastName(AnswerResult.getString("Customer_Last_Name"));
 			Callback.setCustomerType(AnswerResult.getString("Customer_Type"));
 			Callback.setPlanName(AnswerResult.getString("Plan_Name"));
+			Callback.setPlanID(AnswerResult.getInt("Plan_ID"));
 			Callback.setPhoneNumber(AnswerResult.getString("Phone_Number"));
 			Callback.setCreditCard(AnswerResult.getString("Credit_Card"));
 			Callback.setEmail(AnswerResult.getString("Email"));
@@ -2439,30 +2452,16 @@ public class QueryIO implements Runnable {
 		}
 		return (new callbackSuccess());
 	}
+
 /**
  * Variance
  */
-	
-	/**
-	 * Local function for check if the query return results
-	 * @param Result - the result from DB
-	 */	
-	private void printQueryResult(ResultSet Result){
-		try {
-			while (Result.next()) {
-				System.out.println(Result.getString(1) + ":" + 
-						Result.getString(2) + ":" +Result.getString(3));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
+
 	/**
 	 * Logout all users!
 	 * IMPORTANT: Only use when server lost connection or stop!
 	 */
-	public void ServerStopLogoutAllUsers(){						
+	public void ServerStopLogoutAllUsers(){
 
 		// Send query to DB  -----------------------------------------------------
 			try {
@@ -2607,19 +2606,10 @@ public class QueryIO implements Runnable {
 							now.get(Calendar.YEAR)%100+": price to pay "+LocalResult.getFloat("Price_After_Costing_Model_Discount")+
 							" on "+LocalResult.getFloat("Fuel_Total_Amount")+" liters."	);
 				}
-				
-				
+	
 			} catch (SQLException | InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
-			
-			
-		
-		
-		
 		
 	}
 

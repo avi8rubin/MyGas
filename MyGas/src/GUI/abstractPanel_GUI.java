@@ -313,7 +313,7 @@ public class abstractPanel_GUI extends JFrame{
 		
 		/*Create notification thread*/
 		if(User.getUserTypeId() != 2){
-			NotificationThrerad = new UpdateNotifications(ThisScreen, CommonBuffer, Server, User.getUserID());
+			NotificationThrerad = new UpdateNotifications(ThisScreen, Server, User.getUserID());
 			new Thread(NotificationThrerad).start();
 		}
 		

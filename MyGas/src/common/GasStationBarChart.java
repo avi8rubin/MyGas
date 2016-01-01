@@ -2,12 +2,10 @@ package common;
 
 import java.awt.Color;
 import java.awt.SystemColor;
-
 import javax.swing.JPanel;
 import org.jfree.chart.*;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
-import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
@@ -17,14 +15,12 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * Bar chart the display the current fuel amount in the station.
  * @author Ohad
  */
-public class GasStationBarChart extends JPanel{
+public class GasStationBarChart extends JPanel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private static Float[] AmountAndLevel;
-	
+	private static JFreeChart jfreechart;
+	private static ChartPanel chartPanel;
 	/**
 	 * Constructor that gets the details of the fuel level in the station.
 	 * @param AmountAndLevel
@@ -55,12 +51,13 @@ public class GasStationBarChart extends JPanel{
  */
 	private static JFreeChart createChart(CategoryDataset categorydataset)
 	{
-		JFreeChart jfreechart = ChartFactory.createStackedBarChart("Current Station Fuels Level", "Fuel Type", "Level", categorydataset, PlotOrientation.VERTICAL, true, false, false);
+		jfreechart = ChartFactory.createStackedBarChart("Current Station Fuels Level", "Fuel Type", "Level", categorydataset, PlotOrientation.VERTICAL, true, false, false);
 		CategoryPlot categoryplot = (CategoryPlot)jfreechart.getPlot();
+		//jfreechart.getXYPlot();
 		ExtendedStackedBarRenderer extendedstackedbarrenderer = new ExtendedStackedBarRenderer();
 		extendedstackedbarrenderer.setBaseItemLabelsVisible(true);
 		extendedstackedbarrenderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
-		extendedstackedbarrenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+		//extendedstackedbarrenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
 		categoryplot.setRenderer(extendedstackedbarrenderer);
 		NumberAxis numberaxis = (NumberAxis)categoryplot.getRangeAxis();
 		numberaxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
@@ -83,8 +80,8 @@ public class GasStationBarChart extends JPanel{
 	public static JPanel createBarChartPanel()
 	{
 		JFreeChart jfreechart = createChart(createDataset());
-		return new ChartPanel(jfreechart);
+		chartPanel = new ChartPanel(jfreechart);
+		return chartPanel;
 	}
-
 
 }
