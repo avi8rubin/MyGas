@@ -3,12 +3,10 @@ package GUI;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -19,15 +17,8 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
 import javax.swing.text.MaskFormatter;
 
 import callback.CallBack;
@@ -124,22 +115,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	private MaskFormatter CarNumberMask;
 	private JLabel MissedFieldMessageAddCarsLabel;
 	private JLabel SuccessAddingCarMessageLabel;
-	// Create JTable - that the last column is editable.
-	private JTable CarsViewTable = new JTable(){
-		private static final long serialVersionUID = 1L;
-        public boolean isCellEditable(int row, int column) { 
-//        	switch(column){
-//        	case 3:
-//                return true; 
-//        	default:
-//                return false;
-//        	}
-        	return true;
-        };
-	};
-	private JLabel CarsViewLabel;
-	private JButton CarsViewSaveButton;
-
+	
 	//CustomerDetailsLayer Left Layer Components
 	private JLayeredPane CustomerDetailsLayer;
 	private JTextField EnterCustomerIdTextField;
@@ -147,7 +123,6 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	private JLabel InvalidcustomerIDMessageLabel;
 	private JLabel CustomerNotExistMessageLabel;
 	private callbackCustomer fullCallbackCustomer ;
-
 
 	
 
@@ -272,7 +247,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		
 		FuelIDComboBox = new JComboBox();
 		FuelIDComboBox.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		FuelIDComboBox.setBounds(154, 74, 158, 27);
+		FuelIDComboBox.setBounds(154, 88, 158, 27);
 		
 		CreateNewUserCenterLayer();
 				
@@ -448,28 +423,22 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		/*------- add labels, textFields and buttons 
 		 * 						to AddCarLayer --------*/
 		
-		JLabel AddNewCarLabel = new JLabel("Add new car :");
-		AddNewCarLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		AddNewCarLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		AddNewCarLabel.setBounds(51, 0, 164, 34);
-		AddCarPanel.add(AddNewCarLabel);
-		
 		CarNumberLabel1 = new JLabel("Car Number : ");
 		CarNumberLabel1.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		CarNumberLabel1.setEnabled(false);
-		CarNumberLabel1.setBounds(21, 32, 115, 34);
+		CarNumberLabel1.setBounds(21, 46, 115, 34);
 		AddCarPanel.add(CarNumberLabel1);
 		
 		FuelIDLabel = new JLabel("Fuel ID : ");
 		FuelIDLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		FuelIDLabel.setEnabled(false);
-		FuelIDLabel.setBounds(21, 67, 115, 34);
+		FuelIDLabel.setBounds(21, 81, 115, 34);
 		AddCarPanel.add(FuelIDLabel);
 		
 		NFCLabel = new JLabel("NFC :");
 		NFCLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		NFCLabel.setEnabled(false);
-		NFCLabel.setBounds(21, 105, 115, 34);
+		NFCLabel.setBounds(21, 119, 115, 34);
 		AddCarPanel.add(NFCLabel);
 				
         try {
@@ -486,67 +455,41 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		CarNumberFormattedTextField = new JFormattedTextField(CarNumberMask);
 		CarNumberFormattedTextField.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		CarNumberFormattedTextField.setToolTipText("Car number have to written with 7 digits. For example: 11-222-33");
-		CarNumberFormattedTextField.setBounds(155, 36, 103, 27);
+		CarNumberFormattedTextField.setBounds(155, 50, 103, 27);
 		AddCarPanel.add(CarNumberFormattedTextField);
 		
 		AddCarPanel.add(FuelIDComboBox);
 		
 		NFCNewCheckBox = new JCheckBox("");
-		NFCNewCheckBox.setBounds(155, 116, 97, 23);
+		NFCNewCheckBox.setBounds(155, 130, 97, 23);
 		AddCarPanel.add(NFCNewCheckBox);
 		
 		AddButton = new JButton("Add");
 		AddButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		AddButton.setBounds(21, 150, 97, 38);
+		AddButton.setBounds(442, 150, 97, 38);
 		AddCarPanel.add(AddButton);
 		
 		ExistCarNumberLabel = new JLabel("This car already in system");
 		ExistCarNumberLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
 		ExistCarNumberLabel.setEnabled(false);
-		ExistCarNumberLabel.setBounds(264, 26, 244, 46);
+		ExistCarNumberLabel.setBounds(283, 35, 278, 46);
 		ExistCarNumberLabel.setVisible(false);
 		AddCarPanel.add(ExistCarNumberLabel);
 
 	    MissedFieldMessageAddCarsLabel = new JLabel("There is one or more missed fields");
 		MissedFieldMessageAddCarsLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
 		MissedFieldMessageAddCarsLabel.setEnabled(false);
-		MissedFieldMessageAddCarsLabel.setBounds(137, 147, 329, 46);
+		MissedFieldMessageAddCarsLabel.setBounds(561, 142, 348, 46);
 		MissedFieldMessageAddCarsLabel.setVisible(false);
 		AddCarPanel.add(MissedFieldMessageAddCarsLabel);
 		
 		SuccessAddingCarMessageLabel = new JLabel("lol gadol");
 		SuccessAddingCarMessageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
 		SuccessAddingCarMessageLabel.setEnabled(false);
-		SuccessAddingCarMessageLabel.setBounds(10, 183, 532, 46);
+		SuccessAddingCarMessageLabel.setBounds(442, 199, 532, 46);
 		SuccessAddingCarMessageLabel.setVisible(false);
 		AddCarPanel.add(SuccessAddingCarMessageLabel);
 		
-		
-		
-		/*------- Create JTable surround with scroll pane and add it to AddCarPanel --------*/
-		JScrollPane CarsViewScroll = new JScrollPane();
-		CarsViewScroll.setBounds(43, 264, 764, 287);
-		AddCarPanel.add(CarsViewScroll);		
-		
-		CarsViewScroll.setViewportView(CarsViewTable);		
-		CarsViewTable.setRowHeight(23);
-		CarsViewTable.setFillsViewportHeight(true);
-		CarsViewTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		CarsViewTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
-		CarsViewTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		
-		/*------- Create new label on the new table --------*/
-		CarsViewLabel = new JLabel("Cars table of customer :");				
-		CarsViewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		CarsViewLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		CarsViewLabel.setBounds(241, 228, 329, 42);
-		AddCarPanel.add(CarsViewLabel);
-		
-		/* ------- Adding new button to carsView layer -------- */
-		CarsViewSaveButton = new JButton("Save");													//Global variable
-		CarsViewSaveButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		CarsViewSaveButton.setBounds(839, 360, 112, 38);
-		AddCarPanel.add(CarsViewSaveButton);
 		
 	}
 	
@@ -589,8 +532,8 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	
 	public void CreateNewUserCenterLayer()
 	{
-		// show AddCarDetailsButton only in new customer case
-		if (newCustomerFlag) AddCarDetailsButton.setVisible(false);
+		
+		AddCarDetailsButton.setVisible(false);
 		/* ------- Adding CreateUser Center Layer -------- */
 		CreateUserLayer = new JLayeredPane();
 		CreateUserLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
@@ -896,8 +839,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 			CreditCardFormattedTextField.setText( fullCallbackCustomer.getCreditCard() );	
 			if ( fullCallbackCustomer.getCustomerType().equals("Private") ) PrivateCustomerRadioButton.setSelected(true);
 			else CommercialCustomerRadioButton.setSelected(true);
-			PurchasePlanComboBox.setSelectedIndex(fullCallbackCustomer.getPlanID()-1);
-			CostingModelComboBox.setSelectedIndex(fullCallbackCustomer.getCostingModelID()-1);
+			PurchasePlanComboBox.setSelectedIndex(fullCallbackCustomer.getPlanID() - 1);
 			
 		}
 		
@@ -967,11 +909,6 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		else customerCallback.setCustomerType("Commercial");
 		customerCallback.setPlanID(getComboBoxSelection()+1);
 		customerCallback.setCostingModelID(getCostingModelComboBoxSelection()+1);
-		
-		//Update user data case
-		if (!getNewCustomerFlag()) 
-			if (getIsActiveCheckBox().isSelected()) customerCallback.setISActive("Yes"); 
-			else customerCallback.setISActive("No"); 
 
 		return customerCallback;
 	}
@@ -1006,80 +943,11 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		this.fullCallbackCustomer = fullCallbackCustomer;
 	}
 
-	public callbackCustomer getCallbackCustomerUpdated() {
-		return fullCallbackCustomer;
-	}
-	
-	public boolean isCustomerChanged(callbackCustomer afterChange ){
-		callbackCustomer beforeChange=fullCallbackCustomer;
-		if ( !beforeChange.getUserName().equals(afterChange.getUserName() ) ) return false;
-		if ( !beforeChange.getUserPassword().equals(afterChange.getUserPassword() ) ) return false;
-		if ( !beforeChange.getISActive().equals(afterChange.getISActive() ) ) return false;
-		if ( !beforeChange.getCustomerFirstName().equals(afterChange.getCustomerFirstName() ) ) return false;
-		if ( !beforeChange.getCustomerLastName().equals(afterChange.getCustomerLastName() ) ) return false;
-		if ( !beforeChange.getEmail().equals(afterChange.getEmail() ) ) return false;
-		if ( !beforeChange.getPhoneNumber().equals(afterChange.getPhoneNumber() ) ) return false;
-		if ( !beforeChange.getCreditCard().equals(afterChange.getCreditCard() ) ) return false;
-		if ( !beforeChange.getCustomerType().equals(afterChange.getCustomerType() ) ) return false;
-		if ( beforeChange.getPlanID() != afterChange.getPlanID()  ) return false;
-		if ( beforeChange.getCostingModelID() != afterChange.getCostingModelID()  ) return false;
-		return true;
-	}
-	
- 	public JCheckBox getIsActiveCheckBox() {
+	public JCheckBox getIsActiveCheckBox() {
 		return IsActiveCheckBox;
 	}
 
-	public JTable getCarsViewTable(){
-		return CarsViewTable;
-	}
- 	
-	public void setCarsViewTable(DefaultTableModel NewTableModel){
-		//Create combo box
-		Object[] value = { "Choose", "Edit"};
-
-		CarsViewTable.setModel(NewTableModel);
-
-		
-		Vector data=NewTableModel.getDataVector();
-
-//		Vector<Object> cell;
-//		String nfcCell;
-//		JCheckBox NFCCheckBox;
-//		for(int i=0;i<data.size();i++){
-//			cell= (Vector<Object>) data.get(i);
-//			nfcCell= (String)cell.elementAt(3); // NFC 
-//			NFCCheckBox = new JCheckBox("");
-//			if (nfcCell.equals("Yes")) NFCCheckBox.setSelected(true);
-//			else NFCCheckBox.setSelected(false);
-			
-//			TableColumn col = CarsViewTable.getColumnModel().getColumn( 3 );
-//			col.setCellEditor( new DefaultCellEditor( NFCCheckBox ) );			
-			
 	
-//			cell.setElementAt(NFCCheckBox, 3);
-			
-//			NFCNewCheckBox.setBounds(155, 116, 97, 23);
-//			s = nf.format((Double.valueOf((String)icell)));
-//		}
-		
-		
-//		CarsViewTable.setModel(NewTableModel);
-//		DefaultComboBoxModel<?> comboModel = new DefaultComboBoxModel( value );
-//		JComboBox combo = new JComboBox();
-//		combo.setModel( comboModel );
-//		TableColumn col = CarsViewTable.getColumnModel().getColumn( 5 ); /// need to be 6
-//		col.setCellEditor( new DefaultCellEditor( combo ) );
-		
-		
-		//Hide columns
-//		CarsViewTable.removeColumn(CarsViewTable.getColumnModel().getColumn( 0 ));
-//		CarsViewTable.removeColumn(CarsViewTable.getColumnModel().getColumn( 1 ));
-		//All values are in the center of the cell		
-		DefaultTableCellRenderer CenterRenderer = new DefaultTableCellRenderer();
-		CenterRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-		CarsViewTable.setDefaultRenderer(Object.class, CenterRenderer);
-	}
 
 	
 }
