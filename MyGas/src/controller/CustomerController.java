@@ -1,7 +1,10 @@
 package controller;
 
 import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.beans.FeatureDescriptor;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,6 +28,11 @@ import client.Client;
 import common.Checks;
 import common.MessageType;
 
+/**
+ * CustomerController
+ * @author ליטף
+ *
+ */
 public class CustomerController extends Controller{
 
 	private CustomerGUI GuiScreen;
@@ -44,6 +52,9 @@ public class CustomerController extends Controller{
 	private String FuelStr;
 	private String dateStr;
 	private String timeStr;
+	
+	//new sale details
+	private callbackSale sale;
 
 	public CustomerController(Client Server, callbackBuffer CommonBuffer, CustomerGUI GuiScreen) {
 		super(Server, CommonBuffer,GuiScreen);
@@ -73,32 +84,15 @@ public class CustomerController extends Controller{
 		
 	}
 
+	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
 		/* -------- Check the source of the event ---------*/
 		if(e.getActionCommand().equals("Buy Home Fuel")){
 			ContainerCardCenter.show(CenterCardContainer, "BuyHomeFuel");
-			
-//			GuiScreen.setOrderDetailsLabel("Order Details:");
-//			GuiScreen.setShowOrderDetailsLabel("<html> Fuel Price:<br>"
-//												+ "+<br>"
-//												+ "  Liters:<br>"
-//												+ "		____________________<br>"
-//												+ "  Sum:<br><br>"
-//												+ "+Shipping:</html>");
-//			
-//			GuiScreen.setFuelPriceLabel(Float.toHexString((float) 100.5));
-//			GuiScreen.setLitersLabel(FuelStr);
-//			GuiScreen.setsumLabel(Float.toHexString((float) 1002.2));
-//			//SumPrice+=SumPrice*0.02;
-//			GuiScreen.setShippingLabel(Float.toHexString(102));
-//			GuiScreen.setRemaraksLabel("<html>*Immediate order-within 6 hours<br>"
-//									 + "is fuel cost plus 2% shipping from the"
-//									 + "fuel price</html>");
-//
-//			
-//			
+		
 			GuiScreen.DisablePayButton();
 			GuiScreen.setFuelAmount("");
 			GuiScreen.setDate();
@@ -127,7 +121,7 @@ public class CustomerController extends Controller{
 		ErrorDeliveryTimeLabel.setText("");
 		DateLabel.setText("");
 		
-		callbackSale sale= new callbackSale(MessageType.setNewHomeFuelSale);
+		sale= new callbackSale(MessageType.setNewHomeFuelSale);
 		sale.setFuelID(3);
 			
 		//check validation of fuel amount
@@ -180,15 +174,22 @@ public class CustomerController extends Controller{
 
 			
 		private void Server_CalculatePayment(callbackStringArray TariffTable){
-				float FuelPrice=0;
-				float SumPrice=0;
-				int Differacne=0;
-				Object[][] arr=TariffTable.getData();
-				for(int i=0;i<arr.length;i++){
-					if(arr[i][1].toString().equals("Home Fuel"))
+
+			int FuelID=0;
+			float FuelPrice=0;
+			float SumPrice=0;
+			int Differacne=0;
+				
+			Object[][] arr=TariffTable.getData();
+			for(int i=0;i<arr.length;i++){
+				if(arr[i][1].toString().equals("Home Fuel"))
+					{
 						FuelPrice=Float.parseFloat(arr[i][3].toString());
+						FuelID=Integer.parseInt(arr[i][0].toString());
+					}
 				}
-				//Immediate order: (within 6 hours) =Cost + 2% of the price of fuel
+			sale.setFuelID(FuelID);
+			//Immediate order: (within 6 hours) =Cost + 2% of the price of fuel
 				DateFormat TimeFormat = new SimpleDateFormat("HH:mm");
 				DateFormat DateFormat = new SimpleDateFormat("dd/MM/yy");
 				String currDate=DateFormat.format(new Date()).toString();
@@ -209,19 +210,20 @@ public class CustomerController extends Controller{
 															+ "+<br>"
 															+ "  Liters:<br>"
 															+ "		____________________<br>"
-															+ "  Sum:<br>"
+															+ "  Sum:<br><br>"
 															+ "+Shipping:</html>");
 						
-						GuiScreen.setFuelPriceLabel(Float.toHexString(FuelPrice));
+						GuiScreen.setFuelPriceLabel(Float.toString(FuelPrice));
 						GuiScreen.setLitersLabel(FuelStr);
-						GuiScreen.setsumLabel(Float.toHexString(SumPrice));
+						GuiScreen.setsumLabel(Float.toString(SumPrice));
 						SumPrice+=SumPrice*0.02;
-						GuiScreen.setShippingLabel(Float.toHexString(SumPrice));
-						GuiScreen.setRemaraksLabel("*Immediate order-within 6 hours<br>"
+						GuiScreen.setShippingLabel(Float.toString(SumPrice));
+						GuiScreen.setRemaraksLabel("<html>*Immediate order-within 6 hours "
 												 + "is fuel cost plus 2% shipping from the"
 												 + "fuel price</html>");
-
+						GuiScreen.setCalcPricetextArea(Float.toString(SumPrice));
 					}
+					
 				}
 		}
 		private void HandleCheckCustomerCreditCard(){
@@ -246,8 +248,14 @@ public class CustomerController extends Controller{
 				}
 			GuiScreen.DisablePayButton();
 		}
+		/**
+		 * HandlePayButton- create new sale in DB with sale details
+		 * @param callbackSale sale
+		 */
 		private void HandlePayButton() {
 			
+			sale.setUserID(GuiScreen.getCurrentUserID());
+			Server.handleMessageFromClient(sale);
 		}	
 		
 		private void HandleCheckFuelOrder() {
@@ -273,7 +281,16 @@ public class CustomerController extends Controller{
 						break;
 
 					case setNewHomeFuelSale:
-						
+						CallBack temp =  (CallBack) arg;
+						if(temp instanceof callbackSuccess){
+							JOptionPane.showMessageDialog(null, "Your order was added successfully, "
+									+ "you can watch your orders in the 'Check Fuel Orders'", 
+									"", JOptionPane.INFORMATION_MESSAGE);
+							}
+						else {
+							JOptionPane.showMessageDialog(null, "Error has occurred, no charge was made",
+									"", JOptionPane.INFORMATION_MESSAGE);
+							}	
 						break;
 						
 					case getCustomer:
@@ -282,13 +299,13 @@ public class CustomerController extends Controller{
 						break;
 
 					case getHomeFuelOrders:
-						CallBack temp =  (CallBack) arg;
-						if(temp instanceof callbackSuccess){
+						CallBack temp1 =  (CallBack) arg;
+						if(temp1 instanceof callbackSuccess){
 							JOptionPane.showMessageDialog(null, "No Orders to show", 
 									"", JOptionPane.INFORMATION_MESSAGE);
 							}
 						else {
-							callbackStringArray orders=(callbackStringArray) temp;
+							callbackStringArray orders=(callbackStringArray) temp1;
 							GuiScreen.setHomeFuelOrdersTable(orders.getDefaultTableModel());
 							}	
 						break;
