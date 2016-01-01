@@ -158,9 +158,8 @@ public class abstractPanel_GUI extends JFrame{
 				if(User.getUserTypeId()!=2){
 					User.setWhatToDo(MessageType.updateUserLogout);
 					Server.handleMessageFromClient(User);
-					NotificationThrerad.setNotificationFlag(false);					//Stop notification thread
 				}
-				
+				NotificationThrerad.setNotificationFlag(false);					//Stop notification thread
 				LoginScreen.setVisible(true);									//Go to login screen
 				ThisScreen.setVisible(false);									//Set invisible current screen
 				
@@ -195,7 +194,7 @@ public class abstractPanel_GUI extends JFrame{
 		//Notifications Button
 		NotificationsButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		NotificationsButton.setBounds(986, 13, 150, 38);
-		if(User.getUserTypeId()==2) NotificationsButton.setEnabled(false);
+		if(User.getUserTypeId()==2) NotificationsButton.setVisible(false);
 		NotificationsButton.setActionCommand("Notifications");
 		TopPanel.add(NotificationsButton);
 		NotificationsButton.addActionListener(new ActionListener() {
@@ -312,10 +311,10 @@ public class abstractPanel_GUI extends JFrame{
 		NotificationsTable.setDefaultRenderer(Object.class, CenterRenderer);
 		
 		/*Create notification thread*/
-		if(User.getUserTypeId() != 2){
+		//if(User.getUserTypeId() != 2){
 			NotificationThrerad = new UpdateNotifications(ThisScreen, CommonBuffer, Server, User.getUserID());
 			new Thread(NotificationThrerad).start();
-		}
+		//}
 		
 
 /**
