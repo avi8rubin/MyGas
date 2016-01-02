@@ -1,10 +1,7 @@
 package controller;
 
 import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.beans.FeatureDescriptor;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,7 +12,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-import GUI.CEOGUI;
 import GUI.CustomerGUI;
 import callback.CallBack;
 import callback.callbackBuffer;
@@ -23,7 +19,6 @@ import callback.callbackCustomer;
 import callback.callbackSale;
 import callback.callbackStringArray;
 import callback.callbackSuccess;
-import callback.callback_Error;
 import client.Client;
 import common.Checks;
 import common.MessageType;
@@ -41,6 +36,7 @@ public class CustomerController extends Controller{
 	private JButton BuyHomeFuelButton;
 	private JButton CheckFuelOrdersButton;
 	private JButton PayButton;
+	private JButton CancelButton;
 	private JButton CalculateButton;
 	
 	private JLabel ErrorAmount;
@@ -56,6 +52,16 @@ public class CustomerController extends Controller{
 	//new sale details
 	private callbackSale sale;
 
+	/**
+	 * CustomerController- control all the components of the Customer Gui
+	 * handle the Buy home fuel features: insert the sale details, calculate price and right the sale
+	 * details in the DB
+	 * handle the information of all the customer past purchases 
+	 * @param Server
+	 * @param CommonBuffer
+	 * @param GuiScreen
+	 * @author Litaf
+	 */
 	public CustomerController(Client Server, callbackBuffer CommonBuffer, CustomerGUI GuiScreen) {
 		super(Server, CommonBuffer,GuiScreen);
 		this.GuiScreen = GuiScreen;
@@ -82,6 +88,9 @@ public class CustomerController extends Controller{
 		ErrorDeliveryTimeLabel=GuiScreen.getErrorDeliveryTimeLabel();
 		ErrorAddressLabel=GuiScreen.getErrorAddressLabel();
 		
+		CancelButton=GuiScreen.getCancelButton();
+		CancelButton.addActionListener(this);
+		CancelButton.setActionCommand("Cancel Button");
 	}
 
 	
@@ -93,10 +102,14 @@ public class CustomerController extends Controller{
 		if(e.getActionCommand().equals("Buy Home Fuel")){
 			ContainerCardCenter.show(CenterCardContainer, "BuyHomeFuel");
 		
+			GuiScreen.setCalcPricetextArea("");
+			GuiScreen.setAddress("");
 			GuiScreen.DisablePayButton();
+			GuiScreen.DisableCancleButton();
 			GuiScreen.setFuelAmount("");
 			GuiScreen.setDate();
 			GuiScreen.setTime("");
+			GuiScreen.setAllOrderDaetails();
 			HandleCheckCustomerCreditCard();
 		}		
 		
@@ -110,10 +123,18 @@ public class CustomerController extends Controller{
 			ContainerCardCenter.show(CenterCardContainer, "HomeFuelOrdersCenterLayer");
 			HandleCheckFuelOrder();
 		}
+		else if(e.getActionCommand().equals("Cancel Button")){
+			HandleCancelButton();
+		}
 			
 	}
 	
-	
+	/**
+	 * HandleCalcButtonPressed- check if all relevant fields are correctly filled and print
+	 * to the Gui the description of the sale price.
+	 * @author Litaf
+
+	 */
 	private void HandleCalcButtonPressed(){
 			
 		int checkFields=0;
@@ -167,19 +188,43 @@ public class CustomerController extends Controller{
 		//check if all fields added successfully
 		if(checkFields==4) {
 			GuiScreen.EnablePayButton();
+			GuiScreen.EnableCancleButton();
 			Server.handleMessageFromClient(new callbackStringArray(MessageType.getFuelsDetailes));
 		}
 		}
-		
-
+		/**
+		 * HandleCancelButton- remove all information from customer sale that was cancled
+		 */
+		private void HandleCancelButton(){
 			
+			JOptionPane.showMessageDialog(null, "Purchase has been cancelled, no charge was made", 
+					"", JOptionPane.INFORMATION_MESSAGE);
+			GuiScreen.setAllOrderDaetails();
+			GuiScreen.setCalcPricetextArea("");
+			GuiScreen.setAddress("");
+			GuiScreen.setDate();
+			GuiScreen.setFuelAmount("");
+			GuiScreen.setTime("");
+			GuiScreen.DisablePayButton();
+			GuiScreen.DisableCancleButton();
+		};
+		
+			/**
+			 * Server_CalculatePayment- check if customer order fit one of the 
+			 * rate discount in the home fuel rate mechanism and calculate the 
+			 * price after discount/Increase price. print to Gui screen the order details
+			 * @param TariffTable
+			 * @author Litaf
+			 * 
+			 */
 		private void Server_CalculatePayment(callbackStringArray TariffTable){
 
 			int FuelID=0;
 			float FuelPrice=0;
 			float SumPrice=0;
 			int Differacne=0;
-				
+			String RemarksString=null;
+			
 			Object[][] arr=TariffTable.getData();
 			for(int i=0;i<arr.length;i++){
 				if(arr[i][1].toString().equals("Home Fuel"))
@@ -189,6 +234,7 @@ public class CustomerController extends Controller{
 					}
 				}
 			sale.setFuelID(FuelID);
+			
 			//Immediate order: (within 6 hours) =Cost + 2% of the price of fuel
 				DateFormat TimeFormat = new SimpleDateFormat("HH:mm");
 				DateFormat DateFormat = new SimpleDateFormat("dd/MM/yy");
@@ -196,36 +242,77 @@ public class CustomerController extends Controller{
 
 				String currTimeHour=TimeFormat.format(new Date()).toString().substring(0,2);	
 				String currTimeMin=TimeFormat.format(new Date()).toString().substring(3,5);				
-				int DeliveryHour=Integer.parseInt(timeStr.substring(0,2));
-				int DeliveryMin=Integer.parseInt(timeStr.substring(3,5));
-				
+				String DeliveryHour=timeStr.substring(0,2);
+				String DeliveryMin=timeStr.substring(3,5);
+
+				sale.setDeliveryDateAndTime(dateStr.substring(6,8),dateStr.substring(3,5),
+											dateStr.substring(0,2),DeliveryHour, DeliveryMin);
+				SumPrice=FuelPrice*Float.parseFloat(FuelStr);
 				if(currDate.equals(dateStr)){
-					Differacne=(DeliveryHour-Integer.parseInt(currTimeHour))*60+
-								(DeliveryMin-Integer.parseInt(currTimeMin));
+					Differacne=(Integer.parseInt(DeliveryHour)-Integer.parseInt(currTimeHour))*60+
+								(Integer.parseInt(DeliveryMin)-Integer.parseInt(currTimeMin));
 					if(Differacne<=360){
-						SumPrice=FuelPrice*Float.parseFloat(FuelStr);
 					//up to 6 hours -cost Shipping is an additional 2%
-						GuiScreen.setOrderDetailsLabel("Order Details:");
-						GuiScreen.setShowOrderDetailsLabel("<html> Fuel Price:<br>"
-															+ "+<br>"
-															+ "  Liters:<br>"
-															+ "		____________________<br>"
-															+ "  Sum:<br><br>"
-															+ "+Shipping:</html>");
-						
-						GuiScreen.setFuelPriceLabel(Float.toString(FuelPrice));
-						GuiScreen.setLitersLabel(FuelStr);
-						GuiScreen.setsumLabel(Float.toString(SumPrice));
-						SumPrice+=SumPrice*0.02;
-						GuiScreen.setShippingLabel(Float.toString(SumPrice));
-						GuiScreen.setRemaraksLabel("<html>*Immediate order-within 6 hours "
-												 + "is fuel cost plus 2% shipping from the"
-												 + "fuel price</html>");
-						GuiScreen.setCalcPricetextArea(Float.toString(SumPrice));
+						sale.setPayment((float)(SumPrice*0.02));
+						RemarksString="<html>*Immediate order-within 6 hours "
+											+ "is fuel cost plus 2% shipping from the"
+											+ "fuel price</html>";
+						PrintSaleTemplate(SumPrice,RemarksString,0.02, FuelPrice,"+Shipping");		
 					}
 					
 				}
+				else if(Integer.parseInt(FuelStr)>=600 && Integer.parseInt(FuelStr)<=800){
+					sale.setPayment((float)(SumPrice*0.97));
+					RemarksString="<html>*Discount of 3% for reservation of  600-800 liters</html>";
+					PrintSaleTemplate(SumPrice,RemarksString,-0.03, FuelPrice, "+Discount");	
+				}
+				else if(Integer.parseInt(FuelStr)>800){
+					sale.setPayment((float)(SumPrice*0.96));
+					RemarksString="<html>*Discount of 3% for reservation of  600-800 liters</html>";
+					PrintSaleTemplate(SumPrice,RemarksString,-0.04, FuelPrice, "+Discount");	
+				}
+				else {
+					sale.setPayment((float)(SumPrice));
+				//	RemarksString="<html>*Discount of 3% for reservation of  600-800 liters</html>";
+					PrintSaleTemplate(SumPrice,RemarksString,0, FuelPrice, "<br>");	
+				}
+				
 		}
+		/**
+		 * PrintSaleTemplate- print to gui the order information
+		 * @param SumPrice
+		 * @param RemarksString
+		 * @param AfterDiscount
+		 * @param FuelPrice
+		 * @param Discount
+		 * @author Litaf
+		 */
+		private void PrintSaleTemplate(float SumPrice, String RemarksString, double AfterDiscount,
+									   float FuelPrice, String Discount){
+			GuiScreen.setOrderDetailsLabel("Order Details:");
+			GuiScreen.setShowOrderDetailsLabel("<html> Fuel Price:<br>"
+												+ "+<br>"
+												+ "  Liters:<br>"
+												+ "		____________________<br>"
+												+ "  Sum:<br><br>"
+												+ Discount+"</html>");
+			GuiScreen.setLitersLabel(FuelStr);
+			GuiScreen.setsumLabel(Float.toString(SumPrice));
+			SumPrice+=SumPrice*AfterDiscount;
+			if(AfterDiscount!=0)
+				GuiScreen.setShippingLabel(Float.toString(SumPrice));
+			else GuiScreen.setShippingLabel("");
+
+			GuiScreen.setRemaraksLabel(RemarksString);
+			GuiScreen.setFuelPriceLabel(Float.toString(FuelPrice));
+			GuiScreen.setCalcPricetextArea(Float.toString(SumPrice));
+
+		}
+		/**
+		 * HandleCheckCustomerCreditCard- send query to check if current customer 
+		 * has creditcard information in the system
+		 * @author Litaf
+		 */
 		private void HandleCheckCustomerCreditCard(){
 			
 			ErrorAmount.setText("");
@@ -238,6 +325,14 @@ public class CustomerController extends Controller{
 			Server.handleMessageFromClient(customer);
 		}
 		
+		/**
+		 * Server_HandleCheckCustomerCreditCard- after receiving answer from the server-
+		 * check if current customer has creditcard information in the system
+		 * if not- let hin know that he can't purchase
+		 * if yes- open the order fileds for edit
+		 * @param customer
+		 * @author Litaf
+		 */
 		private void Server_HandleCheckCustomerCreditCard(callbackCustomer customer) {
 			if(customer.getCreditCard().equals("")){
 				JOptionPane.showMessageDialog(null, "Customer "+GuiScreen.getCurrentUserName()+
@@ -247,6 +342,7 @@ public class CustomerController extends Controller{
 				GuiScreen.DisableAllComponents();
 				}
 			GuiScreen.DisablePayButton();
+			GuiScreen.DisableCancleButton();
 		}
 		/**
 		 * HandlePayButton- create new sale in DB with sale details
@@ -257,7 +353,9 @@ public class CustomerController extends Controller{
 			sale.setUserID(GuiScreen.getCurrentUserID());
 			Server.handleMessageFromClient(sale);
 		}	
-		
+		/**
+		 * HandleCheckFuelOrder- send query for all the customer past purchases
+		 */
 		private void HandleCheckFuelOrder() {
 			
 			Object[]arr= new Object[1];
@@ -277,22 +375,17 @@ public class CustomerController extends Controller{
 						Server_CalculatePayment(TariffTable);
 						break;
 					case setWaitingTariff:
-						
 						break;
-
 					case setNewHomeFuelSale:
 						CallBack temp =  (CallBack) arg;
 						if(temp instanceof callbackSuccess){
 							JOptionPane.showMessageDialog(null, "Your order was added successfully, "
 									+ "you can watch your orders in the 'Check Fuel Orders'", 
-									"", JOptionPane.INFORMATION_MESSAGE);
-							}
-						else {
+									"", JOptionPane.INFORMATION_MESSAGE);}
+						else{
 							JOptionPane.showMessageDialog(null, "Error has occurred, no charge was made",
-									"", JOptionPane.INFORMATION_MESSAGE);
-							}	
+									"", JOptionPane.INFORMATION_MESSAGE);}	
 						break;
-						
 					case getCustomer:
 						callbackCustomer customer =  (callbackCustomer)arg;
 						Server_HandleCheckCustomerCreditCard(customer);
@@ -317,12 +410,24 @@ public class CustomerController extends Controller{
 				}					
 				}
 			else if(arg instanceof Vector){
-				//
+//			switch(((CallBack) arg).getWhatToDo()){				
+//			case getHomeFuelOrders:
+//				CallBack temp1 =  (CallBack) arg;
+//				if(temp1 instanceof callbackSuccess){
+//					JOptionPane.showMessageDialog(null, "No Orders to show", 
+//							"", JOptionPane.INFORMATION_MESSAGE);
+//					}
+//				else {
+//					callbackStringArray orders=(callbackStringArray) temp1;
+//					GuiScreen.setHomeFuelOrdersTable(orders.getDefaultTableModel());
+//					}	
+//				break;
+//			default:
+//				break;
+//			}
 
 					
 			}
 		}
-
-
 }
 		

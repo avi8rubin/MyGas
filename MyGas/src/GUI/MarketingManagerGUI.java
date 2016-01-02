@@ -1,36 +1,21 @@
 package GUI;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-
-import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
 
 import callback.callbackBuffer;
@@ -38,7 +23,6 @@ import callback.callbackStringArray;
 import callback.callbackUser;
 import client.Client;
 import common.JTableToExcel;
-import common.TableModel;
 
 public class MarketingManagerGUI extends abstractPanel_GUI{
 
@@ -58,12 +42,14 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		private static final long serialVersionUID = 1L;
         public boolean isCellEditable(int row, int column) { 
         	switch(column){
-        	case 3:
-                return true; 
         	default:
                 return false;
         	}};};
 	private JButton UpdateButton;
+	private JLabel ChooseNewTariffLabel;
+	private JComboBox FuelscomboBox;
+	private JTextArea NewFuelTariffTextArea;
+	private JLabel TariffErrorLabel;
 	//ReportButton
 	private JButton CustomerCharacterizationReportButton;
 	private JButton CommentsForMarketingCampaignButton;
@@ -93,6 +79,7 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
                 return false;
         	}};};
 	private JButton ExportButton2;
+	private JButton produceButton;
 	private JDateChooser StartDateChooser;
 	private JDateChooser EndDateChooser;
 	private JLabel StartDateLabel;
@@ -117,6 +104,9 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
                 return false;
         	}};};
 	private JButton StartSaleButton;
+	//export to excel
+	private JTableToExcel CustomerReportToExcel;
+	private JTableToExcel CommentsReportToExcel;
 
 	
 	public MarketingManagerGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer,
@@ -153,8 +143,7 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		
 		/*------- Create JTable surround with scroll pane and add
 		 * 					 it to TariffApprovalPanel --------*/
-
-		TariffScrollPane.setBounds(43, 58,  900, 400);
+		TariffScrollPane.setBounds(43, 58,  900, 300);
 		TariffDisplayLayer.add(TariffScrollPane);
 		
 		TariffScrollPane.setViewportView(TariffUpdateTable);
@@ -163,8 +152,26 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		TariffUpdateTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		TariffUpdateTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
 		TariffUpdateTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		TariffUpdateTable.getTableHeader().setReorderingAllowed(false);
 
-		/* ------- Adding button and label to Tariff Panel -------- */		
+		/* ------- Adding button and label to Tariff Panel -------- */	
+		ChooseNewTariffLabel = new JLabel("Choose a new tariff:");
+		ChooseNewTariffLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		ChooseNewTariffLabel.setBounds(43, 394, 204, 28);
+		TariffDisplayLayer.add(ChooseNewTariffLabel);
+		
+		FuelscomboBox = new JComboBox();
+		FuelscomboBox.setToolTipText("Choose a fuel type");
+		FuelscomboBox.setBounds(43, 432, 193, 28);
+		TariffDisplayLayer.add(FuelscomboBox);
+		
+		NewFuelTariffTextArea = new JTextArea();
+		NewFuelTariffTextArea.setToolTipText("Choose a new price");
+		NewFuelTariffTextArea.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		NewFuelTariffTextArea.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		NewFuelTariffTextArea.setBounds(266, 432, 75, 28);
+		TariffDisplayLayer.add(NewFuelTariffTextArea);
+
 		UpdateButton = new JButton("Update");
 		UpdateButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		UpdateButton.setBounds(818, 483, 125, 33);
@@ -175,6 +182,14 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		HeadlineLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
 		HeadlineLabel.setBounds(177, 13, 608, 42);
 		TariffDisplayLayer.add(HeadlineLabel);
+		
+		TariffErrorLabel = new JLabel("");
+		TariffErrorLabel.setBounds(351, 431, 209, 66);
+		TariffErrorLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		TariffErrorLabel.setText("");
+		TariffErrorLabel.setForeground(Color.RED);
+		TariffDisplayLayer.add(TariffErrorLabel);
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		/* ------- Adding Left layer to Reports Panel -------- */
@@ -252,7 +267,8 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		CommentsReportTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		CommentsReportTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
 		CommentsReportTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		
+		CommentsReportTable.getTableHeader().setReorderingAllowed(false);
+
 		
 		/* ------- Adding CreateCustomerReportsCenterLayer -------- */
 		CreateCustomerReportsCenterLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
@@ -299,10 +315,15 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		ExportButton2.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		CreateCustomerReportsCenterLayer.add(ExportButton2);
 		
+		produceButton = new JButton("Produce ");
+		produceButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		produceButton.setBounds(676, 80, 126, 34);
+		CreateCustomerReportsCenterLayer.add(produceButton);
+
 		//incorrect date
 		Datelabel.setForeground(Color.RED);
 		Datelabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		Datelabel.setBounds(558, 76, 145, 38);	
+		Datelabel.setBounds(534, 76, 145, 38);
 		CreateCustomerReportsCenterLayer.add(Datelabel);
 
 		
@@ -310,13 +331,14 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		 * 				 it to CustomerCharacterizationReportButton --------*/
 		CustomerCharacterizationReportScrollPane.setBounds(38, 125,  900, 400);
 		CreateCustomerReportsCenterLayer.add(CustomerCharacterizationReportScrollPane);
-		
+	
 		CustomerCharacterizationReportScrollPane.setViewportView(CustomerCharacterizationReportTable);
 		CustomerCharacterizationReportTable.setRowHeight(23);
 		CustomerCharacterizationReportTable.setFillsViewportHeight(true);
 		CustomerCharacterizationReportTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		CustomerCharacterizationReportTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
 		CustomerCharacterizationReportTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		CustomerCharacterizationReportTable.getTableHeader().setReorderingAllowed(false);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 		/* ------- Adding ActivateSale center layer -------- */
@@ -341,6 +363,8 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		ActiveSalesTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		ActiveSalesTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
 		ActiveSalesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		ActiveSalesTable.getTableHeader().setReorderingAllowed(false);
+
 		
 		CenterCardContainer.add(ActivateSaleCenterLayer,"ActivateSaleCenterLayer");
 		ActivateSaleCenterLayer.setOpaque(true);
@@ -407,6 +431,11 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		ActivateSaleLeftLayer.setOpaque(true);
 		ActivateSaleLeftLayer.setName("ActivateSaleLeftLayer");
 		
+		
+		///////////Excel///////////////
+		CustomerReportToExcel=new JTableToExcel(ExportButton2, CustomerCharacterizationReportTable);
+		CommentsReportToExcel=new JTableToExcel(ExportButton, CommentsReportTable);
+		
 }
 
 	//Tariff	
@@ -416,21 +445,42 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	public JButton getUpdateButton(){
 		return UpdateButton;
 	}
+	public void setTariffErrorLabel(String str){
+		TariffErrorLabel.setText(str);
+	}
 	public JLayeredPane getTariffDisplayLayer(){
 		return TariffDisplayLayer;
 	}
+	
+	public JTable getTariffUpdateTable(){
+		return TariffUpdateTable;
+	}
+	
 	public void setTariffUpdateTable(DefaultTableModel NewTableModel)
 	{		
 		TariffUpdateTable.setModel(NewTableModel);
-		//change last column to editable
-		TableColumn col = TariffUpdateTable.getColumnModel().getColumn(3);
-		//col.setCellEditor( new DefaultCellEditor( combo ) );
-
+	    
 		//center the table
 		DefaultTableCellRenderer CenterRenderer = new DefaultTableCellRenderer();
 		CenterRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		TariffUpdateTable.setDefaultRenderer(Object.class, CenterRenderer);
+		
+		
+		Object[]fuels=new Object[TariffUpdateTable.getRowCount()];
+		String FuelName;
+		for(int i=0; i<TariffUpdateTable.getRowCount();i++){
+			FuelName = TariffUpdateTable.getValueAt(i, 1).toString();
+			fuels[i]=FuelName;
+		}
+		DefaultComboBoxModel<?> combopatternModel=new DefaultComboBoxModel(fuels);
+		FuelscomboBox.setModel(combopatternModel);
+	}
+	public String getFuelComboBoxSelection(){
+		return (String)FuelscomboBox.getSelectedItem();
+	}
 
+	public String getFuelUpdateFromTextArea(){
+		return NewFuelTariffTextArea.getText();
 	}
 	//reports
 	public JButton getReportButton(){
@@ -484,9 +534,6 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	public JButton getCustomerCharacterizationReportButton(){
 		return CustomerCharacterizationReportButton;
 	}
-	public JButton getExport2Button(){
-		return ExportButton2;
-	}
 	public String getStartDate(){
 		return ((JTextField)StartDateChooser.getDateEditor().getUiComponent()).getText();
 	}
@@ -497,12 +544,17 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		StartDateChooser.setCalendar(null);
 		EndDateChooser.setCalendar(null);
 	}
-	
+	public JButton getproduceButton() {
+		return produceButton;	
+	}
 	public void setCustomerCharacterizationReportTable(DefaultTableModel NewTable){
 		CustomerCharacterizationReportTable.setModel(NewTable);	
 		DefaultTableCellRenderer CenterRenderer = new DefaultTableCellRenderer();
 		CenterRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		CustomerCharacterizationReportTable.setDefaultRenderer(Object.class, CenterRenderer);
+	}
+	public JTable getCustomerCharacterizationReportTable(){
+		return CustomerCharacterizationReportTable;
 	}
 	//activate campaign sale
 	public JLabel getErrorDateLabel2(){

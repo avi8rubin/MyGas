@@ -106,6 +106,22 @@ public class Checks {
 		return true;
 	}
 	
+	/**
+	 * check if string is an int number and if it's in range
+	 * @param String
+	 * @author Litaf
+	 */
+	public static boolean isNumberInRange(float max,String num)  
+	{ 
+		try
+		{
+		if(Float.parseFloat(num)<0 ||Float.parseFloat(num)>max)
+			  return false;
+		}catch(NumberFormatException e){
+		  return false;
+		}
+		return true;
+	}
 	
 	/**
 	 * check if Date for delivery is valid
