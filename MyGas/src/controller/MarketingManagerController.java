@@ -307,7 +307,17 @@ public class MarketingManagerController extends Controller {
 					callbackStringArray TariffTable = (callbackStringArray) arg;		
 					GuiScreen.setTariffUpdateTable(TariffTable.getDefaultTableModel());
 					break;
-
+				case setUpdateFuelsTariffForCEO:
+					CallBack temp =  (CallBack) arg;
+					if(temp instanceof callback_Error){
+						JOptionPane.showMessageDialog(null, "Error, Fuel Update Didn't Saved", 
+								"", JOptionPane.INFORMATION_MESSAGE);
+						}
+					else {
+						JOptionPane.showMessageDialog(null, "Success, Fuel Update Saved In The DB", 
+								"", JOptionPane.INFORMATION_MESSAGE);
+						}
+					break;
 				case getCommentsForMarketionCampaign:
 					callbackStringArray CampaignTable = (callbackStringArray)arg;
 					if(CommentsForMarketionFlag)
@@ -345,34 +355,7 @@ public class MarketingManagerController extends Controller {
 			/*-------------*/
 			}
 	}
-	else if(arg instanceof callbackVector){
-			switch(((callbackVector) arg).getWhatToDo()){
-			case getWaitingTariff:
-	
-				break;
-			case setWaitingTariff:
-			
-				break;
-			case setUpdateFuelsTariffForCEO:
-				CallBack temp =  (CallBack) arg;
-				if(temp instanceof callback_Error){
-					JOptionPane.showMessageDialog(null, "Error, Fuel Update Didn't Saved", 
-							"", JOptionPane.INFORMATION_MESSAGE);
-					}
-				else {
-					JOptionPane.showMessageDialog(null, "Success, Fuel Update Saved In The DB", 
-							"", JOptionPane.INFORMATION_MESSAGE);
-					}
-				break;
-			default:
-				break;
-			
-			}
-	}
-	else if(arg instanceof Vector){
-	
-	}
-		
+
 	}
 }
 

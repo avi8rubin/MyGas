@@ -10,10 +10,6 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.Calendar;
 import java.util.Vector;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-
 import cellact.*;
 
 import callback.*;
@@ -1248,34 +1244,16 @@ public class QueryIO implements Runnable {
 		String[] Headers;
 		int ColNum;
 		int RowNum =0;
-		JComboBox<String> Fuels = new JComboBox<String>();
 		String[] Combo;
-		String[] FuelCombo = new String[3];
 		String[][] ComboWithIndex;
-		int i=0;
-		
 		// Build query -----------------------------------------------------------
 		
 		try {
-			PreparedStatement ps1=conn.prepareStatement("SELECT Fuel_Description FROM mygas.fuels WHERE Fuel_ID<>3");
-			PreparedStatement ps2=conn.prepareStatement(
-					"SELECT A.Car_ID, A.Car_Number, A.Customers_ID, A.NFC, B.Fuel_Description, Active_Car "+
-					"FROM Cars A LEFT OUTER JOIN Fuels B ON A.Fuel_ID = B.Fuel_ID "+
-					"WHERE A.Customers_ID=(?) AND A.Active_Car='Yes'");
-					//SELECT * FROM Cars WHERE Customers_ID=(?) AND Active_Car='Yes'");
+			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Cars WHERE Customers_ID=(?) AND Active_Car='Yes'");
 			
 		// Send query to DB  -----------------------------------------------------
-			
-			//Create fuels ComboBox
-			AnswerResult = ps1.executeQuery();
-			while(AnswerResult.next())
-				FuelCombo[i++] = AnswerResult.getString("Fuel_Description");
-			//	Fuels.addItem(AnswerResult.getString("Fuel_Description"));
-			DefaultComboBoxModel<String> comboModel = new DefaultComboBoxModel( FuelCombo );
-			
-			
-			ps2.setInt(1, (int) Callback.getVariance()[0]);
-			AnswerResult = ps2.executeQuery();
+			ps.setInt(1, (int) Callback.getVariance()[0]);
+			AnswerResult = ps.executeQuery();
 			
 			LocalResult = AnswerResult.getMetaData();
 			Callback.setColCount(ColNum = LocalResult.getColumnCount());
@@ -1283,31 +1261,20 @@ public class QueryIO implements Runnable {
 			AnswerResult.last();
 			Callback.setRowCount(AnswerResult.getRow());
 			AnswerResult.beforeFirst();
-			Data = new Object[Callback.getRowCount()][ColNum];
+			Data = new String[Callback.getRowCount()][ColNum+1];
 			Headers = new String[ColNum];
 			Combo = new String[Callback.getRowCount()];
 			ComboWithIndex = new String[Callback.getRowCount()][2];
 			
-			for( i=0;i<ColNum;i++)
+			for(int i=0;i<ColNum;i++)
 				Headers[i] = LocalResult.getColumnName(i+1).replace("_", " ");
 			Callback.setColHeaders(Headers);
 			/**
 			 * Create the report callback structure
 			 */
 			while (AnswerResult.next()) { 				
-				for (i = 0; i < ColNum; i++) {
-					if(i==3 || i==5) {
-						if(AnswerResult.getString(i + 1).equals("Yes")) Data[RowNum][i] = new Boolean(true);
-						else Data[RowNum][i] = new Boolean(false);
-					}
-					else if(i==4){
-						Data[RowNum][i] = new JComboBox<String>(FuelCombo); //Fuels;
-						((JComboBox<String>)Data[RowNum][i]).setModel( comboModel );
-						((JComboBox<String>)Data[RowNum][i]).setOpaque(false);
-						((JComboBox<String>)Data[RowNum][i]).setSelectedItem(AnswerResult.getString("Fuel_Description"));
-					}
-					else Data[RowNum][i] = AnswerResult.getString(i + 1);
-				}
+				for (int i = 0; i < ColNum; i++) 
+					Data[RowNum][i] = AnswerResult.getString(i + 1);
 				Combo[RowNum] = AnswerResult.getString("Car_Number");
 				ComboWithIndex[RowNum][0] = AnswerResult.getString("Car_ID");
 				ComboWithIndex[RowNum][1] = AnswerResult.getString("Car_Number");
@@ -1710,7 +1677,7 @@ public class QueryIO implements Runnable {
 			e.printStackTrace();
 			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
 		}
-			return new callbackSuccess();					// 	Query not succeed
+			return Callback;					// 	Query not succeed
 		
 	}
 	private Object getHomeFuelOrders(callbackSale Callback){
@@ -1835,7 +1802,7 @@ public class QueryIO implements Runnable {
 			
 			if(RowNum == 0) return new callbackSuccess("No records of orders.");
 						
-			Data = new String[RowNum][ColNum];			//Create table in the result size
+			Data = new String[Callback.getRowCount()][ColNum];			//Create table in the result size
 			Headers = new String[ColNum];
 			
 			/*Get the table headers*/
