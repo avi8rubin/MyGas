@@ -2,10 +2,8 @@ package GUI;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.nio.channels.CancelledKeyException;
 import java.text.ParseException;
-
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -20,8 +18,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
 import com.toedter.calendar.JDateChooser;
-import com.toedter.calendar.JTextFieldDateEditor;
-
 import callback.callbackBuffer;
 import callback.callbackUser;
 import client.Client;
@@ -106,6 +102,7 @@ public class CustomerGUI extends abstractPanel_GUI {
 		HomeFuelOrdersTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		HomeFuelOrdersTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
 		HomeFuelOrdersTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
 		
 		CenterCardContainer.add(HomeFuelOrdersCenterLayer,"HomeFuelOrdersCenterLayer");
 		HomeFuelOrdersCenterLayer.setOpaque(true);
@@ -121,12 +118,16 @@ public class CustomerGUI extends abstractPanel_GUI {
 		
 		FuelAmounttextArea = new JTextArea();
 		FuelAmounttextArea.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		FuelAmounttextArea.setToolTipText("Enter wanted fuel amount to buy");
 		FuelAmounttextArea.setBounds(277, 82, 200, 38);
+		FuelAmounttextArea.setBorder(new LineBorder(new Color(0, 0, 0), 1));
 		BuyHomeFuelCenterLayer.add(FuelAmounttextArea);
 		
 		AddresstextArea = new JTextArea();
 		AddresstextArea.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		AddresstextArea.setToolTipText("Enter wanted delivery address");
 		AddresstextArea.setBounds(277, 162, 200, 38);
+		AddresstextArea.setBorder(new LineBorder(new Color(0, 0, 0), 1));
 		BuyHomeFuelCenterLayer.add(AddresstextArea);
 		
 		PayButton= new JButton("Pay");
@@ -147,12 +148,12 @@ public class CustomerGUI extends abstractPanel_GUI {
 			e.printStackTrace();
 		}
 		DeliveryTimetextArea=new JFormattedTextField(DeliveryTimeFormatter);
-//		DeliveryTimetextArea=new JFormattedTextField();
-
+		DeliveryTimetextArea.setToolTipText("Enter wanted delivery time");
 		DeliveryTimetextArea.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		DeliveryTimetextArea.setHorizontalAlignment(SwingConstants.CENTER);
 		DeliveryTimetextArea.setBounds(277, 322, 200, 38);
 		DeliveryTimetextArea.setValue("__ : ___");
+		DeliveryTimetextArea.setBorder(new LineBorder(new Color(0, 0, 0), 1));
 		BuyHomeFuelCenterLayer.add(DeliveryTimetextArea);
 	
 		Addresslabel = new JLabel("Address:");
@@ -182,13 +183,17 @@ public class CustomerGUI extends abstractPanel_GUI {
 	
 		CalcPricetextArea = new JTextArea();
 		CalcPricetextArea.setEditable(false);
+		CalcPricetextArea.setFont(new Font("Tahoma", Font.PLAIN, 16));		
 		CalcPricetextArea.setBounds(277, 402, 200, 38);
+		CalcPricetextArea.setBorder(new LineBorder(new Color(0, 0, 0), 1));
 		BuyHomeFuelCenterLayer.add(CalcPricetextArea);
 		
 		dateChooser = new JDateChooser();
 		dateChooser.setDateFormatString("dd/MM/yy");
+		dateChooser.setToolTipText("Enter wanted delivery date");
 		dateChooser.setFont(new Font("Tahoma", Font.PLAIN, 16));		
 		dateChooser.setBounds(277, 242, 200, 38);
+		dateChooser.setBorder(new LineBorder(new Color(0, 0, 0), 1));
 		BuyHomeFuelCenterLayer.add(dateChooser);
 		
 		ErrorMassage.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -210,47 +215,46 @@ public class CustomerGUI extends abstractPanel_GUI {
 		ErrorDeliveryTimeLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		ErrorDeliveryTimeLabel.setBounds(277, 353, 212, 38);
 		BuyHomeFuelCenterLayer.add(ErrorDeliveryTimeLabel);
+		
+		OrderDetailsLabel = new JLabel("");
+		OrderDetailsLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
+		OrderDetailsLabel.setBounds(609, 82, 146, 38);
+		BuyHomeFuelCenterLayer.add(OrderDetailsLabel);
 
+		ShowOrderDetailsLabel = new JLabel("");
+		ShowOrderDetailsLabel.setBounds(609, 142, 176, 163);
+		ShowOrderDetailsLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		BuyHomeFuelCenterLayer.add(ShowOrderDetailsLabel);
+		
+		FuelPriceLabel = new JLabel("");
+		FuelPriceLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		FuelPriceLabel.setBounds(755, 142, 94, 22);
+		BuyHomeFuelCenterLayer.add(FuelPriceLabel);
+		
+		LitersLabel = new JLabel("");
+		LitersLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		LitersLabel.setBounds(755, 188, 116, 22);
+		BuyHomeFuelCenterLayer.add(LitersLabel);
+
+		sumLabel = new JLabel("");		
+		sumLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		sumLabel.setBounds(755, 234, 116, 22);
+		BuyHomeFuelCenterLayer.add(sumLabel);
+		
+		ShippingLabel = new JLabel("");
+		ShippingLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		ShippingLabel.setBounds(755, 278, 116, 22);
+		BuyHomeFuelCenterLayer.add(ShippingLabel);
+		
+		RemaraksLabel = new JLabel("");
+		RemaraksLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		RemaraksLabel.setForeground(Color.BLUE);
+		RemaraksLabel.setBounds(609, 337, 200, 92);
+		BuyHomeFuelCenterLayer.add(RemaraksLabel);		
 		
 		CenterCardContainer.add(BuyHomeFuelCenterLayer, "BuyHomeFuel");
 		BuyHomeFuelCenterLayer.setOpaque(true);
 		BuyHomeFuelCenterLayer.setName("BuyHomeFuel");
-		
-		OrderDetailsLabel = new JLabel("");
-		OrderDetailsLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		OrderDetailsLabel.setBounds(609, 77, 146, 38);
-		BuyHomeFuelCenterLayer.add(OrderDetailsLabel);
-
-		ShowOrderDetailsLabel = new JLabel("");
-		ShowOrderDetailsLabel.setBounds(609, 162, 200, 163);
-		BuyHomeFuelCenterLayer.add(ShowOrderDetailsLabel);
-		ShowOrderDetailsLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		
-		FuelPriceLabel = new JLabel("");
-		FuelPriceLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		FuelPriceLabel.setBounds(715, 166, 94, 22);
-		BuyHomeFuelCenterLayer.add(FuelPriceLabel);
-		
-		LitersLabel = new JLabel("");
-		LitersLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		LitersLabel.setBounds(715, 209, 116, 22);
-		BuyHomeFuelCenterLayer.add(LitersLabel);
-
-		sumLabel = new JLabel("");
-		sumLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		sumLabel.setBounds(715, 251, 116, 22);
-		BuyHomeFuelCenterLayer.add(sumLabel);
-		
-		ShippingLabel = new JLabel("");
-		ShippingLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		ShippingLabel.setBounds(715, 298, 116, 22);
-		BuyHomeFuelCenterLayer.add(ShippingLabel);
-		
-		RemaraksLabel = new JLabel("");
-		RemaraksLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		RemaraksLabel.setForeground(Color.BLUE);
-		RemaraksLabel.setBounds(609, 337, 200, 92);
-		BuyHomeFuelCenterLayer.add(RemaraksLabel);
 
 }
 public void setFuelPriceLabel(String str){
@@ -283,6 +287,16 @@ public void setRemaraksLabel(String str){
 	public JButton getCancelButton() {
 		return Cancelbutton;
 	}
+	public void setAllOrderDaetails(){
+
+		OrderDetailsLabel.setText("");
+		ShowOrderDetailsLabel.setText("");
+		FuelPriceLabel.setText("");
+		LitersLabel.setText("");
+		sumLabel.setText("");
+		ShippingLabel.setText("");
+		RemaraksLabel.setText("");
+	}
 	public void setCalcPricetextArea(String price) {
 		CalcPricetextArea.setText(price);
 	}
@@ -297,6 +311,9 @@ public void setRemaraksLabel(String str){
 	}
 	public void setTime(String str){
 		DeliveryTimetextArea.setText(str);
+	}
+	public void setAddress(String str){
+		AddresstextArea.setText(str);
 	}
 	public String getFuelAmount(){
 		return FuelAmounttextArea.getText();
@@ -316,8 +333,12 @@ public void setRemaraksLabel(String str){
 	public String getAddrres() {
 		return AddresstextArea.getText();
 	}
+
 	public JLabel getErrorAddressLabel(){
 		return ErrorAddressLabel;
+	}
+	public void setErrorAddressLabel(String str){
+		ErrorAddressLabel.setText(str);
 	}
 	public JLabel getErrorDeliveryTimeLabel(){
 		return ErrorDeliveryTimeLabel;
@@ -329,8 +350,14 @@ public void setRemaraksLabel(String str){
 	public void DisablePayButton(){
 		PayButton.setEnabled(false);
 	}
+	public void DisableCancleButton(){
+		Cancelbutton.setEnabled(false);
+	}
 	public void EnablePayButton(){
 		PayButton.setEnabled(true);
+	}
+	public void EnableCancleButton(){
+		Cancelbutton.setEnabled(true);
 	}
 	public void DisableAllComponents(){
 

@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import GUI.MarketingManagerGUI;
@@ -17,13 +18,23 @@ import callback.CallBack;
 import callback.callbackBuffer;
 import callback.callbackCampaign;
 import callback.callbackStringArray;
+import callback.callbackTariffUpdate;
 import callback.callbackVector;
 import callback.callback_Error;
 import client.Client;
 import common.Checks;
 import common.JTableToExcel;
 import common.MessageType;
-
+/**
+ * callbackTariffUpdate- ontrol all the components of the Marketing manger Gui
+ * handle the Creation new rate of the fuels
+ * handle the Reports Export
+ * handle the creation of new campaigns 
+ * @param Server
+ * @param CommonBuffer
+ * @param GuiScreen
+ * @author ליטף	
+ */
 public class MarketingManagerController extends Controller {
 	/**
 	 * Marketing Manager GUI components 
@@ -41,11 +52,11 @@ public class MarketingManagerController extends Controller {
 	private JButton ExportButton2;
 	private JButton CommentsForMarketingCampaignButton;
 	private JButton ExportButton;
+	private JButton ProduceButton;
 
 	private JComboBox<?> ComboBoxSelection;
-//
+	private callbackTariffUpdate tarrifUpdate=new callbackTariffUpdate(MessageType.setUpdateFuelsTariffForCEO);
 	private JButton StartSale;
-	private JComboBox<?> ComboBoxSalePattern;
 	private Object[][] PatterWithID;
 	
 	
@@ -84,22 +95,25 @@ public class MarketingManagerController extends Controller {
 		CustomerCharacterizationReportButton= GuiScreen.getCustomerCharacterizationReportButton();
 		CustomerCharacterizationReportButton.addActionListener(this);
 		CustomerCharacterizationReportButton.setActionCommand("Customer Characterization");
+//		
+//		ExportButton2= GuiScreen.getExport2Button();
+//		ExportButton2.addActionListener(this);
+//		ExportButton2.setActionCommand("Export CustomerCharacterization Report");	
 		
-		ExportButton2= GuiScreen.getExport2Button();
-		ExportButton2.addActionListener(this);
-		ExportButton2.setActionCommand("Export CustomerCharacterization Report");		
+		ProduceButton=GuiScreen.getproduceButton();
+		ProduceButton.addActionListener(this);
+		ProduceButton.setActionCommand("Produce CustomerCharacterization Report");	
 
 		Datelabel=GuiScreen.getErrorDateLabel();
-				
 		//Comments For Marketing Campaign
 		CommentsForMarketingCampaignButton=GuiScreen.getCommentsForMarketingCampaignButton();
 		CommentsForMarketingCampaignButton.addActionListener(this);
 		CommentsForMarketingCampaignButton.setActionCommand("Comments For Marketing Campaign");	
-		
-		ExportButton= GuiScreen.getExportButton();
-		ExportButton.addActionListener(this);
-		ExportButton.setActionCommand("Export CommentsForMarketingCampaign Report");		
-		//
+//		
+//		ExportButton= GuiScreen.getExportButton();
+//		ExportButton.addActionListener(this);
+//		ExportButton.setActionCommand("Export CommentsForMarketingCampaign Report");		
+//		//
 		ComboBoxSelection=GuiScreen.getComboBox();
 		ComboBoxSelection.addActionListener(this);
 		ComboBoxSelection.setActionCommand("Change ComboBox selection");	
@@ -110,6 +124,7 @@ public class MarketingManagerController extends Controller {
 		StartSale.setActionCommand("start sale");
 		
 		Datelabel2=GuiScreen.getErrorDateLabel2();
+		
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -121,6 +136,13 @@ public class MarketingManagerController extends Controller {
 			ContainerCardCenter.show(CenterCardContainer, "Tariff");				//The TariffApproval layer will be display
 			HandleTariffPressed();											
 		}
+		else if(e.getActionCommand().equals("Update Button")){
+			GuiScreen.setTariffErrorLabel("");
+			HandleUpdateFuelFromComboBox();
+		}
+//		else if(e.getActionCommand().equals("Change Fuel ComboBox selection")){
+//			//HandleChangeFuelFromComboBox();
+//		}
 		else if(e.getActionCommand().equals("CreateReports")){
 			ContainerCardCenter.show(CenterCardContainer,"EmptyCenterPanel");
 			ContainerCardLeft.show(LeftCardContainer, "ReportsLeft");
@@ -138,9 +160,15 @@ public class MarketingManagerController extends Controller {
 			GuiScreen.setDates();
 			Datelabel.setText("");
 		}		
-		else if(e.getActionCommand().equals("Export CustomerCharacterization Report")){
+//		else if(e.getActionCommand().equals("Export CustomerCharacterization Report")){
+//			new JTableToExcel(GuiScreen.getExport2Button(), GuiScreen.getCustomerCharacterizationReportTable());
+//		}
+		
+		else if(e.getActionCommand().equals("Produce Cu"
+				+ "stomerCharacterization Report")){
 			HandleCustomerCharacterizationReport();											
 		}
+		
 		//
 		else if(e.getActionCommand().equals("Change ComboBox selection")){
 			HandleChangeCampaignFromComboBox();
@@ -151,11 +179,9 @@ public class MarketingManagerController extends Controller {
 			HandleCommentsForMarketingCampaignCombo();
 		}
 
-		else if(e.getActionCommand().equals("Export CommentsForMarketingCampaign Report")){
-			new JTableToExcel(GuiScreen.getExportButton(), GuiScreen.getCommentsTable());
-			
-			//HandleExportReport();
-		}
+//		else if(e.getActionCommand().equals("Export CommentsForMarketingCampaign Report")){
+//			new JTableToExcel(GuiScreen.getExportButton(), GuiScreen.getCommentsTable());
+//		}
 		//
 		else if(e.getActionCommand().equals("start sale")){	
 			HandleActivateSaleCampaignButtonPressed();
@@ -163,10 +189,44 @@ public class MarketingManagerController extends Controller {
 		
 		
 	}
-
-	private void HandleExportReport() {
+	
+	private void HandleUpdateFuelFromComboBox(){
+		GuiScreen.setTariffErrorLabel("");
+		String fuelType=GuiScreen.getFuelComboBoxSelection();
 		
+		int fuelID=0;
+		float currentTariff=0;
+		float maxTariff=0;
+
+		JTable TarrifTable=GuiScreen.getTariffUpdateTable();
+		for(int i=0;i<TarrifTable.getRowCount();i++){
+			
+			if(TarrifTable.getValueAt(i, 1).equals(fuelType)){
+				fuelID=Integer.parseInt(TarrifTable.getValueAt(i, 0).toString());
+				currentTariff=Float.parseFloat(TarrifTable.getValueAt(i, 3).toString());
+				maxTariff=Float.parseFloat(TarrifTable.getValueAt(i, 2).toString());
+			}
+		}
+		//check new fuel tariff is valid
+		if(Checks.isNumberInRange(maxTariff,GuiScreen.getFuelUpdateFromTextArea())){	
+		tarrifUpdate.setFuelID(fuelID);
+		tarrifUpdate.setWantedPrice(Float.parseFloat(GuiScreen.getFuelUpdateFromTextArea()));
+		tarrifUpdate.setCurrentPrice(currentTariff);
+		tarrifUpdate.setMaxPrice(maxTariff);
+		callbackVector tariffVector= new callbackVector(MessageType.setUpdateFuelsTariffForCEO);
+		tariffVector.add(tarrifUpdate);
+		Server.handleMessageFromClient(tariffVector);
+
+		}
+		else{
+			GuiScreen.setTariffErrorLabel("<html>*Incorrect Fuel Tariff, please insert a <u>number</u> "
+										+ "between 0 and "+maxTariff+"</html>");	
+		}
 	}
+
+//	private void HandleExportReport() {
+//		
+//	}
 	
 	private void HandleTariffPressed(){
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getFuelsDetailes));
@@ -247,6 +307,7 @@ public class MarketingManagerController extends Controller {
 					callbackStringArray TariffTable = (callbackStringArray) arg;		
 					GuiScreen.setTariffUpdateTable(TariffTable.getDefaultTableModel());
 					break;
+
 				case getCommentsForMarketionCampaign:
 					callbackStringArray CampaignTable = (callbackStringArray)arg;
 					if(CommentsForMarketionFlag)
@@ -268,8 +329,8 @@ public class MarketingManagerController extends Controller {
 						GuiScreen.SetComboBoxPattern(activeSales);
 					break;
 				case setNewCampaign:
-					CallBack temp =  (CallBack) arg;
-					if(temp instanceof callback_Error){
+					CallBack temp1 =  (CallBack) arg;
+					if(temp1 instanceof callback_Error){
 						JOptionPane.showMessageDialog(null, "Error, Sale Didn't Saved", 
 								"", JOptionPane.INFORMATION_MESSAGE);
 						}
@@ -291,6 +352,17 @@ public class MarketingManagerController extends Controller {
 				break;
 			case setWaitingTariff:
 			
+				break;
+			case setUpdateFuelsTariffForCEO:
+				CallBack temp =  (CallBack) arg;
+				if(temp instanceof callback_Error){
+					JOptionPane.showMessageDialog(null, "Error, Fuel Update Didn't Saved", 
+							"", JOptionPane.INFORMATION_MESSAGE);
+					}
+				else {
+					JOptionPane.showMessageDialog(null, "Success, Fuel Update Saved In The DB", 
+							"", JOptionPane.INFORMATION_MESSAGE);
+					}
 				break;
 			default:
 				break;
