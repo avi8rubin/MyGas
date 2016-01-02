@@ -79,10 +79,8 @@ public class callbackSale extends CallBack {
 								String.valueOf(day)+" "+String.valueOf(hour)+":"+
 									String.valueOf(minute)+":"+String.valueOf(second);
 	}
-	public void setDeliveryDateAndTime(int year, int month, int day, int hour, int minute) {
-		DeliveryDateAndTime = String.valueOf(year)+"-"+String.valueOf(month)+"-"+
-								String.valueOf(day)+" "+String.valueOf(hour)+":"+
-									String.valueOf(minute)+":00";
+	public void setDeliveryDateAndTime(String year, String month, String day, String hour, String minute) {
+		DeliveryDateAndTime = year+"-"+month+"-"+day+" "+hour+":"+minute+":00";
 	}
 	public String getAddress() {
 		return Address;
