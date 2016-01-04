@@ -287,8 +287,8 @@ public void setRemaraksLabel(String str){
 	public JButton getCancelButton() {
 		return Cancelbutton;
 	}
-	public void setAllOrderDaetails(){
-
+	public void cleanScreen(){
+//clean screen from order details
 		OrderDetailsLabel.setText("");
 		ShowOrderDetailsLabel.setText("");
 		FuelPriceLabel.setText("");
@@ -296,6 +296,17 @@ public void setRemaraksLabel(String str){
 		sumLabel.setText("");
 		ShippingLabel.setText("");
 		RemaraksLabel.setText("");
+//clean screen from inserted information
+		FuelAmounttextArea.setText("");
+		AddresstextArea.setText("");
+		setDate();
+		DeliveryTimetextArea.setText("");
+		CalcPricetextArea.setText("");
+//clean screen from errors labels
+		ErrorMassage.setText("");
+		ErrorAddressLabel.setText("");
+		DateError.setText("");
+		ErrorDeliveryTimeLabel.setText("");
 	}
 	public void setCalcPricetextArea(String price) {
 		CalcPricetextArea.setText(price);

@@ -102,14 +102,14 @@ public class CustomerController extends Controller{
 		if(e.getActionCommand().equals("Buy Home Fuel")){
 			ContainerCardCenter.show(CenterCardContainer, "BuyHomeFuel");
 		
-			GuiScreen.setCalcPricetextArea("");
-			GuiScreen.setAddress("");
-			GuiScreen.DisablePayButton();
-			GuiScreen.DisableCancleButton();
-			GuiScreen.setFuelAmount("");
-			GuiScreen.setDate();
-			GuiScreen.setTime("");
-			GuiScreen.setAllOrderDaetails();
+//			GuiScreen.setCalcPricetextArea("");
+//			GuiScreen.setAddress("");
+//			GuiScreen.DisablePayButton();
+//			GuiScreen.DisableCancleButton();
+//			GuiScreen.setFuelAmount("");
+//			GuiScreen.setDate();
+//			GuiScreen.setTime("");
+			GuiScreen.cleanScreen();
 			HandleCheckCustomerCreditCard();
 		}		
 		
@@ -199,14 +199,14 @@ public class CustomerController extends Controller{
 			
 			JOptionPane.showMessageDialog(null, "Purchase has been cancelled, no charge was made", 
 					"", JOptionPane.INFORMATION_MESSAGE);
-			GuiScreen.setAllOrderDaetails();
-			GuiScreen.setCalcPricetextArea("");
-			GuiScreen.setAddress("");
-			GuiScreen.setDate();
-			GuiScreen.setFuelAmount("");
-			GuiScreen.setTime("");
-			GuiScreen.DisablePayButton();
-			GuiScreen.DisableCancleButton();
+			GuiScreen.cleanScreen();
+//			GuiScreen.setCalcPricetextArea("");
+//			GuiScreen.setAddress("");
+//			GuiScreen.setDate();
+//			GuiScreen.setFuelAmount("");
+//			GuiScreen.setTime("");
+//			GuiScreen.DisablePayButton();
+//			GuiScreen.DisableCancleButton();
 		};
 		
 			/**
@@ -349,7 +349,7 @@ public class CustomerController extends Controller{
 		 * @param callbackSale sale
 		 */
 		private void HandlePayButton() {
-			
+			GuiScreen.cleanScreen();
 			sale.setUserID(GuiScreen.getCurrentUserID());
 			Server.handleMessageFromClient(sale);
 		}	
