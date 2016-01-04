@@ -908,3 +908,53 @@ LEFT OUTER JOIN purchase_plan C ON B.Plan_ID=C.Plan_ID
 LEFT OUTER JOIN gas_company D ON D.Gas_Company_ID=A.Gas_Company_ID
 ORDER BY A.Gas_Station_ID
 ;
+CREATE VIEW Pattern_Hours AS
+SELECT A.Campaign_Patterns_ID
+, A.Campaign_Description
+, A.Campaign_Type_ID
+, A.Discount_Percentage
+, B.Start_Hour
+, B.End_Hour
+FROM Campaigns_Hours B
+LEFT OUTER JOIN Campaign_Patterns A ON B.Campaign_Patterns_ID=A.Campaign_Patterns_ID
+;
+
+CREATE VIEW Pattern_Amount AS
+SELECT A.Campaign_Patterns_ID
+, A.Campaign_Description
+, A.Campaign_Type_ID
+, A.Discount_Percentage
+, B.Amount
+FROM Campaigns_Amount B
+LEFT OUTER JOIN Campaign_Patterns A ON B.Campaign_Patterns_ID=A.Campaign_Patterns_ID
+;
+
+CREATE VIEW Pattern_Gas_Station AS
+SELECT A.Campaign_Patterns_ID
+, A.Campaign_Description
+, A.Campaign_Type_ID
+, A.Discount_Percentage
+, B.Gas_Station_ID
+FROM Campaigns_Gas_Station B
+LEFT OUTER JOIN Campaign_Patterns A ON B.Campaign_Patterns_ID=A.Campaign_Patterns_ID
+;
+
+CREATE VIEW Pattern_Gas_Type AS
+SELECT A.Campaign_Patterns_ID
+, A.Campaign_Description
+, A.Campaign_Type_ID
+, A.Discount_Percentage
+, B.Fuel_ID
+FROM Campaigns_Gas_Type B
+LEFT OUTER JOIN Campaign_Patterns A ON B.Campaign_Patterns_ID=A.Campaign_Patterns_ID
+;
+
+CREATE VIEW Pattern_Rate AS
+SELECT A.Campaign_Patterns_ID
+, A.Campaign_Description
+, A.Campaign_Type_ID
+, A.Discount_Percentage
+, B.Customer_Rate
+FROM Campaigns_Rate B
+LEFT OUTER JOIN Campaign_Patterns A ON B.Campaign_Patterns_ID=A.Campaign_Patterns_ID
+;

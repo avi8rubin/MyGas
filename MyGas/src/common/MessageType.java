@@ -40,6 +40,8 @@ public enum MessageType {
 	getAnalyticSystemRatingCalculation,
 	updateAnalyticSystemRatingCalculation,
 	setUpdateCustomer,
+	setNewCampignPattern,
+	getExistCampaignPatterns,
 /*Customer*/
 	setNewHomeFuelSale,
 	getHomeFuelOrders,

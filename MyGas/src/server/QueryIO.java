@@ -181,7 +181,12 @@ public class QueryIO implements Runnable {
 			case setUpdateCustomer:
 				AnswerObject = setUpdateCustomer((callbackCustomer)SwitchCallback);				
 				break;
-				
+			case setNewCampignPattern:
+				AnswerObject = setNewCampignPattern((callbackCampaignPattern)SwitchCallback);				
+				break;
+			case getExistCampaignPatterns:
+				AnswerObject = getExistCampaignPatterns((callbackStringArray)SwitchCallback);				
+				break;
 /*Customer*/
 			case setNewHomeFuelSale:
 				AnswerObject = setNewHomeFuelSale((callbackSale)SwitchCallback);				
@@ -1297,14 +1302,14 @@ public class QueryIO implements Runnable {
 			while (AnswerResult.next()) { 				
 				for (i = 0; i < ColNum; i++) {
 					if(i==3 || i==5) {
-						if(AnswerResult.getString(i + 1).equals("Yes")) Data[RowNum][i] = new Boolean(true);
-						else Data[RowNum][i] = new Boolean(false);
+						if(AnswerResult.getString(i + 1).equals("Yes")) Data[RowNum][i] = Boolean.TRUE;
+						else Data[RowNum][i] = Boolean.FALSE;
 					}
 					else if(i==4){
 						Data[RowNum][i] = new JComboBox<String>(FuelCombo); //Fuels;
-						((JComboBox<String>)Data[RowNum][i]).setModel( comboModel );
-						((JComboBox<String>)Data[RowNum][i]).setOpaque(false);
-						((JComboBox<String>)Data[RowNum][i]).setSelectedItem(AnswerResult.getString("Fuel_Description"));
+						//((JComboBox<String>)Data[RowNum][i]).setModel( comboModel );
+						//((JComboBox<String>)Data[RowNum][i]).setOpaque(false);
+						//((JComboBox<String>)Data[RowNum][i]).setSelectedItem(AnswerResult.getString("Fuel_Description"));
 					}
 					else Data[RowNum][i] = AnswerResult.getString(i + 1);
 				}
@@ -1353,6 +1358,7 @@ public class QueryIO implements Runnable {
 		String[] PurchasePlan;
 		String[] FuelType;
 		String[] CostingModel;
+		String[] GasStations;
 		// Build query -----------------------------------------------------------
 		
 		try {
@@ -1398,6 +1404,18 @@ public class QueryIO implements Runnable {
 			}
 			ComboBoxVector.add(CostingModel);
 			
+			//Set Gas Stations name 
+			AnswerResult = st.executeQuery("SELECT * FROM Gas_Stations");						
+			AnswerResult.last();
+			RowNum = AnswerResult.getRow();
+			AnswerResult.beforeFirst();
+			GasStations = new String[RowNum];
+			RowNum=0;
+			while (AnswerResult.next()) { 
+				GasStations[RowNum] = AnswerResult.getString("Station_Name");
+				RowNum++;
+			}
+			ComboBoxVector.add(GasStations);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1644,6 +1662,247 @@ public class QueryIO implements Runnable {
 			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
 		}
 			return new callbackSuccess("Update customer successfully.");					// 	Query succeed
+		
+	}
+	private CallBack setNewCampignPattern(callbackCampaignPattern Callback){
+		// Set variables ---------------------------------------------------------
+		int Patten_ID;
+		// Build query -----------------------------------------------------------
+			// Checking existence of patterns queries
+		String SqlQuery1 = "SELECT COUNT(*) FROM Pattern_Amount WHERE Discount_Percentage=(?) AND Amount=(?)";
+		String SqlQuery2 = "SELECT COUNT(*) FROM Pattern_Gas_Type WHERE Discount_Percentage=(?) AND Fuel_ID=(?)";
+		String SqlQuery3 = "SELECT COUNT(*) FROM Pattern_Gas_Station WHERE Discount_Percentage=(?) AND Gas_Station_ID=(?)";
+		String SqlQuery4 = "SELECT COUNT(*) FROM Pattern_Hours WHERE Discount_Percentage=(?) AND Start_Hour=(?) AND End_Hour=(?)";
+		String SqlQuery5 = "SELECT COUNT(*) FROM Pattern_Rate WHERE Discount_Percentage=(?) AND Customer_Rate=(?)";
+		   // Adding new patterns to generic pattern table queries
+		String SqlQuery0 = "INSERT INTO Campaign_Patterns VALUES(null,(?),(?),(?))";
+		String SqlQuery01 = "SELECT MAX(Campaign_Patterns_ID) AS Campaign_Patterns_ID FROM Campaign_Patterns";
+		   // Adding new patterns to specific pattern table queries
+		String SqlQuery11 = "INSERT INTO Campaigns_Amount VALUES((?),(?))";
+		String SqlQuery12 = "INSERT INTO Campaigns_Gas_Type VALUES((?),(?))";
+		String SqlQuery13 = "INSERT INTO Campaigns_Gas_Station VALUES((?),(?))";
+		String SqlQuery14 = "INSERT INTO Campaigns_Hours VALUES((?),(?),(?))";
+		String SqlQuery15 = "INSERT INTO Campaigns_Rate VALUES((?),(?))";
+		
+		try {
+			PreparedStatement ps1 = conn.prepareStatement(SqlQuery1);
+			PreparedStatement ps2 = conn.prepareStatement(SqlQuery2);
+			PreparedStatement ps3 = conn.prepareStatement(SqlQuery3);
+			PreparedStatement ps4 = conn.prepareStatement(SqlQuery4);
+			PreparedStatement ps5 = conn.prepareStatement(SqlQuery5);
+
+			PreparedStatement ps0 = conn.prepareStatement(SqlQuery0);
+			PreparedStatement ps01 = conn.prepareStatement(SqlQuery01);
+			
+			PreparedStatement ps11 = conn.prepareStatement(SqlQuery11);
+			PreparedStatement ps12 = conn.prepareStatement(SqlQuery12);
+			PreparedStatement ps13 = conn.prepareStatement(SqlQuery13);
+			PreparedStatement ps14 = conn.prepareStatement(SqlQuery14);
+			PreparedStatement ps15 = conn.prepareStatement(SqlQuery15);
+
+		// Send query to DB  -----------------------------------------------------
+		
+		switch	(Callback.getCampaignTypeIdClient()){
+			case 1: // Fuel Amount - Check if fuel amount pattern already exists	
+				ps1.setFloat(1, Callback.getDiscountPercentage());
+				ps1.setInt(2, Callback.getFuelAmount());
+				AnswerResult = ps1.executeQuery();
+				AnswerResult.next();
+				if (AnswerResult.getInt(1)>0) return new callback_Error("Pattern already exist in DB"); 
+				break;
+			case 2: // Fuel Type - Check if fuel type pattern already exists	
+				ps2.setFloat(1, Callback.getDiscountPercentage());
+				ps2.setInt(2, Callback.getFuelId());
+				AnswerResult = ps2.executeQuery();
+				AnswerResult.next();
+				if (AnswerResult.getInt(1)>0) return new callback_Error("Pattern already exist in DB"); 
+				break;
+			case 3: //Gas Station - Check if gas station pattern already exists	
+				ps3.setFloat(1, Callback.getDiscountPercentage());
+				ps3.setInt(2, Callback.getGasStationId());
+				AnswerResult = ps3.executeQuery();
+				AnswerResult.next();
+				if (AnswerResult.getInt(1)>0) return new callback_Error("Pattern already exist in DB"); 
+				break;
+			case 4: //Hours - Check if hours pattern already exists	
+				ps4.setFloat(1, Callback.getDiscountPercentage());
+				ps4.setString(2, Callback.getStartHour());
+				ps4.setString(3, Callback.getEndHour());
+				AnswerResult = ps4.executeQuery();
+				AnswerResult.next();
+				if (AnswerResult.getInt(1)>0) return new callback_Error("Pattern already exist in DB");
+				break;
+			case 5: //Rate - Check if rate pattern already exists	
+				ps5.setFloat(1, Callback.getDiscountPercentage());
+				ps5.setInt(2, Callback.getCustomerRate());
+				AnswerResult = ps5.executeQuery();
+				AnswerResult.next();
+				if (AnswerResult.getInt(1)>0) return new callback_Error("Pattern already exist in DB"); 
+				break;
+		default:
+			break;
+		}
+			
+		// Add new Pattern to Campaign_Patterns table
+			ps0.setString(1, Callback.getCampaignDescription());
+			ps0.setInt(2, Callback.getCampaignTypeIdServer());
+			ps0.setFloat(3, Callback.getDiscountPercentage());
+			ps0.executeUpdate();
+			
+		// Get Patten_ID from Campaign_Patterns table to use in specific pattern table
+			AnswerResult = ps01.executeQuery();
+			AnswerResult.next();
+			Patten_ID = AnswerResult.getInt("Campaign_Patterns_ID");
+		
+		// Add new Pattern to specific pattern table
+			switch	(Callback.getCampaignTypeIdClient()){
+			case 1: // Add new Fuel Amount Pattern
+				ps11.setInt(1, Patten_ID);
+				ps11.setInt(2, Callback.getFuelAmount());
+				ps11.executeUpdate();
+				break;
+			case 2: // Add new Fuel Type Pattern	
+				ps12.setInt(1, Patten_ID);
+				ps12.setInt(2, Callback.getFuelId());
+				ps12.executeUpdate();
+				break;
+			case 3: // Add new Gas Station Pattern 
+				ps13.setInt(1, Patten_ID);
+				ps13.setInt(2, Callback.getGasStationId());
+				ps13.executeUpdate();
+				break;
+			case 4: // Add new Hours Pattern 
+				ps14.setInt(1, Patten_ID);
+				ps14.setString(2, Callback.getStartHour());
+				ps14.setString(3, Callback.getEndHour());
+				ps14.executeUpdate();
+				break;
+			case 5: // Add new Hours Pattern 
+				ps15.setInt(1, Patten_ID);
+				ps15.setInt(2, Callback.getCustomerRate());
+				ps15.executeUpdate();
+				break;
+		default:
+			break;
+		}	
+					
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, user id not existe or not connection to DB.");					// If query not succeed 
+		}
+			return new callbackSuccess("Create new pattern successfully.");					// 	Query succeed
+		
+	}
+	private CallBack getExistCampaignPatterns(callbackStringArray Callback){
+		// Set variables ---------------------------------------------------------	
+		String [] Combo;
+		callbackCampaignPattern[] ExistPatterns;
+		int RowNum =0;
+		// Build query -----------------------------------------------------------
+		//Campaign Patterns
+		String SqlQuery1 = "SELECT Campaign_Patterns_ID FROM Campaign_Patterns";
+		String SqlQuery2 = "SELECT * FROM Pattern_Amount";
+		String SqlQuery3 = "SELECT * FROM Pattern_Gas_Type";
+		String SqlQuery4 = "SELECT * FROM Pattern_Gas_Station";
+		String SqlQuery5 = "SELECT * FROM Pattern_Hours";
+		String SqlQuery6 = "SELECT * FROM Pattern_Rate";
+		
+		// Send query to DB and get result ---------------------------------------
+		try {
+			
+			//get RowNum of Campaign Patterns			
+			AnswerResult = st.executeQuery(SqlQuery1);					//Send query to DB
+			AnswerResult.last();										//--------------------------
+			RowNum = AnswerResult.getRow();								//Get the number of rows   |
+			AnswerResult.beforeFirst();									//--------------------------
+			Combo = new String[RowNum];									//Set values for omboBox object
+			ExistPatterns = new callbackCampaignPattern[RowNum];
+			RowNum=0;
+			
+			//fill Combo & ExistPatterns[] from Pattern_Amount table
+			AnswerResult = st.executeQuery(SqlQuery2);												
+			AnswerResult.beforeFirst();									
+			while (AnswerResult.next()) { 	
+				Combo[RowNum] = AnswerResult.getString("Campaign_Description");
+				callbackCampaignPattern LocalCallback = new callbackCampaignPattern();
+				LocalCallback.setCampaignPatternsID(AnswerResult.getInt("Campaign_Patterns_ID"));
+				LocalCallback.setCampaignDescription(AnswerResult.getString("Campaign_Description"));
+				LocalCallback.setCampaignTypeIdServer(AnswerResult.getInt("Campaign_Type_ID"));
+				LocalCallback.setDiscountPercentage(AnswerResult.getFloat("Discount_Percentage"));
+				LocalCallback.setFuelAmount(AnswerResult.getInt("Amount"));
+				ExistPatterns[RowNum] = LocalCallback;			
+				RowNum++;
+			}
+			
+			//fill Combo & ExistPatterns[] from Pattern_Gas_Type table
+			AnswerResult = st.executeQuery(SqlQuery3);												
+			AnswerResult.beforeFirst();									
+			while (AnswerResult.next()) { 	
+				Combo[RowNum] = AnswerResult.getString("Campaign_Description");
+				callbackCampaignPattern LocalCallback = new callbackCampaignPattern();
+				LocalCallback.setCampaignPatternsID(AnswerResult.getInt("Campaign_Patterns_ID"));
+				LocalCallback.setCampaignDescription(AnswerResult.getString("Campaign_Description"));
+				LocalCallback.setCampaignTypeIdServer(AnswerResult.getInt("Campaign_Type_ID"));
+				LocalCallback.setDiscountPercentage(AnswerResult.getFloat("Discount_Percentage"));
+				LocalCallback.setFuelId(AnswerResult.getInt("Fuel_ID"));
+				ExistPatterns[RowNum] = LocalCallback;			
+				RowNum++;
+			}
+			
+			//fill Combo & ExistPatterns[] from Pattern_Gas_Station table
+			AnswerResult = st.executeQuery(SqlQuery4);												
+			AnswerResult.beforeFirst();									
+			while (AnswerResult.next()) { 	
+				Combo[RowNum] = AnswerResult.getString("Campaign_Description");
+				callbackCampaignPattern LocalCallback = new callbackCampaignPattern();
+				LocalCallback.setCampaignPatternsID(AnswerResult.getInt("Campaign_Patterns_ID"));
+				LocalCallback.setCampaignDescription(AnswerResult.getString("Campaign_Description"));
+				LocalCallback.setCampaignTypeIdServer(AnswerResult.getInt("Campaign_Type_ID"));
+				LocalCallback.setDiscountPercentage(AnswerResult.getFloat("Discount_Percentage"));
+				LocalCallback.setGasStationId(AnswerResult.getInt("Gas_Station_ID"));
+				ExistPatterns[RowNum] = LocalCallback;			
+				RowNum++;
+			}
+			
+			//fill Combo & ExistPatterns[] from Pattern_Hours table
+			AnswerResult = st.executeQuery(SqlQuery5);												
+			AnswerResult.beforeFirst();									
+			while (AnswerResult.next()) { 	
+				Combo[RowNum] = AnswerResult.getString("Campaign_Description");
+				callbackCampaignPattern LocalCallback = new callbackCampaignPattern();
+				LocalCallback.setCampaignPatternsID(AnswerResult.getInt("Campaign_Patterns_ID"));
+				LocalCallback.setCampaignDescription(AnswerResult.getString("Campaign_Description"));
+				LocalCallback.setCampaignTypeIdServer(AnswerResult.getInt("Campaign_Type_ID"));
+				LocalCallback.setDiscountPercentage(AnswerResult.getFloat("Discount_Percentage"));
+				LocalCallback.setStartHour(AnswerResult.getString("Start_Hour"));
+				LocalCallback.setEndHour(AnswerResult.getString("End_Hour"));
+				ExistPatterns[RowNum] = LocalCallback;			
+				RowNum++;
+			}
+			
+			//fill Combo & ExistPatterns[] from Pattern_Rate table
+			AnswerResult = st.executeQuery(SqlQuery6);												
+			AnswerResult.beforeFirst();									
+			while (AnswerResult.next()) { 	
+				Combo[RowNum] = AnswerResult.getString("Campaign_Description");
+				callbackCampaignPattern LocalCallback = new callbackCampaignPattern();
+				LocalCallback.setCampaignPatternsID(AnswerResult.getInt("Campaign_Patterns_ID"));
+				LocalCallback.setCampaignDescription(AnswerResult.getString("Campaign_Description"));
+				LocalCallback.setCampaignTypeIdServer(AnswerResult.getInt("Campaign_Type_ID"));
+				LocalCallback.setDiscountPercentage(AnswerResult.getFloat("Discount_Percentage"));
+				LocalCallback.setCustomerRate(AnswerResult.getInt("Customer_Rate"));
+				ExistPatterns[RowNum] = LocalCallback;			
+				RowNum++;
+			}
+			
+			
+			Callback.setComboBoxStringArray(Combo);
+			Callback.setVariance(ExistPatterns);
+
+				} catch (SQLException e) {
+						return new callback_Error("Problem has occurred, query not valid or not connection to DB.");					
+			}
+		return Callback;
 		
 	}
 	

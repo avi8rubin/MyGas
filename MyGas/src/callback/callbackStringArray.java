@@ -7,6 +7,7 @@ import javax.swing.table.DefaultTableModel;
 
 import common.MessageType;
 import common.TableModel;
+import common.BooleanTableModel;
 
 public class callbackStringArray extends CallBack {
 
@@ -40,6 +41,9 @@ public class callbackStringArray extends CallBack {
 	}	
 	public DefaultTableModel getDefaultTableModel(){
 		return new DefaultTableModel(Data,colHeaders);
+	}
+	public BooleanTableModel getBooleanTableModel(){
+		return new BooleanTableModel(colHeaders,Data);
 	}
 	public void setComboBoxStringArray(Object[] StringArray){
 		ComboBoxString = StringArray;

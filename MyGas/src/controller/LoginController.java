@@ -135,7 +135,7 @@ public class LoginController implements ActionListener,Observer{
 				else{
 					if(EnteredUser.getUserTypeId()!=2){
 						EnteredUser.setWhatToDo(MessageType.updateUserLogin);
-
+						Server.handleMessageFromClient(EnteredUser);
 					}
 					LoginScreen.ClearErrorMessage(); 					//Clear the error message if exists
 					NextScreenByRole();									// go to the next gui screen by user role
