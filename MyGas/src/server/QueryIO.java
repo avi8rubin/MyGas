@@ -1305,12 +1305,6 @@ public class QueryIO implements Runnable {
 						if(AnswerResult.getString(i + 1).equals("Yes")) Data[RowNum][i] = Boolean.TRUE;
 						else Data[RowNum][i] = Boolean.FALSE;
 					}
-					else if(i==4){
-						Data[RowNum][i] = new JComboBox<String>(FuelCombo); //Fuels;
-						//((JComboBox<String>)Data[RowNum][i]).setModel( comboModel );
-						//((JComboBox<String>)Data[RowNum][i]).setOpaque(false);
-						//((JComboBox<String>)Data[RowNum][i]).setSelectedItem(AnswerResult.getString("Fuel_Description"));
-					}
 					else Data[RowNum][i] = AnswerResult.getString(i + 1);
 				}
 				Combo[RowNum] = AnswerResult.getString("Car_Number");
@@ -1330,6 +1324,9 @@ public class QueryIO implements Runnable {
 			return Callback;					// 	Query not succeed
 		
 	}
+	
+	
+	
 	private Object getCustomerDetailes(callbackCustomer Callback){
 		// Set variables ---------------------------------------------------------
 			CallBack returnCallback;

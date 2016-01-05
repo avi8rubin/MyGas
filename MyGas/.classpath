@@ -16,5 +16,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="CellactSMS.jar"/>
 	<classpathentry kind="lib" path="google-http-client-1.17.0-rc.jar"/>
+	<classpathentry kind="lib" path="org.eclipse.jface-3.6.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
