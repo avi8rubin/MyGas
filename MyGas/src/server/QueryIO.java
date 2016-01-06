@@ -1324,9 +1324,6 @@ public class QueryIO implements Runnable {
 			return Callback;					// 	Query not succeed
 		
 	}
-	
-	
-	
 	private Object getCustomerDetailes(callbackCustomer Callback){
 		// Set variables ---------------------------------------------------------
 			CallBack returnCallback;
@@ -2772,6 +2769,9 @@ public class QueryIO implements Runnable {
 		}	
 	}
 	
+	/**
+	 * Create new fuel order to the station
+	 */
 	private void SetNewFuelOrder(){
 		callbackSale LocalSale = ThreadSale;
 		ResultSet NotificationResultSet, LocalResult = AnswerResult;
@@ -2842,6 +2842,9 @@ public class QueryIO implements Runnable {
 			e.printStackTrace();
 		}
 	}
+	/**
+	 * Send monthly bill to all customers every first day in month
+	 */
 	private void SendBillToCustomers(){
 		
 		// Set variables ---------------------------------------------------------

@@ -12,7 +12,10 @@ import callback.CallBack;
 import callback.callbackBuffer;
 import callback.callbackStringArray;
 import client.Client;
-
+/**
+ * Thread that get the notification for users screen
+ * @author Ohad
+ */
 public class UpdateNotifications implements Runnable,Observer {
 	private boolean NotificationFlag = true, ButtonBackground=true;
 	private boolean NewNotificationFlag = false;
@@ -55,22 +58,35 @@ public class UpdateNotifications implements Runnable,Observer {
 	public boolean isNotificationFlag() {
 		return NotificationFlag;
 	}
+	/**
+	 * User logout, stop thread and delete observer
+	 * @param notificationFlag
+	 */
 	public void setNotificationFlag(boolean notificationFlag) {
 		NotificationFlag = notificationFlag;
 		Server.deleteObserver(this);
 	}
+	/**
+	 * Update the notification table
+	 * @param NewTableModel
+	 */
 	private void setNotificationsTable(DefaultTableModel NewTableModel){
 		NotificationsTable.setModel(NewTableModel);
-		//Hide columns
 		NotificationsTable.removeColumn(NotificationsTable.getColumnModel().getColumn( 2 ));
 
 	}
+	/**
+	 * Check if the there ant new notification.
+	 */
 	private void CheckNewNotification(){
 		String[][] Table = (String[][]) Notification.getData();
 		for(int i=0 ; i<Notification.getRowCount() ; i++){
 			if(Table[i][2].equals("No")) NewNotificationFlag = true;
 		}
 	}
+	/**
+	 * When new notification create the notification button will change colors
+	 */
 	private void ChangeNotificationBackground(){
 		ButtonBackground =! ButtonBackground;
 		if(ButtonBackground)

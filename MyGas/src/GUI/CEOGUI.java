@@ -2,9 +2,6 @@ package GUI;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -19,8 +16,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-
 import callback.callbackBuffer;
 import callback.callbackUser;
 import client.Client;
@@ -144,13 +139,4 @@ public class CEOGUI extends abstractPanel_GUI{
 		TariffApprovalTable.setDefaultRenderer(Object.class, CenterRenderer);
 	}
 	
-	
-	/*Not work - don't delete yet (ohad)*/
-	public void setTariffApprovalTable(DefaultTableModel NewTableModel, JComboBox Combo){	
-
-		TariffApprovalTable.setModel(NewTableModel);
-		TableColumn col = TariffApprovalTable.getColumnModel().getColumn( 6 );
-		col.setCellEditor( new DefaultCellEditor( Combo ) );
-			
-	}
 }

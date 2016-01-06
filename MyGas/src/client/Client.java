@@ -41,10 +41,8 @@ public Client(String host, int port) throws IOException
 */
 public void handleMessageFromServer(Object msg) 
 {	  
-		/************************/
 		super.setChanged();
 		super.notifyObservers(msg);
-		/************************/	
 }	
 
 /**
@@ -59,7 +57,6 @@ public void handleMessageFromClient(Object message)
 		} catch (IOException e) {
 			System.out.println(MessageType.Connection_To_Server_Lost.toString()
 					+" | Class: Client | Function: handleMessageFromClient.");			
-			//LostConnection();														//Close connection
 			e.printStackTrace();
 		}
 			try {

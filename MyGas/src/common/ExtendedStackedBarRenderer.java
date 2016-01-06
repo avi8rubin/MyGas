@@ -20,7 +20,10 @@ import org.jfree.chart.urls.CategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.text.TextUtilities;
 import org.jfree.ui.TextAnchor;
-
+/**
+ * Class was use to display bar chart
+ *
+ */
 public class ExtendedStackedBarRenderer extends StackedBarRenderer
 {
 

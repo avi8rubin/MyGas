@@ -1,5 +1,9 @@
 package common;
-
+/**
+ * MyGas exception class
+ * @author zinoo
+ *
+ */
 public class MyGasException  extends Exception{
 
 	public MyGasException() {}

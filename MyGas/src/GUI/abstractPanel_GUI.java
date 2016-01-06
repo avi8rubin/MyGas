@@ -38,7 +38,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 import java.awt.CardLayout;
-
+/**
+ * The common GUI part.
+ * All the GUI screens inherit that class and add the spesific function and gui parts to the frame.
+ * @author Ohad
+ *
+ */
 public class abstractPanel_GUI extends JFrame{
 
 	
@@ -84,8 +89,6 @@ public class abstractPanel_GUI extends JFrame{
                 return false;               
         };
 	};
-	
-	
 	private JButton LogoutButton = new JButton("Logout");
 	private JButton ContactsButton = new JButton("Contacts");
 	private JButton NotificationsButton = new JButton("Notifications");
@@ -311,10 +314,8 @@ public class abstractPanel_GUI extends JFrame{
 		NotificationsTable.setDefaultRenderer(Object.class, CenterRenderer);
 		
 		/*Create notification thread*/
-		//if(User.getUserTypeId() != 2){
 			NotificationThrerad = new UpdateNotifications(ThisScreen, Server, User.getUserID());
 			new Thread(NotificationThrerad).start();
-		//}
 		
 
 /**
@@ -370,24 +371,6 @@ public class abstractPanel_GUI extends JFrame{
 	}
 	public UpdateNotifications getNotificationThrerad(){
 		return NotificationThrerad;
-	}
-	
-	/**
-	 * @return The callback from the buffer
-	 */
-	private CallBack getCallBackFromBuffer(){
-		CallBack ReturnCallback;
-		while (CommonBuffer.getHaveNewCallBack() == false); 			//Waits for new callback		
-		ReturnCallback = CommonBuffer.getBufferCallBack();				//Get the new callback	
-		if (ReturnCallback instanceof callback_Error){					//If the query back empty or the entered values not illegal
-			System.out.println(((callback_Error) ReturnCallback).getErrorMassage());	
-		}	
-		if (ReturnCallback instanceof callbackLostConnection){
-			LoginScreen.NoConnectionToServer();
-			LoginScreen.setVisible(true);
-			this.setVisible(false);
-		}
-		return ReturnCallback; 	
 	}
 	
 	/**

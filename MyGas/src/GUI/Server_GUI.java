@@ -30,11 +30,13 @@ public class Server_GUI {
 	public JButton btnStop; 
 	private JLabel MyIP;
 	private JScrollPane scrollPane;
-public Server_GUI(){
-	initialize();
-}
-	
-private void initialize() {
+	public Server_GUI(){
+		initialize();
+	}
+	/**
+	 * Create server gui consul	screen
+	 */
+	private void initialize() {
 		frame = new JFrame();
 		frame.setBackground(new Color(240, 240, 240));
 		frame.setBounds(350, 300, 750, 434);
@@ -94,12 +96,9 @@ private void initialize() {
 		
 		
 		btnStart = new JButton("Start");
-
 		btnStart.setBounds(12, 46, 97, 25);
-		frame.getContentPane().add(btnStart);
-		
-		 btnStop = new JButton("Stop");
-
+		frame.getContentPane().add(btnStart);		
+		btnStop = new JButton("Stop");
 		btnStop.setBounds(589, 46, 97, 25);
 		frame.getContentPane().add(btnStop);
 		
@@ -116,25 +115,25 @@ private void initialize() {
 		JScrollBar scrollBar = new JScrollBar();
 		scrollBar.setBounds(12, 76, 720, 296);
 	}
-
-public int GetPort(){
-	return Integer.parseInt(textPort.getText()); 
-}
-public String GetUser(){
-	return textUser.getText();
-}
-public String GetPassword(){
-	return textPassword.getText();
-}
-public String GetURL(){
-	return textURL.getText();
-}
-public void setToPane(String str){
-	try {
-		Word_Counter+=str.length();
-		textPane.getDocument().insertString(Word_Counter, str, null);
-	} catch (BadLocationException e) {
-		e.printStackTrace();
+	
+	public int GetPort(){
+		return Integer.parseInt(textPort.getText()); 
 	}
-}
+	public String GetUser(){
+		return textUser.getText();
+	}
+	public String GetPassword(){
+		return textPassword.getText();
+	}
+	public String GetURL(){
+		return textURL.getText();
+	}
+	public void setToPane(String str){
+		try {
+			Word_Counter+=str.length();
+			textPane.getDocument().insertString(Word_Counter, str, null);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+	}
 }

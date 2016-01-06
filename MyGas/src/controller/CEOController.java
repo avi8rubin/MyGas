@@ -38,7 +38,7 @@ public class CEOController extends Controller {
 	private JTable TariffApprovalTable;
 
 	/**
-	 * Constractor - CEO Gui
+	 * Constructor - CEO Gui
 	 * @param Server
 	 * @param CommonBuffer
 	 * @param GuiScreen

@@ -1,24 +1,17 @@
 package controller;
 import javax.swing.JButton;
-import javax.swing.JFrame;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Observable;
 import java.util.Observer;
 
 import GUI.*;
 import callback.CallBack;
 import callback.callbackBuffer;
-import callback.callbackLostConnection;
-import callback.callbackStringArray;
 import callback.callbackUser;
 import callback.callback_Error;
 import client.Client;
@@ -40,8 +33,6 @@ public class LoginController implements ActionListener,Observer{
 	 * And next GUI screen for closing (gas station problem)
 	 */
 	private Login_GUI LoginScreen;
-	private abstractPanel_GUI NextScreen;
-	
 	/**
 	 * Buttons from login Gui, use to set handler in controller
 	 */
@@ -59,7 +50,6 @@ public class LoginController implements ActionListener,Observer{
 	/**
 	 * Set connection Flag
 	 */
-	private boolean ConnectionFlag = false;
 	String Password;
 	
 	
@@ -98,11 +88,8 @@ public class LoginController implements ActionListener,Observer{
 /**
  * Login button handler
  */
-	private void LoginButtonHandler(){
-		
+	private void LoginButtonHandler(){		
 		EnteredUser = null;
-
-		
 		if(Server!=null && Server.isConnected()){
 			
 			/*------ Read fields from gui ------*/
@@ -139,16 +126,12 @@ public class LoginController implements ActionListener,Observer{
 					}
 					LoginScreen.ClearErrorMessage(); 					//Clear the error message if exists
 					NextScreenByRole();									// go to the next gui screen by user role
-					//LoginScreen.setWelcomUserLabel(EnteredUser.getFirstName(), EnteredUser.getLastName());
-					//LoginScreen.SwitchScreen();
 				}
 			}
 			else LoginScreen.IllegalPassword();							//Display password error message
 		}
 	}
-	
-	
-	
+
 	/**
 	 * Send query to DB that change the user password
 	 */
@@ -162,13 +145,11 @@ public class LoginController implements ActionListener,Observer{
 			Server.handleMessageFromClient(EnteredUser);
 			
 			/*------Waiting for callback ------*/
-			//LocalUserCallBack = getCallBackFromBuffer();					//Get from the common buffer new callback
 			if (LocalUserCallBack instanceof callback_Error)				//An error has occurred
 				LoginScreen.ChangePasswordError();
 			else {															//Password change successfully
 				EnteredUser.setWhatToDo(MessageType.updateUserLogout);		
 				Server.handleMessageFromClient(EnteredUser);				//Update user is logged out, in the DB	
-				//getCallBackFromBuffer();									//Emptying buffer
 				LoginScreen.ClearErrorMessage();
 				LoginScreen.SwitchScreen();
 			}
@@ -204,27 +185,27 @@ public class LoginController implements ActionListener,Observer{
 		switch(EnteredUser.getUserTypeId()){
 		case 1: 
 			new CustomerController(Server, CommonBuffer,
-					(CustomerGUI) (NextScreen = new CustomerGUI(EnteredUser, Server, CommonBuffer, LoginScreen)));
+					new CustomerGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
 			break;
 		case 2: 
 			new StationsController(Server, CommonBuffer,
-					(StationsGUI) (NextScreen = new StationsGUI(EnteredUser, Server, CommonBuffer, LoginScreen)));
+					new StationsGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
 			break;
 		case 3: 
 			new StationManagerController(Server, CommonBuffer,
-					(StationManagerGUI) (NextScreen = new StationManagerGUI(EnteredUser, Server, CommonBuffer, LoginScreen)));
+					new StationManagerGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
 			break;
 		case 4: 
 			new CEOController(Server, CommonBuffer,
-					(CEOGUI) (NextScreen = new CEOGUI(EnteredUser, Server, CommonBuffer, LoginScreen)));
+					new CEOGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
 			break;
 		case 5: 
 			new MarketingManagerController(Server, CommonBuffer,
-					(MarketingManagerGUI) (NextScreen = new MarketingManagerGUI(EnteredUser, Server, CommonBuffer, LoginScreen)));
+					new MarketingManagerGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
 			break;
 		case 6: 
 			new MarketingRepresentativeController(Server, CommonBuffer,
-					(MarketingRepresentativeGUI) (NextScreen = new MarketingRepresentativeGUI(EnteredUser, Server, CommonBuffer, LoginScreen)));
+					new MarketingRepresentativeGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
 			break;
 		}
 		
@@ -234,19 +215,15 @@ public class LoginController implements ActionListener,Observer{
 	 * Initiate the connection to server 
 	 */
 	private void setConnectionToServer(){
-		//if (!ConnectionFlag){	
-			/*----- Create Server Connection -----*/
-			try {
-				Server = new Client (LoginScreen.getServerIP(),DEFAULT_PORT);
-				Server.openConnection();	//Try open connection to server
-				Server.addObserver(this);
-				ConnectionFlag = true;												//Connection already set
-			} catch (IOException e1) {
-				LoginScreen.NoConnectionToServer(); 								//Set label on gui
-				ConnectionFlag = false;												//Can't succeed to make a connection
-				e1.printStackTrace();
-			}													
-		//}
+		/*----- Create Server Connection -----*/
+		try {
+			Server = new Client (LoginScreen.getServerIP(),DEFAULT_PORT);
+			Server.openConnection();	//Try open connection to server
+			Server.addObserver(this);
+		} catch (IOException e1) {
+			LoginScreen.NoConnectionToServer(); 								//Set label on gui
+			e1.printStackTrace();
+		}													
 	}
 
 	@Override
@@ -262,15 +239,7 @@ public class LoginController implements ActionListener,Observer{
 	 * Close the connection and delete observer
 	 */
 	private void RestartConnection(){
-		//ConnectionFlag=false;
-		//Server.deleteObserver(this);
 		LoginScreen.ClearFields();
-		/*try {
-			Server.closeConnection();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 	}
 	
 }

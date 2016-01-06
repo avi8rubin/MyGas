@@ -1,10 +1,8 @@
 package common;
 
-import javax.swing.JComboBox;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 
 public class BooleanTableModel extends AbstractTableModel implements TableModelListener{
 	private static final long serialVersionUID = 1L;
@@ -21,15 +19,12 @@ public class BooleanTableModel extends AbstractTableModel implements TableModelL
 	public int getRowCount() {
         return data.length;
     }
-
     public int getColumnCount() {
         return columns.length;
     }
-
     public Object getValueAt(int rowIndex, int columnIndex) {
         return data[rowIndex][columnIndex];
-    }
-    
+    }  
     @Override
     public void setValueAt(Object Value,int rowIndex, int columnIndex){
     	data[rowIndex][columnIndex] = Value;
@@ -47,12 +42,12 @@ public class BooleanTableModel extends AbstractTableModel implements TableModelL
         return columns[column];
     }
 
-    //
-    // This method is used by the JTable to define the default
-    // renderer or editor for each cell. For example if you have
-    // a boolean data it will be rendered as a check box. A
-    // number value is right aligned.
-    //
+    /**
+     * This method is used by the JTable to define the default
+     * renderer or editor for each cell. For example if you have
+     * a boolean data it will be rendered as a check box. A
+     * number value is right aligned.
+     */
     @Override
     public Class<?> getColumnClass(int columnIndex) {
     	//if(columnIndex==4) return (new JComboBox<String>()).getClass();
@@ -64,7 +59,7 @@ public class BooleanTableModel extends AbstractTableModel implements TableModelL
 		 int row = e.getFirstRow();
 	        int column = e.getColumn();
 	        BooleanTableModel model = (BooleanTableModel)e.getSource();
-	        String columnName = model.getColumnName(column);
+	       // String columnName = model.getColumnName(column);
 	        Object data = model.getValueAt(row, column);
 	        model.setValueAt(data, row, column);
 		// TODO Auto-generated method stub

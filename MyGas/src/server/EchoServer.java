@@ -20,9 +20,9 @@ public class EchoServer extends AbstractServer
   /**
    * Global variables 
    * DEFAULT_PORT is port to listen
-   * @param URL - is the path to DB
-   * @param User - is Username to DB
-   * @param Password - password to DB
+   * @param URL - Driver to DB
+   * @param User - Username to root mysql DB
+   * @param Password - Password to root mysql DB
    */
   final public static int DEFAULT_PORT = 5555;
   public static  String URL="";
@@ -56,7 +56,6 @@ public class EchoServer extends AbstractServer
   }
   /**
    * This method handles any messages received from the client.
-   *
    * @param msg The message received from the client.
    * @param client The connection from which the message originated.
    */
@@ -80,12 +79,8 @@ public class EchoServer extends AbstractServer
 	  else {
 		  Answer = new callback_Error("Can't determine which object was sent to server.");
 	  }
-
 	  
-
-	  
-	  
-	  /*------- Send to client ---------*/
+	  /*------- Send answer back to client ---------*/
 	  try {
 			client.sendToClient(Answer);
 		} catch (IOException e) {
