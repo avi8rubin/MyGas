@@ -42,6 +42,7 @@ public enum MessageType {
 	setUpdateCustomer,
 	setNewCampignPattern,
 	getExistCampaignPatterns,
+	updateCustomerCar,
 /*Customer*/
 	setNewHomeFuelSale,
 	getHomeFuelOrders,

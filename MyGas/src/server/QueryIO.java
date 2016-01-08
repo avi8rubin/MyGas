@@ -265,6 +265,9 @@ public class QueryIO implements Runnable {
 			case getMarketingRepresentativeComboBox:
 				AnswerObject = getMarketingRepresentativeComboBox((callbackVector)SwitchCallback);				
 				break;
+			case updateCustomerCar:
+				AnswerObject = updateCustomerCar((callbackVector)SwitchCallback);				
+				break;
 				
 		default:
 			AnswerObject = new callback_Error("Not a callbackVector object, send legal callbackVector or you don't fill 'WhatToDo'.");
@@ -1898,6 +1901,31 @@ public class QueryIO implements Runnable {
 			}
 		return Callback;
 		
+	}
+	private CallBack updateCustomerCar(callbackVector Callback){
+		// Set variables ---------------------------------------------------------
+		int i;
+		callbackCar Local;
+		// Build query -----------------------------------------------------------
+		try {
+			PreparedStatement ps1=conn.prepareStatement("UPDATE Cars SET NFC=(?),Active_Car=(?) WHERE Car_ID=(?)");
+		
+		// Send query to DB  -----------------------------------------------------
+			for(i=0;i<Callback.size();i++){		
+				Local=(callbackCar) Callback.get(i);
+			
+				/*---------Only Update -----------------------*/
+				ps1.setString(1,Local.getYesNoNFC());
+				ps1.setString(2,Local.getYesNoActiveCar());
+				ps1.setInt(3, Local.getCarID());
+				ps1.executeUpdate();	
+			}
+		
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new callback_Error("Problem has occurred, it's possible server lost connection with DB.");					// If query not succeed 
+		}
+		return (new callbackSuccess());
 	}
 	
 /**
