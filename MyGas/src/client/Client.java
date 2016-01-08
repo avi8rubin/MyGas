@@ -47,7 +47,7 @@ public void handleMessageFromServer(Object msg)
 
 /**
 * This method handles all data coming from the application           
-* @param message The message from the GUI.    
+* @param message - The message from controller/gui.    
 */
 public void handleMessageFromClient(Object message)
 {

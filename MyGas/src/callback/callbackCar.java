@@ -59,11 +59,18 @@ public class callbackCar extends CallBack{
 	public void setFuelID(int fuelID) {
 		FuelID = fuelID;
 	}
-	public String getActiveCar() {
+	public String getYesNoActiveCar() {
 		return ActiveCar;
 	}
 	public void setActiveCar(String activeCar) {
 		ActiveCar = activeCar;
 	}
-
+	public boolean getActiveCar() {
+		if(ActiveCar.equals("Yes")) return true;
+		return false;
+	}
+	public void setActiveCar(boolean NFC) {
+		if(NFC) this.ActiveCar = "Yes";
+		else this.ActiveCar = "No";
+	}
 }
