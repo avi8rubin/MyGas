@@ -125,8 +125,10 @@ public class CreateFuelOrder extends ServerConnection{
 					if(FirstOrderID==Types.NULL) FirstOrderID = Integer.parseInt(Data[i][0]);
 					else SecondOrderID = Integer.parseInt(Data[i][0]);
 					CheckOrderState(2);
+					return;
 				}	
 		}
+		CheckOrderState(2);
 		StationOrderWasSet = false;
 	}
 }
