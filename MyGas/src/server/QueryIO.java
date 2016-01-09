@@ -474,7 +474,7 @@ public class QueryIO implements Runnable {
 		int ColNum;
 		int RowNum =0;
 		// Build query -----------------------------------------------------------
-		String SqlQuery1 = "DELETE FROM Notifications WHERE User_ID=(?) AND User_Saw = 'Yes' AND HOUR(TIMEDIFF(now(), Notification_Date))>48";
+		String SqlQuery1 = "DELETE FROM Notifications WHERE User_ID=(?) AND User_Saw = 'Yes' AND HOUR(TIMEDIFF(now(), Notification_Date))>720"; //Delete old notification
 		String SqlQuery2 = "SELECT DATE_FORMAT(Notification_Date,'%d/%m/%Y %T') AS Notification_Date, NotificationsDescription, User_Saw FROM Notifications WHERE User_ID=(?)";
 		// Send query to DB and get result ---------------------------------------
 		try {

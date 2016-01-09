@@ -1,19 +1,19 @@
 package callback;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import common.MessageType;
 import common.TableModel;
 import common.BooleanTableModel;
-
+/**
+ * That callback create to have an easy way to ask and receive from server objects for JTable.
+ * 
+ * @author Ohad
+ *
+ */
 public class callbackStringArray extends CallBack {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private int colCount;
 	private int rowCount;
@@ -33,32 +33,47 @@ public class callbackStringArray extends CallBack {
 	public callbackStringArray(Object[] Variance){
 		this.Variance = Variance;
 	}
+	/**
+	 * Return JTable object
+	 * @return - JTable
+	 */
 	public JTable getJTableObject(){
 		return new JTable(Data,colHeaders);
 	}
+	/**
+	 * Return TableModel object
+	 * @return - TableModel
+	 */
 	public TableModel getTableModelObject(){
 		return new TableModel(Data,colHeaders);
 	}	
+	/**
+	 * Return DefaultTableModel object
+	 * @return - DefaultTableModel
+	 */
 	public DefaultTableModel getDefaultTableModel(){
 		return new DefaultTableModel(Data,colHeaders);
 	}
+	/**
+	 * Return BooleanTableModel object
+	 * @return - BooleanTableModel
+	 */
 	public BooleanTableModel getBooleanTableModel(){
 		return new BooleanTableModel(colHeaders,Data);
 	}
+	/**
+	 * Get array of strings that will be the ComboBox values
+	 * @param StringArray
+	 */
 	public void setComboBoxStringArray(Object[] StringArray){
 		ComboBoxString = StringArray;
 	}
+	/**
+	 * Return array of strings for ComboBox 
+	 * @param StringArray
+	 */
 	public Object[] getComboBoxStringArray(){
 		return ComboBoxString;
-	}
-	public JComboBox getJComboBoxObject (){
-		DefaultComboBoxModel<?> comboModel = new DefaultComboBoxModel( ComboBoxString );
-		JComboBox combo = new JComboBox();
-		combo.addItem((String)ComboBoxString[0]);
-		combo.addItem((String)ComboBoxString[1]);
-		combo.addItem((String)ComboBoxString[2]);
-		combo.setModel( comboModel );
-		return combo;
 	}
 	public int getColCount(){
 		return colCount;
@@ -90,6 +105,11 @@ public class callbackStringArray extends CallBack {
 	public void setVariance(Object[] Variance){
 		this.Variance = Variance;
 	}
+	/**
+	 * Get an array of integers and return the data matrix for JTable with the index's in the array.
+	 * @param Index - Array of integers
+	 * @return - Data matrix for JTable
+	 */
 	public Object[][] getRowByIndex (int[] Index){
 		Object[][] obj = new Object[Index.length][];
 		for(int i=0 ; i<Index.length ; i++)
