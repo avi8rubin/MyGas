@@ -17,5 +17,7 @@
 	<classpathentry kind="lib" path="CellactSMS.jar"/>
 	<classpathentry kind="lib" path="google-http-client-1.17.0-rc.jar"/>
 	<classpathentry kind="lib" path="org.eclipse.jface-3.6.0.jar"/>
+	<classpathentry kind="lib" path="fitlibraryRunner.jar"/>
+	<classpathentry kind="src" path="AcceptanceTest"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

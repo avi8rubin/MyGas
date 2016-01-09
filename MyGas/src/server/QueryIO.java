@@ -2099,6 +2099,7 @@ public class QueryIO implements Runnable {
 			/**
 			 * Create the report callback structure
 			 */
+			RowNum = 0;
 			while (AnswerResult.next()) { 			
 				for (int i = 0; i < ColNum; i++) 
 					Data[RowNum][i] = AnswerResult.getString(i + 1);
@@ -2328,17 +2329,17 @@ public class QueryIO implements Runnable {
 				ps3.setNull(5, Types.INTEGER);
 			else ps3.setInt(5, Callback.getCampaignID());
 			ps3.executeUpdate();
+					
+			ps4.setFloat(1, Callback.getFuelAmount());
+			ps4.setInt(2, Callback.getGasStationID());
+			ps4.setInt(3, Callback.getFuelID());
+			ps4.executeUpdate();
 			
 			/*Initiate Thread*/
 			ThreadSale = Callback;
 			ThreadMission=0;
 			(new Thread(this)).start();
 			/*---------------*/
-			
-			ps4.setFloat(1, Callback.getFuelAmount());
-			ps4.setInt(2, Callback.getGasStationID());
-			ps4.setInt(3, Callback.getFuelID());
-			ps4.executeUpdate();
 			
 			//Set user notification
 			setNotifications(Callback.getUserID(), "Purchase details: car number "+Callback.getCarNumber()
