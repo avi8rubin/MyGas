@@ -14,7 +14,11 @@ import callback.callbackVector;
 import callback.callback_Error;
 import common.MessageType;
 import ocsf.server.*;
-
+/**
+ * Server side
+ * @author Ohad
+ *
+ */
 public class EchoServer extends AbstractServer 
 {
   /**
