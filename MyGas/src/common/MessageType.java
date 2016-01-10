@@ -57,6 +57,8 @@ public enum MessageType {
 	setCurrentThresholdLimit,
 	setStationSuppliesOrder,
 	getQuarterIncomesReport,
-	getQuarterPurchaseReport
+	getQuarterPurchaseReport,
+/*FitRunner*/
+	ResetForCreateFuelOrder
 
 }

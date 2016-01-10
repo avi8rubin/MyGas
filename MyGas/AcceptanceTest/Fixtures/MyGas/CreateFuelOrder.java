@@ -15,7 +15,6 @@ public class CreateFuelOrder extends ServerConnection{
 	callbackStationFuels Station1 = new callbackStationFuels();
 	callbackSale Sale;
 	callbackStringArray SuppliesOrder;
-	callbackStringArray SuppliesOrder2 = new callbackStringArray(MessageType.getStationSuppliesOrder);
 	
 	//CallbackAnswer
 	private boolean SaleAddToDB;
@@ -27,6 +26,7 @@ public class CreateFuelOrder extends ServerConnection{
 	
 	
 	public CreateFuelOrder(){
+		Server.handleMessageFromClient(new callbackSuccess(MessageType.ResetForCreateFuelOrder)); //Reset DB	
 		//Duplicate of the station fuel level in the DB
 		Station1.setGasStationID(1);
 		Station1.setFuelID(2);

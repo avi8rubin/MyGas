@@ -223,8 +223,12 @@ public class QueryIO implements Runnable {
 				break;	
 			case getQuarterPurchaseReport:
 				AnswerObject = getQuarterPurchaseReport((callbackStringArray)SwitchCallback);				
-				break;	
+				break;					
+/*FitRunner*/
 				
+			case ResetForCreateFuelOrder:
+				ResetForCreateFuelOrder();				
+				break;	
 		default:
 			AnswerObject = new callback_Error("Not a callback object, send legal callback or you don't fill 'WhatToDo'.");
 			break;
@@ -2768,6 +2772,19 @@ public class QueryIO implements Runnable {
 		return (new callbackSuccess());
 	}
 
+	/**
+	 * FitRunner
+	 */
+	private void ResetForCreateFuelOrder(){
+		try {
+			st.executeUpdate("UPDATE `mygas`.`fuel_per_station` SET `Current_Amount`='205' WHERE `Fuel_ID`='2' and`Gas_Station_ID`='1'");
+			st.executeUpdate("UPDATE `mygas`.`fuel_orders` SET `Order_Confirmation`='No' WHERE `Fuel_ID`='2' AND Gas_Station_ID=1");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 /**
  * Variance
  */
