@@ -3,7 +3,13 @@ package common;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
-
+import javax.swing.table.DefaultTableModel;
+/**
+ * BooleanTableModel create for JTable that have CheckBox in them.
+ * That class extends AbstractTableModel and implements TableModelListener
+ * @author Ohad
+ *
+ */
 public class BooleanTableModel extends AbstractTableModel implements TableModelListener{
 	private static final long serialVersionUID = 1L;
 	String[] columns ;
@@ -12,23 +18,30 @@ public class BooleanTableModel extends AbstractTableModel implements TableModelL
     public BooleanTableModel(String[] columns, Object[][] data){
     	this.columns=columns;
     	this.data=data;
+    	//this.addTableModelListener(this);
     }
     public BooleanTableModel() {
+    	//this.addTableModelListener(this);
 		// TODO Auto-generated constructor stub
 	}
+    @Override
 	public int getRowCount() {
         return data.length;
     }
+	@Override
     public int getColumnCount() {
         return columns.length;
     }
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
+    	//return getValueAt(rowIndex, columnIndex);
         return data[rowIndex][columnIndex];
     }  
     @Override
     public void setValueAt(Object Value,int rowIndex, int columnIndex){
     	data[rowIndex][columnIndex] = Value;
-    	 fireTableCellUpdated(rowIndex, columnIndex);
+    	fireTableCellUpdated(rowIndex, columnIndex);
+    	fireTableDataChanged();
     }
     public void setData(Object Data[][]){
     	data=Data;
@@ -62,7 +75,6 @@ public class BooleanTableModel extends AbstractTableModel implements TableModelL
 	       // String columnName = model.getColumnName(column);
 	        Object data = model.getValueAt(row, column);
 	        model.setValueAt(data, row, column);
-		// TODO Auto-generated method stub
 		
 	}
 }

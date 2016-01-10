@@ -74,18 +74,21 @@ public class Checks {
 		}
 		return true;
 	}
+	/**
+	 * Determine if string contains only numbers
+	 * @param str - String of numbers
+	 * @return - true if there only numbers in the string, false else.
+	 */
 	public static boolean isNumeric(String str)  
 	{ 
 		str=str.replace("-","");
-	  try  
-	  {  
-	    int d = Integer.parseInt(str);  
-	  }  
-	  catch(NumberFormatException nfe)  
-	  {  
-	    return false;  
-	  }  
-	  return true;  
+		try  {  
+			Integer.parseInt(str);  
+		}  
+		catch(NumberFormatException nfe){  
+			return false;  
+		}  
+		return true;  
 	}
 	
 	

@@ -3,12 +3,12 @@ package callback;
 import java.io.Serializable;
 
 import common.MessageType;
-
+/**
+ * Error callback return from server with the error description.
+ * @author Ohad
+ *
+ */
 public class callback_Error extends CallBack implements Serializable {
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private String ErrorMassage;
 	

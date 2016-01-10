@@ -1,5 +1,9 @@
 package common;
-
+/**
+ * All the common message to start query in the server
+ * @author Ohad
+ *
+ */
 public enum MessageType {
 	No_Connection_To_Database,
 	Connection_To_Database_Succeded,

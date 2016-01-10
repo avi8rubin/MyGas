@@ -42,7 +42,11 @@ public class JTableToExcel extends JFrame{
 	DefaultTableModel TableModel;
 	JTable Table;
 	JButton Export;
- 
+ /**
+  * Constructor
+  * @param Export - the export button
+  * @param TableModel - extract from table model to excel file
+  */
 	public JTableToExcel(JButton Export, DefaultTableModel TableModel){
 		this.Export = Export;
 		this.TableModel = TableModel;
@@ -63,6 +67,11 @@ public class JTableToExcel extends JFrame{
 		Export.setMnemonic(KeyEvent.VK_X);
 		Export.addActionListener(new AksyonListener());	
 	}
+	/**
+	 * Translate file to Excel file
+	 * @param table - the table to take the data
+	 * @param file - the Excel file
+	 */
     public void toExcel(JTable table, File file){
 		try{
 			TableModel model = table.getModel();
@@ -88,6 +97,11 @@ public class JTableToExcel extends JFrame{
     	JOptionPane.showMessageDialog(this,	
 				"File was create successfully.");
     }
+    /**
+     * When EXPORT button pressed, open folder navigator and save the excel file.
+     * @author Ohad
+     *
+     */
     class AksyonListener implements ActionListener{
     	public AksyonListener(){}
 	    public void actionPerformed(ActionEvent e){

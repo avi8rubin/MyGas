@@ -67,7 +67,7 @@ public class GasStationBarChart extends JPanel {
 		jfreechart.getPlot().setBackgroundPaint(SystemColor.control);
 		jfreechart.getPlot().setOutlineVisible(false);
 		jfreechart.setBackgroundPaint(SystemColor.control);
-
+		// Set the color of the chart
 		 BarRenderer r = (BarRenderer)jfreechart.getCategoryPlot().getRenderer();
 		    r.setSeriesPaint(0, Color.GREEN);
 		    r.setSeriesPaint(1, Color.darkGray);

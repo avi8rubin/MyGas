@@ -3,12 +3,13 @@ package callback;
 import java.util.Vector;
 
 import common.MessageType;
-
+/**
+ * callbackVector class extends Vector class and create to send and receive vector of callbacks.
+ * @author Ohad
+ *
+ */
 public class callbackVector extends Vector<CallBack>{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private MessageType WhatToDo;
 	private Object[][] Data;

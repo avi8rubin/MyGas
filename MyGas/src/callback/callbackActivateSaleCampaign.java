@@ -3,13 +3,13 @@ package callback;
 import java.sql.Date;
 
 import common.MessageType;
-
+/**
+ * Return the active sale campaign
+ * @author Ohad
+ *
+ */
 public class callbackActivateSaleCampaign extends CallBack{
 
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private int CampaignID;
 	private String CampaignDescription;
@@ -20,22 +20,19 @@ public class callbackActivateSaleCampaign extends CallBack{
 	
 	public callbackActivateSaleCampaign(MessageType WhatToDo){
 		super(WhatToDo);
-	}
-	
+	}	
 	public int getCampaignID(){
 		return CampaignID;
 	}
 	public void setCampaignID(int CampaignID){
 		this.CampaignID = CampaignID;
-	}
-	
+	}	
 	public int getCampaignPatternsID(){
 		return CampaignPatternsID;
 	}
 	public void setCampaignPatternsID(int CampaignPatternsID){
 		this.CampaignPatternsID = CampaignPatternsID;
-	}	
-	
+	}		
 	public String getCampaignDescription(){
 		return CampaignDescription;
 	}
