@@ -50,7 +50,7 @@ public class ConnectionBridge {
 	/**
 	 * Release the lock on fittest check function
 	 */
-	private void NotifyBridge(){
+	public void NotifyBridge(){
 		synchronized(lockObject){
 			WaitUntil=true;
 		}
