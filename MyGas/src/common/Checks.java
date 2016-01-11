@@ -42,8 +42,8 @@ public class Checks {
 	
 	/**
 	 * Check if the entered date is a valid date
-	 * @param startDate
-	 * @param endDate
+	 * @param startDate - The start date
+	 * @param endDate - The end date
 	 * @return if dates are valid
 	 * @author Litaf
 	 */
@@ -94,7 +94,8 @@ public class Checks {
 	
 	/**
 	 * check if string is a float number
-	 * @param String
+	 * @param String - String of numbers in a float form
+	 * @return true/false
 	 * @author Litaf
 	 */
 	public static boolean isFloat(String str)  
@@ -111,7 +112,7 @@ public class Checks {
 	
 	/**
 	 * check if string is an int number and if it's in range
-	 * @param String
+	 * @param String - String of numbers in a float form
 	 * @author Litaf
 	 */
 	public static boolean isNumberInRange(float max,String num)  
@@ -128,7 +129,7 @@ public class Checks {
 	
 	/**
 	 * check if Date for delivery is valid
-	 * @param String
+	 * @param String - date string
 	 * @author Litaf
 	 */
 	public static boolean isDateValid(String deliveryDate)  
@@ -143,7 +144,8 @@ public class Checks {
 	
 	/**
 	 * check if Time of delivery is valid
-	 * @param String
+	 * @param deliveryTime - string in form of time
+	 * @param deliveryDate - string in form of date
 	 * @author Litaf
 	 */
 	public static boolean isTimeValid(String deliveryTime, String deliveryDate)  
