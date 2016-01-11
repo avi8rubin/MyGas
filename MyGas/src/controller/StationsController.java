@@ -212,6 +212,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 				Fuel95CurrentAmount=StationCurrentFuels.getCurrentAmount();
 				Fuel95ThresholdLimit=StationCurrentFuels.getThresholdLimit();
 				Fuel95Price=StationCurrentFuels.getCurrentPrice();
+				
 			}
 			if(StationCurrentFuels.getFuelID()==2) // there is scooter fuel
 			{
@@ -219,6 +220,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 				FuelScoterCurrentAmount=StationCurrentFuels.getCurrentAmount();
 				FuelScoterThresholdLimit=StationCurrentFuels.getThresholdLimit();
 				FuelScoterPrice=StationCurrentFuels.getCurrentPrice();
+				
 			}
 			if(StationCurrentFuels.getFuelID()==4) // there is diesel fuel
 			{
@@ -230,8 +232,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 			index++;
 		}
 		
-		/*------Empty buffer ------*/
-		//getCallBackFromBuffer();//Emptying buffer
+
 		
 		
 		
@@ -523,14 +524,18 @@ public class StationsController extends Controller implements MouseListener,Runn
 					 * 2=Scooter Fuel
 					 * 4=Diesel
 					 */
-					if(e.getComponent()==BlueHand && FuelDieselIsExist){
-						if(!UserIsFueling){  //if user is not fuling
+					if(e.getComponent()==BlueHand && FuelDieselIsExist ){
+						if(!UserIsFueling){  //if user is not Fueling
 							DiscountTextBox.setText("");
 							if(UserFuel!=4)
 							{
-								DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
+								DiscountTextBox.setText("Pump Does Not Match The Type Of Vehicle Fuel");
 							}
-							else
+							if(FuelDieselCurrentAmount<0.5)
+							{
+								DiscountTextBox.setText("Out Of Fuel");
+							}
+							if(UserFuel==4 && FuelDieselCurrentAmount>0.7)
 							{
 								UserIsFueling=true;
 								FuelDiesel=true;
@@ -556,9 +561,11 @@ public class StationsController extends Controller implements MouseListener,Runn
 							DiscountTextBox.setText("");
 							if(UserFuel!=1)
 							{
-								DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
+								DiscountTextBox.setText("Pump Does Not Match The Type Of Vehicle Fuel");
 							}
-							else
+							if(Fuel95CurrentAmount<0.5)
+								DiscountTextBox.setText("Out Of Fuel");
+							if(UserFuel==1 && Fuel95CurrentAmount > 0.7)
 							{
 								UserIsFueling=true;
 								Fuel95=true;
@@ -584,9 +591,11 @@ public class StationsController extends Controller implements MouseListener,Runn
 							{  //if user is not fuling
 								if(UserFuel!=2)
 								{
-									DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
+									DiscountTextBox.setText("Pump Does Not Match The Type Of Vehicle Fuel");
 								}
-								else
+								if(FuelScoterCurrentAmount < 0.5)
+									DiscountTextBox.setText("Out Of Fuel");
+								if(UserFuel==2 && FuelScoterCurrentAmount > 0.7)
 								{
 									UserIsFueling=true;
 									FuelScoter=true;
@@ -626,9 +635,11 @@ public class StationsController extends Controller implements MouseListener,Runn
 						if(!UserIsFueling){  //if user is not fuling
 							if(fueltypecurrentcar!=4)
 							{
-								DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
+								DiscountTextBox.setText("Pump Does Not Match The Type Of Vehicle Fuel");
 							}
-							else
+							if(FuelDieselCurrentAmount < 0.5)
+								DiscountTextBox.setText("Out Of Fuel");
+							if(fueltypecurrentcar==4 && FuelDieselCurrentAmount > 0.7)
 							{
 								UserIsFueling=true;
 								FuelDiesel=true;
@@ -652,9 +663,11 @@ public class StationsController extends Controller implements MouseListener,Runn
 						if(!UserIsFueling){  //if user is not fuling
 							if(fueltypecurrentcar!=1)
 							{
-								DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
+								DiscountTextBox.setText("Pump Does Not Match The Type Of Vehicle Fuel");
 							}
-							else
+							if(Fuel95CurrentAmount<0.5)
+								DiscountTextBox.setText("Out Of Fuel");
+							if(fueltypecurrentcar==1 && Fuel95CurrentAmount>0.7)
 							{
 								UserIsFueling=true;
 								Fuel95=true;
@@ -678,9 +691,11 @@ public class StationsController extends Controller implements MouseListener,Runn
 						if(!UserIsFueling){  //if user is not fuling
 							if(fueltypecurrentcar!=2)
 							{
-								DiscountTextBox.setText("*Pump Does Not Match The Type Of Vehicle Fuel");
+								DiscountTextBox.setText("Pump Does Not Match The Type Of Vehicle Fuel");
 							}
-							else
+							if(FuelScoterCurrentAmount < 0.5)
+								DiscountTextBox.setText("Out Of Fuel");
+							if(fueltypecurrentcar==2 && FuelScoterCurrentAmount > 0.7)
 							{
 								UserIsFueling=true;
 								FuelScoter=true;
@@ -710,6 +725,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		
 		//Send To DB StationID To get Fuel Type
 		SendUserIDToGetFuelPerStation();
+		
 		/*------ start ------*/
 		if(PressStartStopButtonFlag==true && UserIsFueling)
 		{
@@ -750,6 +766,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 			{
 				StationUserLoginGui.setCreditRadioButtonEdit(true); 
 			}
+			
 			PressStartStopButtonFlag=true;
 			Paybutton.setEnabled(true);
 			StartFuelingButton.setText("Start");
@@ -765,10 +782,11 @@ public class StationsController extends Controller implements MouseListener,Runn
 	 */
 	public void PayProccess()
 	{
+		SendUserIDToGetFuelPerStation();
 		if(UserNeedToPay==true)
 		{
 			/*---Pushed Pay button---*/
-			/*---set CurrentSale Detials---*/
+			/*---set CurrentSale Details---*/
 			CurrentSale.setWhatToDo(MessageType.setNewGasStationSale);
 			CurrentSale.setUserID(Customer.getUserID());
 			CurrentSale.setCarID( getCarIDByCarNumberr( StationUserLoginGui.getComboboxCarSelect() ) );
@@ -799,7 +817,6 @@ public class StationsController extends Controller implements MouseListener,Runn
 			{
 				CurrentSale.setDriverName(Customer.getCustomerFirstName());
 			}
-
 			Server.handleMessageFromClient(CurrentSale);
 			
 		}
@@ -820,7 +837,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 						havefuel=false;
 						/*-------fuel tank is empty need to stop fueling*/
 						this.Liter-=0.13;
-						DiscountTextBox.setText("*Out of fuel");
+						DiscountTextBox.setText("Out of fuel");
 					}
 					Price=Liter*FuelDieselPrice;
 				}
@@ -842,7 +859,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 						havefuel=false;
 						/*-------fuel tank is empty need to stop fueling*/
 						this.Liter-=0.13;
-						DiscountTextBox.setText("*Out of fuel");
+						DiscountTextBox.setText("Out of fuel");
 					}
 					Price=Liter*FuelScoterPrice;
 				}
@@ -862,7 +879,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 	/**
 	 * Reset all station back to original 
 	 */
-	private void ResetPumpSatation(){
+	private void ResetPumpSatation(){		
 		UserNeedToPay=false;
 		Paybutton.setEnabled(false);
 		UserIsFueling=false;
@@ -997,9 +1014,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 						ResetPumpSatation();
 					}
 					break;
-				case getFuelPerStation:
-					
-					break;
+
 				case getCarWithNFC:
 					if(arg instanceof callback_Error)
 					{
