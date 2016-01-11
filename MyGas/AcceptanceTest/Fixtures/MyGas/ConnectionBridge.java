@@ -30,7 +30,7 @@ public class ConnectionBridge {
 	 * Wait until notify
 	 * @return - false / true
 	 */
-	private boolean ChangedState(){
+	private synchronized boolean ChangedState(){
 		synchronized(lockObject){
 			if(!WaitUntil) return false;	
 			return true;
@@ -50,7 +50,7 @@ public class ConnectionBridge {
 	/**
 	 * Release the lock on fittest check function
 	 */
-	public void NotifyBridge(){
+	public synchronized void NotifyBridge(){
 		synchronized(lockObject){
 			WaitUntil=true;
 		}
