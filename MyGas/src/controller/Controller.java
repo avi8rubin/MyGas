@@ -120,6 +120,10 @@ public abstract class Controller implements ActionListener,Observer{
 					callbackStringArray ContactList = (callbackStringArray) arg;
 					ContactTable.setModel(ContactList.getDefaultTableModel());			
 					break;
+				case updateUserLogout:
+					Server.deleteObserver(this);
+					break;
+					
 			default:
 				GUIScreen.getNotificationThrerad().update(o, arg);
 				break;

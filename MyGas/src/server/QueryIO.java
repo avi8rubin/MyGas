@@ -1802,7 +1802,7 @@ public class QueryIO implements Runnable {
 		int RowNum =0;
 		// Build query -----------------------------------------------------------
 		//Campaign Patterns
-		String SqlQuery1 = "SELECT Campaign_Patterns_ID FROM Campaign_Patterns";
+		String SqlQuery1 = "SELECT Campaign_Patterns_ID FROM Campaign_Patterns WHERE Campaign_Type_ID<>2";
 		String SqlQuery2 = "SELECT * FROM Pattern_Amount";
 		String SqlQuery3 = "SELECT * FROM Pattern_Gas_Type";
 		String SqlQuery4 = "SELECT * FROM Pattern_Gas_Station";
