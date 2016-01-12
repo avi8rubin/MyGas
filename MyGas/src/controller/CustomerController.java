@@ -206,7 +206,7 @@ public class CustomerController extends Controller{
 	*@author Litaf
 	*/
 		private void HandleCancelButton(){
-			JOptionPane.showMessageDialog(null, "Purchase has been cancelled, no charge was made", 
+			JOptionPane.showMessageDialog(GuiScreen, "Purchase has been cancelled, no charge was made", 
 					"", JOptionPane.INFORMATION_MESSAGE);
 			GuiScreen.cleanScreen();
 			GuiScreen.DisablePayButton();
@@ -339,17 +339,17 @@ public class CustomerController extends Controller{
 		 */
 		public boolean CheckForCreditCard(callbackCustomer customer){
 			if(customer.getCreditCard().equals(""))
-				return false;
-			return true;
+				return true;
+			return false;
 
 		}
 		private void Server_HandleCheckCustomerCreditCard(callbackCustomer customer) {
 			
 			if(CheckForCreditCard(customer)){
-				JOptionPane.showMessageDialog(null, "Customer "+GuiScreen.getCurrentUserName()+
+				JOptionPane.showMessageDialog(GuiScreen, "Customer "+GuiScreen.getCurrentUserName()+
 						"\nCan't buy home fuel because there is no credit card information"+
 						"in the system\nPlease contact a service representative to proceed", 
-						"", JOptionPane.INFORMATION_MESSAGE);
+						"Error", JOptionPane.INFORMATION_MESSAGE);
 				GuiScreen.DisableAllComponents();
 				}
 			GuiScreen.DisablePayButton();
@@ -390,12 +390,14 @@ public class CustomerController extends Controller{
 					case setNewHomeFuelSale:
 						CallBack temp =  (CallBack) arg;
 						if(temp instanceof callbackSuccess){
-							JOptionPane.showMessageDialog(null, "Your order was added successfully, "
+							JOptionPane.showMessageDialog(GuiScreen, "Your order was added successfully, "
 									+ "you can watch your orders in the 'Check Fuel Orders'", 
-									"", JOptionPane.INFORMATION_MESSAGE);}
+									"Information", JOptionPane.INFORMATION_MESSAGE);
+							}
 						else{
-							JOptionPane.showMessageDialog(null, "Error has occurred, no charge was made",
-									"", JOptionPane.INFORMATION_MESSAGE);}	
+							JOptionPane.showMessageDialog(GuiScreen, "Error has occurred, no charge was made",
+									"Error", JOptionPane.INFORMATION_MESSAGE);
+							}	
 						break;
 					case getCustomer:
 						callbackCustomer customer =  (callbackCustomer)arg;
@@ -405,8 +407,8 @@ public class CustomerController extends Controller{
 					case getHomeFuelOrders:
 						CallBack temp1 =  (CallBack) arg;
 						if(temp1 instanceof callbackSuccess){
-							JOptionPane.showMessageDialog(null, "No Orders to show", 
-									"", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(GuiScreen, "No Orders to show", 
+									"Information", JOptionPane.INFORMATION_MESSAGE);
 							}
 						else {
 							callbackStringArray orders=(callbackStringArray) temp1;
