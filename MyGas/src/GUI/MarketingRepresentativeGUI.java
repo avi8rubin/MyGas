@@ -639,7 +639,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		
 		/*------- add labels, textFields and buttons 
 		 * 						to CreateUserLayer --------*/		
-		CustimerIDLabel = new JLabel("Custimer ID :");
+		CustimerIDLabel = new JLabel("Customer ID :");
 		CustimerIDLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		CustimerIDLabel.setEnabled(false);
 		CustimerIDLabel.setBounds(39, 50, 115, 34);

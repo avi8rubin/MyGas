@@ -1381,7 +1381,7 @@ public class QueryIO implements Runnable {
 			ComboBoxVector.add(PurchasePlan);
 			
 			//Set Fuels
-			AnswerResult = st.executeQuery("SELECT * FROM Fuels");						
+			AnswerResult = st.executeQuery("SELECT * FROM Fuels WHERE Fuel_ID <> 3");						
 			AnswerResult.last();
 			RowNum = AnswerResult.getRow();
 			AnswerResult.beforeFirst();
