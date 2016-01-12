@@ -146,6 +146,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 
 			
 		Customer=new callbackCustomer();
+		EnteredUser = new callbackUser();
 		this.Liter=0;
 		this.Price=0;
 		
@@ -206,6 +207,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		while(index<NumbersFuelsInCurrentGasStaion){
 			StationCurrentFuels=(callbackStationFuels)FuelsInStation.get(index);
 			GasStationID=StationCurrentFuels.getGasStationID();
+			
 			if(StationCurrentFuels.getFuelID()==1) // there is 95 fuel
 			{
 				Fuel95IsExist=true;
@@ -269,6 +271,8 @@ public class StationsController extends Controller implements MouseListener,Runn
 	 */
 	private void LoginButtonHandler()
 	{
+		
+		
 	/*--Check if NFC is OK--*/
 	CheckNFC();
 	
@@ -319,6 +323,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 	if(UserCarNFC.getYesNoNFC().equals("Yes"))
 	{
 	NFCIsExist=true;
+	Customer = new callbackCustomer();
 	Customer.setCustomersID(UserCarNFC.getCustomerID()); // NFC car callback -> Customer ID
 	/*------send to DB User ID and get Customer id*/
 	Customer.setWhatToDo(MessageType.getCustomer);
@@ -371,7 +376,12 @@ public class StationsController extends Controller implements MouseListener,Runn
 	 * Read Information form Gui And Send To DB
 	 */
 	private void CheckUser(){
-		EnteredUser = new callbackUser(MessageType.getCheckExistsUserPass,StationUserLoginGui.getUserName(),StationUserLoginGui.getPassword());
+	//EnteredUser = new callbackUser(MessageType.getCheckExistsUserPassForStation,StationUserLoginGui.getUserName(),StationUserLoginGui.getPassword());
+	EnteredUser.setWhatToDo(MessageType.getCheckExistsUserPassForStation);
+	EnteredUser.setUserName(StationUserLoginGui.getUserName());
+	EnteredUser.setPassword(StationUserLoginGui.getPassword());
+	
+	
 		if(!StationUserLoginGui.getPassword().equals(""))
 		{
 			Server.handleMessageFromClient(EnteredUser);		
@@ -392,10 +402,15 @@ public class StationsController extends Controller implements MouseListener,Runn
 		{			
 		StationUserLoginGui.IllegalUserName();
 		}
+		if(! Password.equals(EnteredUser.getPassword()) )
+		{
+			StationUserLoginGui.IllegalPassword();
+		}
 		else if (Password.equals(EnteredUser.getPassword()))
 		{				
 		NFCIsExist=false;
 		/*------send to DB User ID and get Customer id*/
+		Customer = new callbackCustomer();
 		Customer.setWhatToDo(MessageType.getCustomer);
 		Customer.setUserID(EnteredUser.getUserID()); //Connect Customer.userID-> userID
 		Server.handleMessageFromClient(Customer);
@@ -407,6 +422,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 	 */
 	private void CheckUserCostingModelNonNFC(callbackCustomer e){
 		Customer=e;
+		
 		if(Customer.isAllowToEnterGasStation(this.GasStationID)) // if Costing model is oK!
 		{
 		getAllUserCar(Customer.getCustomersID());
@@ -442,6 +458,8 @@ public class StationsController extends Controller implements MouseListener,Runn
 	 * @param e -Callback vector of Customer Cars
 	 */
 	private void EnterUserToGasStation(callbackVector e){
+	
+		UserCarsNumbers = new ArrayList<>();	
 	for(int i=0;i<e.size();i++)
 	{
 		UserCarsNumbers.add(e.get(i));
@@ -993,7 +1011,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 	public void update(Observable o, Object arg) {
 		if(arg instanceof CallBack){	
 			switch(((CallBack) arg).getWhatToDo()){
-				case getCheckExistsUserPass:
+				case getCheckExistsUserPassForStation:
 						if(arg instanceof callback_Error)
 						{
 							StationUserLoginGui.IllegalUserName();
@@ -1049,9 +1067,6 @@ public class StationsController extends Controller implements MouseListener,Runn
 						}
 					}
 						
-					break;
-				case updateUserLogin:
-					
 					break;
 				case getSaleDiscount:
 					UpdateSalePrice((CallBack) arg);
