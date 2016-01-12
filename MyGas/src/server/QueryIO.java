@@ -97,6 +97,7 @@ public class QueryIO implements Runnable {
 		
 /*Global Queries*/
 			case getCheckExistsUserPass:
+			case getCheckExistsUserPassForStation:
 				AnswerObject = getCheckExistsUserPass((callbackUser)SwitchCallback);				
 				break;				
 			case updateChangeUserPassword:
@@ -1054,7 +1055,7 @@ public class QueryIO implements Runnable {
 		try {
 			PreparedStatement ps1=conn.prepareStatement("SELECT * FROM Customer_Detailes WHERE User_ID = (?) OR Customers_ID=(?)");
 			PreparedStatement ps2=conn.prepareStatement(
-					"SELECT A.User_ID ,A.Customers_ID ,B.Gas_Company_ID FROM customer_detailes A "+
+					"SELECT A.User_ID ,A.Customers_ID ,B.Gas_Station_ID FROM customer_detailes A "+
 					"LEFT OUTER JOIN gas_station_detailes B ON A.Plan_ID = B.Plan_ID "+
 					"WHERE A.User_ID = (?) GROUP BY User_ID,Gas_Company_Name");
 			
@@ -1093,7 +1094,7 @@ public class QueryIO implements Runnable {
 			AnswerResult.beforeFirst();
 			
 			while(AnswerResult.next()){
-				GasStationIDinPurchasePlan[RowNum] = AnswerResult.getInt("Gas_Company_ID");
+				GasStationIDinPurchasePlan[RowNum] = AnswerResult.getInt("Gas_Station_ID");
 				RowNum++;
 			}
 			Callback.setGasStationInPurchasePlan(GasStationIDinPurchasePlan);
@@ -2076,10 +2077,7 @@ public class QueryIO implements Runnable {
 		
 		try {
 			PreparedStatement ps0=conn.prepareStatement("SELECT Sales_ID FROM All_Home_Fuel_Sales WHERE Customers_ID =(?)");
-			PreparedStatement ps1=conn.prepareStatement(
-					"UPDATE Home_Fuel_Sales SET Order_Status = 'Delivered' "+
-					"WHERE Sales_ID IN (?) "+
-					"AND Delivery_Date < NOW()");
+			PreparedStatement ps1;
 			PreparedStatement ps2=conn.prepareStatement(
 					"SELECT DATE_FORMAT(Sale_Date,'%d/%m/%Y %T') AS Sale_Date_And_Time "+
 					", Address "+
@@ -2102,8 +2100,13 @@ public class QueryIO implements Runnable {
 			}
 			if(!Sale_ID.equals("(")){	
 				Sale_ID = Sale_ID+"0)";
-				//Update customer orders status 			
-				ps1.setString(1, Sale_ID);
+				//Update customer orders status 
+				
+				ps1=conn.prepareStatement(
+						"UPDATE Home_Fuel_Sales SET Order_Status = 'Delivered' "+
+						"WHERE Sales_ID IN "+Sale_ID+
+						" AND Delivery_Date < NOW()");
+				//ps1.setString(1, Sale_ID);
 				ps1.executeUpdate();
 			}
 			

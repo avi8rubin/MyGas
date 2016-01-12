@@ -8,8 +8,6 @@
 	<classpathentry kind="lib" path="jcalendar-1.4.jar"/>
 	<classpathentry kind="lib" path="mysql-connector-java-5.1.37-bin.jar"/>
 	<classpathentry kind="lib" path="javax.mail.jar"/>
-	<classpathentry kind="lib" path="jcommon-1.0.23.jar"/>
-	<classpathentry kind="lib" path="jfreechart-1.0.19.jar"/>
 	<classpathentry kind="lib" path="CellactSMS.jar"/>
 	<classpathentry kind="lib" path="google-http-client-1.17.0-rc.jar"/>
 	<classpathentry kind="lib" path="org.eclipse.jface-3.6.0.jar"/>
@@ -20,5 +18,7 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/MyGas/unittests/junit-4.12-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="jcommon-1.0.23.jar"/>
+	<classpathentry kind="lib" path="jfreechart-1.0.19.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -55,6 +55,7 @@ public enum MessageType {
 	getCarWithNFC,
 	setNewGasStationSale,
 	getFuelPerStation,
+	getCheckExistsUserPassForStation,
 /*Station Manager*/
 	getStationSuppliesOrder,
 	getCurrentThresholdLimit,
