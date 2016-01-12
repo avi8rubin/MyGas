@@ -3,7 +3,6 @@ package common;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 /**
  * BooleanTableModel create for JTable that have CheckBox in them.
  * That class extends AbstractTableModel and implements TableModelListener
