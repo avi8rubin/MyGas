@@ -458,6 +458,8 @@ public class StationsController extends Controller implements MouseListener,Runn
 	 * @param e -Callback vector of Customer Cars
 	 */
 	private void EnterUserToGasStation(callbackVector e){
+	
+		UserCarsNumbers = new ArrayList<>();	
 	for(int i=0;i<e.size();i++)
 	{
 		UserCarsNumbers.add(e.get(i));
