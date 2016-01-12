@@ -19,10 +19,12 @@ import javax.swing.table.TableColumn;
 import callback.callbackBuffer;
 import callback.callbackUser;
 import client.Client;
-
+/**
+ * Create the GUI screens for CEO 
+ * @author Ohad
+ *
+ */
 public class CEOGUI extends abstractPanel_GUI{
-
-
 	private static final long serialVersionUID = 1L;
 	
 	/**

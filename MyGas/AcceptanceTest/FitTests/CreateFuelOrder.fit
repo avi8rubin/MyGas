@@ -22,6 +22,8 @@
 			<strong>Customers:</strong> (Customers_ID, Customer_First_Name, Customer_Last_Name) = (306216168, Nir, Lod)</p>
 		<p class="style1">
 			<strong>Cars: </strong>(Car_ID, Car_Number, Customers_ID, NFC, Fuel_ID, Active_Car) = (17, 12-985-44, 306216168, Yes, 2, Yes)</p>
+		<p class="style1">
+			&nbsp;</p>
 		<table border="1" cellpadding="5" cellspacing="0" width="765">
 			<tbody>
 				<tr>
@@ -53,7 +55,7 @@
 						12</td>
 				</tr>
 				<tr>
-					<td class="style1">
+					<td class="style1" style="color: rgb(0, 0, 205);">
 						check</td>
 					<td class="style1">
 						current station order</td>
@@ -117,7 +119,7 @@
 						1</td>
 				</tr>
 				<tr>
-					<td class="style1">
+					<td class="style1" style="color: rgb(0, 0, 205);">
 						check</td>
 					<td class="style1">
 						add sale</td>
@@ -141,7 +143,7 @@
 						12</td>
 				</tr>
 				<tr>
-					<td class="style1">
+					<td class="style1" style="color: rgb(0, 0, 205);">
 						check</td>
 					<td class="style1">
 						current station order</td>
@@ -205,7 +207,7 @@
 						1</td>
 				</tr>
 				<tr>
-					<td class="style1">
+					<td class="style1" style="color: rgb(0, 0, 205);">
 						check</td>
 					<td class="style1">
 						add sale</td>
@@ -229,7 +231,7 @@
 						12</td>
 				</tr>
 				<tr>
-					<td class="style1">
+					<td class="style1" style="color: rgb(0, 0, 205);">
 						check</td>
 					<td class="style1">
 						current station order</td>

@@ -81,6 +81,7 @@ public class Server_GUI {
 		scrollPane.setViewportView(textPane);
 		DefaultCaret caret = (DefaultCaret)textPane.getCaret();			//Always see the bottom of the text area
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);				//Always see the bottom of the text area
+		textPane.setCaret(caret);
 		
 		textPassword = new JTextField();
 		textPassword.setText("1234");
