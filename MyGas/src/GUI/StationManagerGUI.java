@@ -274,9 +274,6 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		YearSelectInQuarterlyReport.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		YearSelectInQuarterlyReport.setBounds(378, 14, 85, 22);
 		QuartelyRepotyScreen.add(YearSelectInQuarterlyReport);
-		contentPane.add(ContactFrame, BorderLayout.SOUTH);
-		ContactFrame.setVisible(false);
-		ContactFrame.getContentPane().setLayout(null);
 		QuartelyRepotyScreen.setBounds(12, 13, 944, 593);
 		
 		//Generate Button
@@ -361,9 +358,6 @@ public class StationManagerGUI extends abstractPanel_GUI{
 		YearSelectInPurchaseReport.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		YearSelectInPurchaseReport.setBounds(378, 14, 85, 22);
 		PurchaseReportScreen.add(YearSelectInPurchaseReport);
-		contentPane.add(ContactFrame, BorderLayout.SOUTH);
-		ContactFrame.setVisible(false);
-		ContactFrame.getContentPane().setLayout(null);
 		PurchaseReportScreen.setBounds(12, 13, 944, 593);
 		
 		//Generate Button
