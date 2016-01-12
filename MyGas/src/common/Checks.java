@@ -57,8 +57,8 @@ public class Checks {
 		String startMonth=startDate.substring(3, 5);
 		String EndMonth=endDate.substring(3, 5);
 
-		String startYear=startDate.substring(6,7);
-		String EndYear=endDate.substring(6,7);
+		String startYear=startDate.substring(6,8);
+		String EndYear=endDate.substring(6,8);
 		
 		if(Integer.parseInt(EndYear)<Integer.parseInt(startYear))
 			return false;

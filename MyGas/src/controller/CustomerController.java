@@ -169,7 +169,7 @@ public class CustomerController extends Controller{
 	
 	//check validation of delivery date
 	dateStr=GuiScreen.getDate();
-	if(Checks.isDateValid(dateStr) || !dateStr.equals("")){
+	if(Checks.isDateValid(dateStr) && !dateStr.equals("")){
 		checkFields++;
 		DateLabel.setText("");
 		sale.setDeliveryDate(dateStr);
