@@ -3,15 +3,20 @@ package controller;
 import java.awt.CardLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.Observable;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
@@ -19,6 +24,7 @@ import GUI.CEOGUI;
 import GUI.MarketingRepresentativeGUI;
 import callback.CallBack;
 import callback.callbackBuffer;
+import callback.callbackCampaignPattern;
 import callback.callbackCar;
 import callback.callbackCustomer;
 import callback.callbackStringArray;
@@ -26,7 +32,9 @@ import callback.callbackSuccess;
 import callback.callbackVector;
 import callback.callback_Error;
 import client.Client;
+import common.BooleanTableModel;
 import common.Checks;
+import common.JTableToExcel;
 import common.MessageType;
 
 public class MarketingRepresentativeController extends Controller{
@@ -42,6 +50,7 @@ public class MarketingRepresentativeController extends Controller{
 	//Top Layer Components	
 	private JButton CreateNewCustomerAccountButton;
 	private JButton CustomerDetailsButton;
+	private JButton ReportsButton;
 
 	//CreateNewCustomerAccountLayer Left Layer Components
 	private JLayeredPane CreateNewCustomerAccountLayer;
@@ -72,15 +81,32 @@ public class MarketingRepresentativeController extends Controller{
 	private JLabel ExistCarNumberLabel;
 	private JFormattedTextField CarNumberFormattedTextField;
 	private JLabel MissedFieldMessageAddCarsLabel;
+	private BooleanTableModel CarsViewTableModelBeforeChanges;
+	private Object[][] Data;
+	private BooleanTableModel CarsViewTableModelAfterChanges;
+	private JButton CarsViewSaveButton;
 	
-	//CustomerDetailsLayer Left Layer Components	
+	//CustomerDetails Left Layer Components	
 	private JLayeredPane CustomerDetailsLayer;
 	private JButton SearchButton;
 	private JTextField EnterCustomerIdTextField;
 	private JLabel InvalidcustomerIDMessageLabel;
 	private JLabel CustomerNotExistMessageLabel;
 	private callbackCustomer fullCallbackCustomer;
-
+	
+	//RatesReport Left Layer Components	
+	private JButton GenerateReportButton;
+	private JButton UpdateRateButton;
+	//CampignPattern Center Layer Components	
+	private JButton CreateNewCampignPatternButton;
+	private JComboBox<?> PatternKindComboBox;
+	private JButton CreatePatternButton;
+	private JTextField InsertFuelAmountTextField;
+	private JTextArea DescriptionTextArea;
+	//CampignPattern Left Layer Components	
+	private JComboBox<?> ExistPatternsComboBox;
+	
+	
 
 	public MarketingRepresentativeController(Client Server, callbackBuffer CommonBuffer, MarketingRepresentativeGUI GuiScreen) {
 		super(Server, CommonBuffer, GuiScreen);
@@ -114,6 +140,25 @@ public class MarketingRepresentativeController extends Controller{
 		SearchButton.addActionListener(this);
 		SearchButton.setActionCommand("Search"); //Add action command
 		
+		//CampignPattern Button
+		CreateNewCampignPatternButton = GuiScreen.getCreateNewCampignPatternButton();
+		CreateNewCampignPatternButton.addActionListener(this);
+		CreateNewCampignPatternButton.setActionCommand("CampignPattern"); //Add action command	
+		
+		ReportsButton = GuiScreen.getReportsButton();
+		ReportsButton.addActionListener(this);
+		ReportsButton.setActionCommand("Reports"); //Add action command	
+		
+		// GenerateReport Button
+		GenerateReportButton = GuiScreen.getGenerateReportButton();
+		GenerateReportButton.addActionListener(this);
+		GenerateReportButton.setActionCommand("GenerateReport"); //Add action command	
+		
+		// UpdateRate Button
+		UpdateRateButton = GuiScreen.getUpdateRateButton();
+		UpdateRateButton.addActionListener(this);
+		UpdateRateButton.setActionCommand("UpdateRate"); //Add action command	
+				
 		// get values for comboBoxs
 		Server.handleMessageFromClient(new callbackVector(MessageType.getMarketingRepresentativeComboBox));
 
@@ -167,6 +212,10 @@ public class MarketingRepresentativeController extends Controller{
 			HandleAddPressed();										
 		}	
 		
+		if(e.getActionCommand().equals("SaveCarsDetails")){
+			HandleSaveCarsDetailsPressed();										
+		}	
+		
 		if(e.getActionCommand().equals("Search")){
 			HandleSearchPressed();										
 		}			
@@ -179,6 +228,31 @@ public class MarketingRepresentativeController extends Controller{
 		if(e.getActionCommand().equals("Save"))
 			HandleCreatePressed();
 		
+		if(e.getActionCommand().equals("CampignPattern"))
+			HandleCampignPatternPressed();									
+		
+		if(e.getActionCommand().equals("ChangePatternKindSelection"))
+			 GuiScreen.setVisibleByPattenKindComboBox(PatternKindComboBox.getSelectedIndex());
+		
+		if(e.getActionCommand().equals("ExistPatternSelection"))
+			 GuiScreen.displaySelectionExistPattern();
+		
+		
+		if(e.getActionCommand().equals("CreatePattern"))
+			HandleCreatePatternPressed();
+		
+		if(e.getActionCommand().equals("Reports")){
+			GuiScreen.getUpdateSuccessMessageLabel().setVisible(false);
+			GuiScreen.getUpdateRateButton().setVisible(false);
+			ContainerCardLeft.show(LeftCardContainer, "RatesReportLeft");
+			ContainerCardCenter.show(CenterCardContainer, "EmptyCenterPanel");				//The RatesReport layer will be display											
+		}	
+	
+		if(e.getActionCommand().equals("GenerateReport"))
+			HandleGenerateReportPressed();
+		
+		if(e.getActionCommand().equals("UpdateRate"))
+			HandleUpdateRatePressed();		
 		
 		}	
 
@@ -351,16 +425,23 @@ public class MarketingRepresentativeController extends Controller{
 		AddButton.addActionListener(this);
 		AddButton.setActionCommand("Add"); //Add action command
 		
+		//SaveCarsDetails Button
+		CarsViewSaveButton = GuiScreen.getCarsViewSaveButton();
+		CarsViewSaveButton.addActionListener(this);
+		CarsViewSaveButton.setActionCommand("SaveCarsDetails"); //Add action command
+		
 		callbackStringArray CarsViewTable = new callbackStringArray(MessageType.getCarDetailes);
 		CarsViewTable.setVariance(idAraay);
-//		CarsViewTable.setColCount(GuiScreen.getCallbackCustomerUpdated().getCustomersID());
 		Server.handleMessageFromClient(CarsViewTable);			
 	}
 	
 	private void HandleAddCarPressedBackFromServer(callbackStringArray CarsViewTable1) {
 		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
 		
-		GuiScreen.setCarsViewTable(CarsViewTable1.getDefaultTableModel());
+		GuiScreen.setCarsViewTable(CarsViewTable1.getBooleanTableModel());
+		
+		CarsViewTableModelBeforeChanges = CarsViewTable1.getBooleanTableModel();
+//		Data = CarsViewTableModelBeforeChanges.getData();
 		ContainerCardCenter.show(CenterCardContainer, "AddCarLayerCenter");				//The AddCar layer will be display			
 	}
 	
@@ -394,9 +475,64 @@ public class MarketingRepresentativeController extends Controller{
 		{
 			GuiScreen.setSuccessAddingCarMessageLabel();
 			ExistCarNumberLabel.setVisible(false);
+			
+			Object[] idAraay = {GuiScreen.getCallbackCustomerUpdated().getCustomersID()};
+			ExistCarNumberLabel.setVisible(false);
+			
+			callbackStringArray CarsViewTable = new callbackStringArray(MessageType.getCarDetailes);
+			CarsViewTable.setVariance(idAraay);
+			Server.handleMessageFromClient(CarsViewTable);	
 		}
 		// Error case - car exist in DB
 		else ExistCarNumberLabel.setVisible(true);
+	}
+	
+	private void HandleSaveCarsDetailsPressed(){
+		
+		CarsViewTableModelAfterChanges = (BooleanTableModel) GuiScreen.getCarsViewTable().getModel();
+//		CarsViewTableModelBeforeChanges
+		
+		callbackVector CarsChangesVector = new callbackVector(MessageType.updateCustomerCar);
+		// Scan CarsViewTableBeforeChanges & CarsViewTableAfterChanges and looking for changes.
+		// If there are changes- update CarsChangesVector
+		for (int i=0; i<CarsViewTableModelBeforeChanges.getRowCount(); i++)
+		{
+//			///////////////////
+//			if (CarsViewTableModelBeforeChanges.getValueAt(i,3) != CarsViewTableModelAfterChanges.getValueAt(i,3) ) 
+//				System.out.printf("NFC change");
+//			if (CarsViewTableModelBeforeChanges.getValueAt(i,5) != CarsViewTableModelAfterChanges.getValueAt(i,5) ) 
+//				System.out.printf("Active_car change");
+//			//////////////////
+//			if ( 	CarsViewTableModelBeforeChanges.getValueAt(i,3) != CarsViewTableModelAfterChanges.getValueAt(i,3) // NFC change
+//				||	CarsViewTableModelBeforeChanges.getValueAt(i,5) != CarsViewTableModelAfterChanges.getValueAt(i,5) )	// Active_car change		
+//			{
+//				System.out.printf("Row " +i);
+				callbackCar callback_Obj = new callbackCar();
+				if (CarsViewTableModelAfterChanges.getValueAt(i,3).equals(Boolean.TRUE)) callback_Obj.setYesNoNFC("Yes");
+				else callback_Obj.setYesNoNFC("No");
+				if (CarsViewTableModelAfterChanges.getValueAt(i,5).equals(Boolean.TRUE)) callback_Obj.setActiveCar("Yes");
+//				if (CarsViewTableModelAfterChanges.getValueAt(i,5)==true) callback_Obj.setActiveCar("Yes");
+				else callback_Obj.setActiveCar("No");
+				callback_Obj.setCarID( Integer.parseInt((String)CarsViewTableModelAfterChanges.getValueAt(i,0)) );
+				CarsChangesVector.add(callback_Obj);	
+//			}	
+		} // for
+		
+		if (CarsChangesVector.size()>0)
+			Server.handleMessageFromClient(CarsChangesVector);
+	}
+	
+	private void HandleSaveCarsDetailsPressedBackFromServer(CallBack LocalUserCallBack){
+		
+		if  (LocalUserCallBack instanceof callbackSuccess)
+		{
+		Object[] idAraay = {GuiScreen.getCallbackCustomerUpdated().getCustomersID()};
+		GuiScreen.getExistCarNumberLabel().setVisible(false);
+		
+		callbackStringArray CarsViewTable = new callbackStringArray(MessageType.getCarDetailes);
+		CarsViewTable.setVariance(idAraay);
+		Server.handleMessageFromClient(CarsViewTable);		
+		}
 	}
 	
 	private void HandleSearchPressed() {
@@ -437,6 +573,141 @@ public class MarketingRepresentativeController extends Controller{
 		else CustomerNotExistMessageLabel.setVisible(true);		
 	}
 	
+	private void HandleCampignPatternPressed(){
+		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
+		ContainerCardLeft	= (CardLayout)(LeftCardContainer.getLayout());
+		
+		GuiScreen.CampighnPatternLayer();
+		GuiScreen.setNotVisibleAllPatternsKinds();
+		ContainerCardCenter.show(CenterCardContainer, "CampighnPatternLayerCenter");				//The CampighnPattern layer will be display												
+		ContainerCardLeft.show(LeftCardContainer, "CampighnPatternLeft");
+		
+		//ExistPatterns ComboBox
+		ExistPatternsComboBox = GuiScreen.getExistPatternsComboBox();
+		ExistPatternsComboBox.addActionListener(this);
+		ExistPatternsComboBox.setActionCommand("ExistPatternSelection"); //Add action command
+		
+		//PatternKind ComboBox
+		PatternKindComboBox=GuiScreen.getPatternKindComboBox();
+		PatternKindComboBox.addActionListener(this);
+		PatternKindComboBox.setActionCommand("ChangePatternKindSelection"); //Add action command
+	
+		//Description TextArea 
+		DescriptionTextArea = GuiScreen.getDescriptionTextArea();
+		//Add FocusListener to TextArea to get automatic Description
+		DescriptionTextArea.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				if (DescriptionTextArea.getText().equals(""))
+					GuiScreen.setAutoTextToDescriptionTextArea(PatternKindComboBox.getSelectedIndex());
+			}
+		});		
+		
+		//Create Button
+		CreatePatternButton = GuiScreen.getCreatePatternButton();
+		CreatePatternButton.addActionListener(this);
+		CreatePatternButton.setActionCommand("CreatePattern"); //Add action command
+		
+		//get existPatternRefresh from DB
+		callbackStringArray existPatternRefresh = new callbackStringArray(MessageType.getExistCampaignPatterns);
+		Server.handleMessageFromClient(existPatternRefresh);
+		
+	}
+	
+	private void HandleCreatePatternPressed(){
+		
+		InsertFuelAmountTextField = GuiScreen.getInsertFuelAmountTextField();
+		DescriptionTextArea = GuiScreen.getDescriptionTextArea();
+		
+		// checking Inserted Fuel Amount in FuelAmount chosen case
+		if (PatternKindComboBox.getSelectedIndex()==1)
+			if ( !InsertFuelAmountTextField.getText().equals("")  && Checks.isNumeric(InsertFuelAmountTextField.getText() )  )
+				if (Integer.parseInt(InsertFuelAmountTextField.getText()) > 0)
+					GuiScreen.getInvalidFuelAmountLabel().setVisible(false);
+				else GuiScreen.getInvalidFuelAmountLabel().setVisible(true);
+			else GuiScreen.getInvalidFuelAmountLabel().setVisible(true);
+		
+		// checking if DescriptionTextArea is empty
+		if (DescriptionTextArea.getText().equals(""))
+			GuiScreen.getEmptyDescriptionTextAreaMessage().setVisible(true);
+		else GuiScreen.getEmptyDescriptionTextAreaMessage().setVisible(false);
+		
+		// if we don't have invalid messages - send new pattern to server
+		if ( !GuiScreen.getEmptyDescriptionTextAreaMessage().isVisible() && !GuiScreen.getInvalidFuelAmountLabel().isVisible())
+		{
+			callbackCampaignPattern newCampaignPattern = GuiScreen.getNewCampaignPatternCallback();
+			Server.handleMessageFromClient( newCampaignPattern);
+		}
+		
+	}
+	
+	private void HandleCreatePatternPressedBackFromServer(CallBack LocalUserCallBack){		
+		// Success case
+		if  (LocalUserCallBack instanceof callbackSuccess)
+		{
+			GuiScreen.getSuccessAddPatternMessageLabel().setVisible(true);
+			GuiScreen.getPatternExistInDbMessageLabel().setVisible(false);
+			//get existPatternRefresh from DB - add the new pattern to existPattern comboBox
+			callbackStringArray existPatternRefresh = new callbackStringArray(MessageType.getExistCampaignPatterns);
+			Server.handleMessageFromClient(existPatternRefresh);
+		}
+		else  // Error case
+		{
+			GuiScreen.getSuccessAddPatternMessageLabel().setVisible(false);
+			GuiScreen.getPatternExistInDbMessageLabel().setVisible(true);
+		}
+	}
+	
+	private void HandlegetExistCampaignPatternsBackFromServer(callbackStringArray callBack){
+		
+		GuiScreen.SetExistPatternsSelection((String[])callBack.getComboBoxStringArray());
+		GuiScreen.setExistPatternsCallbackArray((callbackCampaignPattern[])callBack.getVariance());
+	}
+	
+	private void HandleGenerateReportPressed(){
+
+		GuiScreen.getUpdateSuccessMessageLabel().setVisible(false);
+		GuiScreen.getUpdateRateButton().setVisible(false);
+		
+		// Create GUI layer
+		GuiScreen.RatesReportlLayer();
+		
+		//get RatesReportTable from DB
+		callbackStringArray RatesReportTable = new callbackStringArray(MessageType.getAnalyticSystemRatingCalculation);
+		Server.handleMessageFromClient(RatesReportTable);			
+	}
+	
+	private void HandleGenerateReportBackFromServer(callbackStringArray RatesReportTable){
+		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
+		
+		// set report table on GUI table
+		GuiScreen.setRatesReportTable(RatesReportTable.getDefaultTableModel());
+		
+		// define hander to Export Button
+		new JTableToExcel(GuiScreen.getRatesReportExportButton(), GuiScreen.getRatesReportTable());
+
+		ContainerCardCenter.show(CenterCardContainer, "RatesReportLayerCenter");				//The RatesReport layer will be display											
+		GuiScreen.getUpdateRateButton().setVisible(true);
+	
+	}
+	
+	private void HandleUpdateRatePressed(){
+		
+		//updates Rates to DB
+		callbackStringArray UpdateRates = new callbackStringArray(MessageType.updateAnalyticSystemRatingCalculation);
+		Server.handleMessageFromClient(UpdateRates);			
+	}
+	
+	private void HandleUpdateRateBackFromServer(CallBack LocalUserCallBack){
+		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
+		
+		if  (LocalUserCallBack instanceof callbackSuccess){
+			GuiScreen.getUpdateSuccessMessageLabel().setVisible(true);
+			ContainerCardCenter.show(CenterCardContainer, "EmptyCenterPanel");				//The RatesReport layer will be display											
+
+		}	
+	}
+	
 	@Override
 	public void update(Observable o, Object arg) {
 		if(arg instanceof CallBack){
@@ -457,7 +728,21 @@ public class MarketingRepresentativeController extends Controller{
 				case getCarDetailes:
 					HandleAddCarPressedBackFromServer((callbackStringArray) arg);
 					break;					
-					
+				case getAnalyticSystemRatingCalculation:
+					HandleGenerateReportBackFromServer((callbackStringArray) arg);
+					break;				
+				case updateAnalyticSystemRatingCalculation:
+					HandleUpdateRateBackFromServer((CallBack) arg);
+					break;	
+				case setNewCampignPattern:
+					HandleCreatePatternPressedBackFromServer((CallBack) arg);
+					break;
+				case getExistCampaignPatterns:
+					HandlegetExistCampaignPatternsBackFromServer((callbackStringArray) arg);
+					break;	
+				case updateCustomerCar:
+					HandleSaveCarsDetailsPressedBackFromServer((CallBack) arg);
+					break;						
 			default:
 				super.update(o, arg);
 				break;
@@ -466,11 +751,12 @@ public class MarketingRepresentativeController extends Controller{
 		
 		
 		// getMarketingRepresentativeComboBox  only case
-		if(arg instanceof Vector<?>){
+		else if(arg instanceof Vector<?>){
 			Vector<String[]> ComboBoxs = (Vector<String[]>) arg;
-			GuiScreen.SetComboBoxSelection(ComboBoxs.get(0));
+			GuiScreen.SetComboBoxSelection(ComboBoxs.get(0));  // purcase plan combo box
 			GuiScreen.SetFuelIDComboBoxSelection(ComboBoxs.get(1));
 			GuiScreen.SetCostingModelComboBoxSelection(ComboBoxs.get(2));
+			GuiScreen.setGasStationsComboBox(ComboBoxs.get(3));
 		}
 			
 		
@@ -480,5 +766,7 @@ public class MarketingRepresentativeController extends Controller{
 	public callbackCustomer getFullCallbackCustomer() {
 		return fullCallbackCustomer;
 	}
+
+
 }
 
