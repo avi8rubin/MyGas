@@ -76,7 +76,7 @@ public class MarketingManagerController extends Controller {
 		TariffButton.addActionListener(this);
 		TariffButton.setActionCommand("Tariff");								
 		
-//		Tariff Update Button
+		//Tariff Update Button
 		UpdateButton = GuiScreen.getUpdateButton();
 		UpdateButton.addActionListener(this);
 		UpdateButton.setActionCommand("Update Button");								
@@ -95,25 +95,18 @@ public class MarketingManagerController extends Controller {
 		CustomerCharacterizationReportButton= GuiScreen.getCustomerCharacterizationReportButton();
 		CustomerCharacterizationReportButton.addActionListener(this);
 		CustomerCharacterizationReportButton.setActionCommand("Customer Characterization");
-//		
-//		ExportButton2= GuiScreen.getExport2Button();
-//		ExportButton2.addActionListener(this);
-//		ExportButton2.setActionCommand("Export CustomerCharacterization Report");	
-		
+
 		ProduceButton=GuiScreen.getproduceButton();
 		ProduceButton.addActionListener(this);
 		ProduceButton.setActionCommand("Produce CustomerCharacterization Report");	
 
 		Datelabel=GuiScreen.getErrorDateLabel();
+		
 		//Comments For Marketing Campaign
 		CommentsForMarketingCampaignButton=GuiScreen.getCommentsForMarketingCampaignButton();
 		CommentsForMarketingCampaignButton.addActionListener(this);
 		CommentsForMarketingCampaignButton.setActionCommand("Comments For Marketing Campaign");	
-//		
-//		ExportButton= GuiScreen.getExportButton();
-//		ExportButton.addActionListener(this);
-//		ExportButton.setActionCommand("Export CommentsForMarketingCampaign Report");		
-//		//
+
 		ComboBoxSelection=GuiScreen.getComboBox();
 		ComboBoxSelection.addActionListener(this);
 		ComboBoxSelection.setActionCommand("Change ComboBox selection");	
@@ -126,7 +119,12 @@ public class MarketingManagerController extends Controller {
 		Datelabel2=GuiScreen.getErrorDateLabel2();
 		
 	}
-
+/**
+ * actionPerformed- attach the buttons to their action event handlers and 
+ * Adding the appropriate window layer according to the selected action
+ * @param ActionEvent
+ * 
+ */
 	public void actionPerformed(ActionEvent e) {
 		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
 		ContainerCardLeft	= (CardLayout)(LeftCardContainer.getLayout());
@@ -140,9 +138,6 @@ public class MarketingManagerController extends Controller {
 			GuiScreen.setTariffErrorLabel("");
 			HandleUpdateFuelFromComboBox();
 		}
-//		else if(e.getActionCommand().equals("Change Fuel ComboBox selection")){
-//			//HandleChangeFuelFromComboBox();
-//		}
 		else if(e.getActionCommand().equals("CreateReports")){
 			ContainerCardCenter.show(CenterCardContainer,"EmptyCenterPanel");
 			ContainerCardLeft.show(LeftCardContainer, "ReportsLeft");
@@ -160,36 +155,25 @@ public class MarketingManagerController extends Controller {
 			GuiScreen.setDates();
 			Datelabel.setText("");
 		}		
-//		else if(e.getActionCommand().equals("Export CustomerCharacterization Report")){
-//			new JTableToExcel(GuiScreen.getExport2Button(), GuiScreen.getCustomerCharacterizationReportTable());
-//		}
-		
 		else if(e.getActionCommand().equals("Produce Cu"
 				+ "stomerCharacterization Report")){
 			HandleCustomerCharacterizationReport();											
 		}
-		
-		//
 		else if(e.getActionCommand().equals("Change ComboBox selection")){
 			HandleChangeCampaignFromComboBox();
-
 		}
 		else if(e.getActionCommand().equals("Comments For Marketing Campaign")){
 			ContainerCardCenter.show(CenterCardContainer, "CommentsForMarketingCampaignReport");
 			HandleCommentsForMarketingCampaignCombo();
 		}
-
-//		else if(e.getActionCommand().equals("Export CommentsForMarketingCampaign Report")){
-//			new JTableToExcel(GuiScreen.getExportButton(), GuiScreen.getCommentsTable());
-//		}
-		//
 		else if(e.getActionCommand().equals("start sale")){	
 			HandleActivateSaleCampaignButtonPressed();
-		}
-		
-		
+		}	
 	}
 	
+	/**
+	 * HandleUpdateFuelFromComboBox- handle the action of determining a new rate for the fuels
+	 */
 	private void HandleUpdateFuelFromComboBox(){
 		GuiScreen.setTariffErrorLabel("");
 		String fuelType=GuiScreen.getFuelComboBoxSelection();
@@ -223,18 +207,28 @@ public class MarketingManagerController extends Controller {
 										+ "between 0 and "+maxTariff+"</html>");	
 		}
 	}
-
-//	private void HandleExportReport() {
-//		
-//	}
 	
+	/**
+	 * HandleTariffPressed- Create a query to get the fuels table information from the DB
+	 */
 	private void HandleTariffPressed(){
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getFuelsDetailes));
 	}
+	/**
+	 * HandleChangeCampaignFromComboBox- Create a query to get the fuels for the
+	 * Campaigns comboBox
+	 * CommentsForMarketionFlag- Variable that distinguishes between two types 
+	 * of queries with the same type of message
+	 */
 	private void HandleChangeCampaignFromComboBox(){	
 		CommentsForMarketionFlag=false; 
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCommentsForMarketionCampaign));
 	}
+	/**
+	 * Server_ChangeCampaignFromComboBox- after getting an answer from the server- add the 
+	 * patterns to the comboBox 
+	 * @param CampaignTable
+	 */
 	public void Server_ChangeCampaignFromComboBox(callbackStringArray CampaignTable){
 		String patternSelected=GuiScreen.getComboBoxSelection();
 		int PattentIndex[] = new int[1]; 
@@ -250,10 +244,20 @@ public class MarketingManagerController extends Controller {
 			GuiScreen.setCommentsForMarketingCampaignTable(table);
 		}
 	}
+	/**
+	 * HandleCommentsForMarketingCampaignCombo- Create a query to get the fuels table 
+	 * of the Comments For Marketion Campaign Report from the DB
+	 * CommentsForMarketionFlag- Variable that distinguishes between two types 
+	 * of queries with the same type of message
+	 */
 	private void HandleCommentsForMarketingCampaignCombo(){
 		CommentsForMarketionFlag=true;
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCommentsForMarketionCampaign));
 	}
+	/**
+	 * HandleCustomerCharacterizationReport- get the date of the wanted report from the user,
+	 * check that it is valid and if it is- send a qeury to the server to ger the wanted report
+	 */
 	private void HandleCustomerCharacterizationReport(){
 		String startDate=GuiScreen.getStartDate(); 
 		String endDate=GuiScreen.getEndDate();
@@ -270,9 +274,18 @@ public class MarketingManagerController extends Controller {
 		Server.handleMessageFromClient(createCustomerTable);
 		}
 	}	
+	/**
+	 * HandleActivateSaleCampaignPressed- send a query to the server to get the patterns and 
+	 * active campaign table
+	 */
 	private void HandleActivateSaleCampaignPressed() {
 		Server.handleMessageFromClient(new callbackStringArray(MessageType.getCampaignPatternAndActiveCampaign));
 	}
+	/**
+	 * HandleActivateSaleCampaignButtonPressed- after pressing the activate sale campaign, check
+	 * that all fields are filled correctly and send a query to the server to add the new
+	 * campaign sale
+	 */
 	private void HandleActivateSaleCampaignButtonPressed(){
 		
 		String startDate=GuiScreen.getStartSaleDate();

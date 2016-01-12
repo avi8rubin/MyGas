@@ -30,6 +30,8 @@ import common.MessageType;
  */
 public class CustomerController extends Controller{
 
+	int checkFields=0;
+ 
 	private CustomerGUI GuiScreen;
 	private CardLayout ContainerCardCenter;
 	
@@ -101,14 +103,6 @@ public class CustomerController extends Controller{
 		/* -------- Check the source of the event ---------*/
 		if(e.getActionCommand().equals("Buy Home Fuel")){
 			ContainerCardCenter.show(CenterCardContainer, "BuyHomeFuel");
-		
-//			GuiScreen.setCalcPricetextArea("");
-//			GuiScreen.setAddress("");
-//			GuiScreen.DisablePayButton();
-//			GuiScreen.DisableCancleButton();
-//			GuiScreen.setFuelAmount("");
-//			GuiScreen.setDate();
-//			GuiScreen.setTime("");
 			GuiScreen.cleanScreen();
 			HandleCheckCustomerCreditCard();
 		}		
@@ -133,81 +127,91 @@ public class CustomerController extends Controller{
 	 * HandleCalcButtonPressed- check if all relevant fields are correctly filled and print
 	 * to the Gui the description of the sale price.
 	 * @author Litaf
-
 	 */
 	private void HandleCalcButtonPressed(){
-			
-		int checkFields=0;
-		ErrorAmount.setText("");
-		ErrorDeliveryTimeLabel.setText("");
-		DateLabel.setText("");
 		
-		sale= new callbackSale(MessageType.setNewHomeFuelSale);
-		sale.setFuelID(3);
-			
-		//check validation of fuel amount
-		FuelStr= GuiScreen.getFuelAmount();
-		if(Checks.isFloat(FuelStr) && !FuelStr.equals("")){
-			ErrorAmount.setText("");
-			checkFields++;
-			sale.setFuelAmount(Float.parseFloat(FuelStr));
-		}
-		else
-			ErrorAmount.setText("*Incorrect Fuel Amount");
-		
-		//check validation of delivery date
-		dateStr=GuiScreen.getDate();
-		if(Checks.isDateValid(dateStr) || !dateStr.equals("")){
-			checkFields++;
-			DateLabel.setText("");
-			sale.setDeliveryDate(dateStr);
-		}
-		else
-			DateLabel.setText("*Incorrect Date");
-	
-		//check Address exist
-		if(GuiScreen.getAddrres().equals(""))
-			ErrorAddressLabel.setText("*Address Missing");
-		else{
-			checkFields++;
-			sale.setAddress(GuiScreen.getAddrres());
-			ErrorAddressLabel.setText("");
-		}
-		
-		//check time validation
-		timeStr=GuiScreen.getTime();
-		timeStr=timeStr.substring(0,2)+":"+timeStr.substring(5,7);
-		if(Checks.isTimeValid(timeStr, dateStr) && !timeStr.equals("/") ){
-			checkFields++;
-			sale.setDeliveryTime(timeStr);
-			ErrorDeliveryTimeLabel.setText("");
-		}
-		else
-		ErrorDeliveryTimeLabel.setText("*Incorrect Time");
-
+		checkFields=CheckAllValidFileds();
 		//check if all fields added successfully
 		if(checkFields==4) {
 			GuiScreen.EnablePayButton();
 			GuiScreen.EnableCancleButton();
 			Server.handleMessageFromClient(new callbackStringArray(MessageType.getFuelsDetailes));
 		}
+		else{
+			GuiScreen.DisablePayButton();
+			GuiScreen.DisableCancleButton();
 		}
-		/**
-		 * HandleCancelButton- remove all information from customer sale that was cancled
-		 */
-		private void HandleCancelButton(){
 			
+		}
+	/**
+	 *CheckAllValidFileds- check if all relevant fields are correctly filled 
+	 * @author Litaf
+	 */
+	private int CheckAllValidFileds() {
+		
+	checkFields=0;
+	ErrorAmount.setText("");
+	ErrorDeliveryTimeLabel.setText("");
+	DateLabel.setText("");
+	
+	sale= new callbackSale(MessageType.setNewHomeFuelSale);
+	sale.setFuelID(3);
+		
+	//check validation of fuel amount
+	FuelStr= GuiScreen.getFuelAmount();
+	if(Checks.isFloat(FuelStr) && !FuelStr.equals("")){
+		ErrorAmount.setText("");
+		checkFields++;
+		sale.setFuelAmount(Float.parseFloat(FuelStr));
+	}
+	else
+		ErrorAmount.setText("*Incorrect Fuel Amount");
+	
+	//check validation of delivery date
+	dateStr=GuiScreen.getDate();
+	if(Checks.isDateValid(dateStr) || !dateStr.equals("")){
+		checkFields++;
+		DateLabel.setText("");
+		sale.setDeliveryDate(dateStr);
+	}
+	else
+		DateLabel.setText("*Incorrect Date");
+
+	//check Address exist
+	if(GuiScreen.getAddrres().equals(""))
+		ErrorAddressLabel.setText("*Address Missing");
+	else{
+		checkFields++;
+		sale.setAddress(GuiScreen.getAddrres());
+		ErrorAddressLabel.setText("");
+	}
+	
+	//check time validation
+	timeStr=GuiScreen.getTime();
+	timeStr=timeStr.substring(0,2)+":"+timeStr.substring(5,7);
+	if(Checks.isTimeValid(timeStr, dateStr) && !timeStr.equals("/") ){
+		checkFields++;
+		sale.setDeliveryTime(timeStr);
+		ErrorDeliveryTimeLabel.setText("");
+	}
+	else
+		ErrorDeliveryTimeLabel.setText("*Incorrect Time");
+	 return checkFields;
+		
+	}
+	
+	
+	/**
+	* HandleCancelButton- remove all information from customer sale that was cancled
+	*@author Litaf
+	*/
+		private void HandleCancelButton(){
 			JOptionPane.showMessageDialog(null, "Purchase has been cancelled, no charge was made", 
 					"", JOptionPane.INFORMATION_MESSAGE);
 			GuiScreen.cleanScreen();
-//			GuiScreen.setCalcPricetextArea("");
-//			GuiScreen.setAddress("");
-//			GuiScreen.setDate();
-//			GuiScreen.setFuelAmount("");
-//			GuiScreen.setTime("");
-//			GuiScreen.DisablePayButton();
-//			GuiScreen.DisableCancleButton();
-		};
+			GuiScreen.DisablePayButton();
+			GuiScreen.DisableCancleButton();
+		}
 		
 			/**
 			 * Server_CalculatePayment- check if customer order fit one of the 
@@ -333,8 +337,15 @@ public class CustomerController extends Controller{
 		 * @param customer
 		 * @author Litaf
 		 */
+		public boolean CheckForCreditCard(callbackCustomer customer){
+			if(customer.getCreditCard().equals(""))
+				return false;
+			return true;
+
+		}
 		private void Server_HandleCheckCustomerCreditCard(callbackCustomer customer) {
-			if(customer.getCreditCard().equals("")){
+			
+			if(CheckForCreditCard(customer)){
 				JOptionPane.showMessageDialog(null, "Customer "+GuiScreen.getCurrentUserName()+
 						"\nCan't buy home fuel because there is no credit card information"+
 						"in the system\nPlease contact a service representative to proceed", 
@@ -371,7 +382,7 @@ public class CustomerController extends Controller{
 			if(arg instanceof CallBack){	
 				switch(((CallBack) arg).getWhatToDo()){
 					case getFuelsDetailes:
-						callbackStringArray TariffTable = (callbackStringArray) arg;		
+						callbackStringArray TariffTable = (callbackStringArray) arg;	
 						Server_CalculatePayment(TariffTable);
 						break;
 					case setWaitingTariff:
