@@ -162,6 +162,7 @@ public class abstractPanel_GUI extends JFrame{
 					User.setWhatToDo(MessageType.updateUserLogout);
 					Server.handleMessageFromClient(User);
 				}
+				
 				NotificationThrerad.setNotificationFlag(false);					//Stop notification thread
 				LoginScreen.setVisible(true);									//Go to login screen
 				ThisScreen.setVisible(false);									//Set invisible current screen

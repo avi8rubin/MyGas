@@ -17,6 +17,7 @@ import GUI.CEOGUI;
 import callback.CallBack;
 import callback.callbackBuffer;
 import callback.callbackStringArray;
+import callback.callbackSuccess;
 import callback.callbackUser;
 import callback.callbackVector;
 import callback.callbackWaitingTariff;
@@ -58,7 +59,8 @@ public class CEOController extends Controller {
 		TariffSaveButton = GuiScreen.getTariffSaveButton();
 		TariffSaveButton.addActionListener(this);
 		/* ------------------------------------------- */
-
+		
+		GuiScreen.getCheckBox().addActionListener(this);
 	}
 
 	@Override
@@ -73,6 +75,7 @@ public class CEOController extends Controller {
 		if(e.getSource() == TariffSaveButton){
 			HandleSavePressed();
 		}		
+		if(e.getSource() == GuiScreen.getCheckBox()) Server.handleMessageFromClient(new callbackSuccess(MessageType.StartSender));
 	}
 /**
  * Sends request to query from DB

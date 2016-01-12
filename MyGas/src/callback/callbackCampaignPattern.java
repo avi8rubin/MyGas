@@ -1,7 +1,5 @@
 package callback;
 
-import java.sql.Time;
-
 import common.MessageType;
 
 public class callbackCampaignPattern extends CallBack {
@@ -55,6 +53,7 @@ public class callbackCampaignPattern extends CallBack {
 
 	public void setCampaignTypeIdServer(int campaignTypeIdServer) {
 		CampaignTypeIdServer = campaignTypeIdServer;
+		CampaignTypeIdClient = convertToCampaignTypeIdServerToClient(campaignTypeIdServer);
 	}
 
 	public int getCampaignTypeIdClient() {
@@ -121,4 +120,23 @@ public class callbackCampaignPattern extends CallBack {
 		CustomerRate = customerRate;
 	}
 
+	public int convertToCampaignTypeIdServerToClient(int CampaignTypeIdServer) {
+		
+		switch	(CampaignTypeIdServer){
+		case 4: // Fuel Amount
+			return 1;
+		case 3: // Fuel Type
+			return 2;
+		case 5: //Gas Station
+			return 3;
+		case 1: //Hours
+			return 4;
+		case 6: //Rate
+			return 5;
+	default:
+		return 0;
+	}	
+	}
+	
+	
 }
