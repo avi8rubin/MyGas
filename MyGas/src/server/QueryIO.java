@@ -2076,10 +2076,7 @@ public class QueryIO implements Runnable {
 		
 		try {
 			PreparedStatement ps0=conn.prepareStatement("SELECT Sales_ID FROM All_Home_Fuel_Sales WHERE Customers_ID =(?)");
-			PreparedStatement ps1=conn.prepareStatement(
-					"UPDATE Home_Fuel_Sales SET Order_Status = 'Delivered' "+
-					"WHERE Sales_ID IN (?) "+
-					"AND Delivery_Date < NOW()");
+			PreparedStatement ps1;
 			PreparedStatement ps2=conn.prepareStatement(
 					"SELECT DATE_FORMAT(Sale_Date,'%d/%m/%Y %T') AS Sale_Date_And_Time "+
 					", Address "+
@@ -2102,8 +2099,13 @@ public class QueryIO implements Runnable {
 			}
 			if(!Sale_ID.equals("(")){	
 				Sale_ID = Sale_ID+"0)";
-				//Update customer orders status 			
-				ps1.setString(1, Sale_ID);
+				//Update customer orders status 
+				
+				ps1=conn.prepareStatement(
+						"UPDATE Home_Fuel_Sales SET Order_Status = 'Delivered' "+
+						"WHERE Sales_ID IN "+Sale_ID+
+						" AND Delivery_Date < NOW()");
+				//ps1.setString(1, Sale_ID);
 				ps1.executeUpdate();
 			}
 			
