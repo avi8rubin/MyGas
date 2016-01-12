@@ -265,12 +265,12 @@ public class CustomerController extends Controller{
 					}
 					
 				}
-				else if(Integer.parseInt(FuelStr)>=600 && Integer.parseInt(FuelStr)<=800){
+				else if(Float.parseFloat(FuelStr)>=600 && Float.parseFloat(FuelStr)<=800){
 					sale.setPayment((float)(SumPrice*0.97));
 					RemarksString="<html>*Discount of 3% for reservation of  600-800 liters</html>";
 					PrintSaleTemplate(SumPrice,RemarksString,-0.03, FuelPrice, "+Discount");	
 				}
-				else if(Integer.parseInt(FuelStr)>800){
+				else if(Float.parseFloat(FuelStr)>800){
 					sale.setPayment((float)(SumPrice*0.96));
 					RemarksString="<html>*Discount of 3% for reservation of  600-800 liters</html>";
 					PrintSaleTemplate(SumPrice,RemarksString,-0.04, FuelPrice, "+Discount");	
