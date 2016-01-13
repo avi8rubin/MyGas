@@ -67,7 +67,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	 * If newCustomerFlag=1 , CreateNewCustomerAccountLayer process using those common layers to create new customer account.
 	 * If newCustomerFlag=0 , AddPersonalDetails process using those common layers to update customer account's details.
 	 */
-	private static boolean newCustomerFlag=true;
+	private boolean newCustomerFlag=true;
 	
 	/**
 	 * Gui variables

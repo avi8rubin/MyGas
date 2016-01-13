@@ -18,7 +18,5 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/MyGas/unittests/junit-4.12-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="jcommon-1.0.23.jar"/>
-	<classpathentry kind="lib" path="jfreechart-1.0.19.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

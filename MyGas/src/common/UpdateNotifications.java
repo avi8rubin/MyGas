@@ -111,6 +111,9 @@ public class UpdateNotifications implements Runnable,Observer {
 					Notification = (callbackStringArray) arg;
 					setNotificationsTable(Notification.getDefaultTableModel());
 				break;
+				case updateUserLogout:
+					Server.deleteObserver(this);
+					break;
 			}
 		}
 	}
