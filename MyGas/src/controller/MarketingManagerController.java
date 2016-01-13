@@ -4,8 +4,6 @@ package controller;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.util.Observable;
-import java.util.Vector;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -23,7 +21,6 @@ import callback.callbackVector;
 import callback.callback_Error;
 import client.Client;
 import common.Checks;
-import common.JTableToExcel;
 import common.MessageType;
 /**
  * callbackTariffUpdate- ontrol all the components of the Marketing manger Gui
@@ -49,9 +46,9 @@ public class MarketingManagerController extends Controller {
 	private JButton UpdateButton;
 //
 	private JButton CustomerCharacterizationReportButton;
-	private JButton ExportButton2;
+	//private JButton ExportButton2;
 	private JButton CommentsForMarketingCampaignButton;
-	private JButton ExportButton;
+	//private JButton ExportButton;
 	private JButton ProduceButton;
 
 	private JComboBox<?> ComboBoxSelection;
