@@ -1,16 +1,14 @@
 package callback;
 
 import common.MessageType;
-
+/**
+ * This callback represent Tariff waiting for CEO
+ * Contain
+ * Global : TariffUpdateID,TariffUpdateDate, FuelID, FuelDescription, WantedPrice, CurrentPrice, CEOConfirmation;
+ */
 public class callbackWaitingTariff extends CallBack {
 	
-	/**
-	 * Create for CEO GUI
-	 */
 	private static final long serialVersionUID = 1L;
-	/**
-	 * CallBack Variables
-	 */
 	private int TariffUpdateID;
 	private String TariffUpdateDate;
 	private int FuelID;

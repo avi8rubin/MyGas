@@ -1,12 +1,14 @@
 package callback;
 
 import common.MessageType;
-
+/**
+ * This callback represent Tariff update 
+ * Contain
+ * Global :FuelID,FuelDescription,CurrentPrice,MaxPrice, NewPrice,WantedPrice;
+ *
+ */
 public class callbackTariffUpdate extends CallBack {
 
-	/**
-	  * Create for Marketing Manager GUI
-	 */
 	private static final long serialVersionUID = 1L;
 	private int FuelID;
 	private String FuelDescription;

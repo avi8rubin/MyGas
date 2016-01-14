@@ -1,14 +1,14 @@
 package callback;
 
 import common.MessageType;
-
+/**
+ * This callback represent Station Fuel 
+ * Contain GasStationID, FuelID,ThresholdLimit, CurrentAmount,Capacity,FuelDescription,MaxPrice,CurrentPrice;
+ *
+ */
 public class callbackStationFuels extends CallBack{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = 1L;	
 	private int GasStationID;
 	private int FuelID;
 	private int ThresholdLimit;
