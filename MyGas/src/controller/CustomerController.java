@@ -206,8 +206,9 @@ public class CustomerController extends Controller{
 	*@author Litaf
 	*/
 		private void HandleCancelButton(){
-			JOptionPane.showMessageDialog(GuiScreen, "Purchase has been cancelled, no charge was made", 
-					"", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(GuiScreen,
+					"Purchase has been cancelled, no charge was made", 
+					"Information", JOptionPane.INFORMATION_MESSAGE);
 			GuiScreen.cleanScreen();
 			GuiScreen.DisablePayButton();
 			GuiScreen.DisableCancleButton();
@@ -390,12 +391,14 @@ public class CustomerController extends Controller{
 					case setNewHomeFuelSale:
 						CallBack temp =  (CallBack) arg;
 						if(temp instanceof callbackSuccess){
-							JOptionPane.showMessageDialog(GuiScreen, "Your order was added successfully, "
+							JOptionPane.showMessageDialog(GuiScreen,
+									"Your order was added successfully, "
 									+ "you can watch your orders in the 'Check Fuel Orders'", 
 									"Information", JOptionPane.INFORMATION_MESSAGE);
 							}
 						else{
-							JOptionPane.showMessageDialog(GuiScreen, "Error has occurred, no charge was made",
+							JOptionPane.showMessageDialog(GuiScreen,
+									"Error has occurred, no charge was made",
 									"Error", JOptionPane.INFORMATION_MESSAGE);
 							}	
 						break;
@@ -423,22 +426,6 @@ public class CustomerController extends Controller{
 				}					
 				}
 			else if(arg instanceof Vector){
-//			switch(((CallBack) arg).getWhatToDo()){				
-//			case getHomeFuelOrders:
-//				CallBack temp1 =  (CallBack) arg;
-//				if(temp1 instanceof callbackSuccess){
-//					JOptionPane.showMessageDialog(null, "No Orders to show", 
-//							"", JOptionPane.INFORMATION_MESSAGE);
-//					}
-//				else {
-//					callbackStringArray orders=(callbackStringArray) temp1;
-//					GuiScreen.setHomeFuelOrdersTable(orders.getDefaultTableModel());
-//					}	
-//				break;
-//			default:
-//				break;
-//			}
-
 					
 			}
 		}
