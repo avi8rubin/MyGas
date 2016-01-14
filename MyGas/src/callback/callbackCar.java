@@ -1,12 +1,12 @@
 package callback;
 
 import common.MessageType;
-
+/**
+ * Class that contain all values of cars objects
+ * @author Ohad
+ */
 public class callbackCar extends CallBack{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private int CarID;
 	private String CarNumber;
@@ -39,10 +39,18 @@ public class callbackCar extends CallBack{
 	public void setCustomerID(int customerID) {
 		CustomerID = customerID;
 	}
+	/**
+	 * Return if the car have NFC
+	 * @return - true/false
+	 */
 	public boolean hasNFC() {
 		if(NFC.equals("Yes")) return true;
 		return false;
 	}
+	/**
+	 * Set NFC of remove NFC
+	 * @param NFC - true/false
+	 */
 	public void setNFC(boolean NFC) {
 		if(NFC) this.NFC = "Yes";
 		else this.NFC = "No";

@@ -2,12 +2,13 @@ package callback;
 
 
 import common.MessageType;
-
+/**
+ * Return all the campaigns on system
+ * @author Ohad
+ *
+ */
 public class callbackCampaign extends CallBack{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private int CampaignID;
 	private int CampaignPatternsID;
@@ -43,6 +44,12 @@ public class callbackCampaign extends CallBack{
 	public void setStartCampaignDate(String startCampaignDate) {
 		StartCampaignDate = startCampaignDate;
 	}
+	/**
+	 * Create the string on the date special form to mysql
+	 * @param year - years in 4 digits
+	 * @param month - month in 2 digits
+	 * @param day - day in 2 digits
+	 */
 	public void setStartCampaignDate(int year, int month, int day) {
 		StartCampaignDate = String.valueOf(year)+"/"+String.valueOf(month)+"/"+String.valueOf(day);
 	}
@@ -52,6 +59,12 @@ public class callbackCampaign extends CallBack{
 	public void setEndCampaignDate(String endCampaignDate) {
 		EndCampaignDate = endCampaignDate;
 	}
+	/**
+	 * Create the string on the date special form to mysql
+	 * @param year - years in 4 digits
+	 * @param month - month in 2 digits
+	 * @param day - day in 2 digits
+	 */
 	public void setEndCampaignDate(int year, int month, int day) {
 		EndCampaignDate = String.valueOf(year)+"/"+String.valueOf(month)+"/"+String.valueOf(day);
 	}

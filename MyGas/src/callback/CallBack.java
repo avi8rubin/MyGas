@@ -5,7 +5,7 @@ import java.io.Serializable;
 import common.MessageType;
 /**
  * An abstract callback class, implements Serializable
- * @author zinoo
+ * @author Ohad
  *
  */
 public abstract class CallBack implements Serializable{

@@ -1,12 +1,12 @@
 package callback;
 
 import common.MessageType;
-
+/**
+ * Callback of customer with all the needed details.
+ * @author Ohad
+ */
 public class callbackCustomer extends CallBack{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private int UserID =0;
 	private int CustomersID =0;
@@ -146,6 +146,11 @@ public class callbackCustomer extends CallBack{
 	public void setGasStationInPurchasePlan(int[] gasStationInPurchasePlan) {
 		GasStationInPurchasePlan = gasStationInPurchasePlan;
 	}
+	/**
+	 * Check if the current station is allowed to this customer
+	 * @param GasStationID - Current station id
+	 * @return - true/false
+	 */
 	public boolean isAllowToEnterGasStation(int GasStationID) {
 		for (int i=0; i<GasStationInPurchasePlan.length ; i++)
 			if (GasStationInPurchasePlan[i] == GasStationID) return true;

@@ -1,12 +1,13 @@
 package callback;
 
 import common.MessageType;
-
+/**
+ * Class that contain all values of campaign pattern
+ * @author Adir
+ *
+ */
 public class callbackCampaignPattern extends CallBack {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	// Global variables for every pattern
 	private int CampaignPatternsID;
@@ -119,24 +120,26 @@ public class callbackCampaignPattern extends CallBack {
 	public void setCustomerRate(int customerRate) {
 		CustomerRate = customerRate;
 	}
-
+	/**
+	 * Translate values
+	 * @param CampaignTypeIdServer
+	 * @return - Campaign Type Id
+	 */
 	public int convertToCampaignTypeIdServerToClient(int CampaignTypeIdServer) {
 		
 		switch	(CampaignTypeIdServer){
-		case 4: // Fuel Amount
-			return 1;
-		case 3: // Fuel Type
-			return 2;
-		case 5: //Gas Station
-			return 3;
-		case 1: //Hours
-			return 4;
-		case 6: //Rate
-			return 5;
-	default:
-		return 0;
-	}	
+			case 4: // Fuel Amount
+				return 1;
+			case 3: // Fuel Type
+				return 2;
+			case 5: //Gas Station
+				return 3;
+			case 1: //Hours
+				return 4;
+			case 6: //Rate
+				return 5;
+			default:
+				return 0;
+		}	
 	}
-	
-	
 }

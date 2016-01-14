@@ -1,12 +1,12 @@
 package callback;
 
 import common.MessageType;
-
+/**
+ * Callback class that contain marketing campaign
+ *
+ */
 public class callbackCommentsForMarketionCampaign extends CallBack{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private int CampaignID;
 	private String StartCampaign;
@@ -15,8 +15,7 @@ public class callbackCommentsForMarketionCampaign extends CallBack{
 	private int NumberOfCoustomer;
 	private float TotalProfit;
 	private float TotalFuelAmount;
-	
-	
+		
 	public callbackCommentsForMarketionCampaign(MessageType WhatToDo){
 		super(WhatToDo);
 	}

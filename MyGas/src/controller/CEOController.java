@@ -4,13 +4,10 @@ import java.awt.CardLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.util.Observable;
-import java.util.Vector;
-
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
-import javax.swing.plaf.FontUIResource;
 import javax.swing.table.DefaultTableModel;
 
 import GUI.CEOGUI;
@@ -18,12 +15,10 @@ import callback.CallBack;
 import callback.callbackBuffer;
 import callback.callbackStringArray;
 import callback.callbackSuccess;
-import callback.callbackUser;
 import callback.callbackVector;
 import callback.callbackWaitingTariff;
 import client.Client;
 import common.MessageType;
-import common.TableModel;
 /**
  * CEO controller, literally, control the CEO gui
  * @author Ohad

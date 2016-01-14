@@ -4,7 +4,6 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import common.MessageType;
-import common.TableModel;
 import common.BooleanTableModel;
 /**
  * That callback create to have an easy way to ask and receive from server objects for JTable.
@@ -40,13 +39,7 @@ public class callbackStringArray extends CallBack {
 	public JTable getJTableObject(){
 		return new JTable(Data,colHeaders);
 	}
-	/**
-	 * Return TableModel object
-	 * @return - TableModel
-	 */
-	public TableModel getTableModelObject(){
-		return new TableModel(Data,colHeaders);
-	}	
+	
 	/**
 	 * Return DefaultTableModel object
 	 * @return - DefaultTableModel
