@@ -1,12 +1,14 @@
 package callback;
 
 import common.MessageType;
-
+/**
+ * This callback represent Gas station orders 
+ * Contain
+ *Global : OrderID,GasStationID,FuelID,Amount,Confirmation;
+ *
+ */
 public class callbackStationOrders extends CallBack{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private int OrderID;
 	private int GasStationID;

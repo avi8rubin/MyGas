@@ -1,12 +1,16 @@
 package callback;
 
 import common.MessageType;
-
+/**
+ * This class represent sale for Home order and Gas Station
+ * Contain
+ * Global: UserID, SaleID, FuelID, SaleDate,FuelAmount,Payment,CustomersID;
+ *For home fuel sale : DeliveryDateAndTime,DeliveryDate,DeliveryTime,Address,OrderStatus;
+ *For gas station sale : DriverName,CarID,CarNumber,GasStationID, CampaignID ;
+ *
+ */
 public class callbackSale extends CallBack {
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	private int UserID;
 	private int SaleID;
@@ -74,6 +78,15 @@ public class callbackSale extends CallBack {
 	public void setDeliveryDateAndTime(String deliveryDate) {
 		DeliveryDateAndTime = deliveryDate;
 	}
+	/**
+	 * Set new Delivery Data & Time
+	 * @param year - Year 
+	 * @param month - Month 
+	 * @param day - Day 
+	 * @param hour - Hour
+	 * @param minute - Minute
+	 * @param second - Second
+	 */
 	public void setDeliveryDateAndTime(int year, int month, int day, int hour, int minute, int second) {
 		DeliveryDateAndTime = String.valueOf(year)+"-"+String.valueOf(month)+"-"+
 								String.valueOf(day)+" "+String.valueOf(hour)+":"+

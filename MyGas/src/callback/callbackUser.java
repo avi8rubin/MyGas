@@ -2,12 +2,14 @@ package callback;
 import java.io.Serializable;
 
 import common.MessageType;
-
+/**
+ * This callback represent User 
+ * Contain
+ * Global : UserID, UserName, Password, UserTypeId, LoggedIn, UserPrivilege, FirstName, LastName, Email;
+ *
+ */
 public class callbackUser extends CallBack implements Serializable {
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	private int UserID;
 	private String UserName;

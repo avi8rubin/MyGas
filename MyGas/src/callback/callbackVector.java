@@ -4,9 +4,9 @@ import java.util.Vector;
 
 import common.MessageType;
 /**
- * callbackVector class extends Vector class and create to send and receive vector of callbacks.
- * @author Ohad
- *
+ * callbackVector class extends Vector class and create to send and receive vector of callback.
+ * Contain
+ * Global : Data, Headers;
  */
 public class callbackVector extends Vector<CallBack>{
 

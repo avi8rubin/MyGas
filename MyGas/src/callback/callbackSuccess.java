@@ -1,7 +1,12 @@
 package callback;
 
 import common.MessageType;
-
+/**
+ * This callback represent Success by the DB
+ * Contain
+ * Global : SuccessMassage
+ *
+ */
 public class callbackSuccess extends CallBack{
 
 	private static final long serialVersionUID = 1L;

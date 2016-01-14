@@ -1,10 +1,11 @@
 package callback;
-
+/**
+ * This callback represent Worker info
+ * Contain
+ * Global : WorkerID, WorkerFirstName, WorkerLastName, Email, Organization, UserId;
+ */
 public class callbackWorkersDetailes extends CallBack {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private int WorkerID;
 	private String WorkerFirstName;
