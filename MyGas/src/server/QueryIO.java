@@ -1443,8 +1443,7 @@ public class QueryIO implements Runnable {
 		CallBack ReturnCallback;
 		int ColNum;
 		int RowNum =0;
-		String[] Combo;
-		String[][] ComboWithIndex;
+		String[] Date = (String[]) Callback.getVariance();
 		// Build query -----------------------------------------------------------
 		
 		String SqlQuery = 
@@ -1459,6 +1458,7 @@ public class QueryIO implements Runnable {
 				", ROUND(SUM(Fuel_Type_Rate)) AS Fuel_Type_Rate "+
 				", ROUND(SUM(Costing_Model_Rate)) AS New_Rate "+
 				"FROM ( "+
+//----------20%------------
 // Rate	|	Costing Model
 //-------------------------
 //	2.5	|	Casual Fueling-Max price		
@@ -1478,6 +1478,7 @@ public class QueryIO implements Runnable {
 				"	FROM Customers "+
 
 				"	UNION "+
+//  ----------30%------------				
 //	Rate	|	Hour
 //	------------------------
 //	10		|	00:00:00-05:00:00
@@ -1504,6 +1505,7 @@ public class QueryIO implements Runnable {
 				"	GROUP BY A.Customers_ID "+
 
 				"	UNION "+
+//  ----------30%------------
 //	Rate	|	Price
 //	------------------------
 //	1		|	0-100
@@ -1534,7 +1536,7 @@ public class QueryIO implements Runnable {
 				"	GROUP BY A.Customers_ID "+
 
 				"	UNION "+
-
+//  ----------20%------------
 //	Rate	|	Fuel Type
 //----------------------------
 //	2.5		|	Scooters Fuel
@@ -1560,8 +1562,12 @@ public class QueryIO implements Runnable {
 		try {
 			PreparedStatement ps1=conn.prepareStatement("UPDATE Customers SET Carrent_Rate=(?) WHERE Customers_ID=(?)");			
 		// Send query to DB  -----------------------------------------------------
-
-			AnswerResult = st.executeQuery(SqlQuery);
+			
+			if(Date == null)	//Return the rates from the last week
+				AnswerResult = st.executeQuery(SqlQuery);
+			else{				//Return the rates from specific week
+				AnswerResult = st.executeQuery(SqlQuery.replaceAll("DATE(NOW())", "'"+Date[0]+"'"));
+			}
 			/*Create callbackStringArray and send back to client*/
 			if(SelectUpdate == 1){
 				
