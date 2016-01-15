@@ -65,8 +65,11 @@ public abstract class Controller implements ActionListener,Observer{
 	@Override
 	public void update(Observable o, Object arg) {
 		
-		if(arg instanceof callbackLostConnection){
-			GUIScreen.ShowLostConnection();
+		if(arg instanceof callbackLostConnection){ 	//Connection was lost
+			GUIScreen.ShowLostConnection();			//Show on GUI connection lost message
+			Server.deleteObserver(this);			//Delete controller Observer
+			Server.deleteObserver(GUIScreen.getNotificationThrerad());	//Delete Notification Observer
+			GUIScreen.getNotificationThrerad().setNotificationFlag(false); // Stop Notification Threrad
 		}
 		
 		if(arg instanceof CallBack){	
