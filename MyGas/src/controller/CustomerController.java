@@ -33,9 +33,10 @@ import common.Checks;
 import common.MessageType;
 
 /**
- * Customer Controller
- * @author Litaf
- *
+ * CustomerController-  control all the components of the Customer Gui
+ * handle the orders table
+ * handle the option of buying home fuel
+ * @author litaf
  */
 public class CustomerController extends Controller{
 
@@ -77,7 +78,9 @@ public class CustomerController extends Controller{
 		super(Server, CommonBuffer,GuiScreen);
 		this.GuiScreen = GuiScreen;
 		GuiScreen.setVisible(true);
-			
+		/**
+		 * Add action listener to buttons
+		 */
 		BuyHomeFuelButton = GuiScreen.getBuyHomeFuelButton();
 		BuyHomeFuelButton.addActionListener(this);
 		BuyHomeFuelButton.setActionCommand("Buy Home Fuel");							

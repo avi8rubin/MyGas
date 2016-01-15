@@ -9,6 +9,7 @@
  **************************************************************************/
 package controller;
 
+
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.util.Observable;
@@ -31,7 +32,7 @@ import client.Client;
 import common.Checks;
 import common.MessageType;
 /**
- * callbackTariffUpdate- Control all the components of the Marketing manger Gui
+ * callbackTariffUpdate- control all the components of the Marketing manger Gui
  * handle the Creation new rate of the fuels
  * handle the Reports Export
  * handle the creation of new campaigns 
@@ -75,7 +76,9 @@ public class MarketingManagerController extends Controller {
 		this.GuiScreen = GuiScreen;
 		GuiScreen.setVisible(true);
 		
-		/* ------ Add action listener to buttons ------ */
+		/**
+		 * Add action listener to buttons
+		 */
 		//Tariff update Button
 		TariffButton = GuiScreen.getTariffButton();
 		TariffButton.addActionListener(this);
