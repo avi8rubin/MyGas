@@ -532,7 +532,11 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	}
 	/**
 	 * setTariffUpdateTable:
+<<<<<<< HEAD
+	 * 1) add the table model that was recived from the DB to the TariffUpdateTable
+=======
 	 * 1) add the table model that was received from the DB to the TariffUpdateTable
+>>>>>>> refs/remotes/origin/master
 	 * 2) update the FuelscomboBox with the fuel types
 	 * @param NewTableModel
 	 */
@@ -580,7 +584,11 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		return (String)CampaignComboBox.getSelectedItem();
 	}
 	/**
+<<<<<<< HEAD
+	 * SetComboBoxSelection- set the CampaignComboBox with the patterns that recived from the DB
+=======
 	 * SetComboBoxSelection- set the CampaignComboBox with the patterns that received from the DB
+>>>>>>> refs/remotes/origin/master
 	 * @param CampaignPatterns
 	 */
 	public void SetComboBoxSelection(callbackStringArray CampaignPatterns){
@@ -610,7 +618,11 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	}
 	/**
 	 * setCommentsForMarketingCampaignTable- add the table model 
+<<<<<<< HEAD
+	 * that was recived from the DB to the CommentsReportTable
+=======
 	 * that was received from the DB to the CommentsReportTable
+>>>>>>> refs/remotes/origin/master
 	 * @param NewTable
 	 */
 	public void setCommentsForMarketingCampaignTable(DefaultTableModel NewTable){
@@ -642,7 +654,11 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	}
 	/**
 	 * setCustomerCharacterizationReportTable- add the table model 
+<<<<<<< HEAD
+	 * that was recived from the DB to the CustomerCharacterizationReportTable
+=======
 	 * that was received from the DB to the CustomerCharacterizationReportTable
+>>>>>>> refs/remotes/origin/master
 	 * @param NewTable
 	 */
 	public void setCustomerCharacterizationReportTable(DefaultTableModel NewTable){
@@ -664,7 +680,11 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	
 	/**
 	 * setActiveSalesTable- add the table model 
+<<<<<<< HEAD
+	 * that was recived from the DB to the ActiveSalesTable
+=======
 	 * that was received from the DB to the ActiveSalesTable
+>>>>>>> refs/remotes/origin/master
 	 * @param NewTable
 	 */
 	public void setActiveSalesTable(DefaultTableModel NewTable){
@@ -674,7 +694,11 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		ActiveSalesTable.setDefaultRenderer(Object.class, CenterRenderer);
 	}
 /**
+<<<<<<< HEAD
+ * SetComboBoxPattern- set the PatternsComboBox with the patterns that was recived from the DB
+=======
  * SetComboBoxPattern- set the PatternsComboBox with the patterns that was received from the DB
+>>>>>>> refs/remotes/origin/master
  * @param CampaignPatterns
  */
 	public void SetComboBoxPattern(callbackStringArray CampaignPatterns){
