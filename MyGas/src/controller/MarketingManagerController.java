@@ -1,6 +1,5 @@
 package controller;
 
-
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.util.Observable;
@@ -23,7 +22,7 @@ import client.Client;
 import common.Checks;
 import common.MessageType;
 /**
- * callbackTariffUpdate- ontrol all the components of the Marketing manger Gui
+ * callbackTariffUpdate- Control all the components of the Marketing manger Gui
  * handle the Creation new rate of the fuels
  * handle the Reports Export
  * handle the creation of new campaigns 

@@ -309,11 +309,11 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		
 		//buttons left layer
 		CreateUserButton = new JButton("<html>Create User</html>");
-		CreateUserButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		CreateUserButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		CreateUserButton.setBounds(27, 33, 212, 46);
 		
 		AddCarDetailsButton = new JButton("<html>Add Car Details</html>");
-		AddCarDetailsButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		AddCarDetailsButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		AddCarDetailsButton.setBounds(27, 99, 212, 46);
 		AddCarDetailsButton.setVisible(false);
 		
@@ -359,9 +359,8 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		CustomerDetailsLayer.add(SearchButton);
 		
 		InvalidcustomerIDMessageLabel = new JLabel("Invalid customer ID inserted");
+		InvalidcustomerIDMessageLabel.setForeground(Color.WHITE);
 		InvalidcustomerIDMessageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
-		InvalidcustomerIDMessageLabel.setForeground(Color.RED);
-		InvalidcustomerIDMessageLabel.setEnabled(false);
 		InvalidcustomerIDMessageLabel.setVisible(false);
 		InvalidcustomerIDMessageLabel.setBounds(10, 126, 265, 46);
 		CustomerDetailsLayer.add(InvalidcustomerIDMessageLabel);
@@ -455,17 +454,17 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		
 		//buttons left layer
 		GenerateReportButton = new JButton("<html>Generate Report</html>");
-		GenerateReportButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		GenerateReportButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		GenerateReportButton.setBounds(27, 33, 212, 46);
 		
 		UpdateRateButton = new JButton("<html>Update</html>");
-		UpdateRateButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		UpdateRateButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		UpdateRateButton.setBounds(27, 99, 212, 46);
 		UpdateRateButton.setVisible(false);
 		
 		UpdateSuccessMessageLabel = new JLabel("<html>Customers rates<br>updated successfully</html>", SwingConstants.CENTER);
 		UpdateSuccessMessageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
-		UpdateSuccessMessageLabel.setEnabled(false);
+		UpdateSuccessMessageLabel.setForeground(Color.WHITE);
 		UpdateSuccessMessageLabel.setBounds(10, 146, 231, 66);
 		UpdateSuccessMessageLabel.setVisible(false);
 		
@@ -1350,9 +1349,9 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		
 		// PatternKind 
 		PatternKindLabel = new JLabel("Pattern Kind By :");
-		PatternKindLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		PatternKindLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		PatternKindLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		PatternKindLabel.setBounds(45, 19, 164, 34);
+		PatternKindLabel.setBounds(10, 19, 200, 34);
 		CampighnPatternPanel.add(PatternKindLabel);
 		
 		PatternKindComboBox = new JComboBox();
@@ -1365,9 +1364,9 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		
 		// Rates 
 		ChooseRateLabel = new JLabel("Choose Rate :");
-		ChooseRateLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		ChooseRateLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		ChooseRateLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		ChooseRateLabel.setBounds(71, 64, 146, 34);
+		ChooseRateLabel.setBounds(10, 64, 200, 34);
 		CampighnPatternPanel.add(ChooseRateLabel);
 		
 		ChooseRateComboBox = new JComboBox();
@@ -1381,9 +1380,9 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		
 		// Fuel Amount
 		InsertFuelAmountLabel = new JLabel("Insert Fuel Amount :");
-		InsertFuelAmountLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		InsertFuelAmountLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		InsertFuelAmountLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		InsertFuelAmountLabel.setBounds(10, 64, 211, 34);
+		InsertFuelAmountLabel.setBounds(10, 64, 200, 34);
 		CampighnPatternPanel.add(InsertFuelAmountLabel);
 		
 		InsertFuelAmountTextField = new JTextField();
@@ -1401,16 +1400,16 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		
 		// Fuel Type		
 		ChooseFuelTypeLabel = new JLabel("Choose Fuel Type :");
-		ChooseFuelTypeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		ChooseFuelTypeLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		ChooseFuelTypeLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		ChooseFuelTypeLabel.setBounds(20, 64, 201, 34);
+		ChooseFuelTypeLabel.setBounds(10, 64, 200, 34);
 		CampighnPatternPanel.add(ChooseFuelTypeLabel);
 	
 		CampighnPatternPanel.add(FuelTypeComboBox);
 		
 		// Gas Station
 		ChooseGasStationLabel = new JLabel("Choose Gas Station :");
-		ChooseGasStationLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		ChooseGasStationLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		ChooseGasStationLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		ChooseGasStationLabel.setBounds(10, 64, 211, 34);
 		CampighnPatternPanel.add(ChooseGasStationLabel);
@@ -1419,9 +1418,9 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		
 		// Hours - time span
 		ChooseTimeSpanLabel = new JLabel("Choose Time Span :");
-		ChooseTimeSpanLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		ChooseTimeSpanLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		ChooseTimeSpanLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		ChooseTimeSpanLabel.setBounds(10, 67, 211, 34);
+		ChooseTimeSpanLabel.setBounds(10, 64, 200, 34);
 		CampighnPatternPanel.add(ChooseTimeSpanLabel);
 		
 		TimeSpanToLabel = new JLabel("to");
@@ -1450,9 +1449,9 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		
 		// Discount 
 		DiscountLabel = new JLabel("Discount :");
-		DiscountLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		DiscountLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		DiscountLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		DiscountLabel.setBounds(99, 99, 125, 34);
+		DiscountLabel.setBounds(10, 99, 200, 34);
 		CampighnPatternPanel.add(DiscountLabel);
 		
 		DiscountSpinner = new JSpinner();
@@ -1469,9 +1468,9 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		
 		// Description 
 		DescriptionLabel = new JLabel("Description :");
-		DescriptionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		DescriptionLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		DescriptionLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		DescriptionLabel.setBounds(87, 132, 125, 34);
+		DescriptionLabel.setBounds(10, 132, 200, 34);
 		CampighnPatternPanel.add(DescriptionLabel);
 		
 		DescriptionTextArea = new JTextArea();
