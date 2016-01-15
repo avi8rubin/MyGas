@@ -33,9 +33,8 @@ import callback.callbackUser;
 import client.Client;
 import common.JTableToExcel;
 /**
- * Marketing Manager GUI Components
+ * Marketing Manager GUI
  * @author Litaf
- *
  */
 public class MarketingManagerGUI extends abstractPanel_GUI{
 
