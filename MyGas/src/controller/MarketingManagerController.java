@@ -30,7 +30,7 @@ import common.MessageType;
  * @param Server
  * @param CommonBuffer
  * @param GuiScreen
- * @author ליטף	
+ * @author Litaf	
  */
 public class MarketingManagerController extends Controller {
 	/**
@@ -368,4 +368,3 @@ public class MarketingManagerController extends Controller {
 
 	}
 }
-

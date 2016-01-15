@@ -24,8 +24,8 @@ import common.Checks;
 import common.MessageType;
 
 /**
- * CustomerController
- * @author ליטף
+ * Customer Controller
+ * @author Litaf
  *
  */
 public class CustomerController extends Controller{
@@ -430,4 +430,3 @@ public class CustomerController extends Controller{
 			}
 		}
 }
-		
