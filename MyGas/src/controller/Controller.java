@@ -68,8 +68,8 @@ public abstract class Controller implements ActionListener,Observer{
 		if(arg instanceof callbackLostConnection){ 	//Connection was lost
 			GUIScreen.ShowLostConnection();			//Show on GUI connection lost message
 			Server.deleteObserver(this);			//Delete controller Observer
-			Server.deleteObserver(GUIScreen.getNotificationThrerad());	//Delete Notification Observer
-			GUIScreen.getNotificationThrerad().setNotificationFlag(false); // Stop Notification Threrad
+			Server.deleteObserver(GUIScreen.getNotificationThread());	//Delete Notification Observer
+			GUIScreen.getNotificationThread().setNotificationFlag(false); // Stop Notification Thread
 		}
 		
 		if(arg instanceof CallBack){	
@@ -83,7 +83,7 @@ public abstract class Controller implements ActionListener,Observer{
 					break;
 					
 			default:
-				GUIScreen.getNotificationThrerad().update(o, arg);
+				GUIScreen.getNotificationThread().update(o, arg);
 				break;
 			}		
 		}	

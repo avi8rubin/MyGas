@@ -376,7 +376,7 @@ public class abstractPanel_GUI extends JFrame{
 	public JTable getContactTable(){
 		return ContactTable;
 	}
-	public UpdateNotifications getNotificationThrerad(){
+	public UpdateNotifications getNotificationThread(){
 		return NotificationThrerad;
 	}
 	public void ShowLostConnection(){
