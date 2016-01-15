@@ -32,12 +32,13 @@ import callback.callbackStringArray;
 import callback.callbackUser;
 import client.Client;
 import common.JTableToExcel;
-
+/**
+ * Marketing Manager GUI Components
+ * @author Litaf
+ *
+ */
 public class MarketingManagerGUI extends abstractPanel_GUI{
 
-	/**
-	 * Marketing Manager GUI Components  
-	 */
 	private static final long serialVersionUID = 1L;
 	//top buttons
 	private JButton TariffButton;

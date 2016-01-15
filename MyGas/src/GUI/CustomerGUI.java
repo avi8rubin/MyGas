@@ -30,7 +30,10 @@ import com.toedter.calendar.JDateChooser;
 import callback.callbackBuffer;
 import callback.callbackUser;
 import client.Client;
-
+/**
+ * Customer GUI
+ * @author Litaf
+ */
 public class CustomerGUI extends abstractPanel_GUI {
 
 	/**
