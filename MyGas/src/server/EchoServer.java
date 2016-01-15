@@ -1,6 +1,13 @@
-/**
- * This Class Create Server listener that get Query and send callback
- */
+/************************************************************************** 
+ * Copyright (©) MyGas System 2015-2016 - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Ohad Zino <zinoohad@gmail.com>
+ * 			  Adir Notes <adirno@zahav.net.il>
+ * 			  Litaf Kupfer <litafkupfer@gmail.com>
+ * 			  Avi Rubin <avi8rubin@gmail.com>
+ **************************************************************************/
+
 package server;
 import java.io.*;
 import java.text.DateFormat;
@@ -14,10 +21,10 @@ import callback.callbackVector;
 import callback.callback_Error;
 import common.MessageType;
 import ocsf.server.*;
+
 /**
- * Server side
+ * This Class Create Server listener that get Query and send callback
  * @author Ohad
- *
  */
 public class EchoServer extends AbstractServer 
 {
