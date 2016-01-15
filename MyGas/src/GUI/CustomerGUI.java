@@ -25,17 +25,27 @@ import client.Client;
 public class CustomerGUI extends abstractPanel_GUI {
 
 	/**
-	 * 
+	 * CustomerGUI variables:
+	 * 2 center layers
+	 * BuyHomeFuelCenterLayer
+	 * HomeFuelOrdersCenterLayer
 	 */
+	
 	private JLayeredPane BuyHomeFuelCenterLayer= new JLayeredPane();
 	private JLayeredPane HomeFuelOrdersCenterLayer= new JLayeredPane();
-	//top buttons
+	/**
+	 * top buttons of the CustomerGUI
+	 */
 	private JButton BuyHomeFuelButton;
 	private JButton CheckFuelOrdersButton;
-	//orders
+	/**
+	 * components of the orders layer 
+	 */
 	private JScrollPane HomeFuelOrdersScrollPane = new JScrollPane();
 	private JTable HomeFuelOrdersTable = new JTable();
-	//buy
+	/**
+	 * components of the buying home fuel layer 
+	 */
 	private JButton PayButton;
 	private JButton Cancelbutton;
 	private JButton Calcbutton;
@@ -71,20 +81,27 @@ public class CustomerGUI extends abstractPanel_GUI {
 	public CustomerGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer, Login_GUI LoginScreen) {
 		super(EnteredUser, Server, CommonBuffer, LoginScreen);
 
-		/* ------- Adding new button to Top Panel -------- */
+		/**
+		 * Adding BuyHomeFuelButton to Top Panel 
+		 */
 		BuyHomeFuelButton= new JButton("Buy Home Fuel");
 		BuyHomeFuelButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		BuyHomeFuelButton.setBounds(12, 99, 185, 38);
 		TopPanel.add(BuyHomeFuelButton);	
-		/* ------- Adding new button to Top Panel -------- */
-
+		/**
+		 * Adding CheckFuelOrdersButton to Top Panel 
+		 */
 		CheckFuelOrdersButton = new JButton("Check Fuel Orders");
 		CheckFuelOrdersButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		CheckFuelOrdersButton.setBounds(217, 99, 200, 38);
 		TopPanel.add(CheckFuelOrdersButton);
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
-		/*------- Create JTable surround with scroll pane and add
-		 * 				 it to CheckFuelOrders			 --------*/
+		
+		/**
+		 * Adding new center layer -HomeFuelOrdersCenterLayer to orders Panel 
+		 * and adding the components to this layer:
+		 * CheckOrders-label
+		 * 
+		 */	
 		HomeFuelOrdersCenterLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 
 		CheckOrders = new JLabel("Your Fuel Order");				
@@ -107,7 +124,33 @@ public class CustomerGUI extends abstractPanel_GUI {
 		CenterCardContainer.add(HomeFuelOrdersCenterLayer,"HomeFuelOrdersCenterLayer");
 		HomeFuelOrdersCenterLayer.setOpaque(true);
 		HomeFuelOrdersCenterLayer.setName("HomeFuelOrdersCenterLayer"); 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		/**
+		 * Adding new center layer -BuyHomeFuelCenterLayer to buying Panel 
+		 * and adding the components to this layer:
+		 * BuyHomeLabel
+		 * FuelAmounttextArea
+		 * AddresstextArea
+		 * PayButton
+		 * Cancelbutton
+		 * DeliveryTimetextArea
+		 * Addresslabel
+		 *DeliveryDatelabel
+		 *FuelAmountLabel
+	 	 *lblDeliveryTime
+		 *CalcPricetextArea
+		 *dateChooser
+		 *ErrorMassage
+		 *DateError
+		 *ErrorAddressLabel
+		 *ErrorDeliveryTimeLabel
+		 *OrderDetailsLabel
+		 *FuelPriceLabel
+		 *ShowOrderDetailsLabel
+	     *LitersLabel
+		 *sumLabel
+		 *RemaraksLabel
+		 */	
 		BuyHomeFuelCenterLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		
 		BuyHomeLabel = new JLabel("Buy Home Fuel");				
@@ -156,6 +199,7 @@ public class CustomerGUI extends abstractPanel_GUI {
 		DeliveryTimetextArea.setBorder(new LineBorder(new Color(0, 0, 0), 1));
 		BuyHomeFuelCenterLayer.add(DeliveryTimetextArea);
 	
+
 		Addresslabel = new JLabel("Address:");
 		Addresslabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		Addresslabel.setBounds(72, 162, 130, 38);
@@ -287,6 +331,9 @@ public void setRemaraksLabel(String str){
 	public JButton getCancelButton() {
 		return Cancelbutton;
 	}
+	/**
+	 * cleanScreen- clean all the error label and text fileds from information
+	 */
 	public void cleanScreen(){
 //clean screen from order details
 		OrderDetailsLabel.setText("");
@@ -370,6 +417,10 @@ public void setRemaraksLabel(String str){
 	public void EnableCancleButton(){
 		Cancelbutton.setEnabled(true);
 	}
+	/**
+	 * DisableAllComponents- disable all the gui components in case that the customer
+	 * has no credit card infromation in the DB and therefor can't make a fuel order
+	 */
 	public void DisableAllComponents(){
 
 		for(int a = 0 ; a < BuyHomeFuelCenterLayer.getComponentCount() ; a ++){   

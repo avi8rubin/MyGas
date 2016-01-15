@@ -30,12 +30,16 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	 * Marketing Manager GUI Components  
 	 */
 	private static final long serialVersionUID = 1L;
-	//top buttons
+	/**
+	 * top buttons
+	 */
 	private JButton TariffButton;
 	private JButton ReportButton;
 	private JButton ActivateSaleCampaignButton;
 	private JLabel HeadlineLabel=new JLabel("");
-	//TariffButton
+	/**
+	 * TariffDisplayLayer- create Tariff layer components
+	 */
 	private JLayeredPane TariffDisplayLayer= new JLayeredPane();
 	private JScrollPane TariffScrollPane = new JScrollPane();
 	private JTable TariffUpdateTable = new JTable(){
@@ -50,7 +54,10 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	private JComboBox FuelscomboBox;
 	private JTextArea NewFuelTariffTextArea;
 	private JLabel TariffErrorLabel;
-	//ReportButton
+	/**
+	 * CreateCommentsReportsCenterLayer- create center layer components
+	 * CreateReportsLeftLayer- create report and center layer components
+	 */
 	private JButton CustomerCharacterizationReportButton;
 	private JButton CommentsForMarketingCampaignButton;
 	private JLayeredPane CreateReportsLeftLayer= new JLayeredPane();
@@ -67,7 +74,10 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	private JLabel ChooseCampaignLabel;
 	private JComboBox CampaignComboBox ;
 	private JButton ExportButton;
-	//Customer Characterization Report
+	/**
+	 * CreateCustomerReportsCenterLayer-create the Customer Characterization Report 
+	 * layer components 
+	 */
 	private JLabel Datelabel=new JLabel("");
 	private JLayeredPane CreateCustomerReportsCenterLayer= new JLayeredPane(); ;
 	private JScrollPane CustomerCharacterizationReportScrollPane = new JScrollPane();
@@ -84,7 +94,11 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	private JDateChooser EndDateChooser;
 	private JLabel StartDateLabel;
 	private JLabel EndDateLabel;
-	//Activate Sale
+	/**
+	 * ActivateSaleLeftLayer- create  Activate Sale center layer components
+	 * ActivateSaleLeftLayer- create  Activate Sale left layer components
+	 *
+	 */
 	private JLabel Datelabel2=new JLabel("");
 	private JLayeredPane ActivateSaleLeftLayer= new JLayeredPane();
 	private JLayeredPane ActivateSaleCenterLayer= new JLayeredPane();
@@ -104,7 +118,9 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
                 return false;
         	}};};
 	private JButton StartSaleButton;
-	//export to excel
+/**
+ * export to excel classes
+ */
 	private JTableToExcel CustomerReportToExcel;
 	private JTableToExcel CommentsReportToExcel;
 
@@ -113,36 +129,43 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 			Login_GUI LoginScreen) {
 		super(EnteredUser, Server, CommonBuffer, LoginScreen);
 
-		/* ------- Adding new button to Top Panel -------- */
+		/**
+		 *  Adding TariffButton to Top Panel
+		 */
 		TariffButton= new JButton("Tariff Update");
 		TariffButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		TariffButton.setBounds(12, 99, 185, 38);
 		TopPanel.add(TariffButton);
 		
-		/* ------- Adding new button to Top Panel -------- */
-		ReportButton = new JButton("Create Reports");
+		/**
+		 *  Adding ReportButton to Top Panel
+		 */		ReportButton = new JButton("Create Reports");
 		ReportButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		ReportButton.setBounds(217, 99, 195, 38);
 		TopPanel.add(ReportButton);
 		
-		/* ------- Adding new button to Top Panel -------- */
+		/**
+		 *  Adding ActivateSaleCampaignButton to Top Panel
+		 */
 		ActivateSaleCampaignButton = new JButton("Activate Sale Campaign");
 		ActivateSaleCampaignButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		ActivateSaleCampaignButton.setBounds(434, 99,252, 38);
 		TopPanel.add(ActivateSaleCampaignButton);
 		
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////		
-		/* ------- Adding new layer to Tariff Panel -------- */
+		/**
+		 * Adding new layer -TariffDisplayLayer to Tariff Panel 
+		 */
 		TariffDisplayLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		
 		CenterCardContainer.add(TariffDisplayLayer, "Tariff");
 		TariffDisplayLayer.setOpaque(true);
 		TariffDisplayLayer.setName("Tariff");
 		
-		/*------- Create JTable surround with scroll pane and add
-		 * 					 it to TariffApprovalPanel --------*/
+		/**
+		 * Create JTable-TariffUpdateTable surround with TariffScrollPane and add
+		 * it to TariffApprovalPanel
+		 */
 		TariffScrollPane.setBounds(43, 58,  900, 300);
 		TariffDisplayLayer.add(TariffScrollPane);
 		
@@ -154,7 +177,15 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		TariffUpdateTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		TariffUpdateTable.getTableHeader().setReorderingAllowed(false);
 
-		/* ------- Adding button and label to Tariff Panel -------- */	
+		/**
+		 * Adding components to Tariff Panel:
+		 * ChooseNewTariffLabel
+		 * NewFuelTariffTextArea
+		 * FuelscomboBox
+		 * UpdateButton
+		 * HeadlineLabel
+		 * TariffErrorLabel
+		 */	
 		ChooseNewTariffLabel = new JLabel("Choose a new tariff:");
 		ChooseNewTariffLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		ChooseNewTariffLabel.setBounds(43, 394, 204, 28);
@@ -190,17 +221,21 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		TariffErrorLabel.setForeground(Color.RED);
 		TariffDisplayLayer.add(TariffErrorLabel);
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		/* ------- Adding Left layer to Reports Panel -------- */
+		/**
+		 * Adding new left layer -CreateReportsLeftLayer to reports Panel 
+		 */		
 		CreateReportsLeftLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		CreateReportsLeftLayer.setBackground(new Color(169, 169, 169));
+		
 		//add to left container
 		LeftCardContainer.add(CreateReportsLeftLayer, "ReportsLeft");
 		CreateReportsLeftLayer.setOpaque(true);
 		CreateReportsLeftLayer.setName("ReportsLeft");
 
-		//buttons left layer
+		/**
+		 * buttons left layer: CommentsForMarketingCampaignButton, CustomerCharacterizationReportButton
+		 */
 		CommentsForMarketingCampaignButton = 
 				new JButton("<html>Comments For Marketing Campaign Report</html>");
 		CommentsForMarketingCampaignButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
@@ -215,20 +250,32 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		CreateReportsLeftLayer.add(CommentsForMarketingCampaignButton);
 		CreateReportsLeftLayer.add(CustomerCharacterizationReportButton);
 		
+		/**
+		 * adding the logo to the left layer
+		 */
         JLabel LogoImageCreateReports = new JLabel("");
         LogoImageCreateReports.setIcon(new ImageIcon(abstractPanel_GUI.class.getResource("/images/Left_Panel_Logo22.jpg")));
         LogoImageCreateReports.setBounds(38, 313, 239, 242);
         CreateReportsLeftLayer.add(LogoImageCreateReports);
- ///////////////////////////////////////////////////////////////////////////////////////////
-		/* ------- Adding CommentsForMarketingCampaignButton layer -------- */
+
+        
+        /**
+         * Adding CreateCommentsReportsCenterLayer layer
+         */
 		CreateCommentsReportsCenterLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		
 		CenterCardContainer.add(CreateCommentsReportsCenterLayer,"CommentsForMarketingCampaignReport");
 		CreateCommentsReportsCenterLayer.setOpaque(true);
 		CreateCommentsReportsCenterLayer.setName("CommentsForMarketingCampaignReport");
 
-		/*------- add labels, comboBox and buttons 
-		 * 						to CreateCommentsReportsCenterLayer --------*/
+		/**
+		 * Adding components to CreateCommentsReportsCenterLayer the components:
+		 * ChooseCampaignLabel
+		 * CampaignComboBox
+		 * ExportButton
+		 * HeadlineLabel
+		 * CommentsReportTable
+		 */	
 		ChooseCampaignLabel = new JLabel("Choose Campaign ");
 		ChooseCampaignLabel.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		ChooseCampaignLabel.setEnabled(false);
@@ -248,15 +295,11 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		ExportButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		CreateCommentsReportsCenterLayer.add(ExportButton);
 		
-		/* ------- Adding label to comments report Panel -------- */		
-
 		HeadlineLabel = new JLabel("Comments For Marketing Campaign Report");				
 		HeadlineLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		HeadlineLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
 		HeadlineLabel.setBounds(177, 13, 608, 42);
 		CreateCommentsReportsCenterLayer.add(HeadlineLabel);
-		/*------- Create JTable surround with scroll pane and add
-		 * 				 it to CommentsForMarketingCampaignReport --------*/
 
 		CommentsReportScrollPane.setBounds(38, 125,  900, 400);
 		CreateCommentsReportsCenterLayer.add(CommentsReportScrollPane);
@@ -270,22 +313,33 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		CommentsReportTable.getTableHeader().setReorderingAllowed(false);
 
 		
-		/* ------- Adding CreateCustomerReportsCenterLayer -------- */
+		/**
+		 * Adding CreateCustomerReportsCenterLayer
+		 */
 		CreateCustomerReportsCenterLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		
 		CenterCardContainer.add(CreateCustomerReportsCenterLayer,"CustomerCharacterizationReport");
 		CreateCustomerReportsCenterLayer.setOpaque(true);
 		CreateCustomerReportsCenterLayer.setName("CustomerCharacterizationReport");
+	
 		
-		/* ------- Adding label to customer report Panel -------- */		
-
+		/**
+		 * Adding components to Customer Reports Center Layer:
+		 * HeadlineLabel
+		 * StartDateChooser
+		 * EndDateChooser
+		 * StartDateLabel
+		 * EndDateLabel
+		 * ExportButton2
+		 * produceButton
+		 * Datelabel
+		 * CustomerCharacterizationReportTable
+		 */			
 		HeadlineLabel = new JLabel("Customer Characterization By Period Report");				
 		HeadlineLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		HeadlineLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
 		HeadlineLabel.setBounds(177, 13, 608, 42);
 		CreateCustomerReportsCenterLayer.add(HeadlineLabel);
-		
-		/*------- add dated and buttons to CreateCustomerReportsCenterLayer--------*/
 		
 		StartDateChooser = new JDateChooser();
 		StartDateChooser.setBounds(131, 78, 140, 36);
@@ -325,10 +379,7 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		Datelabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		Datelabel.setBounds(534, 76, 145, 38);
 		CreateCustomerReportsCenterLayer.add(Datelabel);
-
-		
-		/*------- Create JTable surround with scroll pane and add
-		 * 				 it to CustomerCharacterizationReportButton --------*/
+ 
 		CustomerCharacterizationReportScrollPane.setBounds(38, 125,  900, 400);
 		CreateCustomerReportsCenterLayer.add(CustomerCharacterizationReportScrollPane);
 	
@@ -340,20 +391,22 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		CustomerCharacterizationReportTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		CustomerCharacterizationReportTable.getTableHeader().setReorderingAllowed(false);
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/* ------- Adding ActivateSale center layer -------- */
+		/**
+		 * Adding ActivateSaleCenterLayer layer
+		 */
 		ActivateSaleCenterLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 
-		/* ------- Adding label to customer report Panel -------- */		
-
+		/**
+		 * Adding components to Activate Sale Center Layer:
+		 * HeadlineLabel
+		 * ActiveSalesTable
+		 */	
 		HeadlineLabel = new JLabel("All Active Campaigns");				
 		HeadlineLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		HeadlineLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
 		HeadlineLabel.setBounds(177, 13, 608, 42);		
 		ActivateSaleCenterLayer.add(HeadlineLabel);
-//		/*------- Create JTable surround with scroll pane and add
-//		 * 				 it to CommentsForMarketingCampaignReport --------*/
-//		
+ 
 		ActiveSalesScrollPane.setBounds(43, 58,  900, 400);
 		ActivateSaleCenterLayer.add(ActiveSalesScrollPane);
 		
@@ -370,8 +423,17 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		ActivateSaleCenterLayer.setOpaque(true);
 		ActivateSaleCenterLayer.setName("ActivateSaleCenterLayer");
 
-		
-		/* ------- Adding ActivateSale left layer -------- */
+		/**
+		 * Adding components to Activate Sale Left Layer
+		 * ActivateSale_StartDateChooser
+		 * ActivateSale_EndDateChooser
+		 * ActivateSale_StartDateLabel
+		 * ActivateSale_EndDateLabel
+		 * SelectPatternLabel
+		 * PatternsComboBox
+		 * StartSaleButton
+		 * Datelabel2
+		 */		
 		ActivateSaleLeftLayer.setBackground(new Color(169, 169, 169));
 		ActivateSaleLeftLayer.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 
@@ -417,7 +479,6 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		Datelabel2.setBounds(130, 216, 146, 26);
 		ActivateSaleLeftLayer.add(Datelabel2);
 
-
 		//////////////logo////////////////////////
 
         JLabel LogoImageActivateSale = new JLabel("");
@@ -425,14 +486,14 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
         LogoImageActivateSale.setBounds(38, 313, 239, 242);
         ActivateSaleLeftLayer.add(LogoImageActivateSale);
 		
-		//ActivateSaleLeftLayer.add(LogoImage);
-
 		LeftCardContainer.add(ActivateSaleLeftLayer,"ActivateSaleLeftLayer");
 		ActivateSaleLeftLayer.setOpaque(true);
 		ActivateSaleLeftLayer.setName("ActivateSaleLeftLayer");
 		
-		
-		///////////Excel///////////////
+		/**
+		 * CustomerReportToExcel and CommentsReportToExcel are the two new objects from 
+		 * JTableToExcel class there are responsible to export jtable to excel
+		 */
 		CustomerReportToExcel=new JTableToExcel(ExportButton2, CustomerCharacterizationReportTable);
 		CommentsReportToExcel=new JTableToExcel(ExportButton, CommentsReportTable);
 		
@@ -455,7 +516,12 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	public JTable getTariffUpdateTable(){
 		return TariffUpdateTable;
 	}
-	
+	/**
+	 * setTariffUpdateTable:
+	 * 1) add the table model that was recived from the DB to the TariffUpdateTable
+	 * 2) update the FuelscomboBox with the fuel types
+	 * @param NewTableModel
+	 */
 	public void setTariffUpdateTable(DefaultTableModel NewTableModel)
 	{		
 		TariffUpdateTable.setModel(NewTableModel);
@@ -475,10 +541,10 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		DefaultComboBoxModel<?> combopatternModel=new DefaultComboBoxModel(fuels);
 		FuelscomboBox.setModel(combopatternModel);
 	}
+	
 	public String getFuelComboBoxSelection(){
 		return (String)FuelscomboBox.getSelectedItem();
 	}
-
 	public String getFuelUpdateFromTextArea(){
 		return NewFuelTariffTextArea.getText();
 	}
@@ -499,7 +565,10 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	public String getComboBoxSelection(){
 		return (String)CampaignComboBox.getSelectedItem();
 	}
-	
+	/**
+	 * SetComboBoxSelection- set the CampaignComboBox with the patterns that recived from the DB
+	 * @param CampaignPatterns
+	 */
 	public void SetComboBoxSelection(callbackStringArray CampaignPatterns){
 		Object[]pattern=CampaignPatterns.getComboBoxStringArray();
 		DefaultComboBoxModel<?> combopatternModel=new DefaultComboBoxModel(pattern);
@@ -510,7 +579,12 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	public JComboBox<?> getComboBox(){
 		return CampaignComboBox;
 	}
-	
+	/**
+	 * getPatternInt- return the row number of the pattern that was 
+	 * choosen in the CampaignComboBox for the filter of the CampaignTable
+	 * @param pattern
+	 * @return row number
+	 */
 	public int getPatternInt(String pattern)
 	{
 		int row=0;
@@ -520,6 +594,11 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		}
 		return row;
 	}
+	/**
+	 * setCommentsForMarketingCampaignTable- add the table model 
+	 * that was recived from the DB to the CommentsReportTable
+	 * @param NewTable
+	 */
 	public void setCommentsForMarketingCampaignTable(DefaultTableModel NewTable){
 		 CommentsReportTable.setModel(NewTable);
 			DefaultTableCellRenderer CenterRenderer = new DefaultTableCellRenderer();
@@ -547,6 +626,11 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	public JButton getproduceButton() {
 		return produceButton;	
 	}
+	/**
+	 * setCustomerCharacterizationReportTable- add the table model 
+	 * that was recived from the DB to the CustomerCharacterizationReportTable
+	 * @param NewTable
+	 */
 	public void setCustomerCharacterizationReportTable(DefaultTableModel NewTable){
 		CustomerCharacterizationReportTable.setModel(NewTable);	
 		DefaultTableCellRenderer CenterRenderer = new DefaultTableCellRenderer();
@@ -564,13 +648,21 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		return ActivateSaleCampaignButton;
 	}
 	
+	/**
+	 * setActiveSalesTable- add the table model 
+	 * that was recived from the DB to the ActiveSalesTable
+	 * @param NewTable
+	 */
 	public void setActiveSalesTable(DefaultTableModel NewTable){
 		ActiveSalesTable.setModel(NewTable);	
 		DefaultTableCellRenderer CenterRenderer = new DefaultTableCellRenderer();
 		CenterRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		ActiveSalesTable.setDefaultRenderer(Object.class, CenterRenderer);
 	}
-
+/**
+ * SetComboBoxPattern- set the PatternsComboBox with the patterns that was recived from the DB
+ * @param CampaignPatterns
+ */
 	public void SetComboBoxPattern(callbackStringArray CampaignPatterns){
 		Object[]pattern=CampaignPatterns.getComboBoxStringArray();
 		DefaultComboBoxModel<?> combopatternModel=new DefaultComboBoxModel<>(pattern);
@@ -593,7 +685,13 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 		ActivateSale_StartDateChooser.setCalendar(null);
 		ActivateSale_EndDateChooser.setCalendar(null);
 	}
-	
+	/**
+	 * getSalePatternId- compare the patternChoosen string to the PatternWithID table and return 
+	 * the choosen pattern id in order to activate a new sale in the DB
+	 * @param patternChoosen
+	 * @param PatternWithID
+	 * @return
+	 */
 	public Object getSalePatternId(String patternChoosen,Object[][] PatternWithID){
 	int RowNum=0;
 	for(int i=0; i<PatternWithID.length;i++){
