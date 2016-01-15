@@ -72,8 +72,9 @@ public class ServerController {
 					Server.sendToAllClients(new callbackLostConnection());
 					
 					try {
+						Thread.sleep(1000);
 						Server.close();
-					} catch (IOException e1) {
+					} catch (IOException | InterruptedException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}

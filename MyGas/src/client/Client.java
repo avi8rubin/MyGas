@@ -14,9 +14,7 @@ public class Client extends ObservableClient
 {
 //Instance variables **********************************************
 
-	/**
-	 * This buffer will allows the transfer of the callback, back to the application
-	 */
+	boolean LostConnection;
 	
 //Constructors ****************************************************
 
@@ -51,13 +49,20 @@ public void handleMessageFromServer(Object msg)
 */
 public void handleMessageFromClient(Object message)
 {
-
+	LostConnection = false;
 		try {
 			sendToServer(message);
 		} catch (IOException e) {
+			LostConnection=true;
 			System.out.println(MessageType.Connection_To_Server_Lost.toString()
 					+" | Class: Client | Function: handleMessageFromClient.");			
 			e.printStackTrace();
+		}
+		finally {
+			if(LostConnection){
+				super.setChanged();
+				super.notifyObservers(new callbackLostConnection());
+			}
 		}
 			try {
 				Thread.sleep(50);

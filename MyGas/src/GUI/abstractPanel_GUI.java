@@ -89,6 +89,7 @@ public class abstractPanel_GUI extends JFrame{
                 return false;               
         };
 	};
+	private JLabel LostConnection;
 	private JButton LogoutButton = new JButton("Logout");
 	private JButton ContactsButton = new JButton("Contacts");
 	private JButton NotificationsButton = new JButton("Notifications");
@@ -170,7 +171,12 @@ public class abstractPanel_GUI extends JFrame{
 			}
 		});
 
-
+		LostConnection = new JLabel("<html>Server connection was lost.<br>Save all the data and exit.</html>");
+		LostConnection.setForeground(new Color(220, 20, 60));
+		LostConnection.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 18));
+		LostConnection.setBounds(531, 13, 263, 47);
+		LostConnection.setVisible(false);
+		TopPanel.add(LostConnection);
 		
 		
 		// Contact button
@@ -372,6 +378,9 @@ public class abstractPanel_GUI extends JFrame{
 	}
 	public UpdateNotifications getNotificationThrerad(){
 		return NotificationThrerad;
+	}
+	public void ShowLostConnection(){
+		LostConnection.setVisible(true);
 	}
 	
 	/**

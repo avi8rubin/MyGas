@@ -11,6 +11,7 @@ import javax.swing.JTable;
 import GUI.abstractPanel_GUI;
 import callback.CallBack;
 import callback.callbackBuffer;
+import callback.callbackLostConnection;
 import callback.callbackStringArray;
 import client.Client;
 import common.Checks;
@@ -63,6 +64,10 @@ public abstract class Controller implements ActionListener,Observer{
 
 	@Override
 	public void update(Observable o, Object arg) {
+		
+		if(arg instanceof callbackLostConnection){
+			GUIScreen.ShowLostConnection();
+		}
 		
 		if(arg instanceof CallBack){	
 			switch(((CallBack) arg).getWhatToDo()){

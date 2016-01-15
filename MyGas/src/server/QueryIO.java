@@ -1203,12 +1203,20 @@ public class QueryIO implements Runnable {
 		// Set variables ---------------------------------------------------------
 
 		// Build query -----------------------------------------------------------
-		
+
 		try {
 			PreparedStatement ps=conn.prepareStatement("INSERT INTO Cars VALUES(null,(?),(?),(?),(?),DEFAULT)");
-			
+			PreparedStatement ps2=conn.prepareStatement("SELECT COUNT(*) FROM Cars WHERE Car_Number=(?) AND Active_Car='Yes'");
+
 		// Send query to DB  -----------------------------------------------------
 			
+			// Check id Car_Number exist in DB and Active_Car=Yes
+			ps2.setString(1, Callback.getCarNumber().trim());
+			AnswerResult = ps2.executeQuery();	
+			AnswerResult.next();
+			if (AnswerResult.getInt(1)>0) return new callback_Error("Car Number exist in system and active");
+
+			// Add new car to DB
 				ps.setString(1, Callback.getCarNumber().trim());
 				ps.setInt(2, Callback.getCustomerID());
 				ps.setString(3, Callback.getYesNoNFC().trim());
