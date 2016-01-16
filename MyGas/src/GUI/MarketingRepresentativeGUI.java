@@ -15,6 +15,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Observable;
@@ -50,6 +51,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.text.MaskFormatter;
+
+import com.toedter.calendar.JDateChooser;
 
 import callback.CallBack;
 import callback.callbackBuffer;
@@ -125,13 +128,6 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	 * using for get relevant data from callbackCampaignPattern when his description chosen in ExistPatternsComboBox.
 	 */
 	private callbackCampaignPattern [] ExistPatternsCallbackArray;
-	
-/**
- * RatesReportLayer Left Layer Components
- */
-	private JLayeredPane RatesReportLayer;
-	private JButton GenerateReportButton;
-	private JButton UpdateRateButton;
 	
 /**
  * CreateUserLayer Center Layer Components
@@ -246,28 +242,32 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 /**
  *  RatesReport Center Layer Components
  */
+	
+	private JLayeredPane RatesReportLayer;
+	private JLayeredPane RatesReportPanel;
+	private JLabel InsertDateLabel;
+	private JDateChooser GenerateDateChooser;
+	private JButton GenerateReportButton;
+	private JLabel InvalidInsertedDateLabel;
+	private JLabel RatesReportLabel;
+	private JScrollPane RatesReportScroll;
 	/**
 	 * Create JTable - no column is editable.
 	 */
-		private JLayeredPane RatesReportPanel;
-		// Create JTable - that no column is editable.
 	private JTable RatesReportTable = new JTable(){
 			private static final long serialVersionUID = 1L;
 	        public boolean isCellEditable(int row, int column) { 
 	                return false;  
 	        };
 		};
-	private JLabel RatesReportLabel;
-	
+	private JButton RatesReportExportButton;
+	private JButton UpdateRateButton;
+	private JLabel UpdateSuccessMessageLabel;
 	
 	/**
 	 * MarketingRepresentativeGUI constructor - build top panel, left panels  and relevant combo-boxes from center panels
 	 * for load combo-boxes values only once when the MarketingRepresentativeGUI created.
 	 */
-		private JButton RatesReportExportButton;
-		private JLabel UpdateSuccessMessageLabel;
-	
-	
 	public MarketingRepresentativeGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer,
 			Login_GUI LoginScreen) {
 		super(EnteredUser, Server, CommonBuffer, LoginScreen);
@@ -472,8 +472,8 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		UpdateRateButton.setVisible(false);
 		
 		UpdateSuccessMessageLabel = new JLabel("<html>Customers rates<br>updated successfully</html>", SwingConstants.CENTER);
-		UpdateSuccessMessageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
 		UpdateSuccessMessageLabel.setForeground(Color.WHITE);
+		UpdateSuccessMessageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));		
 		UpdateSuccessMessageLabel.setBounds(10, 146, 231, 66);
 		UpdateSuccessMessageLabel.setVisible(false);
 		
@@ -488,9 +488,6 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		RatesReportLayer.add(LogoImage);
 		
 	} 
-	
-	
-	
 	
 	/* Top Panel layer  */
 	
@@ -1252,7 +1249,8 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		callbackCar carCallback = new callbackCar();
 		
 		carCallback.setCarNumber(CarNumberFormattedTextField.getText().trim());
-		carCallback.setFuelID(FuelIDComboBox.getSelectedIndex()+1);
+		if (FuelIDComboBox.getSelectedIndex()!=2) carCallback.setFuelID(FuelIDComboBox.getSelectedIndex()+1);
+		else carCallback.setFuelID(FuelIDComboBox.getSelectedIndex()+2);
 		carCallback.setNFC(NFCNewCheckBox.isSelected());
 		
 		// Get CustomerID from the right field - depend which situation.
@@ -1265,6 +1263,9 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	public void setSuccessAddingCarMessageLabel(){
 		SuccessAddingCarMessageLabel.setText("Car number " + CarNumberFormattedTextField.getText().trim() + " added successfully to system");
 		SuccessAddingCarMessageLabel.setVisible(true);
+	}
+	public JLabel getSuccessAddingCarMessageLabel() {
+		return SuccessAddingCarMessageLabel;
 	}
 	public JTable getCarsViewTable(){
 		return CarsViewTable;
@@ -1669,7 +1670,9 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 				InsertFuelAmountTextField.setText(String.valueOf(LocalCallback.getFuelAmount()));
 				break;
 			case 2: // Fuel Type
-				FuelTypeComboBox.setSelectedIndex(LocalCallback.getFuelId()-1);
+				if (LocalCallback.getFuelId()<3)
+					FuelTypeComboBox.setSelectedIndex(LocalCallback.getFuelId()-1);
+				else FuelTypeComboBox.setSelectedIndex(LocalCallback.getFuelId()-2);
 				break;
 			case 3: //Gas Station
 				GasStationsComboBox.setSelectedIndex(LocalCallback.getGasStationId()-1);
@@ -1796,7 +1799,8 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 				newCampaignPattern.setFuelAmount( Integer.parseInt(InsertFuelAmountTextField.getText()) );
 				break;
 			case 2: // Fuel Type
-				newCampaignPattern.setFuelId(FuelTypeComboBox.getSelectedIndex()+1);
+				if (FuelTypeComboBox.getSelectedIndex()<2) newCampaignPattern.setFuelId(FuelTypeComboBox.getSelectedIndex()+1);
+				else newCampaignPattern.setFuelId(FuelTypeComboBox.getSelectedIndex()+2);
 				break;
 			case 3: //Gas Station
 				newCampaignPattern.setGasStationId(GasStationsComboBox.getSelectedIndex()+1);
@@ -1904,33 +1908,100 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 		RatesReportPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		CenterCardContainer.add(RatesReportPanel, "RatesReportLayerCenter");
 		
-		/*------- Create JTable surround with scroll pane and add it to AddCarPanel --------*/
-		JScrollPane RatesReportScroll = new JScrollPane();
-		RatesReportScroll.setBounds(10, 62, 964, 489);
-		RatesReportPanel.add(RatesReportScroll);		
+		InsertDateLabel = new JLabel("Insert Date:");
+		InsertDateLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		InsertDateLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		InsertDateLabel.setEnabled(false);
+		InsertDateLabel.setBounds(10, 11, 115, 34);
+		RatesReportPanel.add(InsertDateLabel);
 		
-		RatesReportScroll.setViewportView(RatesReportTable);		
+		GenerateDateChooser = new JDateChooser();
+		GenerateDateChooser.setDateFormatString("yyyy/MM/dd");
+		GenerateDateChooser.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		GenerateDateChooser.setBounds(126, 9, 140, 36);
+		RatesReportPanel.add(GenerateDateChooser);
+		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		Date date = new Date();
+		GenerateDateChooser.getDateEditor().setDate(date);
+
+		GenerateReportButton = new JButton("Generate");
+		GenerateReportButton.setBounds(276, 7, 129, 38);
+		RatesReportPanel.add(GenerateReportButton);
+		GenerateReportButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		
+		/*------- Create new label on the new table --------*/
+		RatesReportLabel = new JLabel("Customer rates for the last week :");				
+		RatesReportLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		RatesReportLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		RatesReportLabel.setBounds(236, 49, 463, 42);
+		RatesReportPanel.add(RatesReportLabel);
+		
+		RatesReportExportButton = new JButton("Export");													//Global variable
+		RatesReportExportButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		RatesReportExportButton.setBounds(846, 38, 112, 38);
+		RatesReportPanel.add(RatesReportExportButton);
+		
+		/*------- Create JTable surround with scroll pane and add it to AddCarPanel --------*/
+		RatesReportScroll = new JScrollPane();
+		RatesReportScroll.setBounds(12, 87, 964, 402);
+		RatesReportPanel.add(RatesReportScroll);
+		
+		RatesReportScroll.setViewportView(RatesReportTable);
 		RatesReportTable.setRowHeight(23);
 		RatesReportTable.setFillsViewportHeight(true);
 		RatesReportTable.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		RatesReportTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 15));
 		RatesReportTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		
-		/*------- Create new label on the new table --------*/
-		RatesReportLabel = new JLabel("Customer rates for the last week :");				
-		RatesReportLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		RatesReportLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		RatesReportLabel.setBounds(283, 9, 329, 42);
-		RatesReportPanel.add(RatesReportLabel);
+		UpdateRateButton = new JButton("<html>Update</html>");
+		UpdateRateButton.setBounds(846, 500, 97, 36);
+		RatesReportPanel.add(UpdateRateButton);
+		UpdateRateButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		
-		/* ------- Adding new button to carsView layer -------- */
-		RatesReportExportButton = new JButton("Export");													//Global variable
-		RatesReportExportButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		RatesReportExportButton.setBounds(801, 11, 112, 38);
-		RatesReportPanel.add(RatesReportExportButton);
+		UpdateSuccessMessageLabel = new JLabel("<html>Customers rates<br>updated successfully</html>", SwingConstants.CENTER);
+		UpdateSuccessMessageLabel.setBounds(605, 502, 231, 57);
+		RatesReportPanel.add(UpdateSuccessMessageLabel);
+		UpdateSuccessMessageLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
+		UpdateSuccessMessageLabel.setEnabled(false);
 		
-		/*------- Create new label for update success message --------*/
-		
+		InvalidInsertedDateLabel = new JLabel("<html>Invalid inserted date</html>", SwingConstants.CENTER);
+		InvalidInsertedDateLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 17));
+		InvalidInsertedDateLabel.setForeground(Color.black);
+		InvalidInsertedDateLabel.setBounds(401, 9, 216, 34);
+		RatesReportPanel.add(InvalidInsertedDateLabel);
+		UpdateRateButton.setVisible(false);
+	}
+	/**
+	 * SetVisibleRelevantComponents(boolean res) -show/don't show relevant components in rate report center layer.
+	 * @param res - boolean true/false
+	 */
+	public void SetVisibleRelevantComponents(boolean res){
+		InvalidInsertedDateLabel.setVisible(false);
+		RatesReportLabel.setVisible(res);
+		RatesReportScroll.setVisible(res);
+		RatesReportTable.setVisible(res);
+		RatesReportExportButton.setVisible(res);
+		UpdateRateButton.setVisible(res);
+		UpdateSuccessMessageLabel.setVisible(false);
+	}
+	public void setRatesReportLabel() {
+		RatesReportLabel.setText("Customer rates for week before " + 
+				((JTextField)GenerateDateChooser.getDateEditor().getUiComponent()).getText() );
+	}
+	/**
+	 * Get NewTableModel of RatesReport and set this data in RatesReportTable - JTable of RatesReport.
+	 * @param NewTableModel RatesReport table model, came from DB.
+	 */
+	public void setRatesReportTable(DefaultTableModel NewTableModel){
+		RatesReportTable.setModel(NewTableModel);
+		//All values are in the center of the cell		
+		DefaultTableCellRenderer CenterRenderer = new DefaultTableCellRenderer();
+		CenterRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		RatesReportTable.setDefaultRenderer(Object.class, CenterRenderer);
+	}
+	public JLabel getInvalidInsertedDateLabel() {
+		return InvalidInsertedDateLabel;
 	}
 	public JTable getRatesReportTable() {
 		return RatesReportTable;
@@ -1947,16 +2018,9 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	public JButton getUpdateRateButton() {
 		return UpdateRateButton;
 	}
-	/**
-	 * Get NewTableModel of RatesReport and set this data in RatesReportTable - JTable of RatesReport.
-	 * @param NewTableModel RatesReport table model, came from DB.
-	 */
-	public void setRatesReportTable(DefaultTableModel NewTableModel){
-		RatesReportTable.setModel(NewTableModel);
-		//All values are in the center of the cell		
-		DefaultTableCellRenderer CenterRenderer = new DefaultTableCellRenderer();
-		CenterRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-		RatesReportTable.setDefaultRenderer(Object.class, CenterRenderer);
+
+	public JDateChooser getGenerateDateChooser() {
+		return GenerateDateChooser;
 	}
-	
+
 }

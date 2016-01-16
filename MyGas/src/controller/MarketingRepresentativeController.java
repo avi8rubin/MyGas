@@ -14,6 +14,9 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Observable;
 import java.util.Vector;
 
@@ -28,6 +31,8 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
+
+import com.toedter.calendar.JDateChooser;
 
 import GUI.CEOGUI;
 import GUI.MarketingRepresentativeGUI;
@@ -54,25 +59,33 @@ public class MarketingRepresentativeController extends Controller{
 	private CardLayout ContainerCardCenter;
 	private CardLayout ContainerCardLeft;
 	private MarketingRepresentativeGUI GuiScreen;
-	callbackCustomer customerCallback;
 	
-	//Top Layer Components	
+	/**
+	 * Top Layer Components	
+	 */
 	private JButton CreateNewCustomerAccountButton;
 	private JButton CustomerDetailsButton;
+	private JButton CreateNewCampignPatternButton;
 	private JButton ReportsButton;
 
-	//CreateNewCustomerAccountLayer Left Layer Components
+	/**
+	 * CreateNewCustomerAccountLayer Left Layer Components
+	 */
 	private JLayeredPane CreateNewCustomerAccountLayer;
 	private JButton CreateUserButton;
 	private JButton AddCarDetailsButton;
 	
-	//CreateUserLayer Center Layer Components
+	/**
+	 * CreateUserLayer Center Layer Components
+	 */
 	private JLabel PasswordValidationFailedMessageLabel;
 	private JLabel MissedFieldsMessageLabel;
 	private JLabel UserNameExistMesaageLabel;
 	private JButton NextButton;	
 	
-	// AddPersonalDetails Center Layer Components	
+	/**
+	 * AddPersonalDetails Center Layer Components	
+	 */
 	private JButton CreateButton;
 	private JButton EditButton;
 	private JButton SaveButton;	
@@ -85,17 +98,19 @@ public class MarketingRepresentativeController extends Controller{
 	private JLabel MissedFieldsMessage;
 	private JLabel CustomerIDExistMesaageLabel;
 
-	// AddCars Center Layer Components		
+	/**
+	 * AddCars Center Layer Components		
+	 */
 	private JButton AddButton;
 	private JLabel ExistCarNumberLabel;
 	private JFormattedTextField CarNumberFormattedTextField;
 	private JLabel MissedFieldMessageAddCarsLabel;
-	private BooleanTableModel CarsViewTableModelBeforeChanges;
-	private Object[][] Data;
 	private BooleanTableModel CarsViewTableModelAfterChanges;
 	private JButton CarsViewSaveButton;
 	
-	//CustomerDetails Left Layer Components	
+	/**
+	 * CustomerDetails Left Layer Components	
+	 */
 	private JLayeredPane CustomerDetailsLayer;
 	private JButton SearchButton;
 	private JTextField EnterCustomerIdTextField;
@@ -103,20 +118,35 @@ public class MarketingRepresentativeController extends Controller{
 	private JLabel CustomerNotExistMessageLabel;
 	private callbackCustomer fullCallbackCustomer;
 	
-	//RatesReport Left Layer Components	
+	/**
+	 * RatesReport Left Layer Components	
+	 */
 	private JButton GenerateReportButton;
 	private JButton UpdateRateButton;
-	//CampignPattern Center Layer Components	
-	private JButton CreateNewCampignPatternButton;
+	
+	/**
+	 * CampignPattern Center Layer Components	
+	 */
 	private JComboBox<?> PatternKindComboBox;
 	private JButton CreatePatternButton;
 	private JTextField InsertFuelAmountTextField;
 	private JTextArea DescriptionTextArea;
-	//CampignPattern Left Layer Components	
+	
+	/**
+	 * CampignPattern Left Layer Components	
+	 */
 	private JComboBox<?> ExistPatternsComboBox;
 	
-	
-
+	/**
+	 * MarketingRepresentative controller, control the MarketingRepresentative gui.
+	 * First adding listeners to all relevant buttons, then send query to DB for getting all values for ComboBox -
+	 * only one time when the controller created.
+	 * @param Server
+	 * @param CommonBuffer
+	 * @param GuiScreen
+	 * 
+	 * @author Adir
+	 */
 	public MarketingRepresentativeController(Client Server, callbackBuffer CommonBuffer, MarketingRepresentativeGUI GuiScreen) {
 		super(Server, CommonBuffer, GuiScreen);
 		this.GuiScreen = GuiScreen;
@@ -157,22 +187,16 @@ public class MarketingRepresentativeController extends Controller{
 		ReportsButton = GuiScreen.getReportsButton();
 		ReportsButton.addActionListener(this);
 		ReportsButton.setActionCommand("Reports"); //Add action command	
-		
-		// GenerateReport Button
-		GenerateReportButton = GuiScreen.getGenerateReportButton();
-		GenerateReportButton.addActionListener(this);
-		GenerateReportButton.setActionCommand("GenerateReport"); //Add action command	
-		
-		// UpdateRate Button
-		UpdateRateButton = GuiScreen.getUpdateRateButton();
-		UpdateRateButton.addActionListener(this);
-		UpdateRateButton.setActionCommand("UpdateRate"); //Add action command	
 				
 		// get values for comboBoxs
 		Server.handleMessageFromClient(new callbackVector(MessageType.getMarketingRepresentativeComboBox));
 
 	}
 
+	/**
+	 * actionPerformed- attach the buttons to their action event handlers and 
+	 * Adding the appropriate window layer according to the selected action
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
@@ -250,12 +274,8 @@ public class MarketingRepresentativeController extends Controller{
 		if(e.getActionCommand().equals("CreatePattern"))
 			HandleCreatePatternPressed();
 		
-		if(e.getActionCommand().equals("Reports")){
-			GuiScreen.getUpdateSuccessMessageLabel().setVisible(false);
-			GuiScreen.getUpdateRateButton().setVisible(false);
-			ContainerCardLeft.show(LeftCardContainer, "RatesReportLeft");
-			ContainerCardCenter.show(CenterCardContainer, "EmptyCenterPanel");				//The RatesReport layer will be display											
-		}	
+		if(e.getActionCommand().equals("Reports"))
+			HandleReportPressed();
 	
 		if(e.getActionCommand().equals("GenerateReport"))
 			HandleGenerateReportPressed();
@@ -265,12 +285,18 @@ public class MarketingRepresentativeController extends Controller{
 		
 		}	
 
+	/* Create/Edit User */
+	
+	/**
+	 * HandleCreateUserPressed()- initialize CreateUserLayerCenter for new customer insertion.
+	 * In addition, adding action listeners to relevant buttons.
+	 */
 	private void HandleCreateUserPressed(){
 		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
 		ContainerCardLeft	= (CardLayout)(LeftCardContainer.getLayout());
 		
 		GuiScreen.CreateNewUserCenterLayer();
-		
+		// HideRelevantButtons()- let us show relevant button- depend Create/Edit case.
 		GuiScreen.HideRelevantButtons();
 		if ( GuiScreen.getNewCustomerFlag() ) GuiScreen.EnableRelevantButtons(true);
 		else GuiScreen.EnableRelevantButtons(false);
@@ -298,13 +324,15 @@ public class MarketingRepresentativeController extends Controller{
 		SaveButton.setActionCommand("Save"); //Add action command
 		
 	}
-
+	/**
+	 * HandleNextPressed() - Checking validation of inserted password and that all fields are full -
+	 * display relevant message else. If all fields inserted OK - display the next insertion layer - AddPersonalDetailsCenter.
+	 */
 	private void HandleNextPressed(){
 		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
 		PasswordValidationFailedMessageLabel = GuiScreen.getPasswordValidationFailedMessageLabel();
 		MissedFieldsMessageLabel = GuiScreen.getMissedFieldsMessageLabel();
 		UserNameExistMesaageLabel = GuiScreen.getUserNameExistMesaageLabel();
-		//CallBack LocalUserCallBack = null;
 		
 		// Show/ don't show PasswordValidationFailedMessageLabel after isValidPassword check
 		if (!Checks.isValidPassword(GuiScreen.getPasswordPasswordField().getText(), GuiScreen.getPasswordValidatePasswordField().getText()))
@@ -316,12 +344,15 @@ public class MarketingRepresentativeController extends Controller{
 				MissedFieldsMessageLabel.setVisible(true);
 		else MissedFieldsMessageLabel.setVisible(false);
 		
-		// If the input OK - checking if UserName exist in DB
+		// If the input OK - display the next layer - AddPersonalDetailsCenter
 		if (!PasswordValidationFailedMessageLabel.isVisible()&&!MissedFieldsMessageLabel.isVisible())
 			ContainerCardCenter.show(CenterCardContainer, "AddPersonalDetailsCenter");					
 			
 	}
-
+	/**
+	 * HandleCreatePressed() - Checking validation of inserted fields -display relevant message else.
+	 * If all fields inserted OK - send query to DB for add new customer.
+	 */
 	private void HandleCreatePressed(){
 		
 		InvalidEmailMesaageLabel = GuiScreen.getInvalidEmailMesaageLabel();
@@ -382,7 +413,10 @@ public class MarketingRepresentativeController extends Controller{
 			}
 		}	
 	}
-	
+	/**
+	 * HandleCreatePressedBackFromServer(CallBack LocalUserCallBack) - Checking instance of return callback from server and show relevant message.
+	 * @param LocalUserCallBack - Callback answer that return from server.
+	 */
 	private void HandleCreatePressedBackFromServer(CallBack LocalUserCallBack){
 		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
 		
@@ -423,7 +457,16 @@ public class MarketingRepresentativeController extends Controller{
 		}			
 	
 	}
+	public callbackCustomer getFullCallbackCustomer() {
+		return fullCallbackCustomer;
+	}
 	
+	/* Add/Edit User's Cars */
+	
+	/**
+	 * HandleAddCarPressed()- initialize AddCarsCenterPanelLayer for new cars insertion.
+	 * In addition, adding action listeners to relevant buttons, then send query to DB for get cars details of current customer.
+	 */
 	private void HandleAddCarPressed() {
 		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
 		Object[] idAraay = {GuiScreen.getCallbackCustomerUpdated().getCustomersID()};
@@ -443,17 +486,21 @@ public class MarketingRepresentativeController extends Controller{
 		CarsViewTable.setVariance(idAraay);
 		Server.handleMessageFromClient(CarsViewTable);			
 	}
-	
-	private void HandleAddCarPressedBackFromServer(callbackStringArray CarsViewTable1) {
+	/**
+	 * HandleAddCarPressedBackFromServer(callbackStringArray CarsViewTable) - getting cars details table from server in callbackStringArray,
+	 * then display cars table in GUI.
+	 * @param CarsViewTable - callbackStringArray containing cars details table.
+	 */
+	private void HandleAddCarPressedBackFromServer(callbackStringArray CarsViewTable) {
 		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
 		
-		GuiScreen.setCarsViewTable(CarsViewTable1.getBooleanTableModel());
-		
-		CarsViewTableModelBeforeChanges = CarsViewTable1.getBooleanTableModel();
-//		Data = CarsViewTableModelBeforeChanges.getData();
+		GuiScreen.setCarsViewTable(CarsViewTable.getBooleanTableModel());
 		ContainerCardCenter.show(CenterCardContainer, "AddCarLayerCenter");				//The AddCar layer will be display			
 	}
-	
+	/**
+	 * HandleAddPressed() - Checking validation of inserted fields -display relevant message else.
+	 * If all fields inserted OK - send query to DB for add new car.
+	 */
 	private void HandleAddPressed() {
 		
 		CarNumberFormattedTextField = GuiScreen.getCarNumberFormattedTextField();
@@ -475,7 +522,12 @@ public class MarketingRepresentativeController extends Controller{
 		}
 				
 	}
-	
+	/**
+	 * HandleAddPressedBackFromServer(CallBack LocalUserCallBack) - Checking instance of return callback from server and show relevant message.
+	 * If return callback from server is instance of callbackSuccess - refresh cars table by send query for getting cars details table from server and then 
+	 * display cars table in GUI.
+	 * @param LocalUserCallBack - Callback answer that return from server.
+	 */
 	private void HandleAddPressedBackFromServer(CallBack LocalUserCallBack) {
 		
 		ExistCarNumberLabel = GuiScreen.getExistCarNumberLabel();
@@ -493,44 +545,39 @@ public class MarketingRepresentativeController extends Controller{
 			Server.handleMessageFromClient(CarsViewTable);	
 		}
 		// Error case - car exist in DB
-		else ExistCarNumberLabel.setVisible(true);
+		else 
+			{
+			GuiScreen.getSuccessAddingCarMessageLabel().setVisible(false);
+			ExistCarNumberLabel.setVisible(true);
+			}
 	}
-	
+	/**
+	 * HandleSaveCarsDetailsPressed() - scanning cars table in GUI and update these cars in car table in DB by query that get 
+	 * vector of Car Callbacks.
+	 */
 	private void HandleSaveCarsDetailsPressed(){
-		
 		CarsViewTableModelAfterChanges = (BooleanTableModel) GuiScreen.getCarsViewTable().getModel();
-//		CarsViewTableModelBeforeChanges
-		
 		callbackVector CarsChangesVector = new callbackVector(MessageType.updateCustomerCar);
-		// Scan CarsViewTableBeforeChanges & CarsViewTableAfterChanges and looking for changes.
-		// If there are changes- update CarsChangesVector
-		for (int i=0; i<CarsViewTableModelBeforeChanges.getRowCount(); i++)
+		// Scan CarsViewTableAfterChange and update CarsChangesVector
+		for (int i=0; i<CarsViewTableModelAfterChanges.getRowCount(); i++)
 		{
-//			///////////////////
-//			if (CarsViewTableModelBeforeChanges.getValueAt(i,3) != CarsViewTableModelAfterChanges.getValueAt(i,3) ) 
-//				System.out.printf("NFC change");
-//			if (CarsViewTableModelBeforeChanges.getValueAt(i,5) != CarsViewTableModelAfterChanges.getValueAt(i,5) ) 
-//				System.out.printf("Active_car change");
-//			//////////////////
-//			if ( 	CarsViewTableModelBeforeChanges.getValueAt(i,3) != CarsViewTableModelAfterChanges.getValueAt(i,3) // NFC change
-//				||	CarsViewTableModelBeforeChanges.getValueAt(i,5) != CarsViewTableModelAfterChanges.getValueAt(i,5) )	// Active_car change		
-//			{
-//				System.out.printf("Row " +i);
-				callbackCar callback_Obj = new callbackCar();
-				if (CarsViewTableModelAfterChanges.getValueAt(i,3).equals(Boolean.TRUE)) callback_Obj.setYesNoNFC("Yes");
-				else callback_Obj.setYesNoNFC("No");
-				if (CarsViewTableModelAfterChanges.getValueAt(i,5).equals(Boolean.TRUE)) callback_Obj.setActiveCar("Yes");
-//				if (CarsViewTableModelAfterChanges.getValueAt(i,5)==true) callback_Obj.setActiveCar("Yes");
-				else callback_Obj.setActiveCar("No");
-				callback_Obj.setCarID( Integer.parseInt((String)CarsViewTableModelAfterChanges.getValueAt(i,0)) );
-				CarsChangesVector.add(callback_Obj);	
-//			}	
-		} // for
-		
+			callbackCar callback_Obj = new callbackCar();
+			if (CarsViewTableModelAfterChanges.getValueAt(i,3).equals(Boolean.TRUE)) callback_Obj.setYesNoNFC("Yes");
+			else callback_Obj.setYesNoNFC("No");
+			if (CarsViewTableModelAfterChanges.getValueAt(i,5).equals(Boolean.TRUE)) callback_Obj.setActiveCar("Yes");
+			else callback_Obj.setActiveCar("No");
+			callback_Obj.setCarID( Integer.parseInt((String)CarsViewTableModelAfterChanges.getValueAt(i,0)) );
+			CarsChangesVector.add(callback_Obj);	
+		} 
 		if (CarsChangesVector.size()>0)
 			Server.handleMessageFromClient(CarsChangesVector);
 	}
-	
+	/**
+	 * HandleSaveCarsDetailsPressedBackFromServer(CallBack LocalUserCallBack) - Checking instance of return callback from server and show relevant message.
+	 * If return callback from server is instance of callbackSuccess - refresh cars table by send query for getting cars details table from server and then 
+	 * display cars table in GUI.
+	 * @param LocalUserCallBack - Callback answer that return from server.
+	 */
 	private void HandleSaveCarsDetailsPressedBackFromServer(CallBack LocalUserCallBack){
 		
 		if  (LocalUserCallBack instanceof callbackSuccess)
@@ -540,10 +587,18 @@ public class MarketingRepresentativeController extends Controller{
 		
 		callbackStringArray CarsViewTable = new callbackStringArray(MessageType.getCarDetailes);
 		CarsViewTable.setVariance(idAraay);
-		Server.handleMessageFromClient(CarsViewTable);		
+		Server.handleMessageFromClient(CarsViewTable);	
+		GuiScreen.getSuccessAddingCarMessageLabel().setVisible(false);
+		GuiScreen.getExistCarNumberLabel().setVisible(false);
 		}
 	}
 	
+	/* CustomerDetails Left Layer - Search Customer */	
+	
+	/**
+	 * HandleSearchPressed()- Checking input customer Id from user - if not valid display relevant message.
+	 * If valid - sent query to server to get customer details.
+	 */
 	private void HandleSearchPressed() {
 		
 		EnterCustomerIdTextField = GuiScreen.getEnterCustomerIdTextField();
@@ -566,7 +621,12 @@ public class MarketingRepresentativeController extends Controller{
 			Server.handleMessageFromClient( fullCallbackCustomer);				
 		}	
 	}
-	
+	/**
+	 * HandleSearchPressedBackFromServer(CallBack LocalUserCallBack) - Checking instance of return callback from server and show relevant message.
+	 * If return callback from server is instance of callbackSuccess - set customer details on relevant gui layers, then display CreateNewCustomerAccountLeft 
+	 * for choose action button.
+	 * @param LocalUserCallBack - Callback answer that return from server.
+	 */
 	private void HandleSearchPressedBackFromServer(CallBack LocalUserCallBack) {
 		
 		ContainerCardLeft = (CardLayout)(LeftCardContainer.getLayout());
@@ -582,13 +642,20 @@ public class MarketingRepresentativeController extends Controller{
 		else CustomerNotExistMessageLabel.setVisible(true);		
 	}
 	
+	/* Campaign Patterns */
+
+	/**
+	 * HandleCampignPatternPressed()- initialize CampighnPatternLayerCenter for new pattern insertion.
+	 * In addition, adding action listeners to relevant buttons.
+	 * Then send query to server to get Exist Campaign Patterns for Exist Campaign Patterns comboBox.
+	 */
 	private void HandleCampignPatternPressed(){
 		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
 		ContainerCardLeft	= (CardLayout)(LeftCardContainer.getLayout());
 		
 		GuiScreen.CampighnPatternLayer();
 		GuiScreen.setNotVisibleAllPatternsKinds();
-		ContainerCardCenter.show(CenterCardContainer, "CampighnPatternLayerCenter");				//The CampighnPattern layer will be display												
+		ContainerCardCenter.show(CenterCardContainer, "CampighnPatternLayerCenter");	//The CampighnPattern layer will be display												
 		ContainerCardLeft.show(LeftCardContainer, "CampighnPatternLeft");
 		
 		//ExistPatterns ComboBox
@@ -622,7 +689,20 @@ public class MarketingRepresentativeController extends Controller{
 		Server.handleMessageFromClient(existPatternRefresh);
 		
 	}
-	
+	/**
+	 * HandlegetExistCampaignPatternsBackFromServer(callbackStringArray callBack) - update Gui components with patterns data that 
+	 * came from DB.
+	 * @param callBack - callbackStringArray containing Exist Patterns description values for Exist Patterns comboBox.
+	 */
+	private void HandlegetExistCampaignPatternsBackFromServer(callbackStringArray callBack){
+		
+		GuiScreen.SetExistPatternsSelection((String[])callBack.getComboBoxStringArray());
+		GuiScreen.setExistPatternsCallbackArray((callbackCampaignPattern[])callBack.getVariance());
+	}
+	/**
+	 * HandleCreatePatternPressed() - Checking validation of inserted fields -display relevant message else.
+	 * If all fields inserted OK - send query to DB for adding new campaign pattern.
+	 */
 	private void HandleCreatePatternPressed(){
 		
 		InsertFuelAmountTextField = GuiScreen.getInsertFuelAmountTextField();
@@ -646,10 +726,13 @@ public class MarketingRepresentativeController extends Controller{
 		{
 			callbackCampaignPattern newCampaignPattern = GuiScreen.getNewCampaignPatternCallback();
 			Server.handleMessageFromClient( newCampaignPattern);
-		}
-		
+		}	
 	}
-	
+	/**
+	 * HandleCreatePatternPressedBackFromServer(CallBack LocalUserCallBack) - Checking instance of return callback from server and show relevant message.
+	 * If return callback from server is instance of callbackSuccess - send query to server to get Exist Campaign Patterns for Exist Campaign Patterns comboBox.
+	 * @param LocalUserCallBack - Callback answer that return from server.
+	 */
 	private void HandleCreatePatternPressedBackFromServer(CallBack LocalUserCallBack){		
 		// Success case
 		if  (LocalUserCallBack instanceof callbackSuccess)
@@ -667,55 +750,85 @@ public class MarketingRepresentativeController extends Controller{
 		}
 	}
 	
-	private void HandlegetExistCampaignPatternsBackFromServer(callbackStringArray callBack){
-		
-		GuiScreen.SetExistPatternsSelection((String[])callBack.getComboBoxStringArray());
-		GuiScreen.setExistPatternsCallbackArray((callbackCampaignPattern[])callBack.getVariance());
-	}
+	/* Rates Report */
 	
-	private void HandleGenerateReportPressed(){
-
-		GuiScreen.getUpdateSuccessMessageLabel().setVisible(false);
-		GuiScreen.getUpdateRateButton().setVisible(false);
-		
-		// Create GUI layer
+	/**
+	 * HandleGenerateReportPressed()- initialize RatesReportlLayer.
+	 * In addition, adding action listeners to relevant buttons.
+	 */
+	private void HandleReportPressed(){
 		GuiScreen.RatesReportlLayer();
+		GuiScreen.SetVisibleRelevantComponents(false);
 		
-		//get RatesReportTable from DB
-		callbackStringArray RatesReportTable = new callbackStringArray(MessageType.getAnalyticSystemRatingCalculation);
-		Server.handleMessageFromClient(RatesReportTable);			
+		ContainerCardLeft.show(LeftCardContainer, "EmptyLeftPanel");
+		ContainerCardCenter.show(CenterCardContainer, "RatesReportLayerCenter");	//The RatesReport layer will be display	
+		
+		// GenerateReport Button
+		GenerateReportButton = GuiScreen.getGenerateReportButton();
+		GenerateReportButton.addActionListener(this);
+		GenerateReportButton.setActionCommand("GenerateReport"); //Add action command	
+		
+		// UpdateRate Button
+		UpdateRateButton = GuiScreen.getUpdateRateButton();
+		UpdateRateButton.addActionListener(this);
+		UpdateRateButton.setActionCommand("UpdateRate"); //Add action command	
+	}	
+	/**
+	 * HandleGenerateReportPressed() - Checking GenerateDateChooser validation and display relevant message.
+	 * If GenerateDateChooser inserted OK - send query to DB for getting rate report by inserted date.
+	 */
+	private void HandleGenerateReportPressed(){
+		JDateChooser GenerateDateChooser = GuiScreen.getGenerateDateChooser();
+		// show/ don't show InvalidInsertedDateLabel
+		if (!checks.isPassedDate(((JTextField)GenerateDateChooser.getDateEditor().getUiComponent()).getText())) GuiScreen.getInvalidInsertedDateLabel().setVisible(true);
+		else { //get RatesReportTable from DB
+			GuiScreen.getInvalidInsertedDateLabel().setVisible(false);
+			String[] dateArr={((JTextField)GenerateDateChooser.getDateEditor().getUiComponent()).getText()};
+			callbackStringArray RatesReportTable = new callbackStringArray(MessageType.getAnalyticSystemRatingCalculation);
+			RatesReportTable.setVariance(dateArr);
+			Server.handleMessageFromClient(RatesReportTable);
+		}		
 	}
-	
+	/**
+	 * HandleGenerateReportBackFromServer(callbackStringArray RatesReportTable) - getting report details from DB and display it on GUI.
+	 * In addition, display relevant components.
+	 * @param RatesReportTable - callbackStringArray contain report details.
+	 */
 	private void HandleGenerateReportBackFromServer(callbackStringArray RatesReportTable){
 		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
-		
 		// set report table on GUI table
 		GuiScreen.setRatesReportTable(RatesReportTable.getDefaultTableModel());
-		
 		// define hander to Export Button
 		new JTableToExcel(GuiScreen.getRatesReportExportButton(), GuiScreen.getRatesReportTable());
-
+		GuiScreen.setRatesReportLabel();
+		GuiScreen.SetVisibleRelevantComponents(true);
 		ContainerCardCenter.show(CenterCardContainer, "RatesReportLayerCenter");				//The RatesReport layer will be display											
-		GuiScreen.getUpdateRateButton().setVisible(true);
-	
 	}
 	
+	/**
+	 * HandleUpdateRatePressed() -  send query to DB for update rate field in customer table according to new rate in Rates Report table that generated.
+	 */
 	private void HandleUpdateRatePressed(){
-		
+		JDateChooser GenerateDateChooser = GuiScreen.getGenerateDateChooser();
 		//updates Rates to DB
 		callbackStringArray UpdateRates = new callbackStringArray(MessageType.updateAnalyticSystemRatingCalculation);
+		String[] dateArr={((JTextField)GenerateDateChooser.getDateEditor().getUiComponent()).getText()};
+		UpdateRates.setVariance(dateArr);
 		Server.handleMessageFromClient(UpdateRates);			
 	}
-	
+	/**
+	 * HandleUpdateRateBackFromServer(CallBack LocalUserCallBack) - Checking instance of return callback from server and show relevant message.
+	 * @param LocalUserCallBack - Callback answer that return from server.
+	 */
 	private void HandleUpdateRateBackFromServer(CallBack LocalUserCallBack){
 		ContainerCardCenter = (CardLayout)(CenterCardContainer.getLayout());
 		
 		if  (LocalUserCallBack instanceof callbackSuccess){
 			GuiScreen.getUpdateSuccessMessageLabel().setVisible(true);
-			ContainerCardCenter.show(CenterCardContainer, "EmptyCenterPanel");				//The RatesReport layer will be display											
-
 		}	
 	}
+	
+	/* Controller */
 	
 	@Override
 	public void update(Observable o, Object arg) {
@@ -771,11 +884,5 @@ public class MarketingRepresentativeController extends Controller{
 		
 		
 	}
-	
-	public callbackCustomer getFullCallbackCustomer() {
-		return fullCallbackCustomer;
-	}
-
 
 }
-
