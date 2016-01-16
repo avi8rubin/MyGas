@@ -33,7 +33,7 @@ import common.MessageType;
  * In this class you can find all queries that communicate with the database.
  * All the requests from client goes into two methods, one handles object type CallBack
  * and the second one handles callbackVector type witch extends Vector class.
- * @author zinoohad
+ * @author Ohad Zino
  *
  */
 public class QueryIO implements Runnable {
@@ -1576,7 +1576,7 @@ public class QueryIO implements Runnable {
 			if(Date == null)	//Return the rates from the last week
 				AnswerResult = st.executeQuery(SqlQuery);
 			else{				//Return the rates from specific week
-				AnswerResult = st.executeQuery(SqlQuery.replaceAll("DATE(NOW())", "'"+Date[0]+"'"));
+				AnswerResult = st.executeQuery(SqlQuery.replace("DATE(NOW())", "'"+Date[0]+"'"));
 			}
 			/*Create callbackStringArray and send back to client*/
 			if(SelectUpdate == 1){

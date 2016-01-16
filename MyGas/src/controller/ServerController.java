@@ -81,7 +81,7 @@ public class ServerController {
 					Server.sendToAllClients(new callbackLostConnection());
 
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(3000); //Wait while message send to all clients
 						Server.close();
 					} catch (IOException | InterruptedException e1) {
 						// TODO Auto-generated catch block

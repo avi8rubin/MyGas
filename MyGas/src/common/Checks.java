@@ -17,8 +17,11 @@ import java.util.Date;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
+
+import com.toedter.calendar.JDateChooser;
 
 public class Checks {
 
@@ -26,7 +29,11 @@ public class Checks {
 		// TODO Auto-generated constructor stub
 	}
 
-// MarketingRepresentative
+	/**
+	 * isValidEmailAddress(String email) - Checking email validation.
+	 * @param email - string value of input email.
+	 * @return true for valid email, false else.
+	 */
 	public static boolean isValidEmailAddress(String email) {
 		   boolean result = true;
 		   try {
@@ -37,18 +44,63 @@ public class Checks {
 		   }
 		   return result;
 		}
-	
+	/**
+	 * isValidPassword(String password, String passwordValidate) - Checking password validation.
+	 * @param password
+	 * @param passwordValidate
+	 * @return true if password=passwordValidate , else return false.
+	 */
 	public static boolean isValidPassword(String password, String passwordValidate) {   
 		   if (password.equals(passwordValidate)) return true;
 		   return false;
 		}	
-	
+	/**
+	 * isAllFieldsFilled(String field1, String field2, String field3 ) - Checking that all fields are full.
+	 * @param field1 string value
+	 * @param field2 string value
+	 * @param field3 string value
+	 * @return return true if all fields are full, else return false.
+	 */
 	public static boolean isAllFieldsFilled(String field1, String field2, String field3 ) {	
 		if (field1.equals("")||field2.equals("")||field3.equals(""))
 			return false;
 		return true;
 	}
-	
+	/**
+	 * isPassedDate(String Date) - Checking if Date is passed date - then return true, else return false.
+	 * @param Date - inserted date in GUI
+	 * @return true if Date is date that passed , else return false.
+	 */
+	public static boolean isPassedDate(String Date){
+		JDateChooser DateChooser = new JDateChooser();
+		DateChooser.setDateFormatString("yyyy/MM/dd");
+		Date date = new Date();
+		DateChooser.getDateEditor().setDate(date);
+		String currDate= ((JTextField)DateChooser.getDateEditor().getUiComponent()).getText();
+		
+		String DateDay=Date.substring(8, 10);
+		String CurrentDay=currDate.substring(8, 10);
+
+		String DateMonth=Date.substring(5, 7);
+		String CurrentMonth=currDate.substring(5, 7);
+
+		String DateYear=Date.substring(0,4);
+		String CurrentYear=currDate.substring(0,4);
+		
+		if(Integer.parseInt(DateYear)>Integer.parseInt(CurrentYear))
+			return false;
+		else if(Integer.parseInt(DateMonth)>Integer.parseInt(CurrentMonth)){
+			if(Integer.parseInt(DateYear)==Integer.parseInt(CurrentYear))
+				return false;
+			}
+		else if(Integer.parseInt(DateDay)>Integer.parseInt(CurrentDay)){
+			if(Integer.parseInt(DateMonth)==Integer.parseInt(CurrentMonth)){
+				if(Integer.parseInt(DateYear)==Integer.parseInt(CurrentYear))
+					return false;
+			}
+		}
+		return true;
+	}
 	/**
 	 * Check if the entered date is a valid date
 	 * @param startDate - The start date
@@ -99,8 +151,6 @@ public class Checks {
 		}  
 		return true;  
 	}
-	
-	
 	/**
 	 * check if string is a float number
 	 * @param String - String of numbers in a float form
@@ -197,8 +247,6 @@ public class Checks {
 
 		return false;  
 	}
-	
-	
 	/**
 	 * Resize the column of JTable to the ultimate size.
 	 * @param table
