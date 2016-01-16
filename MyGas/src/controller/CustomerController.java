@@ -270,7 +270,7 @@ public class CustomerController extends Controller{
 								(Integer.parseInt(DeliveryMin)-Integer.parseInt(currTimeMin));
 					if(Differacne<=360){
 					//up to 6 hours -cost Shipping is an additional 2%
-						sale.setPayment((float)(SumPrice*0.02));
+						sale.setPayment((float)(SumPrice*1.02));
 						RemarksString="<html>*Immediate order-within 6 hours "
 											+ "is fuel cost plus 2% shipping from the"
 											+ "fuel price</html>";

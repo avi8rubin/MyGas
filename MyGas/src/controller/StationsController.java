@@ -833,7 +833,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 				int selectedOption = JOptionPane.showOptionDialog(null, panel, "Driver Input", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
 					while(txt.getText().equals(""))
 					{
-						lbl.setText("Worng Driver Input, Try Again");
+						lbl.setText("Wrong Driver Input, Try Again");
 						selectedOption = JOptionPane.showOptionDialog(null, panel, "Driver Input", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
 					}
 				  String text = txt.getText();

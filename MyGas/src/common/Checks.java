@@ -161,7 +161,7 @@ public class Checks {
 	{ 
 		try
 		{
-		if(Float.parseFloat(str)<0)
+		if(Float.parseFloat(str)<=0)
 			  return false;
 		}catch(NumberFormatException e){
 		  return false;
