@@ -79,7 +79,7 @@ public class ServerController {
 					printToConsol("Server is Terminate connction.");
 					QueryServer.ServerStopLogoutAllUsers();
 					Server.sendToAllClients(new callbackLostConnection());
-					
+
 					try {
 						Thread.sleep(1000);
 						Server.close();
