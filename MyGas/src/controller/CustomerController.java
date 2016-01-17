@@ -275,7 +275,10 @@ public class CustomerController extends Controller{
 											+ "fuel price</html>";
 						PrintSaleTemplate(SumPrice,RemarksString,0.02, FuelPrice,"+Shipping");		
 					}
-					
+					else {
+						sale.setPayment((float)(SumPrice));
+						PrintSaleTemplate(SumPrice,RemarksString,0, FuelPrice, "<br>");	
+					}
 				}
 				else if(Float.parseFloat(FuelStr)>=600 && Float.parseFloat(FuelStr)<=800){
 					sale.setPayment((float)(SumPrice*0.97));
