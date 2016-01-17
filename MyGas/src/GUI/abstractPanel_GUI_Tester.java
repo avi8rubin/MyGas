@@ -24,9 +24,6 @@ import javax.swing.JCheckBox;
 
 public class abstractPanel_GUI_Tester extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JLayeredPane TopPanel = new JLayeredPane();

@@ -109,7 +109,6 @@ public class abstractPanel_GUI extends JFrame{
 	 * Create the abstract GUI panel.
 	 * @param EnteredUser - Current user
 	 * @param Server - server connection
-	 * @param CommonBuffer - not in use
 	 * @param LoginScreen - The login screen to go back when user logout
 	 */
 

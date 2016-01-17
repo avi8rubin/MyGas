@@ -59,7 +59,6 @@ public class CEOGUI extends abstractPanel_GUI{
 	 * Display CEO screen with all the function this screen contains.
 	 * @param EnteredUser The user entered to the system.
 	 * @param Server The client connection to server.
-	 * @param CommonBuffer The callback buffer, where the query answer returns.
 	 * @param LoginScreen The login screen, when the user logout, he return to the login screen.
 	 */
 	public CEOGUI(callbackUser EnteredUser, Client Server, Login_GUI LoginScreen) {

@@ -258,7 +258,6 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	 * for load combo-boxes values only once when the MarketingRepresentativeGUI created.
 	 * @param EnteredUser - Current user
 	 * @param Server - server connection
-	 * @param CommonBuffer - not in use
 	 * @param LoginScreen - The login screen to go back when user logout
 	 */
 	public MarketingRepresentativeGUI(callbackUser EnteredUser, Client Server,

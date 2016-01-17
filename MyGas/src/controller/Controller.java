@@ -46,7 +46,6 @@ public abstract class Controller implements ActionListener,Observer{
 	/**
 	 * The abstract controller constructor.
 	 * @param Server - The client connection to server.
-	 * @param CommonBuffer -  The callback buffer, where the query answer returns.
 	 */
 	
 	public Controller(Client Server){

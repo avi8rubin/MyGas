@@ -44,7 +44,6 @@ public class CEOController extends Controller {
 	/**
 	 * Constructor - CEO Gui
 	 * @param Server - Connection to server
-	 * @param CommonBuffer - Not in use
 	 * @param GuiScreen - The gui screen use in some methods
 	 */
 	public CEOController(Client Server, CEOGUI GuiScreen) {

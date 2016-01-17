@@ -69,7 +69,6 @@ public class MarketingManagerController extends Controller {
 	/**
 	 * Contractor
 		 * @param Server - Connection to server
-		 * @param CommonBuffer - Not in use
 		 * @param GuiScreen - The gui screen use in some methods	
 	 */
 	public MarketingManagerController(Client Server, MarketingManagerGUI GuiScreen) {

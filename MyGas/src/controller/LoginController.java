@@ -62,7 +62,6 @@ public class LoginController implements ActionListener,Observer{
 	/**
 	* Constructor of login controller.
 	* @param LoginScreen The login Gui.
-	* @param CommonBuffer The buffer to transfer callback's
 	*/
 	public LoginController(Login_GUI LoginScreen){
 		/*------- initialize common variables-------*/

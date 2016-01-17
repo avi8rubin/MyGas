@@ -137,7 +137,12 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	private JTableToExcel CustomerReportToExcel;
 	private JTableToExcel CommentsReportToExcel;
 
-	
+	/**
+	 * Marketing Manager GUI constructor
+	 * @param EnteredUser The user entered to the system.
+	 * @param Server The client connection to server.
+	 * @param LoginScreen The login screen, when the user logout, he return to the login screen.
+	 */
 	public MarketingManagerGUI(callbackUser EnteredUser, Client Server, 
 			Login_GUI LoginScreen) {
 		super(EnteredUser, Server, LoginScreen);

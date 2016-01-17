@@ -88,7 +88,12 @@ public class CustomerGUI extends abstractPanel_GUI {
 	private JLabel sumLabel;
 	
 	private static final long serialVersionUID = 1L;
-
+/**
+ * CustomerGUI contractor
+ * @param EnteredUser The user entered to the system.
+ * @param Server The client connection to server.
+ * @param LoginScreen The login screen, when the user logout, he return to the login screen.
+ */
 	public CustomerGUI(callbackUser EnteredUser, Client Server,  Login_GUI LoginScreen) {
 		super(EnteredUser, Server, LoginScreen);
 

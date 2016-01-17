@@ -69,7 +69,6 @@ public class CustomerController extends Controller{
 	 * details in the DB
 	 * handle the information of all the customer past purchases 
 	 * @param Server - Connection to server
-	 * @param CommonBuffer - Not in use
 	 * @param GuiScreen - The gui screen use in some methods
 	 * @author Litaf
 	 */

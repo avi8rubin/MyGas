@@ -74,7 +74,6 @@ public class StationManagerController extends Controller{
 	/**
 	 * Contractor
 	 * @param Server - Connection to server
-	 * @param CommonBuffer - Not in use
 	 * @param GuiScreen - The gui screen use in some methods
 	 */
 	public StationManagerController(Client Server, StationManagerGUI GuiScreen) {

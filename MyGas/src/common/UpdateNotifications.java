@@ -32,6 +32,12 @@ public class UpdateNotifications implements Runnable,Observer {
 	private JButton NotificationsButton;
 	private callbackStringArray Notification = new callbackStringArray(MessageType.getNotifications);
 	
+	/**
+	 * Notification thread
+	 * @param GUIScreen - the current screen gui
+	 * @param Server - server connection
+	 * @param UserID - the current userid
+	 */
 	public UpdateNotifications(abstractPanel_GUI GUIScreen ,Client Server, int UserID){
 		this.Server = Server;
 		Server.addObserver(this);

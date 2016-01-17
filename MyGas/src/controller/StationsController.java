@@ -94,7 +94,6 @@ public class StationsController extends Controller implements MouseListener,Runn
 		/**
 		 * Contractor
 		 * @param Server - main server to send DB
-		 * @param CommonBuffer - get all the callbacks
 		 * @param GuiScreen - gas Station enter
 		 */
 	public StationsController(Client Server, StationsGUI GuiScreen) {

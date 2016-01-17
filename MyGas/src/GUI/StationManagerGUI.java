@@ -92,7 +92,6 @@ public class StationManagerGUI extends abstractPanel_GUI{
 	 * Contractor
 	 * @param EnteredUser - User details
 	 * @param Server - Server connection
-	 * @param CommonBuffer - callbackBuffer - NOT IN USE
 	 * @param LoginScreen - Login screen to go back when logout
 	 */
 	public StationManagerGUI(callbackUser EnteredUser, Client Server,

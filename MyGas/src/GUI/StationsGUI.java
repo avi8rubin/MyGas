@@ -8,19 +8,11 @@
  * 			  Avi Rubin <avi8rubin@gmail.com>
  **************************************************************************/
 package GUI;
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyListener;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Vector;
-
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -38,15 +30,11 @@ import javax.swing.border.LineBorder;
 import javax.swing.text.MaskFormatter;
 
 import callback.callbackCar;
-import callback.callbackStringArray;
 import callback.callbackUser;
 import client.Client;
 
 public class StationsGUI extends abstractPanel_GUI{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	
@@ -82,6 +70,12 @@ public class StationsGUI extends abstractPanel_GUI{
 	private JLayeredPane GasFuelingCenterPanel = new JLayeredPane();
 	private JLayeredPane StationUserLoginLayer ;
 	
+	/**
+	 * Stations GUI constructor
+	 * @param EnteredUser The user entered to the system.
+	 * @param Server The client connection to server.
+	 * @param LoginScreen The login screen, when the user logout, he return to the login screen.
+	 */
 	public StationsGUI(callbackUser EnteredUser, Client Server, Login_GUI LoginScreen) {
 		super(EnteredUser, Server, LoginScreen);
 
