@@ -1197,7 +1197,7 @@ public class QueryIO implements Runnable {
 			ps3.setInt(5, Callback.getPlanID());
 			ps3.setInt(6, Fcallback.getUserID());
 			ps3.setString(7, Callback.getPhoneNumber().trim());
-			ps3.setString(8, Callback.getCreditCard().trim());
+			ps3.setString(8, Callback.getCreditCard().trim().replace("-    -    -", ""));
 			ps3.setString(9, Callback.getEmail().trim());		
 			ps3.setInt(10, Callback.getCostingModelID());	
 			ps3.executeUpdate();
@@ -1677,7 +1677,7 @@ public class QueryIO implements Runnable {
 			ps3.setString(3, Callback.getCustomerType().trim());
 			ps3.setInt(4, Callback.getPlanID());
 			ps3.setString(5, Callback.getPhoneNumber().trim());
-			ps3.setString(6, Callback.getCreditCard().trim());
+			ps3.setString(6, Callback.getCreditCard().trim().replace("-    -    -", ""));
 			ps3.setString(7, Callback.getEmail().trim());
 			ps3.setString(8, Callback.getISActive().trim());	
 			ps3.setInt(9, Callback.getCostingModelID());
