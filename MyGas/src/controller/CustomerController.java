@@ -267,10 +267,10 @@ public class CustomerController extends Controller{
 											dateStr.substring(0,2),DeliveryHour, DeliveryMin);
 				SumPrice=FuelPrice*Float.parseFloat(FuelStr);
 				if(currDate.equals(dateStr)){
-					flag++;
 					Differacne=(Integer.parseInt(DeliveryHour)-Integer.parseInt(currTimeHour))*60+
 								(Integer.parseInt(DeliveryMin)-Integer.parseInt(currTimeMin));
 					if(Differacne<=360){
+						flag++;
 					//up to 6 hours -cost Shipping is an additional 2%
 						sale.setPayment((float)(SumPrice*1.02));
 						ShippingAndDiscount++;
