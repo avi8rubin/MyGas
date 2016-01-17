@@ -239,6 +239,8 @@ public class CustomerController extends Controller{
 			float FuelPrice=0;
 			float SumPrice=0;
 			int Differacne=0;
+			int ShippingAndDiscount=0;
+			int flag=0;
 			String RemarksString=null;
 			
 			Object[][] arr=TariffTable.getData();
@@ -268,31 +270,46 @@ public class CustomerController extends Controller{
 					Differacne=(Integer.parseInt(DeliveryHour)-Integer.parseInt(currTimeHour))*60+
 								(Integer.parseInt(DeliveryMin)-Integer.parseInt(currTimeMin));
 					if(Differacne<=360){
+						flag++;
 					//up to 6 hours -cost Shipping is an additional 2%
 						sale.setPayment((float)(SumPrice*1.02));
+						ShippingAndDiscount++;
 						RemarksString="<html>*Immediate order-within 6 hours "
-											+ "is fuel cost plus 2% shipping from the"
+											+ "is fuel cost plus 2% shipping from the "
 											+ "fuel price</html>";
 						PrintSaleTemplate(SumPrice,RemarksString,0.02, FuelPrice,"+Shipping");		
 					}
-					else {
-						sale.setPayment((float)(SumPrice));
-						PrintSaleTemplate(SumPrice,RemarksString,0, FuelPrice, "<br>");	
-					}
 				}
-				else if(Float.parseFloat(FuelStr)>=600 && Float.parseFloat(FuelStr)<=800){
+				 if(Float.parseFloat(FuelStr)>=600 && Float.parseFloat(FuelStr)<=800){
+					 flag++;
+					 if(ShippingAndDiscount==1){
+							sale.setPayment((float)(SumPrice*0.99));
+							RemarksString="<html>*Shipping is 2% from fuel price and reservation of 600-800 "
+												+ "liters in 3% discount. Overall 1% discount</html>";
+							PrintSaleTemplate(SumPrice,RemarksString,-0.01, FuelPrice, "+Discount");	
+					 }
+					else{
 					sale.setPayment((float)(SumPrice*0.97));
 					RemarksString="<html>*Discount of 3% for reservation of  600-800 liters</html>";
 					PrintSaleTemplate(SumPrice,RemarksString,-0.03, FuelPrice, "+Discount");	
-				}
-				else if(Float.parseFloat(FuelStr)>800){
+					 }
+				 }
+				 if(Float.parseFloat(FuelStr)>800){
+					 flag++;
+					 if(ShippingAndDiscount==1){
+							sale.setPayment((float)(SumPrice*0.98));
+							RemarksString="<html>*Shipping is 2% from fuel price and reservation of over 800 "
+												+ "liters in 4% discount. Overall 2% discount</html>";
+							PrintSaleTemplate(SumPrice,RemarksString,-0.02, FuelPrice, "+Discount");	
+					 }
+					 else{
 					sale.setPayment((float)(SumPrice*0.96));
-					RemarksString="<html>*Discount of 3% for reservation of  600-800 liters</html>";
+					RemarksString="<html>*Discount of 4% for reservation of over 800 liters</html>";
 					PrintSaleTemplate(SumPrice,RemarksString,-0.04, FuelPrice, "+Discount");	
+					 }
 				}
-				else {
+				if(flag==0) {
 					sale.setPayment((float)(SumPrice));
-				//	RemarksString="<html>*Discount of 3% for reservation of  600-800 liters</html>";
 					PrintSaleTemplate(SumPrice,RemarksString,0, FuelPrice, "<br>");	
 				}
 				
