@@ -163,8 +163,7 @@ public class MarketingManagerController extends Controller {
 			GuiScreen.setDates();
 			Datelabel.setText("");
 		}		
-		else if(e.getActionCommand().equals("Produce Cu"
-				+ "stomerCharacterization Report")){
+		else if(e.getActionCommand().equals("Produce CustomerCharacterization Report")){
 			HandleCustomerCharacterizationReport();											
 		}
 		else if(e.getActionCommand().equals("Change ComboBox selection")){
@@ -276,7 +275,9 @@ public class MarketingManagerController extends Controller {
 			Datelabel.setText("*Error, Illegal Date");
 		}
 		else{
-		String[] dateArr={startDate,endDate};
+		String startDateToDB= startDate.substring(6,8)+"/"+startDate.substring(3,5)+"/"+startDate.substring(0,2);
+		String endDateToDB= endDate.substring(6,8)+"/"+endDate.substring(3,5)+"/"+endDate.substring(0,2);
+		String[] dateArr={startDateToDB,endDateToDB};
 		callbackStringArray createCustomerTable=new callbackStringArray(MessageType.getCustomerCharacterizationByPeriod);
 		createCustomerTable.setColHeaders(dateArr);
 		Server.handleMessageFromClient(createCustomerTable);
