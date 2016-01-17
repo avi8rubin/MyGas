@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import GUI.CustomerGUI;
 import GUI.Login_GUI;
-import callback.callbackBuffer;
 import callback.callbackCustomer;
 import callback.callbackUser;
 import client.Client;
@@ -43,7 +42,6 @@ public class homeFuelTest {
 			Customers.add(CustomerWithNoCredit);
 			
 			Login_GUI LoginGui= new Login_GUI();
-			callbackBuffer buff=new callbackBuffer();
 			Client server=new Client("127.0.0.1", 5555);
 			tempUser1=new callbackUser
 					(CustomerWithCredit.getCustomerFirstName(),CustomerWithNoCredit.getUserPassword());
@@ -51,12 +49,12 @@ public class homeFuelTest {
 			tempUser2=new callbackUser
 					(CustomerWithCredit.getCustomerFirstName(),CustomerWithCredit.getUserPassword());
 			
-			CustomerGUI GuiScreenNoCredit= new CustomerGUI(tempUser1,server,buff,LoginGui);
+			CustomerGUI GuiScreenNoCredit= new CustomerGUI(tempUser1,server,LoginGui);
 			customerController= new CustomerController
-					(server,buff,GuiScreenNoCredit);
-			CustomerGUI GuiScreenCredit= new CustomerGUI(tempUser2,server,buff,LoginGui);
+					(server,GuiScreenNoCredit);
+			CustomerGUI GuiScreenCredit= new CustomerGUI(tempUser2,server,LoginGui);
 			customerController= new CustomerController
-					(server,buff,GuiScreenCredit);
+					(server,GuiScreenCredit);
 		}
 
 
