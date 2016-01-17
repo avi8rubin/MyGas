@@ -20,7 +20,6 @@ import java.util.Observer;
 
 import GUI.*;
 import callback.CallBack;
-import callback.callbackBuffer;
 import callback.callbackUser;
 import callback.callback_Error;
 import client.Client;
@@ -33,10 +32,6 @@ public class LoginController implements ActionListener,Observer{
 	 * The default port to connect on.
 	 */
 	 final public static int DEFAULT_PORT = 5555;
-	/**
-	 * This buffer will allows the transfer of the callback, back to the application
-	 */
-	private callbackBuffer CommonBuffer = null;
 	/**
 	 * The login GUI screen
 	 * And next GUI screen for closing (gas station problem)
@@ -69,10 +64,9 @@ public class LoginController implements ActionListener,Observer{
 	* @param LoginScreen The login Gui.
 	* @param CommonBuffer The buffer to transfer callback's
 	*/
-	public LoginController(Login_GUI LoginScreen, callbackBuffer CommonBuffer){
+	public LoginController(Login_GUI LoginScreen){
 		/*------- initialize common variables-------*/
-		this.LoginScreen=LoginScreen; 									// Login GUI											// Server connection
-		this.CommonBuffer=CommonBuffer;									// CallBack buffer
+		this.LoginScreen=LoginScreen; 									// Login GUI	
 
 		
 		/*----- Create gui button handlers -----*/
@@ -192,28 +186,28 @@ public class LoginController implements ActionListener,Observer{
 		
 		switch(EnteredUser.getUserTypeId()){
 		case 1: 
-			new CustomerController(Server, CommonBuffer,
-					new CustomerGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+			new CustomerController(Server,
+					new CustomerGUI(EnteredUser, Server, LoginScreen));
 			break;
 		case 2: 
-			new StationsController(Server, CommonBuffer,
-					new StationsGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+			new StationsController(Server,
+					new StationsGUI(EnteredUser, Server, LoginScreen));
 			break;
 		case 3: 
-			new StationManagerController(Server, CommonBuffer,
-					new StationManagerGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+			new StationManagerController(Server,
+					new StationManagerGUI(EnteredUser, Server, LoginScreen));
 			break;
 		case 4: 
-			new CEOController(Server, CommonBuffer,
-					new CEOGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+			new CEOController(Server,
+					new CEOGUI(EnteredUser, Server, LoginScreen));
 			break;
 		case 5: 
-			new MarketingManagerController(Server, CommonBuffer,
-					new MarketingManagerGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+			new MarketingManagerController(Server,
+					new MarketingManagerGUI(EnteredUser, Server, LoginScreen));
 			break;
 		case 6: 
-			new MarketingRepresentativeController(Server, CommonBuffer,
-					new MarketingRepresentativeGUI(EnteredUser, Server, CommonBuffer, LoginScreen));
+			new MarketingRepresentativeController(Server,
+					new MarketingRepresentativeGUI(EnteredUser, Server, LoginScreen));
 			break;
 		}
 		

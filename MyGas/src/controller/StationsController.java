@@ -17,22 +17,14 @@ import java.awt.event.MouseListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Observable;
-import java.util.Vector;
-
-import javax.security.auth.callback.Callback;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
-
 import GUI.StationsGUI;
 import callback.CallBack;
-import callback.callbackBuffer;
 import callback.callbackCampaign;
 import callback.callbackCar;
 import callback.callbackCustomer;
@@ -47,7 +39,6 @@ import common.Checks;
 import common.MessageType;
 
 public class StationsController extends Controller implements MouseListener,Runnable{
-		private callbackBuffer CommonBuffer = null;
 		private callbackStationFuels CurrentStation=null;
 		
 		
@@ -101,13 +92,13 @@ public class StationsController extends Controller implements MouseListener,Runn
 		private boolean NFCIsExist;
 		private boolean ThreadRunFlag=true;
 		/**
-		 * Constratcor
+		 * Contractor
 		 * @param Server - main server to send DB
 		 * @param CommonBuffer - get all the callbacks
 		 * @param GuiScreen - gas Station enter
 		 */
-	public StationsController(Client Server, callbackBuffer CommonBuffer, StationsGUI GuiScreen) {
-		super(Server, CommonBuffer, GuiScreen);
+	public StationsController(Client Server, StationsGUI GuiScreen) {
+		super(Server, GuiScreen);
 		this.StationUserLoginGui = GuiScreen;
 		StationUserLoginGui.setVisible(true);
 		

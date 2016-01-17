@@ -29,12 +29,8 @@ import javax.swing.JLayeredPane;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
-import callback.CallBack;
-import callback.callbackBuffer;
-import callback.callbackLostConnection;
 import callback.callbackStringArray;
 import callback.callbackUser;
-import callback.callback_Error;
 import client.Client;
 import common.Checks;
 import common.MessageType;
@@ -49,7 +45,7 @@ import javax.swing.JInternalFrame;
 import java.awt.CardLayout;
 /**
  * The common GUI part.
- * All the GUI screens inherit that class and add the spesific function and gui parts to the frame.
+ * All the GUI screens inherit that class and add the specific function and gui parts to the frame.
  * @author Ohad
  *
  */
@@ -75,7 +71,6 @@ public class abstractPanel_GUI extends JFrame{
 	 * Server
 	 */
 	private Client Server;
-	private callbackBuffer CommonBuffer;
 	protected Checks checks = new Checks();
 	
 	//GUI variables ***************************************************
@@ -118,7 +113,7 @@ public class abstractPanel_GUI extends JFrame{
 	 * @param LoginScreen - The login screen to go back when user logout
 	 */
 
-	public abstractPanel_GUI(callbackUser EnteredUser, Client Server,callbackBuffer CommonBuffer, Login_GUI LoginScreen) {
+	public abstractPanel_GUI(callbackUser EnteredUser, Client Server, Login_GUI LoginScreen) {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds((screenSize.width-1300)/2,(screenSize.height-750)/2, 1300, 750);
 		contentPane = new JPanel();
@@ -133,7 +128,6 @@ public class abstractPanel_GUI extends JFrame{
 		
 		this.User = EnteredUser;
 		this.Server = Server;
-		this.CommonBuffer = CommonBuffer;
 		this.LoginScreen = LoginScreen;
 		ThisScreen = this;
 		setWelcomeLabel(User.getFirstName(),User.getLastName()); 		// Set welcome label

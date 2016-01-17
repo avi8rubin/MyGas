@@ -27,7 +27,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
 import com.toedter.calendar.JDateChooser;
-import callback.callbackBuffer;
 import callback.callbackUser;
 import client.Client;
 /**
@@ -90,8 +89,8 @@ public class CustomerGUI extends abstractPanel_GUI {
 	
 	private static final long serialVersionUID = 1L;
 
-	public CustomerGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer, Login_GUI LoginScreen) {
-		super(EnteredUser, Server, CommonBuffer, LoginScreen);
+	public CustomerGUI(callbackUser EnteredUser, Client Server,  Login_GUI LoginScreen) {
+		super(EnteredUser, Server, LoginScreen);
 
 		/**
 		 * Adding BuyHomeFuelButton to Top Panel 

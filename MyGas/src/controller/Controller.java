@@ -19,7 +19,6 @@ import javax.swing.JTable;
 
 import GUI.abstractPanel_GUI;
 import callback.CallBack;
-import callback.callbackBuffer;
 import callback.callbackLostConnection;
 import callback.callbackStringArray;
 import client.Client;
@@ -30,10 +29,7 @@ public abstract class Controller implements ActionListener,Observer{
 	 * The server connection to send queries and receive callback's
 	 */
 	protected static Client Server;
-	/**
-	 * This buffer will allows the transfer of the callback, back to the application
-	 */
-	private callbackBuffer CommonBuffer = null;
+
 	/**
 	 * GUI Panels
 	 */
@@ -53,14 +49,12 @@ public abstract class Controller implements ActionListener,Observer{
 	 * @param CommonBuffer -  The callback buffer, where the query answer returns.
 	 */
 	
-	public Controller(Client Server, callbackBuffer CommonBuffer){
+	public Controller(Client Server){
 		this.Server = Server;
-		this.CommonBuffer = CommonBuffer;
 		Server.addObserver(this);
 	}
-	public Controller(Client Server, callbackBuffer CommonBuffer,abstractPanel_GUI GUIScreen){
+	public Controller(Client Server,abstractPanel_GUI GUIScreen){
 		this.Server = Server;
-		this.CommonBuffer = CommonBuffer;
 		this.GUIScreen = GUIScreen;
 		Server.addObserver(this);
 		CenterCardContainer = GUIScreen.getCenterCardContainer();

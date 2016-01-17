@@ -9,7 +9,6 @@
  **************************************************************************/
 package GUI;
 
-import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -18,12 +17,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Observable;
-import java.util.Vector;
-
 import javax.swing.AbstractCellEditor;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -49,20 +44,14 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
 import javax.swing.text.MaskFormatter;
 
 import com.toedter.calendar.JDateChooser;
 
-import callback.CallBack;
-import callback.callbackBuffer;
 import callback.callbackCampaignPattern;
 import callback.callbackCar;
 import callback.callbackCustomer;
-import callback.callbackStringArray;
-import callback.callbackSuccess;
 import callback.callbackUser;
-import callback.callbackVector;
 import client.Client;
 import common.BooleanTableModel;
 import common.Checks;
@@ -272,9 +261,9 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	 * @param CommonBuffer - not in use
 	 * @param LoginScreen - The login screen to go back when user logout
 	 */
-	public MarketingRepresentativeGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer,
+	public MarketingRepresentativeGUI(callbackUser EnteredUser, Client Server,
 			Login_GUI LoginScreen) {
-		super(EnteredUser, Server, CommonBuffer, LoginScreen);
+		super(EnteredUser, Server, LoginScreen);
 
 		/** 
 		 * Create top panel gui.

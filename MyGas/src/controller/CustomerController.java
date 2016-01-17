@@ -23,7 +23,6 @@ import javax.swing.JOptionPane;
 
 import GUI.CustomerGUI;
 import callback.CallBack;
-import callback.callbackBuffer;
 import callback.callbackCustomer;
 import callback.callbackSale;
 import callback.callbackStringArray;
@@ -74,8 +73,8 @@ public class CustomerController extends Controller{
 	 * @param GuiScreen - The gui screen use in some methods
 	 * @author Litaf
 	 */
-	public CustomerController(Client Server, callbackBuffer CommonBuffer, CustomerGUI GuiScreen) {
-		super(Server, CommonBuffer,GuiScreen);
+	public CustomerController(Client Server, CustomerGUI GuiScreen) {
+		super(Server,GuiScreen);
 		this.GuiScreen = GuiScreen;
 		GuiScreen.setVisible(true);
 		/**

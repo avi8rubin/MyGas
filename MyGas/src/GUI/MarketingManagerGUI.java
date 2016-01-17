@@ -28,7 +28,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import com.toedter.calendar.JDateChooser;
 
-import callback.callbackBuffer;
 import callback.callbackStringArray;
 import callback.callbackUser;
 import client.Client;
@@ -139,9 +138,9 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	private JTableToExcel CommentsReportToExcel;
 
 	
-	public MarketingManagerGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer,
+	public MarketingManagerGUI(callbackUser EnteredUser, Client Server, 
 			Login_GUI LoginScreen) {
-		super(EnteredUser, Server, CommonBuffer, LoginScreen);
+		super(EnteredUser, Server, LoginScreen);
 
 		/**
 		 *  Adding TariffButton to Top Panel

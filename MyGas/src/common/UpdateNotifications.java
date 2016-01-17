@@ -18,7 +18,6 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import GUI.abstractPanel_GUI;
 import callback.CallBack;
-import callback.callbackBuffer;
 import callback.callbackStringArray;
 import client.Client;
 /**

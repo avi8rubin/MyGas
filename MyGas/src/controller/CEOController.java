@@ -21,7 +21,6 @@ import javax.swing.table.DefaultTableModel;
 
 import GUI.CEOGUI;
 import callback.CallBack;
-import callback.callbackBuffer;
 import callback.callbackStringArray;
 import callback.callbackSuccess;
 import callback.callbackVector;
@@ -48,8 +47,8 @@ public class CEOController extends Controller {
 	 * @param CommonBuffer - Not in use
 	 * @param GuiScreen - The gui screen use in some methods
 	 */
-	public CEOController(Client Server, callbackBuffer CommonBuffer, CEOGUI GuiScreen) {
-		super(Server, CommonBuffer,GuiScreen);
+	public CEOController(Client Server, CEOGUI GuiScreen) {
+		super(Server, GuiScreen);
 		this.GuiScreen = GuiScreen;
 		GuiScreen.setVisible(true);
 		

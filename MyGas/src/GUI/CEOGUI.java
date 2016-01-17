@@ -25,7 +25,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import callback.callbackBuffer;
 import callback.callbackUser;
 import client.Client;
 /**
@@ -63,8 +62,8 @@ public class CEOGUI extends abstractPanel_GUI{
 	 * @param CommonBuffer The callback buffer, where the query answer returns.
 	 * @param LoginScreen The login screen, when the user logout, he return to the login screen.
 	 */
-	public CEOGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer, Login_GUI LoginScreen) {
-		super(EnteredUser, Server, CommonBuffer, LoginScreen);
+	public CEOGUI(callbackUser EnteredUser, Client Server, Login_GUI LoginScreen) {
+		super(EnteredUser, Server, LoginScreen);
 
 		/* ------- Adding new button to Top Panel -------- */
 		TariffApprovalButton = new JButton("Tariff Approval");									//Global variable

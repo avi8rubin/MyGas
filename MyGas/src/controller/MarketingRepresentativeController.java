@@ -14,30 +14,23 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Observable;
 import java.util.Vector;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 import com.toedter.calendar.JDateChooser;
 
-import GUI.CEOGUI;
 import GUI.MarketingRepresentativeGUI;
 import callback.CallBack;
-import callback.callbackBuffer;
 import callback.callbackCampaignPattern;
 import callback.callbackCar;
 import callback.callbackCustomer;
@@ -146,8 +139,8 @@ public class MarketingRepresentativeController extends Controller{
 	 * @param GuiScreen - The gui screen use in some methods
 	 * @author Adir
 	 */
-	public MarketingRepresentativeController(Client Server, callbackBuffer CommonBuffer, MarketingRepresentativeGUI GuiScreen) {
-		super(Server, CommonBuffer, GuiScreen);
+	public MarketingRepresentativeController(Client Server, MarketingRepresentativeGUI GuiScreen) {
+		super(Server, GuiScreen);
 		this.GuiScreen = GuiScreen;
 		GuiScreen.setVisible(true);
 

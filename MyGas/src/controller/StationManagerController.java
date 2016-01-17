@@ -22,7 +22,6 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import GUI.StationManagerGUI;
 import callback.CallBack;
-import callback.callbackBuffer;
 import callback.callbackStationFuels;
 import callback.callbackStationOrders;
 import callback.callbackStringArray;
@@ -78,8 +77,8 @@ public class StationManagerController extends Controller{
 	 * @param CommonBuffer - Not in use
 	 * @param GuiScreen - The gui screen use in some methods
 	 */
-	public StationManagerController(Client Server, callbackBuffer CommonBuffer, StationManagerGUI GuiScreen) {
-		super(Server, CommonBuffer, GuiScreen);
+	public StationManagerController(Client Server, StationManagerGUI GuiScreen) {
+		super(Server, GuiScreen);
 		this.GuiScreen = GuiScreen;
 		GuiScreen.setVisible(true);
 		/*-----------------get Table from DB By user ID----------------------*/

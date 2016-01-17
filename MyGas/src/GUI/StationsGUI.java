@@ -37,7 +37,6 @@ import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.text.MaskFormatter;
 
-import callback.callbackBuffer;
 import callback.callbackCar;
 import callback.callbackStringArray;
 import callback.callbackUser;
@@ -83,8 +82,8 @@ public class StationsGUI extends abstractPanel_GUI{
 	private JLayeredPane GasFuelingCenterPanel = new JLayeredPane();
 	private JLayeredPane StationUserLoginLayer ;
 	
-	public StationsGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer, Login_GUI LoginScreen) {
-		super(EnteredUser, Server, CommonBuffer, LoginScreen);
+	public StationsGUI(callbackUser EnteredUser, Client Server, Login_GUI LoginScreen) {
+		super(EnteredUser, Server, LoginScreen);
 
 		/**
 		 * Station Login Layer maker

@@ -9,15 +9,11 @@
  **************************************************************************/
 package GUI;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.text.NumberFormat;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.DefaultCellEditor;
@@ -37,7 +33,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import callback.callbackBuffer;
 import callback.callbackUser;
 import client.Client;
 import common.GasStationBarChart;
@@ -100,9 +95,9 @@ public class StationManagerGUI extends abstractPanel_GUI{
 	 * @param CommonBuffer - callbackBuffer - NOT IN USE
 	 * @param LoginScreen - Login screen to go back when logout
 	 */
-	public StationManagerGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer,
+	public StationManagerGUI(callbackUser EnteredUser, Client Server,
 			Login_GUI LoginScreen) {
-		super(EnteredUser, Server, CommonBuffer, LoginScreen);
+		super(EnteredUser, Server, LoginScreen);
 		ManagerUser=EnteredUser;
 		/*-------------------------------------------------------------------------------------------------------------------*/
 		/*----------------------------------------------------Top Panel Buttons----------------------------------------------*/

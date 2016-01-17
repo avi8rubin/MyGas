@@ -22,7 +22,6 @@ import javax.swing.table.DefaultTableModel;
 
 import GUI.MarketingManagerGUI;
 import callback.CallBack;
-import callback.callbackBuffer;
 import callback.callbackCampaign;
 import callback.callbackStringArray;
 import callback.callbackTariffUpdate;
@@ -73,8 +72,8 @@ public class MarketingManagerController extends Controller {
 		 * @param CommonBuffer - Not in use
 		 * @param GuiScreen - The gui screen use in some methods	
 	 */
-	public MarketingManagerController(Client Server, callbackBuffer CommonBuffer, MarketingManagerGUI GuiScreen) {
-		super(Server, CommonBuffer, GuiScreen);
+	public MarketingManagerController(Client Server, MarketingManagerGUI GuiScreen) {
+		super(Server, GuiScreen);
 		this.GuiScreen = GuiScreen;
 		GuiScreen.setVisible(true);
 		
