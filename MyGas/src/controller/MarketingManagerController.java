@@ -36,9 +36,6 @@ import common.MessageType;
  * handle the Creation new rate of the fuels
  * handle the Reports Export
  * handle the creation of new campaigns 
- * @param Server
- * @param CommonBuffer
- * @param GuiScreen
  * @author Litaf	
  */
 public class MarketingManagerController extends Controller {
@@ -70,7 +67,12 @@ public class MarketingManagerController extends Controller {
 	private JLabel Datelabel2;
 
 	private boolean CommentsForMarketionFlag=false;
-
+	/**
+	 * Contractor
+		 * @param Server - Connection to server
+		 * @param CommonBuffer - Not in use
+		 * @param GuiScreen - The gui screen use in some methods	
+	 */
 	public MarketingManagerController(Client Server, callbackBuffer CommonBuffer, MarketingManagerGUI GuiScreen) {
 		super(Server, CommonBuffer, GuiScreen);
 		this.GuiScreen = GuiScreen;
@@ -130,7 +132,7 @@ public class MarketingManagerController extends Controller {
 /**
  * actionPerformed- attach the buttons to their action event handlers and 
  * Adding the appropriate window layer according to the selected action
- * @param ActionEvent
+ * @param e - Check what action happen
  * 
  */
 	public void actionPerformed(ActionEvent e) {
@@ -235,7 +237,7 @@ public class MarketingManagerController extends Controller {
 	/**
 	 * Server_ChangeCampaignFromComboBox- after getting an answer from the server- add the 
 	 * patterns to the comboBox 
-	 * @param CampaignTable
+	 * @param CampaignTable - Create ComboBox
 	 */
 	public void Server_ChangeCampaignFromComboBox(callbackStringArray CampaignTable){
 		String patternSelected=GuiScreen.getComboBoxSelection();
@@ -254,7 +256,7 @@ public class MarketingManagerController extends Controller {
 	}
 	/**
 	 * HandleCommentsForMarketingCampaignCombo- Create a query to get the fuels table 
-	 * of the Comments For Marketion Campaign Report from the DB
+	 * of the Comments For Marketing Campaign Report from the DB
 	 * CommentsForMarketionFlag- Variable that distinguishes between two types 
 	 * of queries with the same type of message
 	 */

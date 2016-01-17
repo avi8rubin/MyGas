@@ -39,6 +39,7 @@ public class abstractPanel_GUI_Tester extends JFrame {
 	private JInternalFrame ContactFrame = new JInternalFrame("Contact List");
 	/**
 	 * Launch the application.
+	 * @param args - not in use
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {

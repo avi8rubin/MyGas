@@ -94,11 +94,11 @@ public class StationManagerGUI extends abstractPanel_GUI{
 	//  JTable - that the last column is editable.
 	private JTable ApprovalSuppliesTable;
 	/**
-	 * Constracor
-	 * @param EnteredUser
-	 * @param Server
-	 * @param CommonBuffer
-	 * @param LoginScreen
+	 * Contractor
+	 * @param EnteredUser - User details
+	 * @param Server - Server connection
+	 * @param CommonBuffer - callbackBuffer - NOT IN USE
+	 * @param LoginScreen - Login screen to go back when logout
 	 */
 	public StationManagerGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer,
 			Login_GUI LoginScreen) {
@@ -506,7 +506,7 @@ public class StationManagerGUI extends abstractPanel_GUI{
 	}
 	/**
 	 * Initialized values of table
-	 * @param NewTableModel
+	 * @param NewTableModel - table came from server
 	 */
 	public void setApprovalTable(DefaultTableModel NewTableModel)
 	{

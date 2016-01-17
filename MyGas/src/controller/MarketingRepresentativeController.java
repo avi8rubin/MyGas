@@ -141,10 +141,9 @@ public class MarketingRepresentativeController extends Controller{
 	 * MarketingRepresentative controller, control the MarketingRepresentative gui.
 	 * First adding listeners to all relevant buttons, then send query to DB for getting all values for ComboBox -
 	 * only one time when the controller created.
-	 * @param Server
-	 * @param CommonBuffer
-	 * @param GuiScreen
-	 * 
+	 * @param Server - Connection to server
+	 * @param CommonBuffer - Not in use
+	 * @param GuiScreen - The gui screen use in some methods
 	 * @author Adir
 	 */
 	public MarketingRepresentativeController(Client Server, callbackBuffer CommonBuffer, MarketingRepresentativeGUI GuiScreen) {

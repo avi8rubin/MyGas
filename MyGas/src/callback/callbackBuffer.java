@@ -15,7 +15,7 @@ public class callbackBuffer extends CallBack{
 	
 	/**
 	 * This function set new callback that receive from server 
-	 * @param NewCallBack
+	 * @param NewCallBack - callback
 	 * @return boolean - if success to set callback
 	 */
 	public boolean setNewCallBack(Object NewCallBack){

@@ -31,9 +31,9 @@ public class EchoServer extends AbstractServer
   /**
    * Global variables 
    * DEFAULT_PORT is port to listen
-   * @param URL - Driver to DB
-   * @param User - Username to root mysql DB
-   * @param Password - Password to root mysql DB
+   * URL - Driver to DB
+   * User - Username to root mysql DB
+   * Password - Password to root mysql DB
    */
   final public static int DEFAULT_PORT = 5555;
   public static  String URL="";
@@ -57,7 +57,9 @@ public class EchoServer extends AbstractServer
   
   /**
    * Constructs an instance of the echo server.
-   * @param port The port number to connect on.
+   * @param port - The port number to connect on.
+   * @param QueryAsk - Object of QueryIO
+   * @param server_GUI - Gui server
    */
   public EchoServer(int port,QueryIO QueryAsk,Server_GUI server_GUI) 
   {

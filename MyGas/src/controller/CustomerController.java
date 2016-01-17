@@ -69,9 +69,9 @@ public class CustomerController extends Controller{
 	 * handle the Buy home fuel features: insert the sale details, calculate price and right the sale
 	 * details in the DB
 	 * handle the information of all the customer past purchases 
-	 * @param Server
-	 * @param CommonBuffer
-	 * @param GuiScreen
+	 * @param Server - Connection to server
+	 * @param CommonBuffer - Not in use
+	 * @param GuiScreen - The gui screen use in some methods
 	 * @author Litaf
 	 */
 	public CustomerController(Client Server, callbackBuffer CommonBuffer, CustomerGUI GuiScreen) {
@@ -156,7 +156,8 @@ public class CustomerController extends Controller{
 			
 		}
 	/**
-	 *CheckAllValidFileds- check if all relevant fields are correctly filled 
+	 * CheckAllValidFileds- check if all relevant fields are correctly filled 
+	 * @return status about the fields
 	 * @author Litaf
 	 */
 	private int CheckAllValidFileds() {
@@ -230,7 +231,7 @@ public class CustomerController extends Controller{
 			 * Server_CalculatePayment- check if customer order fit one of the 
 			 * rate discount in the home fuel rate mechanism and calculate the 
 			 * price after discount/Increase price. print to Gui screen the order details
-			 * @param TariffTable
+			 * @param TariffTable - Table from server
 			 * @author Litaf
 			 * 
 			 */
@@ -297,11 +298,11 @@ public class CustomerController extends Controller{
 		}
 		/**
 		 * PrintSaleTemplate- print to gui the order information
-		 * @param SumPrice
-		 * @param RemarksString
-		 * @param AfterDiscount
-		 * @param FuelPrice
-		 * @param Discount
+		 * @param SumPrice - Total price to pay
+		 * @param RemarksString - Remarks String
+		 * @param AfterDiscount - price After Discount
+		 * @param FuelPrice - Current Fuel Price
+		 * @param Discount - Discount
 		 * @author Litaf
 		 */
 		private void PrintSaleTemplate(float SumPrice, String RemarksString, double AfterDiscount,
@@ -347,7 +348,8 @@ public class CustomerController extends Controller{
 		 * check if current customer has creditcard information in the system
 		 * if not- let hin know that he can't purchase
 		 * if yes- open the order fileds for edit
-		 * @param customer
+		 * @param customer - Customer
+		 * @return true/false if that customer has credit card
 		 * @author Litaf
 		 */
 		public boolean CheckForCreditCard(callbackCustomer customer){
@@ -370,7 +372,6 @@ public class CustomerController extends Controller{
 		}
 		/**
 		 * HandlePayButton- create new sale in DB with sale details
-		 * @param callbackSale sale
 		 */
 		private void HandlePayButton() {
 			GuiScreen.cleanScreen();

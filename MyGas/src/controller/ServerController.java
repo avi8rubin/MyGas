@@ -93,11 +93,8 @@ public class ServerController {
 	}
 	
 /**
- * 
+ * Create the connection to DB
  * @param Port for jdbc connection
- * @param Url for jdbc connection
- * @param User for jdbc connection
- * @param Password for jdbc connection 
  * @return Message Error if server connection failed
  */
 	public MessageType initServer(int Port){
@@ -106,8 +103,7 @@ public class ServerController {
 		 try {
 			Server.listen();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		 
 		return null;
@@ -115,9 +111,9 @@ public class ServerController {
 	
 	/**
 	 * This function create connection to sql server
-	 * @param Url
-	 * @param User
-	 * @param Password
+	 * @param Url - Drivet path
+	 * @param User - User for DB
+	 * @param Password - Password for DB
 	 */
 	public void initMySqlConnection(String Url,String User,String Password){
 		String msg=null;

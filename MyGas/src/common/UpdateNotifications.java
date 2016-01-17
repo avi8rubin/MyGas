@@ -69,7 +69,7 @@ public class UpdateNotifications implements Runnable,Observer {
 	}
 	/**
 	 * User logout, stop thread and delete observer
-	 * @param notificationFlag
+	 * @param notificationFlag - Stop thread and delete observer
 	 */
 	public void setNotificationFlag(boolean notificationFlag) {
 		NotificationFlag = notificationFlag;
@@ -77,7 +77,7 @@ public class UpdateNotifications implements Runnable,Observer {
 	}
 	/**
 	 * Update the notification table
-	 * @param NewTableModel
+	 * @param NewTableModel - Table of notification came from server
 	 */
 	private void setNotificationsTable(DefaultTableModel NewTableModel){
 		NotificationsTable.setModel(NewTableModel);

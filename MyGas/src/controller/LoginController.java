@@ -65,9 +65,8 @@ public class LoginController implements ActionListener,Observer{
 //Constructors ****************************************************
 
 	/**
-	* Constructs an login controller.
+	* Constructor of login controller.
 	* @param LoginScreen The login Gui.
-	* @param Server The server connection.
 	* @param CommonBuffer The buffer to transfer callback's
 	*/
 	public LoginController(Login_GUI LoginScreen, callbackBuffer CommonBuffer){

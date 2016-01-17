@@ -73,10 +73,10 @@ public class StationManagerController extends Controller{
 	/*-----------------------Global Functions------------------------------*/
 	/*---------------------------------------------------------------------*/
 	/**
-	 * Constracor
-	 * @param Server
-	 * @param CommonBuffer
-	 * @param GuiScreen
+	 * Contractor
+	 * @param Server - Connection to server
+	 * @param CommonBuffer - Not in use
+	 * @param GuiScreen - The gui screen use in some methods
 	 */
 	public StationManagerController(Client Server, callbackBuffer CommonBuffer, StationManagerGUI GuiScreen) {
 		super(Server, CommonBuffer, GuiScreen);
@@ -218,7 +218,7 @@ public class StationManagerController extends Controller{
 		ContainerCard.show(LeftCardContainer,"EmptyLeftPanel");
 	}
 	/**
-	 * This function update supplies in DB & Update Table
+	 * This function update supplies in DB and Update Table
 	 */
 	private void handleUpdateOnApproveScreen()
 	{
@@ -270,7 +270,6 @@ public class StationManagerController extends Controller{
 	}
 	/**
 	 * This function Only Update Global Value GasStationFuelLevel
-	 * @return true if Query was successful 
 	 */
 	private void SendUserIDUpdateLimitLevel(){
 		callbackStringArray LocalUserID=new callbackStringArray(MessageType.getCurrentThresholdLimit);

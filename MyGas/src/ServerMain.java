@@ -13,7 +13,7 @@ public class ServerMain {
 
 	/**
 	 * Create GUI and start server
-	 * @param args
+	 * @param args - Not in use
 	 */
 	public static void main(String[] args) {
 					Server_GUI Server_GUI=new GUI.Server_GUI(); //Create new GUI windows

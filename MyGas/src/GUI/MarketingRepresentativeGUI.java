@@ -75,7 +75,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	/**
 	 * newCustomerFlag is system flag that let us know which process use in the same layers- 
 	 * CreateNewCustomerAccountLayer or AddPersonalDetails.
-	 * Both using CreateUserLayer (center layer) & AddCars ( center layer).
+	 * Both using CreateUserLayer (center layer) and AddCars ( center layer).
 	 * If newCustomerFlag=1 , CreateNewCustomerAccountLayer process using those common layers to create new customer account.
 	 * If newCustomerFlag=0 , AddPersonalDetails process using those common layers to update customer account's details.
 	 */
@@ -267,6 +267,10 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	/**
 	 * MarketingRepresentativeGUI constructor - build top panel, left panels  and relevant combo-boxes from center panels
 	 * for load combo-boxes values only once when the MarketingRepresentativeGUI created.
+	 * @param EnteredUser - Current user
+	 * @param Server - server connection
+	 * @param CommonBuffer - not in use
+	 * @param LoginScreen - The login screen to go back when user logout
 	 */
 	public MarketingRepresentativeGUI(callbackUser EnteredUser, Client Server, callbackBuffer CommonBuffer,
 			Login_GUI LoginScreen) {
@@ -542,7 +546,7 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	/* Create New User Center Layer */
 	
 	/**
-	 * Build CreateUser & AddPersonalDetails Center Layers and their components.
+	 * Build CreateUser and AddPersonalDetails Center Layers and their components.
 	 * Fill these components by customer data in edit customer case.
 	 */
 	public void CreateNewUserCenterLayer(){
@@ -986,7 +990,6 @@ public class MarketingRepresentativeGUI extends abstractPanel_GUI{
 	/**
 	 * isCustomerChanged method compare between 2 objects of callbackCustomer and return false 
 	 * if there is any change at those relevant fields, else return true.
-	 * @param beforeChange callbackCustomer before user changes.
 	 * @param afterChange callbackCustomer after user changes.
 	 * @return return false if there is any change at those relevant fields, else return true.
 	 */

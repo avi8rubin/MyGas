@@ -167,7 +167,8 @@ public class StationsController extends Controller implements MouseListener,Runn
 		
 		}
 	/**
-	 * This function set action listener to login & logout buttons
+	 * This function set action listener to login and logout buttons
+	 * @param e - Check how set the action event
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource()==LoginButton){
@@ -304,7 +305,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 	/*--------------------------------------------------------------------------------------------------*/
 	
 	/**
-	 * Check NFC Input & Send To DB Car Number
+	 * Check NFC Input and Send To DB Car Number
 	 */
 	private void CheckNFC(){
 		
@@ -323,8 +324,8 @@ public class StationsController extends Controller implements MouseListener,Runn
 		}
 	}
 	/**
-	 * Check Car have NFC & Send To DB Customer Info
-	 * @param e Car Callback
+	 * Check Car have NFC and Send To DB Customer Info
+	 * @param e - Car Callback
 	 */
 	private void ValidNFCNumber(callbackCar e)
 	{
@@ -445,8 +446,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 	/**
 	 * This function get userID and return array of car number strings
 	 * Build callback Car with Customer ID
-	 * return Vector with cars
-	 * @return 
+	 * @param CurrentCustomerID - Customer ID
 	 */
 	private void getAllUserCar(int CurrentCustomerID){
 		UserCarsNumbers=new ArrayList<>();
@@ -945,7 +945,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 	/**
 	 * This function find the right car to number
 	 * @param CarToFind - input car number " XX-XXX-XX"
-	 * @return
+	 * @return - Car fuel type
 	 */
 	private int FindCarTypeByCarNumber(String CarToFind)
 	{
@@ -973,10 +973,10 @@ public class StationsController extends Controller implements MouseListener,Runn
 	}
 	
 /**
- * This function check & update discount for user
+ * This function check and update discount for user
  * @param Payment - Price
  * @param FueAmount - Liters
- * @param GasStationID - GasID
+ * @param CarNumber - Car Number
  * @param FuelID - 1=95, 2=Scooter Fuel, 4=Diesel
  * @param CustomerID - CusotmerID
  */

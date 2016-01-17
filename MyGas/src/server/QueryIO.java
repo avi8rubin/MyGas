@@ -53,6 +53,7 @@ public class QueryIO implements Runnable {
 
 	/**
 	 * Set Driver connection to MySQL
+	 * @return - Driver_Succeded string to show on the console
 	 */
 	public String SetDriver(){
 		try {
@@ -84,7 +85,7 @@ public class QueryIO implements Runnable {
 	}
 	/**
 	 * Create global connection to send queries to DB.
-	 * @return
+	 * @return - Statement_Succeeded/Not Succeeded string to show on the console
 	 */
 	public String setStatement(){	
 		try {
@@ -98,7 +99,7 @@ public class QueryIO implements Runnable {
 
 /**
  * Callback Resolver determine what is the purpose of the callback and redirects to the right place. 
- * @param SwitchCallback
+ * @param SwitchCallback - Callback came from client
  * @return Object (Vector/CallBack)
  */
 	public Object CallbackResolver(Object SwitchCallback){		

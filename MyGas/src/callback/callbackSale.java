@@ -79,7 +79,7 @@ public class callbackSale extends CallBack {
 		DeliveryDateAndTime = deliveryDate;
 	}
 	/**
-	 * Set new Delivery Data & Time
+	 * Set new Delivery Data And Time
 	 * @param year - Year 
 	 * @param month - Month 
 	 * @param day - Day 

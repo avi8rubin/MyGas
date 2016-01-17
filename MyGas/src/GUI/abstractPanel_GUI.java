@@ -109,9 +109,13 @@ public class abstractPanel_GUI extends JFrame{
 	private callbackStringArray ContactList;
 	private String LastCard,LastCardNot;
 	private UpdateNotifications NotificationThrerad;
-	
+
 	/**
 	 * Create the abstract GUI panel.
+	 * @param EnteredUser - Current user
+	 * @param Server - server connection
+	 * @param CommonBuffer - not in use
+	 * @param LoginScreen - The login screen to go back when user logout
 	 */
 
 	public abstractPanel_GUI(callbackUser EnteredUser, Client Server,callbackBuffer CommonBuffer, Login_GUI LoginScreen) {
@@ -395,6 +399,7 @@ public class abstractPanel_GUI extends JFrame{
 	/**
 	 * Set in global variable the current component displayed
 	 * @param c - the components array
+	 * @return the name of the last component
 	 */
 	private String getLastComponent(Component c[]){
 		int i=0;

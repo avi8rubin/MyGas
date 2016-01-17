@@ -122,7 +122,7 @@ public class callbackCampaignPattern extends CallBack {
 	}
 	/**
 	 * Translate values
-	 * @param CampaignTypeIdServer
+	 * @param CampaignTypeIdServer - Integer
 	 * @return - Campaign Type Id
 	 */
 	public int convertToCampaignTypeIdServerToClient(int CampaignTypeIdServer) {

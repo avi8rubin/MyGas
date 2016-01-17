@@ -32,7 +32,7 @@ public class GasStationBarChart extends JPanel {
 	private static ChartPanel chartPanel;
 	/**
 	 * Constructor that gets the details of the fuel level in the station.
-	 * @param AmountAndLevel
+	 * @param AmountAndLevel - All the current fuel amounts
 	 */
 	public GasStationBarChart(Float[] AmountAndLevel) {
 		this.AmountAndLevel = AmountAndLevel;
@@ -55,8 +55,8 @@ public class GasStationBarChart extends JPanel {
 /**
  * Creating chart.
  * Use JFreeChart JRE
- * @param categorydataset
- * @return
+ * @param categorydataset - all the data entered to chart
+ * @return JFreeChart object
  */
 	private static JFreeChart createChart(CategoryDataset categorydataset)
 	{

@@ -130,7 +130,7 @@ public class CEOGUI extends abstractPanel_GUI{
 	}
 	/**
 	 * Insert to JTable the new table from DB with combo box.
-	 * @param NewTableModel
+	 * @param NewTableModel - Table came from server
 	 */
 	public void setTariffApprovalTable(DefaultTableModel NewTableModel){
 		//Create combo box

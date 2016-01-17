@@ -56,14 +56,14 @@ public class callbackStringArray extends CallBack {
 	}
 	/**
 	 * Get array of strings that will be the ComboBox values
-	 * @param StringArray
+	 * @param StringArray - Array of strings
 	 */
 	public void setComboBoxStringArray(Object[] StringArray){
 		ComboBoxString = StringArray;
 	}
 	/**
 	 * Return array of strings for ComboBox 
-	 * @param StringArray
+	 * @return array of strings
 	 */
 	public Object[] getComboBoxStringArray(){
 		return ComboBoxString;

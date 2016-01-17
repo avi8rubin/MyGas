@@ -36,9 +36,9 @@ import java.io.IOException;
  * Do you want to open the file now?"  (Yes | No | Help)"
  * 
  * To solve that problem you need, NOT MUST, to do as follow:
- *  Open your Registry (Start -> Run -> regedit.exe)
+ *  Open your Registry (Start - Run - regedit.exe)
  *  Navigate to HKEY_CURRENT_USER\SOFTWARE\MICROSOFT\OFFICE\12.0\EXCEL\SECURITY
- * 	Right click in the right window and choose New -> DWORD
+ * 	Right click in the right window and choose New - DWORD
  * 	Type “ExtensionHardening” as the name (without the quotes)
  * 	Verify that the data has the value 0
  * 

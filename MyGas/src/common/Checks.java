@@ -46,8 +46,8 @@ public class Checks {
 		}
 	/**
 	 * isValidPassword(String password, String passwordValidate) - Checking password validation.
-	 * @param password
-	 * @param passwordValidate
+	 * @param password - first line password
+	 * @param passwordValidate - second line password
 	 * @return true if password=passwordValidate , else return false.
 	 */
 	public static boolean isValidPassword(String password, String passwordValidate) {   
@@ -153,7 +153,7 @@ public class Checks {
 	}
 	/**
 	 * check if string is a float number
-	 * @param String - String of numbers in a float form
+	 * @param str - String of numbers in a float form
 	 * @return true/false
 	 * @author Litaf
 	 */
@@ -171,7 +171,9 @@ public class Checks {
 	
 	/**
 	 * check if string is an int number and if it's in range
-	 * @param String - String of numbers in a float form
+	 * @param max - max float number
+	 * @param num - String of numbers in a float form
+	 * @return true/false
 	 * @author Litaf
 	 */
 	public static boolean isNumberInRange(float max,String num)  
@@ -188,7 +190,8 @@ public class Checks {
 	
 	/**
 	 * check if Date for delivery is valid
-	 * @param String - date string
+	 * @param deliveryDate - date string
+	 * @return true/false
 	 * @author Litaf
 	 */
 	public static boolean isDateValid(String deliveryDate)  
@@ -205,6 +208,7 @@ public class Checks {
 	 * check if Time of delivery is valid
 	 * @param deliveryTime - string in form of time
 	 * @param deliveryDate - string in form of date
+	 * @return true/false
 	 * @author Litaf
 	 */
 	public static boolean isTimeValid(String deliveryTime, String deliveryDate)  
@@ -249,7 +253,7 @@ public class Checks {
 	}
 	/**
 	 * Resize the column of JTable to the ultimate size.
-	 * @param table
+	 * @param table - JTable
 	 * @author Ohad
 	 */
 	public static void resizeColumnWidth(JTable table) {

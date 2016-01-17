@@ -534,7 +534,7 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	 * setTariffUpdateTable:
 	 * 1) add the table model that was received from the DB to the TariffUpdateTable
 	 * 2) update the FuelscomboBox with the fuel types
-	 * @param NewTableModel
+	 * @param NewTableModel - Table came from server
 	 */
 	public void setTariffUpdateTable(DefaultTableModel NewTableModel)
 	{		
@@ -581,7 +581,7 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	}
 	/**
 	 * SetComboBoxSelection- set the CampaignComboBox with the patterns that received from the DB
-	 * @param CampaignPatterns
+	 * @param CampaignPatterns - Create ComboBox and set default choice
 	 */
 	public void SetComboBoxSelection(callbackStringArray CampaignPatterns){
 		Object[]pattern=CampaignPatterns.getComboBoxStringArray();
@@ -595,8 +595,8 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	}
 	/**
 	 * getPatternInt- return the row number of the pattern that was 
-	 * choosen in the CampaignComboBox for the filter of the CampaignTable
-	 * @param pattern
+	 * chosen in the CampaignComboBox for the filter of the CampaignTable
+	 * @param pattern - Pattern description
 	 * @return row number
 	 */
 	public int getPatternInt(String pattern)
@@ -611,7 +611,7 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	/**
 	 * setCommentsForMarketingCampaignTable- add the table model 
 	 * that was received from the DB to the CommentsReportTable
-	 * @param NewTable
+	 * @param NewTable - Table back from server
 	 */
 	public void setCommentsForMarketingCampaignTable(DefaultTableModel NewTable){
 		 CommentsReportTable.setModel(NewTable);
@@ -643,7 +643,7 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	/**
 	 * setCustomerCharacterizationReportTable- add the table model 
 	 * that was received from the DB to the CustomerCharacterizationReportTable
-	 * @param NewTable
+	 * @param NewTable - Table back from server
 	 */
 	public void setCustomerCharacterizationReportTable(DefaultTableModel NewTable){
 		CustomerCharacterizationReportTable.setModel(NewTable);	
@@ -665,7 +665,7 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	/**
 	 * setActiveSalesTable- add the table model 
 	 * that was received from the DB to the ActiveSalesTable
-	 * @param NewTable
+	 * @param NewTable - Table back from server
 	 */
 	public void setActiveSalesTable(DefaultTableModel NewTable){
 		ActiveSalesTable.setModel(NewTable);	
@@ -675,7 +675,7 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	}
 /**
  * SetComboBoxPattern- set the PatternsComboBox with the patterns that was received from the DB
- * @param CampaignPatterns
+ * @param CampaignPatterns - Create comboBox of all patterns
  */
 	public void SetComboBoxPattern(callbackStringArray CampaignPatterns){
 		Object[]pattern=CampaignPatterns.getComboBoxStringArray();
@@ -701,10 +701,10 @@ public class MarketingManagerGUI extends abstractPanel_GUI{
 	}
 	/**
 	 * getSalePatternId- compare the patternChoosen string to the PatternWithID table and return 
-	 * the choosen pattern id in order to activate a new sale in the DB
-	 * @param patternChoosen
-	 * @param PatternWithID
-	 * @return
+	 * the chosen pattern id in order to activate a new sale in the DB
+	 * @param patternChoosen - pattern that Chosen
+	 * @param PatternWithID - pattern id
+	 * @return Pattern With ID
 	 */
 	public Object getSalePatternId(String patternChoosen,Object[][] PatternWithID){
 	int RowNum=0;

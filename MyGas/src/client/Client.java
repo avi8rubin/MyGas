@@ -31,7 +31,7 @@ public class Client extends ObservableClient
 * Constructs an instance of the chat client.
 * @param host The server to connect to.
 * @param port The port number to connect on.
-* @param CommonBuffer The buffer to transfer callback's
+* @throws IOException - throws IOExceptio if there is problem
 */
 
 public Client(String host, int port) throws IOException 
