@@ -95,7 +95,8 @@ public class StationsController extends Controller implements MouseListener,Runn
 		 * Contractor
 		 * @param Server - main server to send DB
 		 * @param GuiScreen - gas Station enter
-		 */	public StationsController(Client Server, StationsGUI GuiScreen) {
+		 */
+		public StationsController(Client Server, StationsGUI GuiScreen) {
 		super(Server, GuiScreen);
 		this.StationUserLoginGui = GuiScreen;
 		StationUserLoginGui.setVisible(true);
@@ -992,7 +993,9 @@ public class StationsController extends Controller implements MouseListener,Runn
 	public void setFuelScooterCurrentAmount(float e){
 		FuelScoterCurrentAmount=e;
 	}
-	
+	public void setGasStationID(int GasStationID){
+		this.GasStationID=GasStationID;
+	}
 	
 /**
  * This function handle the Start/Stop Button
