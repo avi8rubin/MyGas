@@ -750,7 +750,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		boolean TestFlag=false;
 
 		
-		 if(e==BlueHand || e==GreenHand || e==RedHand  ) // select pump with no car number
+		 if(false) // select pump with no car number
 		 {
 			 DiscountTextBox.setText("*Select Car Number First To Begin.");
 		 }
@@ -1244,7 +1244,7 @@ public class StationsController extends Controller implements MouseListener,Runn
  * @param FuelID - 1=95, 2=Scooter Fuel, 4=Diesel
  * @param CustomerID - CusotmerID
  */
-	private void DiscountCalulation(float Payment,float FueAmount,int FuelID,int CustomerID,String CarNumber){
+	public void DiscountCalulation(float Payment,float FueAmount,int FuelID,int CustomerID,String CarNumber){
 		CurrentSale=new callbackSale();
 		CurrentSale.setCarNumber(CarNumber);
 		CurrentSale.setPayment(Payment);
