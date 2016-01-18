@@ -10,6 +10,7 @@
 package controller;
 
 import java.awt.CardLayout;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -744,12 +745,12 @@ public class StationsController extends Controller implements MouseListener,Runn
 		 
 	}
 	
-	public boolean mouseClickedTest(MouseEvent e) {
+	public boolean mouseClickedTest(Component e) {
 		
 		boolean TestFlag=false;
 
 		
-		 if(e.getComponent()==BlueHand || e.getComponent()==GreenHand || e.getComponent()==RedHand  ) // select pump with no car number
+		 if(e==BlueHand || e==GreenHand || e==RedHand  ) // select pump with no car number
 		 {
 			 DiscountTextBox.setText("*Select Car Number First To Begin.");
 		 }
@@ -763,7 +764,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 					 * 2=Scooter Fuel
 					 * 4=Diesel
 					 */
-					if(e.getComponent()==BlueHand && FuelDieselIsExist ){
+					if(e==BlueHand && FuelDieselIsExist ){
 						if(!UserIsFueling){  //if user is not Fueling
 							DiscountTextBox.setText("");
 							
@@ -787,7 +788,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 							}
 						}
 					}
-					if(e.getComponent()==BlueHandFlip)
+					if(e==BlueHandFlip)
 					{
 						if(!UserNeedToPay)
 						{
@@ -797,7 +798,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 							DiscountTextBox.setText("");
 						}
 					}
-					if(e.getComponent()==RedHand && Fuel95IsExist){
+					if(e==RedHand && Fuel95IsExist){
 						if(!UserIsFueling){  //if user is not fuling
 							DiscountTextBox.setText("");
 							if(UserFuel!=1)
@@ -818,7 +819,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 							}
 						}
 					}
-					if(e.getComponent()==RedHandFlip){
+					if(e==RedHandFlip){
 						if(!UserNeedToPay){
 							StationUserLoginGui.RedPumpNotShow();//return the hand to the right palce
 							StartFuelingButton.setEnabled(false);
@@ -826,7 +827,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 							DiscountTextBox.setText("");
 						}
 					}
-					if(e.getComponent()==GreenHand && FuelScoterIsExist)
+					if(e==GreenHand && FuelScoterIsExist)
 						{
 						DiscountTextBox.setText("");
 							if(!UserIsFueling)
@@ -849,7 +850,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 								}
 							}
 						}
-					if(e.getComponent()==GreenHandFlip)
+					if(e==GreenHandFlip)
 						{
 							if(!UserNeedToPay)
 							{
@@ -873,7 +874,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 					 * 2=Scooter Fuel
 					 * 4=Diesel
 					 */
-					if(e.getComponent()==BlueHand && FuelDieselIsExist){
+					if(e==BlueHand && FuelDieselIsExist){
 						DiscountTextBox.setText("");
 						if(!UserIsFueling){  //if user is not fuling
 							if(fueltypecurrentcar!=4)
@@ -894,7 +895,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 							}
 						}
 					}
-					if(e.getComponent()==BlueHandFlip){
+					if(e==BlueHandFlip){
 						if(!UserNeedToPay){
 							StationUserLoginGui.BluePumpNotShow(); //return the hand to the right palce
 							StartFuelingButton.setEnabled(false);
@@ -902,7 +903,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 							DiscountTextBox.setText("");
 						}
 					}
-					if(e.getComponent()==RedHand && Fuel95IsExist){
+					if(e==RedHand && Fuel95IsExist){
 						DiscountTextBox.setText("");
 						if(!UserIsFueling){  //if user is not fuling
 							if(fueltypecurrentcar!=1)
@@ -923,7 +924,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 							}
 						}
 					}
-					if(e.getComponent()==RedHandFlip){
+					if(e==RedHandFlip){
 						if(!UserNeedToPay){
 							StationUserLoginGui.RedPumpNotShow();//return the hand to the right palce
 							StartFuelingButton.setEnabled(false);
@@ -931,7 +932,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 							DiscountTextBox.setText("");
 						}
 					}
-					if(e.getComponent()==GreenHand && FuelScoterIsExist){
+					if(e==GreenHand && FuelScoterIsExist){
 						DiscountTextBox.setText("");
 						if(!UserIsFueling){  //if user is not fuling
 							if(fueltypecurrentcar!=2)
@@ -952,7 +953,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 							}
 						}
 					}
-					if(e.getComponent()==GreenHandFlip){
+					if(e==GreenHandFlip){
 						if(!UserNeedToPay){
 							StationUserLoginGui.GreenPumpNotShow();//return the hand to the right palce
 							StartFuelingButton.setEnabled(false);
