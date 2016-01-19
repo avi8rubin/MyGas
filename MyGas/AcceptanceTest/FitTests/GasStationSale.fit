@@ -9,27 +9,309 @@
 	</head>
 	<body>
 		<p class="style1">
-			<u>Create Fuel Order&nbsp;Acceptance Test</u></p>
+			<u>Gas Station Fuel Sale&nbsp;Acceptance Test</u></p>
 		<p class="style1">
-			A new order will be create in the DateBase when the fuel type in station dropped below threshold limit.</p>
+			Perfome tests for the use case&nbsp; &#39;Sale Fuel In Gas Station&#39;.</p>
 		<p class="style1">
-			If there already order that waiting for approval in the DB, it will be updated&nbsp;instead creating new order.</p>
+			Conain the following tests for related sale:</p>
+		<p class="style1">
+			1. User credit card.</p>
+		<p class="style1">
+			2. User Purchase plan.</p>
+		<p class="style1">
+			3. Car fuel type compatible with pump.</p>
+		<p class="style1">
+			4. Sale discount.</p>
+		<p class="style1">
+			5. Recording sale in DB.</p>
+		<p class="style1">
+			&nbsp;</p>
 		<p class="style1">
 			<u>Tabels in DB:</u></p>
 		<p class="style1">
-			<strong>Fuel_Per_Station:</strong> (Gas_Station_ID, Fuel_ID, Threshold_Limit, Current_Amount, Capacity) = (1, 2, 200, 205, 1700)</p>
+			<strong>Fuel_Per_Station:</strong></p>
+		<table border="1" cellpadding="1" cellspacing="1" style="width: 520px; height: 77px;">
+			<thead>
+				<tr>
+					<th scope="col">
+						Gas_Station_ID</th>
+					<th scope="col">
+						Fuel_ID</th>
+					<th scope="col">
+						Threshold_Limit</th>
+					<th scope="col">
+						Current_Amount</th>
+					<th scope="col">
+						Capacity</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						1</td>
+					<td>
+						2</td>
+					<td>
+						200</td>
+					<td>
+						500</td>
+					<td>
+						1700</td>
+				</tr>
+				<tr>
+					<td>
+						1</td>
+					<td>
+						1</td>
+					<td>
+						200</td>
+					<td>
+						500</td>
+					<td>
+						1600</td>
+				</tr>
+				<tr>
+					<td>
+						1</td>
+					<td>
+						4</td>
+					<td>
+						200</td>
+					<td>
+						500</td>
+					<td>
+						1900</td>
+				</tr>
+			</tbody>
+		</table>
 		<p class="style1">
-			<strong>Customers:</strong> (User_ID,Customers_ID, Customer_First_Name, Customer_Last_Name,Credit_Card) =</p>
+			<strong>Customers:</strong></p>
+		<table border="1" cellpadding="1" cellspacing="1" style="width: 760px; height: 68px;">
+			<thead>
+				<tr>
+					<th scope="col">
+						User_ID</th>
+					<th scope="col">
+						Customers_ID</th>
+					<th scope="col">
+						Customer_First_Name</th>
+					<th scope="col">
+						Customer_Last_Name</th>
+					<th scope="col">
+						Credit_Card</th>
+					<th scope="col">
+						Exists&nbsp;In DB</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						34</td>
+					<td>
+						88888</td>
+					<td>
+						Nir</td>
+					<td>
+						Lod</td>
+					<td>
+						2356-6589-7644-7852</td>
+					<td>
+						Yes</td>
+				</tr>
+				<tr>
+					<td>
+						33</td>
+					<td>
+						77777</td>
+					<td>
+						Sali</td>
+					<td>
+						Funny</td>
+					<td>
+						&nbsp;</td>
+					<td>
+						Yes</td>
+				</tr>
+			</tbody>
+		</table>
 		<p class="style1">
-			1. (34,88888, &quot;Nir&quot;, &quot;Lod&quot;,&quot;2356-6589-7644-7852&quot;)</p>
+			<strong>Cars: </strong></p>
+		<table border="1" cellpadding="1" cellspacing="1" style="width: 520px; height: 77px;">
+			<thead>
+				<tr>
+					<th scope="col">
+						Car_ID</th>
+					<th scope="col">
+						Car_Number</th>
+					<th scope="col">
+						Customers_ID</th>
+					<th scope="col">
+						Fuel_ID</th>
+					<th scope="col">
+						Exists In DB</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						17</td>
+					<td>
+						12-985-44</td>
+					<td>
+						88888</td>
+					<td>
+						2</td>
+					<td>
+						Yes</td>
+				</tr>
+				<tr>
+					<td>
+						36</td>
+					<td>
+						21-111-95</td>
+					<td>
+						77777</td>
+					<td>
+						4</td>
+					<td>
+						Yes</td>
+				</tr>
+				<tr>
+					<td>
+						17</td>
+					<td>
+						12-985-44</td>
+					<td>
+						88888</td>
+					<td>
+						1</td>
+					<td>
+						No</td>
+				</tr>
+				<tr>
+					<td>
+						36</td>
+					<td>
+						21-111-95</td>
+					<td>
+						77777</td>
+					<td>
+						2</td>
+					<td>
+						No</td>
+				</tr>
+			</tbody>
+		</table>
 		<p class="style1">
-			2. (33,77777, &quot;Sali&quot;, &quot;Funny&quot;,&quot;&quot;)</p>
+			<strong>Gas Station Detailes X Customers:</strong></p>
+		<table border="1" cellpadding="1" cellspacing="1" style="width: 520px; height: 77px;">
+			<thead>
+				<tr>
+					<th scope="col">
+						Customers_ID</th>
+					<th scope="col">
+						Gas_Station_ID</th>
+					<th scope="col">
+						Exists In DB</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						88888</td>
+					<td>
+						{1,2,3,4,5,6}</td>
+					<td>
+						Yes</td>
+				</tr>
+				<tr>
+					<td>
+						77777</td>
+					<td>
+						{3}</td>
+					<td>
+						Yes</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			<strong>Fuel:</strong></p>
+		<table border="1" cellpadding="1" cellspacing="1" style="width: 121px; height: 120px;">
+			<thead>
+				<tr>
+					<th scope="col">
+						Fuel_ID</th>
+					<th scope="col">
+						Fuel_Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						1</td>
+					<td>
+						95</td>
+				</tr>
+				<tr>
+					<td>
+						2</td>
+					<td>
+						Scooter</td>
+				</tr>
+				<tr>
+					<td>
+						3</td>
+					<td>
+						Home Fuel</td>
+				</tr>
+				<tr>
+					<td>
+						4</td>
+					<td>
+						Diesel</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			<u>Views in DB:</u></p>
 		<p class="style1">
-			<strong>Cars: </strong>(Car_ID, Car_Number, Customers_ID, Fuel_ID) =</p>
-		<p class="style1">
-			1. (17, &quot;12-985-44&quot;, 88888,&nbsp;2)</p>
-		<p class="style1">
-			2. (16, &quot;21-111-95&quot;, 77777, 4)</p>
+			<strong>All Campaign On System:</strong></p>
+		<table border="1" cellpadding="1" cellspacing="1" style="width: 586px; height: 68px;">
+			<thead>
+				<tr>
+					<th scope="col">
+						Campaign_ID</th>
+					<th scope="col">
+						Campaign_Description</th>
+					<th scope="col">
+						Discount_Percentage</th>
+					<th scope="col">
+						Is_Active</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						5</td>
+					<td>
+						&quot;Discount of 3% on Scooters Fuel.&quot;</td>
+					<td>
+						3%</td>
+					<td>
+						Yes</td>
+				</tr>
+				<tr>
+					<td>
+						6<span _fck_bookmark="1" style="display: none;">&nbsp;</span></td>
+					<td>
+						&quot;Discount of 5% on 95 Fuel&quot;</td>
+					<td>
+						5%</td>
+					<td>
+						No</td>
+				</tr>
+			</tbody>
+		</table>
 		<p class="style1">
 			&nbsp;</p>
 		<table border="1" cellpadding="5" cellspacing="0" width="765">
@@ -67,6 +349,14 @@
 						check</td>
 					<td class="style1">
 						check credit card</td>
+					<td class="style1">
+						true<span _fck_bookmark="1" style="display: none;">&nbsp;</span></td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						check purchase plan in station</td>
 					<td class="style1">
 						true<span _fck_bookmark="1" style="display: none;">&nbsp;</span></td>
 				</tr>
@@ -165,6 +455,14 @@
 						check credit card</td>
 					<td class="style1">
 						false</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						check purchase plan in station</td>
+					<td class="style1">
+						false<span _fck_bookmark="1" style="display: none;">&nbsp;</span></td>
 				</tr>
 				<tr>
 					<td class="style1">

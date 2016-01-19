@@ -69,12 +69,15 @@ public class GasStationSale extends ServerConnection{
 		Customer = new callbackCustomer();	
 	}
 	public void createCustomer(int CustomerNumber){
+		int[] StationInPurchasePlan;
 		if(CustomerNumber == 1){
 			Customer.setUserID(34);
 			Customer.setCustomersID(88888);
 			Customer.setCustomerFirstName("Nir");
 			Customer.setCustomerLastName("Lod");
 			Customer.setCreditCard("2356-6589-7644-7852");	
+			StationInPurchasePlan = new int []{1,2,3,4,5,6};
+			Customer.setGasStationInPurchasePlan(StationInPurchasePlan);
 		}
 		else {
 			Customer.setUserID(33);
@@ -82,6 +85,8 @@ public class GasStationSale extends ServerConnection{
 			Customer.setCustomerFirstName("Sali");
 			Customer.setCustomerLastName("Funny");
 			Customer.setCreditCard("");	
+			StationInPurchasePlan = new int []{3};
+			Customer.setGasStationInPurchasePlan(StationInPurchasePlan);
 		}
 		CreateCar(CustomerNumber);
 	}
@@ -94,7 +99,7 @@ public class GasStationSale extends ServerConnection{
 			Car.setFuelID(2);
 		}
 		else {
-			Car.setCarID(16);
+			Car.setCarID(36);
 			Car.setCarNumber("21-111-95");
 			Car.setCustomerID(Customer.getCustomersID());
 			Car.setFuelID(1);
@@ -144,9 +149,10 @@ public class GasStationSale extends ServerConnection{
 		Sale.setPayment(Payment);
 	}
 	public boolean addSale(){
+		Bridge.Restart();
 		Sale.setWhatToDo(MessageType.setNewGasStationSale);
+		Server.handleMessageFromClient(Sale);			
 		Bridge.Wait();
-		Server.handleMessageFromClient(Sale);				
 		if(ReturnCallBack instanceof callbackSuccess)
 			return true;
 		return false;		
@@ -166,7 +172,11 @@ public class GasStationSale extends ServerConnection{
 		System.out.println("callback Error");
 		return false;		
 	}
-	
+
+	//Check Purchase Plan
+	public boolean checkPurchasePlanInStation(){
+		return SCon.CheckUserCostingModelNonNFC(Customer);
+	}
 	
 	@Override
 	public void update(Observable arg0, Object arg) {
