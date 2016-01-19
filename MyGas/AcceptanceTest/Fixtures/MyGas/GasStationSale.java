@@ -18,6 +18,7 @@ import controller.StationsController;
 
 public class GasStationSale extends ServerConnection{
 	
+	//Solution to Observer method
 	private ConnectionBridge Bridge = new ConnectionBridge();
 	
 	/*Login Controller and Gui*/
@@ -37,19 +38,19 @@ public class GasStationSale extends ServerConnection{
 	
 	/*Variable*/
 	private Component FuelType;
-	private boolean SaleAddToDB;
 	private int GasStationID = 1;
-	
-	
+		
 	/*Constructor*/
 	public GasStationSale(){
 		User = new callbackUser();	
+		User.setUserID(6);
 		LGui.setVisible(false);							//Set gui invisible
 		SGui = new StationsGUI(User, Server, LGui);		//Create new station gui
 		SGui.setVisible(false);							//Set gui invisible
 		SCon = new StationsController(Server, SGui);	//Create new station controller
 		Server.deleteObserver(SCon);
 		Server.deleteObserver(SGui.getNotificationThread());
+		SGui.getNotificationThread().setNotificationFlag(false);
 		CreateStation();
 	}	
 	private void CreateStation(){		
@@ -70,14 +71,14 @@ public class GasStationSale extends ServerConnection{
 	public void createCustomer(int CustomerNumber){
 		if(CustomerNumber == 1){
 			Customer.setUserID(34);
-			Customer.setCustomersID(306216168);
+			Customer.setCustomersID(88888);
 			Customer.setCustomerFirstName("Nir");
 			Customer.setCustomerLastName("Lod");
 			Customer.setCreditCard("2356-6589-7644-7852");	
 		}
 		else {
 			Customer.setUserID(33);
-			Customer.setCustomersID(302561566);
+			Customer.setCustomersID(77777);
 			Customer.setCustomerFirstName("Sali");
 			Customer.setCustomerLastName("Funny");
 			Customer.setCreditCard("");	
@@ -94,9 +95,9 @@ public class GasStationSale extends ServerConnection{
 		}
 		else {
 			Car.setCarID(16);
-			Car.setCarNumber("21-236-50");
+			Car.setCarNumber("21-111-95");
 			Car.setCustomerID(Customer.getCustomersID());
-			Car.setFuelID(4);
+			Car.setFuelID(1);
 		}
 	}
 	public boolean checkCreditCard(){
@@ -105,7 +106,7 @@ public class GasStationSale extends ServerConnection{
 	
 	//Check pump
 	public void setPump(String FuelType){
-		switch (FuelType){
+ 		switch (FuelType){
 		case "Diesel": 
 			this.FuelType = SGui.getBlueHand();
 			break;
@@ -118,8 +119,12 @@ public class GasStationSale extends ServerConnection{
 		}
 	}
 	public boolean checkPump(){
+		boolean returnFlag;
 		SCon.setCarTest(Car);
-		return SCon.mouseClickedTest(FuelType);
+		returnFlag = SCon.mouseClickedTest(FuelType);
+		SCon.ResetPumpSatation();
+		return returnFlag;
+		
 	}
 	
 	
