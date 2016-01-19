@@ -19,9 +19,17 @@
 		<p class="style1">
 			<strong>Fuel_Per_Station:</strong> (Gas_Station_ID, Fuel_ID, Threshold_Limit, Current_Amount, Capacity) = (1, 2, 200, 205, 1700)</p>
 		<p class="style1">
-			<strong>Customers:</strong> (Customers_ID, Customer_First_Name, Customer_Last_Name) = (306216168, Nir, Lod)</p>
+			<strong>Customers:</strong> (User_ID,Customers_ID, Customer_First_Name, Customer_Last_Name,Credit_Card) =</p>
 		<p class="style1">
-			<strong>Cars: </strong>(Car_ID, Car_Number, Customers_ID, NFC, Fuel_ID, Active_Car) = (17, 12-985-44, 306216168, Yes, 2, Yes)</p>
+			1. (34,88888, &quot;Nir&quot;, &quot;Lod&quot;,&quot;2356-6589-7644-7852&quot;)</p>
+		<p class="style1">
+			2. (33,77777, &quot;Sali&quot;, &quot;Funny&quot;,&quot;&quot;)</p>
+		<p class="style1">
+			<strong>Cars: </strong>(Car_ID, Car_Number, Customers_ID, Fuel_ID) =</p>
+		<p class="style1">
+			1. (17, &quot;12-985-44&quot;, 88888,&nbsp;2)</p>
+		<p class="style1">
+			2. (16, &quot;21-111-95&quot;, 77777, 4)</p>
 		<p class="style1">
 			&nbsp;</p>
 		<table border="1" cellpadding="5" cellspacing="0" width="765">
@@ -180,7 +188,7 @@
 					<td class="style1">
 						set pump</td>
 					<td class="style1">
-						Diesel</td>
+						95</td>
 				</tr>
 				<tr>
 					<td class="style1" style="color: rgb(0, 0, 205);">
@@ -231,8 +239,5 @@
 						true</td>
 				</tr>
 			</tbody>
-		</table>
-		<p>
-			Create by Avi Rubin.</p>
-	</body>
+		</table></body>
 </html>

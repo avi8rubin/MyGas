@@ -1170,7 +1170,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 	/**
 	 * Reset all station back to original 
 	 */
-	private void ResetPumpSatation(){		
+	public void ResetPumpSatation(){		
 		UserNeedToPay=false;
 		Paybutton.setEnabled(false);
 		UserIsFueling=false;

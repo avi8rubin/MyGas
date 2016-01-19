@@ -18,6 +18,7 @@ import controller.StationsController;
 
 public class GasStationSale extends ServerConnection{
 	
+	//Solution to Observer method
 	private ConnectionBridge Bridge = new ConnectionBridge();
 	
 	/*Login Controller and Gui*/
@@ -94,9 +95,9 @@ public class GasStationSale extends ServerConnection{
 		}
 		else {
 			Car.setCarID(16);
-			Car.setCarNumber("21-236-50");
+			Car.setCarNumber("21-111-95");
 			Car.setCustomerID(Customer.getCustomersID());
-			Car.setFuelID(4);
+			Car.setFuelID(1);
 		}
 	}
 	public boolean checkCreditCard(){
@@ -118,8 +119,12 @@ public class GasStationSale extends ServerConnection{
 		}
 	}
 	public boolean checkPump(){
+		boolean returnFlag;
 		SCon.setCarTest(Car);
-		return SCon.mouseClickedTest(FuelType);
+		returnFlag = SCon.mouseClickedTest(FuelType);
+		SCon.ResetPumpSatation();
+		return returnFlag;
+		
 	}
 	
 	
