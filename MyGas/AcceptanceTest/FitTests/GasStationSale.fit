@@ -134,6 +134,102 @@
 					<td class="style1">
 						true</td>
 				</tr>
+				<tr>
+					<td class="style1">
+						press</td>
+					<td class="style1">
+						start customer</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						create customer</td>
+					<td class="style1">
+						2</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						check credit card</td>
+					<td class="style1">
+						false</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						set pump</td>
+					<td class="style1">
+						Scooter</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						check pump</td>
+					<td class="style1">
+						false</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						set pump</td>
+					<td class="style1">
+						Diesel</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						check pump</td>
+					<td class="style1">
+						true<span _fck_bookmark="1" style="display: none;">&nbsp;</span></td>
+				</tr>
+				<tr>
+					<td class="style1">
+						press</td>
+					<td class="style1">
+						start sale</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						sale fuel amount</td>
+					<td class="style1">
+						10.5</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						sale payment</td>
+					<td class="style1">
+						30</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						check discount</td>
+					<td class="style1">
+						false</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						add sale</td>
+					<td class="style1">
+						true</td>
+				</tr>
 			</tbody>
 		</table>
 		<p>

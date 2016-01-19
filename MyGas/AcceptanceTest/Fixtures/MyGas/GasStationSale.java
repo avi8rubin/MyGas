@@ -37,19 +37,19 @@ public class GasStationSale extends ServerConnection{
 	
 	/*Variable*/
 	private Component FuelType;
-	private boolean SaleAddToDB;
 	private int GasStationID = 1;
-	
-	
+		
 	/*Constructor*/
 	public GasStationSale(){
 		User = new callbackUser();	
+		User.setUserID(6);
 		LGui.setVisible(false);							//Set gui invisible
 		SGui = new StationsGUI(User, Server, LGui);		//Create new station gui
 		SGui.setVisible(false);							//Set gui invisible
 		SCon = new StationsController(Server, SGui);	//Create new station controller
 		Server.deleteObserver(SCon);
 		Server.deleteObserver(SGui.getNotificationThread());
+		SGui.getNotificationThread().setNotificationFlag(false);
 		CreateStation();
 	}	
 	private void CreateStation(){		
@@ -70,14 +70,14 @@ public class GasStationSale extends ServerConnection{
 	public void createCustomer(int CustomerNumber){
 		if(CustomerNumber == 1){
 			Customer.setUserID(34);
-			Customer.setCustomersID(306216168);
+			Customer.setCustomersID(88888);
 			Customer.setCustomerFirstName("Nir");
 			Customer.setCustomerLastName("Lod");
 			Customer.setCreditCard("2356-6589-7644-7852");	
 		}
 		else {
 			Customer.setUserID(33);
-			Customer.setCustomersID(302561566);
+			Customer.setCustomersID(77777);
 			Customer.setCustomerFirstName("Sali");
 			Customer.setCustomerLastName("Funny");
 			Customer.setCreditCard("");	
@@ -105,7 +105,7 @@ public class GasStationSale extends ServerConnection{
 	
 	//Check pump
 	public void setPump(String FuelType){
-		switch (FuelType){
+ 		switch (FuelType){
 		case "Diesel": 
 			this.FuelType = SGui.getBlueHand();
 			break;
