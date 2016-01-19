@@ -55,6 +55,7 @@ public class LoginController implements ActionListener,Observer{
 	 * Set connection Flag
 	 */
 	String Password;
+	private boolean WaitToConnection = true;
 	
 	
 //Constructors ****************************************************
@@ -91,8 +92,8 @@ public class LoginController implements ActionListener,Observer{
  */
 	private void LoginButtonHandler(){		
 		EnteredUser = null;
-		if(Server!=null && Server.isConnected()){
-			
+		if(Server!=null && Server.isConnected() && WaitToConnection){
+			WaitToConnection=false;
 			/*------ Read fields from gui ------*/
 			EnteredUser = new callbackUser(MessageType.getCheckExistsUserPass,LoginScreen.getUserName(),LoginScreen.getPassword());
 			Password = LoginScreen.getPassword();
@@ -230,8 +231,10 @@ public class LoginController implements ActionListener,Observer{
 	@Override
 	public void update(Observable o, Object arg) {
 		 if (arg instanceof CallBack){
-			if(((CallBack)arg).getWhatToDo() == MessageType.getCheckExistsUserPass)
+			if(((CallBack)arg).getWhatToDo() == MessageType.getCheckExistsUserPass){
+				WaitToConnection=true;
 					CheckRegisteredUser((CallBack)arg);	
+			}
 			if(((CallBack)arg).getWhatToDo() == MessageType.updateUserLogout)
 				RestartConnection();		
 		 }

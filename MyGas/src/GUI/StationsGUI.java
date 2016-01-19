@@ -338,7 +338,7 @@ public class StationsGUI extends abstractPanel_GUI{
 		ErrorMassage.setText("*Error With CustomerID.");
 	}
 	public void IllegalCustomerHasNoCars(){
-		ErrorMassage.setText("*No Records Of Cars For This Customer.");
+		ErrorMassage.setText("<html>*No Records Of Cars For This  Customer.</html>");
 	}
 	public void ClearErrorMessage(){
 		ErrorMassage.setText("");
