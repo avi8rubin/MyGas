@@ -31,10 +31,9 @@ public class ConnectionBridge {
 	 * @return - false / true
 	 */
 	private synchronized boolean ChangedState(){
-		synchronized(lockObject){
-			if(!WaitUntil) return false;	
-			return true;
-		}		
+		synchronized(lockObject) {
+			return WaitUntil;
+		}
 	}
 	/**
 	 * Thread go to sleep.

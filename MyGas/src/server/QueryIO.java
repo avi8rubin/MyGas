@@ -325,7 +325,7 @@ public class QueryIO implements Runnable {
 		
 		// Build query -----------------------------------------------------------
 		String SqlQuery = "SELECT * FROM All_Users_Detailes "
-						+ "WHERE User_Name= '"+User.getUserName().trim()+"' ";
+						+ "WHERE User_Name= '"+User.getUserName().trim()+"' AND IS_Active='Yes'";
 		 	
 		// Send query to DB and get result ---------------------------------------
 		try {
@@ -1197,7 +1197,7 @@ public class QueryIO implements Runnable {
 			ps3.setInt(5, Callback.getPlanID());
 			ps3.setInt(6, Fcallback.getUserID());
 			ps3.setString(7, Callback.getPhoneNumber().trim());
-			ps3.setString(8, Callback.getCreditCard().trim());
+			ps3.setString(8, Callback.getCreditCard().trim().replace("-    -    -", ""));
 			ps3.setString(9, Callback.getEmail().trim());		
 			ps3.setInt(10, Callback.getCostingModelID());	
 			ps3.executeUpdate();
@@ -1248,8 +1248,9 @@ public class QueryIO implements Runnable {
 		// Build query -----------------------------------------------------------
 		
 		try {
-			PreparedStatement ps=conn.prepareStatement("SELECT * FROM Cars WHERE Customers_ID=(?) AND Active_Car='Yes'");
-			
+			//PreparedStatement ps=conn.prepareStatement("SELECT * FROM Cars WHERE Customers_ID=(?) AND Active_Car='Yes'");
+			PreparedStatement ps=conn.prepareStatement("SELECT A.* FROM Cars A LEFT OUTER JOIN Customers B ON A.Customers_ID=B.Customers_ID "+
+														"WHERE A.Customers_ID=(?) AND A.Active_Car='Yes' AND B.IS_Active='Yes'");
 		// Send query to DB  -----------------------------------------------------
 			ps.setInt(1, Callback.getCustomerID());
 			AnswerResult = ps.executeQuery();
@@ -1263,8 +1264,10 @@ public class QueryIO implements Runnable {
 				callback_Obj.setYesNoNFC(AnswerResult.getString("NFC"));				
 				LocalVector.add(callback_Obj);
 			}
-			if (LocalVector.size() == 0) 
-				return LocalVector.add( new callback_Error("No records of cars for this customer."));
+			if (LocalVector.size() == 0){ 
+				LocalVector.add( new callback_Error("No records of cars for this customer."));
+				return LocalVector;
+			}
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1677,7 +1680,7 @@ public class QueryIO implements Runnable {
 			ps3.setString(3, Callback.getCustomerType().trim());
 			ps3.setInt(4, Callback.getPlanID());
 			ps3.setString(5, Callback.getPhoneNumber().trim());
-			ps3.setString(6, Callback.getCreditCard().trim());
+			ps3.setString(6, Callback.getCreditCard().trim().replace("-    -    -", ""));
 			ps3.setString(7, Callback.getEmail().trim());
 			ps3.setString(8, Callback.getISActive().trim());	
 			ps3.setInt(9, Callback.getCostingModelID());

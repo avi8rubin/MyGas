@@ -412,9 +412,9 @@ INSERT INTO Fuel_Orders VALUES(null,2,4,640,'2015-11-14 12:12:00',1,2);
 INSERT INTO Fuel_Orders VALUES(null,1,3,620,'2015-10-6 12:12:00',1,1);
 INSERT INTO Fuel_Orders VALUES(null,1,5,650,'2015-9-7 12:12:00',2,1);
 
-INSERT INTO Fuel_Per_Station VALUES(1,1,200,500,1600);
-INSERT INTO Fuel_Per_Station VALUES(1,2,200,500,1700);
-INSERT INTO Fuel_Per_Station VALUES(1,4,200,500,1900);
+INSERT INTO Fuel_Per_Station VALUES(1,1,200,650,1600);
+INSERT INTO Fuel_Per_Station VALUES(1,2,200,690,1700);
+INSERT INTO Fuel_Per_Station VALUES(1,4,200,850,1900);
 INSERT INTO Fuel_Per_Station VALUES(2,1,200,250,1600);
 INSERT INTO Fuel_Per_Station VALUES(2,2,400,450,1800);
 INSERT INTO Fuel_Per_Station VALUES(2,4,300,350,2000);
@@ -503,7 +503,6 @@ INSERT INTO Cars VALUES(null,'10-963-52',302298198,'No',4,DEFAULT);
 INSERT INTO Cars VALUES(null,'10-842-95',66666,'No',1,DEFAULT);
 INSERT INTO Cars VALUES(null,'95-642-32',302296816,'No',1,DEFAULT);
 INSERT INTO Cars VALUES(null,'12-632-85',77777,'Yes',2,DEFAULT);
-INSERT INTO Cars VALUES(null,'21-111-95',77777,'No',1,DEFAULT);
 INSERT INTO Cars VALUES(null,'10-845-98',88888,'Yes',4,DEFAULT);
 INSERT INTO Cars VALUES(null,'23-468-95',359681680,'Yes',2,DEFAULT);
 INSERT INTO Cars VALUES(null,'10-456-85',326594906,'No',2,DEFAULT);
@@ -763,7 +762,6 @@ SELECT A.*
 ,C.Customer_Last_Name
 ,C.Email
 ,C.Phone_Number
-,C.IS_Active
 FROM Users A
 LEFT OUTER JOIN User_Type B ON A.User_Type_Id=B.User_Type_Id
 RIGHT OUTER JOIN Customers C ON A.User_ID=C.User_ID
@@ -776,7 +774,6 @@ SELECT A.*
 ,C.Worker_Last_Name
 ,C.Email
 ,C.Phone_Number
-,'Yes' AS IS_Active
 FROM Users A
 LEFT OUTER JOIN User_Type B ON A.User_Type_Id=B.User_Type_Id
 RIGHT OUTER JOIN Workers C ON A.User_ID=C.User_ID
@@ -789,7 +786,6 @@ SELECT A.*
 ,'Station' AS Worker_Last_Name
 ,'' AS Email
 ,'' AS Phone_Number
-,'Yes' AS IS_Active
 FROM Users A
 LEFT OUTER JOIN User_Type B ON A.User_Type_Id=B.User_Type_Id
 RIGHT OUTER JOIN Gas_Stations C ON A.User_ID = C.User_Interface_ID

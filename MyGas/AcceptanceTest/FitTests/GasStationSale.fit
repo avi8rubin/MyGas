@@ -1,0 +1,541 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>Delete Recipe FIT Test</title>
+		<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type" />
+		<style type="text/css">
+<!--{cke_protected}{C}%3C!%2D%2D.style1%20%7Bfont-family%3A%20Arial%2C%20Helvetica%2C%20sans-serif%7D%2D%2D%3E-->		</style>
+		<meta content="MSHTML 11.00.10586.35" name="GENERATOR" />
+	</head>
+	<body>
+		<p class="style1">
+			<u>Gas Station Fuel Sale&nbsp;Acceptance Test</u></p>
+		<p class="style1">
+			Perfome tests for the use case&nbsp; &#39;Sale Fuel In Gas Station&#39;.</p>
+		<p class="style1">
+			Conain the following tests for related sale:</p>
+		<p class="style1">
+			1. User credit card.</p>
+		<p class="style1">
+			2. User Purchase plan.</p>
+		<p class="style1">
+			3. Car fuel type compatible with pump.</p>
+		<p class="style1">
+			4. Sale discount.</p>
+		<p class="style1">
+			5. Recording sale in DB.</p>
+		<p class="style1">
+			&nbsp;</p>
+		<p class="style1">
+			<u>Tabels in DB:</u></p>
+		<p class="style1">
+			<strong>Fuel_Per_Station:</strong></p>
+		<table border="1" cellpadding="1" cellspacing="1" style="width: 520px; height: 77px;">
+			<thead>
+				<tr>
+					<th scope="col">
+						Gas_Station_ID</th>
+					<th scope="col">
+						Fuel_ID</th>
+					<th scope="col">
+						Threshold_Limit</th>
+					<th scope="col">
+						Current_Amount</th>
+					<th scope="col">
+						Capacity</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						1</td>
+					<td>
+						2</td>
+					<td>
+						200</td>
+					<td>
+						500</td>
+					<td>
+						1700</td>
+				</tr>
+				<tr>
+					<td>
+						1</td>
+					<td>
+						1</td>
+					<td>
+						200</td>
+					<td>
+						500</td>
+					<td>
+						1600</td>
+				</tr>
+				<tr>
+					<td>
+						1</td>
+					<td>
+						4</td>
+					<td>
+						200</td>
+					<td>
+						500</td>
+					<td>
+						1900</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="style1">
+			<strong>Customers:</strong></p>
+		<table border="1" cellpadding="1" cellspacing="1" style="width: 760px; height: 68px;">
+			<thead>
+				<tr>
+					<th scope="col">
+						User_ID</th>
+					<th scope="col">
+						Customers_ID</th>
+					<th scope="col">
+						Customer_First_Name</th>
+					<th scope="col">
+						Customer_Last_Name</th>
+					<th scope="col">
+						Credit_Card</th>
+					<th scope="col">
+						Exists&nbsp;In DB</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						34</td>
+					<td>
+						88888</td>
+					<td>
+						Nir</td>
+					<td>
+						Lod</td>
+					<td>
+						2356-6589-7644-7852</td>
+					<td>
+						Yes</td>
+				</tr>
+				<tr>
+					<td>
+						33</td>
+					<td>
+						77777</td>
+					<td>
+						Sali</td>
+					<td>
+						Funny</td>
+					<td>
+						&nbsp;</td>
+					<td>
+						Yes</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="style1">
+			<strong>Cars: </strong></p>
+		<table border="1" cellpadding="1" cellspacing="1" style="width: 520px; height: 77px;">
+			<thead>
+				<tr>
+					<th scope="col">
+						Car_ID</th>
+					<th scope="col">
+						Car_Number</th>
+					<th scope="col">
+						Customers_ID</th>
+					<th scope="col">
+						Fuel_ID</th>
+					<th scope="col">
+						Exists In DB</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						17</td>
+					<td>
+						12-985-44</td>
+					<td>
+						88888</td>
+					<td>
+						2</td>
+					<td>
+						Yes</td>
+				</tr>
+				<tr>
+					<td>
+						36</td>
+					<td>
+						21-111-95</td>
+					<td>
+						77777</td>
+					<td>
+						4</td>
+					<td>
+						Yes</td>
+				</tr>
+				<tr>
+					<td>
+						17</td>
+					<td>
+						12-985-44</td>
+					<td>
+						88888</td>
+					<td>
+						1</td>
+					<td>
+						No</td>
+				</tr>
+				<tr>
+					<td>
+						36</td>
+					<td>
+						21-111-95</td>
+					<td>
+						77777</td>
+					<td>
+						2</td>
+					<td>
+						No</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="style1">
+			<strong>Gas Station Detailes X Customers:</strong></p>
+		<table border="1" cellpadding="1" cellspacing="1" style="width: 520px; height: 77px;">
+			<thead>
+				<tr>
+					<th scope="col">
+						Customers_ID</th>
+					<th scope="col">
+						Gas_Station_ID</th>
+					<th scope="col">
+						Exists In DB</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						88888</td>
+					<td>
+						{1,2,3,4,5,6}</td>
+					<td>
+						Yes</td>
+				</tr>
+				<tr>
+					<td>
+						77777</td>
+					<td>
+						{3}</td>
+					<td>
+						Yes</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			<strong>Fuel:</strong></p>
+		<table border="1" cellpadding="1" cellspacing="1" style="width: 121px; height: 120px;">
+			<thead>
+				<tr>
+					<th scope="col">
+						Fuel_ID</th>
+					<th scope="col">
+						Fuel_Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						1</td>
+					<td>
+						95</td>
+				</tr>
+				<tr>
+					<td>
+						2</td>
+					<td>
+						Scooter</td>
+				</tr>
+				<tr>
+					<td>
+						3</td>
+					<td>
+						Home Fuel</td>
+				</tr>
+				<tr>
+					<td>
+						4</td>
+					<td>
+						Diesel</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			<u>Views in DB:</u></p>
+		<p class="style1">
+			<strong>All Campaign On System:</strong></p>
+		<table border="1" cellpadding="1" cellspacing="1" style="width: 586px; height: 68px;">
+			<thead>
+				<tr>
+					<th scope="col">
+						Campaign_ID</th>
+					<th scope="col">
+						Campaign_Description</th>
+					<th scope="col">
+						Discount_Percentage</th>
+					<th scope="col">
+						Is_Active</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						5</td>
+					<td>
+						&quot;Discount of 3% on Scooters Fuel.&quot;</td>
+					<td>
+						3%</td>
+					<td>
+						Yes</td>
+				</tr>
+				<tr>
+					<td>
+						6<span _fck_bookmark="1" style="display: none;">&nbsp;</span></td>
+					<td>
+						&quot;Discount of 5% on 95 Fuel&quot;</td>
+					<td>
+						5%</td>
+					<td>
+						No</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="style1">
+			&nbsp;</p>
+		<table border="1" cellpadding="5" cellspacing="0" width="765">
+			<tbody>
+				<tr>
+					<td class="style1" colspan="3">
+						fit.ActionFixture</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						start</td>
+					<td class="style1">
+						Fixtures.MyGas.GasStationSale</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						press</td>
+					<td class="style1">
+						start customer</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						create customer</td>
+					<td class="style1">
+						1</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						check credit card</td>
+					<td class="style1">
+						true<span _fck_bookmark="1" style="display: none;">&nbsp;</span></td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						check purchase plan in station</td>
+					<td class="style1">
+						true<span _fck_bookmark="1" style="display: none;">&nbsp;</span></td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						set pump</td>
+					<td class="style1">
+						95</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						check pump</td>
+					<td class="style1">
+						false</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						set pump</td>
+					<td class="style1">
+						Scooter</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						check pump</td>
+					<td class="style1">
+						true<span _fck_bookmark="1" style="display: none;">&nbsp;</span></td>
+				</tr>
+				<tr>
+					<td class="style1">
+						press</td>
+					<td class="style1">
+						start sale</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						sale fuel amount</td>
+					<td class="style1">
+						10.5</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						sale payment</td>
+					<td class="style1">
+						30</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						check discount</td>
+					<td class="style1">
+						true</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						add sale</td>
+					<td class="style1">
+						true</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						press</td>
+					<td class="style1">
+						start customer</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						create customer</td>
+					<td class="style1">
+						2</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						check credit card</td>
+					<td class="style1">
+						false</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						check purchase plan in station</td>
+					<td class="style1">
+						false<span _fck_bookmark="1" style="display: none;">&nbsp;</span></td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						set pump</td>
+					<td class="style1">
+						Scooter</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						check pump</td>
+					<td class="style1">
+						false</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						set pump</td>
+					<td class="style1">
+						95</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						check pump</td>
+					<td class="style1">
+						true<span _fck_bookmark="1" style="display: none;">&nbsp;</span></td>
+				</tr>
+				<tr>
+					<td class="style1">
+						press</td>
+					<td class="style1">
+						start sale</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						sale fuel amount</td>
+					<td class="style1">
+						10.5</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						sale payment</td>
+					<td class="style1">
+						30</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						check discount</td>
+					<td class="style1">
+						false</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1">
+						add sale</td>
+					<td class="style1">
+						true</td>
+				</tr>
+			</tbody>
+		</table></body>
+</html>

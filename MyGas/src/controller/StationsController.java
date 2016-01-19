@@ -10,6 +10,7 @@
 package controller;
 
 import java.awt.CardLayout;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -39,12 +40,10 @@ import common.Checks;
 import common.MessageType;
 
 public class StationsController extends Controller implements MouseListener,Runnable{
-		private callbackStationFuels CurrentStation=null;
-		
-		
 		private float Liter=0,Price=0,Fuel95Price,FuelScoterPrice,FuelDieselPrice,Fuel95CurrentAmount,Fuel95ThresholdLimit,FuelScoterCurrentAmount,FuelScoterThresholdLimit,
 				FuelDieselCurrentAmount,FuelDieselThresholdLimit; 
 		private int GasStationID,NFCnumber;
+		private int fueltypecurrentcar=0;
 		private ArrayList UserCarsNumbers;
 		private JButton LoginButton;
 		private JButton UserLogoutButton;
@@ -62,7 +61,6 @@ public class StationsController extends Controller implements MouseListener,Runn
 		private static callbackCar CustomerCars;
 		private static CallBack Temp;
 		private static callbackCustomer Customer;
-		private static CallBack LocalUserCallBack = null;
 		private static callbackSale CurrentSale;
 		DecimalFormat myFormatter = new DecimalFormat("###.##");
 		
@@ -79,8 +77,6 @@ public class StationsController extends Controller implements MouseListener,Runn
 		
 		//private CardLayout ContainerCard2=(CardLayout)(CenterCardContainer.getLayout()),ContainerCard1;
 		private JTextField LiterLabel;
-		private JTextField PriceLabel;
-		
 		private boolean logoutflag;
 		private boolean UserIsFueling =false;  //if hand in the car
 		private boolean UserNeedToPay=false;   //if was start pumping
@@ -90,13 +86,18 @@ public class StationsController extends Controller implements MouseListener,Runn
 		private boolean FuelDiesel=false; //Blue
 		private boolean Fuel95IsExist,FuelScoterIsExist,FuelDieselIsExist;
 		private boolean NFCIsExist;
-		private boolean ThreadRunFlag=true;
+		
+		/*-------Testing-------*/
+		public callbackCar CarTest; 
+		
+		
+		
 		/**
 		 * Contractor
 		 * @param Server - main server to send DB
 		 * @param GuiScreen - gas Station enter
 		 */
-	public StationsController(Client Server, StationsGUI GuiScreen) {
+		public StationsController(Client Server, StationsGUI GuiScreen) {
 		super(Server, GuiScreen);
 		this.StationUserLoginGui = GuiScreen;
 		StationUserLoginGui.setVisible(true);
@@ -113,7 +114,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		DiscountTextBox=GuiScreen.getDiscountLabelBox();
 		LiterCounter = new Thread(this);
 		LiterLabel=GuiScreen.getLiterLabel();
-		PriceLabel=GuiScreen.getPriceLabel();
+		GuiScreen.getPriceLabel();
 		StationCurrentUser=GuiScreen.getStationUser();
 		NFCTextField=GuiScreen.getNFCTextField();
 		StationUserLoginGui.setCashCheacked();
@@ -337,7 +338,8 @@ public class StationsController extends Controller implements MouseListener,Runn
 	 * Check if Costing Model allow Customer To Fuel In Gas Station 
 	 * @param e - Customer Callback
 	 */
-	private void CheakModelCostingNFC(callbackCustomer e){
+	private boolean CheakModelCostingNFC(callbackCustomer e){
+		boolean TestFlag = false;
 		Customer=e;
 		if(Customer.isAllowToEnterGasStation(this.GasStationID)) // if Costing model is oK!
 		{
@@ -359,12 +361,13 @@ public class StationsController extends Controller implements MouseListener,Runn
 			onecar.setCarID(UserCarNFC.getCarID());
 			UserCarsNumbers.add(onecar);
 			DiscountTextBox.setText("<html> Wellcome "+Customer.getCustomerFirstName()+" "+Customer.getCustomerLastName()+"</html>");
+			TestFlag = true;
 		}	
 		else // Not Costing model
 		{
 			StationUserLoginGui.IllegalCostingmodel();
 		}
-		
+		return TestFlag;
 	}//End of funtion
 	
 	
@@ -420,17 +423,21 @@ public class StationsController extends Controller implements MouseListener,Runn
 	 * Check if User Can Enter To Gas Station With The Costing Model
 	 * @param e - Customer Callback
 	 */
-	private void CheckUserCostingModelNonNFC(callbackCustomer e){
+	public boolean CheckUserCostingModelNonNFC(callbackCustomer e){
+		
+		boolean TestFlag = false;
 		Customer=e;
 		
 		if(Customer.isAllowToEnterGasStation(this.GasStationID)) // if Costing model is oK!
 		{
 		getAllUserCar(Customer.getCustomersID());
+		TestFlag=true;
 		}
 		else // Not Costing model
 		{
 			StationUserLoginGui.IllegalCostingmodel();
 		}
+		return TestFlag;
 	}
 	
 	/**
@@ -523,6 +530,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 	 */
 	public void mouseClicked(MouseEvent e) {
 		
+		boolean TestFlag=false;
 		/*user enter in NFC - check if he can click right pump*/
 		boolean SelectCar=false;
 		if(StationUserLoginGui.getComboboxCarSelect().equals("Select Car")) SelectCar=true;
@@ -544,6 +552,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 					if(e.getComponent()==BlueHand && FuelDieselIsExist ){
 						if(!UserIsFueling){  //if user is not Fueling
 							DiscountTextBox.setText("");
+							
 							if(UserFuel!=4)
 							{
 								DiscountTextBox.setText("Pump Does Not Match The Type Of Vehicle Fuel");
@@ -733,12 +742,265 @@ public class StationsController extends Controller implements MouseListener,Runn
 					}
 				}
 		 }
+		 
 	}
+	
+	public boolean mouseClickedTest(Component e) {
+		
+		boolean TestFlag=false;
+
+		
+		 if(false) // select pump with no car number
+		 {
+			 DiscountTextBox.setText("*Select Car Number First To Begin.");
+		 }
+		 else
+		 { 
+				if(NFCIsExist)
+				{
+					int UserFuel=UserCarNFC.getFuelID();
+					/*
+					 * 1=95
+					 * 2=Scooter Fuel
+					 * 4=Diesel
+					 */
+					if(e==BlueHand && FuelDieselIsExist ){
+						if(!UserIsFueling){  //if user is not Fueling
+							DiscountTextBox.setText("");
+							
+							if(UserFuel!=4)
+							{
+								DiscountTextBox.setText("Pump Does Not Match The Type Of Vehicle Fuel");
+							}
+							if(FuelDieselCurrentAmount<0.5)
+							{
+								DiscountTextBox.setText("Out Of Fuel");
+							}
+							if(UserFuel==4 && FuelDieselCurrentAmount>0.7)
+							{
+								TestFlag=true;
+								UserIsFueling=true;
+								FuelDiesel=true;
+								this.Liter=0;
+								DiscountTextBox.setText("The Price Per Liter For Diesel is: "+FuelDieselPrice);
+								StartFuelingButton.setEnabled(true);
+								StationUserLoginGui.BluePumpShow();
+							}
+						}
+					}
+					if(e==BlueHandFlip)
+					{
+						if(!UserNeedToPay)
+						{
+							StationUserLoginGui.BluePumpNotShow(); //return the hand to the right palce
+							StartFuelingButton.setEnabled(false);
+							UserIsFueling=false;
+							DiscountTextBox.setText("");
+						}
+					}
+					if(e==RedHand && Fuel95IsExist){
+						if(!UserIsFueling){  //if user is not fuling
+							DiscountTextBox.setText("");
+							if(UserFuel!=1)
+							{
+								DiscountTextBox.setText("Pump Does Not Match The Type Of Vehicle Fuel");
+							}
+							if(Fuel95CurrentAmount<0.5)
+								DiscountTextBox.setText("Out Of Fuel");
+							if(UserFuel==1 && Fuel95CurrentAmount > 0.7)
+							{
+								TestFlag=true;
+								UserIsFueling=true;
+								Fuel95=true;
+								this.Liter=0;
+								DiscountTextBox.setText("The Price Per Liter For 95 is: "+Fuel95Price);
+								StartFuelingButton.setEnabled(true);
+								StationUserLoginGui.RedPumpShow();
+							}
+						}
+					}
+					if(e==RedHandFlip){
+						if(!UserNeedToPay){
+							StationUserLoginGui.RedPumpNotShow();//return the hand to the right palce
+							StartFuelingButton.setEnabled(false);
+							UserIsFueling=false;
+							DiscountTextBox.setText("");
+						}
+					}
+					if(e==GreenHand && FuelScoterIsExist)
+						{
+						DiscountTextBox.setText("");
+							if(!UserIsFueling)
+							{  //if user is not fuling
+								if(UserFuel!=2)
+								{
+									DiscountTextBox.setText("Pump Does Not Match The Type Of Vehicle Fuel");
+								}
+								if(FuelScoterCurrentAmount < 0.5)
+									DiscountTextBox.setText("Out Of Fuel");
+								if(UserFuel==2 && FuelScoterCurrentAmount > 0.7)
+								{
+									TestFlag=true;
+									UserIsFueling=true;
+									FuelScoter=true;
+									this.Liter=0;
+									DiscountTextBox.setText("The Price Per Liter For Scooter Fuel is: "+FuelScoterPrice);
+									StartFuelingButton.setEnabled(true);
+									StationUserLoginGui.GreenPumpShow();
+								}
+							}
+						}
+					if(e==GreenHandFlip)
+						{
+							if(!UserNeedToPay)
+							{
+								StationUserLoginGui.GreenPumpNotShow();//return the hand to the right palce
+								StartFuelingButton.setEnabled(false);
+								UserIsFueling=false;
+								DiscountTextBox.setText("");
+							}
+						}
+				
+				}
+				else
+				/* ---------Regular Fueling --------*/
+				{	
+
+					fueltypecurrentcar=CarTest.getFuelID();
+					
+					
+					/*
+					 * 1=95
+					 * 2=Scooter Fuel
+					 * 4=Diesel
+					 */
+					if(e==BlueHand && FuelDieselIsExist){
+						DiscountTextBox.setText("");
+						if(!UserIsFueling){  //if user is not fuling
+							if(fueltypecurrentcar!=4)
+							{
+								DiscountTextBox.setText("Pump Does Not Match The Type Of Vehicle Fuel");
+							}
+							if(FuelDieselCurrentAmount < 0.5)
+								DiscountTextBox.setText("Out Of Fuel");
+							if(fueltypecurrentcar==4 && FuelDieselCurrentAmount > 0.7)
+							{
+								TestFlag=true;
+								UserIsFueling=true;
+								FuelDiesel=true;
+								this.Liter=0;
+								DiscountTextBox.setText("The Price Per Liter For Diesel is: "+FuelDieselPrice);
+								StartFuelingButton.setEnabled(true);
+								StationUserLoginGui.BluePumpShow();
+							}
+						}
+					}
+					if(e==BlueHandFlip){
+						if(!UserNeedToPay){
+							StationUserLoginGui.BluePumpNotShow(); //return the hand to the right palce
+							StartFuelingButton.setEnabled(false);
+							UserIsFueling=false;
+							DiscountTextBox.setText("");
+						}
+					}
+					if(e==RedHand && Fuel95IsExist){
+						DiscountTextBox.setText("");
+						if(!UserIsFueling){  //if user is not fuling
+							if(fueltypecurrentcar!=1)
+							{
+								DiscountTextBox.setText("Pump Does Not Match The Type Of Vehicle Fuel");
+							}
+							if(Fuel95CurrentAmount<0.5)
+								DiscountTextBox.setText("Out Of Fuel");
+							if(fueltypecurrentcar==1 && Fuel95CurrentAmount>0.7)
+							{
+								TestFlag=true;
+								UserIsFueling=true;
+								Fuel95=true;
+								this.Liter=0;
+								DiscountTextBox.setText("The Price Per Liter For 95 is: "+Fuel95Price);
+								StartFuelingButton.setEnabled(true);
+								StationUserLoginGui.RedPumpShow();
+							}
+						}
+					}
+					if(e==RedHandFlip){
+						if(!UserNeedToPay){
+							StationUserLoginGui.RedPumpNotShow();//return the hand to the right palce
+							StartFuelingButton.setEnabled(false);
+							UserIsFueling=false;
+							DiscountTextBox.setText("");
+						}
+					}
+					if(e==GreenHand && FuelScoterIsExist){
+						DiscountTextBox.setText("");
+						if(!UserIsFueling){  //if user is not fuling
+							if(fueltypecurrentcar!=2)
+							{
+								DiscountTextBox.setText("Pump Does Not Match The Type Of Vehicle Fuel");
+							}
+							if(FuelScoterCurrentAmount < 0.5)
+								DiscountTextBox.setText("Out Of Fuel");
+							if(fueltypecurrentcar==2 && FuelScoterCurrentAmount > 0.7)
+							{
+								TestFlag=true;
+								UserIsFueling=true;
+								FuelScoter=true;
+								this.Liter=0;
+								DiscountTextBox.setText("The Price Per Liter For Scooter Fuel is: "+FuelScoterPrice);
+								StartFuelingButton.setEnabled(true);
+								StationUserLoginGui.GreenPumpShow();
+							}
+						}
+					}
+					if(e==GreenHandFlip){
+						if(!UserNeedToPay){
+							StationUserLoginGui.GreenPumpNotShow();//return the hand to the right palce
+							StartFuelingButton.setEnabled(false);
+							UserIsFueling=false;
+							DiscountTextBox.setText("");
+						}
+					}
+				}
+		 }
+		 
+		 return TestFlag;
+	}
+	/*-----------------Test-----------------------*/
+	public void setfueltypecurrentcar(int e){
+		this.fueltypecurrentcar=e;
+	}
+	public void setNFCIsExist(boolean e){
+		this.NFCIsExist=e;
+	}
+	public void setCarTest(callbackCar e){
+		this.CarTest=e;
+	}
+	public void setFuelDieselIsExist(boolean e){
+		this.FuelDieselIsExist=e;
+	}
+	public void setFuel95IsExist(boolean e){
+		this.Fuel95IsExist=e;
+	}
+	public void setFuelScooterIsExist(boolean e){
+		this.FuelScoterIsExist=e;
+	}
+	public void setFuelDieselCurrentAmount(float e){
+		FuelDieselCurrentAmount=e;
+	}
+	public void setFuel95CurrentAmount(float e){
+		Fuel95CurrentAmount=e;
+	}
+	public void setFuelScooterCurrentAmount(float e){
+		FuelScoterCurrentAmount=e;
+	}
+	public void setGasStationID(int GasStationID){
+		this.GasStationID=GasStationID;
+	}
+	
 /**
  * This function handle the Start/Stop Button
- */
-	
-	public void FuelingProccess(){		
+ */		public void FuelingProccess(){		
 		
 		//Send To DB StationID To get Fuel Type
 		SendUserIDToGetFuelPerStation();
@@ -773,16 +1035,8 @@ public class StationsController extends Controller implements MouseListener,Runn
 			String CurrentCarNumber;
 			CurrentCarNumber=StationUserLoginGui.getComboboxCarSelect();
 			CurrentCarNumber=CurrentCarNumber.replace("-","");
-
-			if(Customer.getCreditCard().equals(""))
-			{
-				StationUserLoginGui.setCreditRadioButtonEdit(false); 
-				StationUserLoginGui.setCashCheacked();
-			}
-			else
-			{
-				StationUserLoginGui.setCreditRadioButtonEdit(true); 
-			}
+			
+			CheckCreditCard(Customer);
 			
 			PressStartStopButtonFlag=true;
 			Paybutton.setEnabled(true);
@@ -793,6 +1047,26 @@ public class StationsController extends Controller implements MouseListener,Runn
 		}
 		
 		
+	}
+	/**
+	 * check if customer have credit card
+	 * @param e customer callback
+	 * @return true - have credit card , else false
+	 */
+	public boolean CheckCreditCard(callbackCustomer e){
+		boolean TestFlag=false;
+		if(e.getCreditCard().equals(""))
+		{
+			StationUserLoginGui.setCreditRadioButtonEdit(false); 
+			StationUserLoginGui.setCashCheacked();
+			
+		}
+		else
+		{
+			StationUserLoginGui.setCreditRadioButtonEdit(true); 
+			TestFlag= true;
+		}
+	return TestFlag;	
 	}
 	/**
 	 * This function handle the payment - send data to DB and reset the station
@@ -896,7 +1170,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 	/**
 	 * Reset all station back to original 
 	 */
-	private void ResetPumpSatation(){		
+	public void ResetPumpSatation(){		
 		UserNeedToPay=false;
 		Paybutton.setEnabled(false);
 		UserIsFueling=false;
@@ -970,7 +1244,7 @@ public class StationsController extends Controller implements MouseListener,Runn
  * @param FuelID - 1=95, 2=Scooter Fuel, 4=Diesel
  * @param CustomerID - CusotmerID
  */
-	private void DiscountCalulation(float Payment,float FueAmount,int FuelID,int CustomerID,String CarNumber){
+	public void DiscountCalulation(float Payment,float FueAmount,int FuelID,int CustomerID,String CarNumber){
 		CurrentSale=new callbackSale();
 		CurrentSale.setCarNumber(CarNumber);
 		CurrentSale.setPayment(Payment);
@@ -986,13 +1260,16 @@ public class StationsController extends Controller implements MouseListener,Runn
 		Server.handleMessageFromClient(CurrentSale);
 		 
 	}
-	private void UpdateSalePrice(CallBack e){
+	public boolean UpdateSalePrice(CallBack e){
+		
+		boolean TestFlag=false;
 		if(e instanceof callbackSuccess) // No Discount
 		{
 			DiscountTextBox.setText(" You Need To Pay: "+myFormatter.format(Price)+" Shekel *No Discount");
 		}
 		if(e instanceof callbackCampaign) // Was Discount
 		{
+			TestFlag=true;
 			Temp=(callbackCampaign)e;
 			Price=((callbackCampaign) Temp).getPriceAfterDiscount();
 			DiscountTextBox.setText("<html>You Need To Pay: "+myFormatter.format(Price)+" Shekel"+"<br/>"
@@ -1004,6 +1281,7 @@ public class StationsController extends Controller implements MouseListener,Runn
 		CurrentSale.setPayment(Price);
 		CurrentSale.setCampaignID(((callbackCampaign) Temp).getCampaignID());
 		}
+		return TestFlag;
 	}
 	
 	@Override
