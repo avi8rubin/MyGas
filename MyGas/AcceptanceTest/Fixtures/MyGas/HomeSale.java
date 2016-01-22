@@ -45,6 +45,8 @@ public class HomeSale extends ServerConnection{
 	String Date;
 	String ReturnOrders[][];
 	int flag=0;
+	int SaleID;
+	
 	
 	public HomeSale(){
 		customer=new callbackCustomer(MessageType.getCustomer);
@@ -154,18 +156,7 @@ public class HomeSale extends ServerConnection{
 		CCon.HandleCancelButton2();
 	}
 	
-	private void CheckOrder(String[][] Data, int Rows){
-		
-		String[][] orders=Data;
-		for(int i=0;i<Rows;i++)
-		{
-			if(orders[i][1]==sale.getAddress()&&
-				orders[i][2]==sale.getAddress()	)
-				bool=true;
-		}
-		bool=false;
-	}
-	
+
 	@Override
 	public void update(Observable arg0, Object arg) {
 		if(arg instanceof CallBack){		
