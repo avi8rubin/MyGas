@@ -13,6 +13,9 @@ package GUI;
 import java.awt.Color;
 import java.awt.Font;
 import java.text.ParseException;
+import java.util.Calendar;
+import java.util.TimeZone;
+
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -35,12 +38,17 @@ import client.Client;
  */
 public class CustomerGUI extends abstractPanel_GUI {
 
+	//global
+	String DateForTest;
+	
 	/**
 	 * CustomerGUI variables:
 	 * 2 center layers
 	 * BuyHomeFuelCenterLayer
 	 * HomeFuelOrdersCenterLayer
 	 */
+	
+	
 	
 	private JLayeredPane BuyHomeFuelCenterLayer= new JLayeredPane();
 	private JLayeredPane HomeFuelOrdersCenterLayer= new JLayeredPane();
@@ -396,10 +404,16 @@ public void setRemaraksLabel(String str){
 		FuelAmounttextArea.setText(str);
 	}
 	public String getDate(){
+		String date=((JTextField)dateChooser.getDateEditor().getUiComponent()).getText();
+		if(date.compareTo("")==0)
+			return DateForTest; 
 		return ((JTextField)dateChooser.getDateEditor().getUiComponent()).getText();
 	}
 	public void setDate(){
 	dateChooser.setCalendar(null);
+	}
+	public void setDate(String date){
+		DateForTest=date;
 	}	
 	public JLabel ErrorAmoutLabel(){
 		return ErrorMassage;
