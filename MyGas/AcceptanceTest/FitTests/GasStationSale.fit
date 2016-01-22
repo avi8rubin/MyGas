@@ -7,6 +7,8 @@
 <!--{cke_protected}{C}%3C!%2D%2D.style1%20%7Bfont-family%3A%20Arial%2C%20Helvetica%2C%20sans-serif%7D%2D%2D%3E-->		</style>
 		<meta content="MSHTML 11.00.10586.35" name="GENERATOR" />
 	</head>
+	<p class="style1"  style="color: rgb(255, 0, 0);">
+	<font size="6">Please Remove DB Table Before Running The Test</font>
 	<body>
 		<p class="style1">
 			<u>Gas Station Fuel Sale&nbsp;Acceptance Test</u></p>

@@ -1,0 +1,654 @@
+<html>
+	<head>
+		<title>Buy Home Fuel FIT Test</title>
+		<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type" />
+		<style type="text/css">
+<!--{cke_protected}{C}%3C!%2D%2D.style1%20%7Bfont-family%3A%20Arial%2C%20Helvetica%2C%20sans-serif%7D%2D%2D%3E-->		</style>
+		<meta content="MSHTML 11.00.9600.18161" name="GENERATOR" />
+	</head>
+		<p class="style1"  style="color: rgb(255, 0, 0);">
+	<font size="6">Please Remove DB Table Before Running The Test</font>
+	<body>
+		<p class="style1">
+			<u>Home Fuel Sale&nbsp;Acceptance Test</u></p>
+		<p class="style1">
+			tests for the use case&nbsp; &#39;Sale Home Fuel&#39;.</p>
+		<p class="style1">
+			Contain the following tests:</p>
+		<p class="style1">
+			1. User with no credit card can&#39;t buy home fuel.</p>
+		<p class="style1">
+			2. User with credit card can buy home fuel.</p>
+		<p class="style1">
+			3. Validation of the inserted fields.</p>
+		<p class="style1">
+			4. Sale discount.</p>
+		<p class="style1">
+			5. Recording sale in DB.</p>
+		<p class="style1">
+			&nbsp;</p>
+			
+			<p class="style1">
+			<u>Table in DB:</u></p>
+		<p class="style1">
+			<strong>Customers:</strong></p>
+		<p class="style1">
+			&nbsp;</p>
+		<table border="1" cellpadding="1" cellspacing="1" style="width: 760px; height: 68px;">
+			<thead>
+				<tr>
+					<th scope="col">
+						User_ID</th>
+					<th scope="col">
+						Customers_ID</th>
+					<th scope="col">
+						Customer_First_Name</th>
+					<th scope="col">
+						Customer_Last_Name</th>
+					<th scope="col">
+						Credit_Card</th>
+					<th scope="col">
+						Exists&nbsp;In DB</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						26</td>
+					<td>
+						44444</td>
+					<td>
+						Roni</td>
+					<td>
+						Israeli</td>
+					<td>
+						&nbsp;</td>
+					<td>
+						Yes</td>
+				</tr>
+				<tr>
+					<td>
+						36</td>
+					<td>
+						326594906</td>
+					<td>
+						Or</td>
+					<td>
+						Levi</td>
+					<td>
+						2345-6589-3333-7852</td>
+					<td>
+						Yes</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="style1">
+			&nbsp;</p>
+			
+			
+				<p class="style1">
+			<strong>Home Fuel Sales:</strong></p>
+		<table border="1" cellpadding="1" cellspacing="1" style="width: 520px; height: 77px;">
+			<thead>
+				<tr>
+					<th scope="col">
+						Sale_ID</th>
+					<th scope="col">
+						Fuel_Amount</th>
+					<th scope="col">
+						Payment</th>
+					<th scope="col">
+						Delivery_Time_And_Date</th>
+					<th scope="col">
+						Address</th>
+						<th scope="col">
+						Order_Status</th>
+						<th scope="col">
+						Customer_ID</th>
+						<th scope="col">
+						Exist</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>88</td>
+					<td>100</td>
+					<td>620</td>
+					<td>31-01-2016 21:30:00</td>
+					<td>karmiel</td>
+					<td>Not Delivered</td>
+					<td>326594906</td>
+					<td>No</td>	
+				</tr>
+				<tr>
+					<td>89</td>
+					<td>200</td>
+					<td>1240</td>
+					<td>18-02-2016 10:00:00</td>
+					<td>lala land</td>
+					<td>Not Delivered</td>
+					<td>326594906</td>
+					<td>No</td>
+						
+				</tr>
+								<tr>
+					<td>26</td>
+					<td>134</td>
+					<td>654.5</td>
+					<td>02-01-2015 15:23:00</td>
+					<td>Israeli 34</td>
+					<td>Delivered</td>
+					<td>302929161</td>
+					<td>Yes</td>
+						
+				</tr>
+			</tbody>
+		</table>
+					<p class="style1">
+			&nbsp;</p>
+			
+		<table border="1" cellpadding="5" cellspacing="0" width="765">
+			<tbody>
+				<tr>
+					<td class="style1" colspan="3">
+						fit.ActionFixture</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						start</td>
+					<td class="style1">
+						Fixtures.MyGas.HomeSale</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						press</td>
+					<td class="style1">
+						enter user</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						user ID</td>
+					<td class="style1">
+						26</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						customer ID</td>
+					<td class="style1">
+						44444</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check credit card</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						false</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						press</td>
+					<td class="style1">
+						enter user</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						user ID</td>
+					<td class="style1">
+						36</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						customer ID</td>
+					<td class="style1">
+						326594906</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check credit card</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						true</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						press</td>
+					<td class="style1">
+						enter sale details</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						fuel price</td>
+					<td class="style1">
+						6</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						fuel amount</td>
+					<td class="style1">
+						650</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						address</td>
+					<td class="style1">
+						Karmiel</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						delivery date</td>
+					<td class="style1">
+						04/02/16</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						delivery time</td>
+					<td class="style1">
+						55:00</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check valid fields</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						false</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						press</td>
+					<td class="style1">
+						enter sale details</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						fuel price</td>
+					<td class="style1">
+						6</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						fuel amount</td>
+					<td class="style1">
+						-100</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						address</td>
+					<td class="style1">
+						karmiel</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						delivery date</td>
+					<td class="style1">
+						04/02/16</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						delivery time</td>
+					<td class="style1">
+						12:00</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check valid fields</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						false</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						press</td>
+					<td class="style1">
+						enter sale details</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						fuel price</td>
+					<td class="style1">
+						6</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						fuel amount</td>
+					<td class="style1">
+						650</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						address</td>
+					<td class="style1">
+						karmiel</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						delivery date</td>
+					<td class="style1">
+						04/01/16</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						delivery time</td>
+					<td class="style1">
+						12:00</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check valid fields</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						false</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						press</td>
+					<td class="style1">
+						enter sale details</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						fuel price</td>
+					<td class="style1">
+						6</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						fuel amount</td>
+					<td class="style1">
+						870</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						address</td>
+					<td class="style1">
+						karmiel</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						delivery date</td>
+					<td class="style1">
+						04/02/16</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						delivery time</td>
+					<td class="style1">
+						12:00</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check valid fields</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						true</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check valid discount</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						5011.2</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						press</td>
+					<td class="style1">
+						enter sale details</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						fuel price</td>
+					<td class="style1">
+						6</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						fuel amount</td>
+					<td class="style1">
+						650</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						address</td>
+					<td class="style1">
+						karmiel</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						delivery date</td>
+					<td class="style1">
+						14/02/16</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						delivery time</td>
+					<td class="style1">
+						12:30</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check valid discount</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						3783</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						press</td>
+					<td class="style1">
+						enter sale details</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						fuel price</td>
+					<td class="style1">
+						6.2</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						fuel amount</td>
+					<td class="style1">
+						100</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						address</td>
+					<td class="style1">
+						karmiel</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						delivery date</td>
+					<td class="style1">
+						31/01/16</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						delivery time</td>
+					<td class="style1">
+						21:30</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check valid discount</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						620</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						press</td>
+					<td class="style1">
+						pay for order</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check order in DB</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						true</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						press</td>
+					<td class="style1">
+						enter sale details</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						fuel price</td>
+					<td class="style1">
+						6.2</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						fuel amount</td>
+					<td class="style1">
+						200</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						address</td>
+					<td class="style1">
+						lala land</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						delivery date</td>
+					<td class="style1">
+						18/02/16</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						enter</td>
+					<td class="style1">
+						delivery time</td>
+					<td class="style1">
+						10:00</td>
+				</tr>
+				<tr>
+					<td class="style1">
+						press</td>
+					<td class="style1">
+						cancle order</td>
+					<td class="style1">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						check order in DB</td>
+					<td class="style1" style="color: rgb(0, 0, 205);">
+						false</td>
+				</tr>
+			</tbody>
+		</table></body>
+</html>

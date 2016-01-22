@@ -158,7 +158,7 @@ public class CustomerController extends Controller{
 	 * @return status about the fields
 	 * @author Litaf
 	 */
-	private int CheckAllValidFileds() {
+	public int CheckAllValidFileds() {
 		
 	checkFields=0;
 	ErrorAmount.setText("");
@@ -216,10 +216,14 @@ public class CustomerController extends Controller{
 	* HandleCancelButton- remove all information from customer sale that was cancled
 	*@author Litaf
 	*/
-		private void HandleCancelButton(){
+		public void HandleCancelButton(){
 			JOptionPane.showMessageDialog(GuiScreen,
 					"Purchase has been cancelled, no charge was made", 
 					"Information", JOptionPane.INFORMATION_MESSAGE);
+			HandleCancelButton2();
+		}			
+			public void HandleCancelButton2(){
+
 			GuiScreen.cleanScreen();
 			GuiScreen.DisablePayButton();
 			GuiScreen.DisableCancleButton();
@@ -237,11 +241,7 @@ public class CustomerController extends Controller{
 
 			int FuelID=0;
 			float FuelPrice=0;
-			float SumPrice=0;
-			int Differacne=0;
-			int ShippingAndDiscount=0;
-			int flag=0;
-			String RemarksString=null;
+
 			
 			Object[][] arr=TariffTable.getData();
 			for(int i=0;i<arr.length;i++){
@@ -251,6 +251,16 @@ public class CustomerController extends Controller{
 						FuelID=Integer.parseInt(arr[i][0].toString());
 					}
 				}
+			setSale(FuelID,FuelPrice);
+			
+		}
+		public float setSale(int FuelID, float FuelPrice){
+			float SumPrice=0;
+			int Differacne=0;
+			int ShippingAndDiscount=0;
+			int flag=0;
+			String RemarksString=null;
+			
 			sale.setFuelID(FuelID);
 			
 			//Immediate order: (within 6 hours) =Cost + 2% of the price of fuel
@@ -312,7 +322,7 @@ public class CustomerController extends Controller{
 					sale.setPayment((float)(SumPrice));
 					PrintSaleTemplate(SumPrice,RemarksString,0, FuelPrice, "<br>");	
 				}
-				
+				return sale.getPayment();
 		}
 		/**
 		 * PrintSaleTemplate- print to gui the order information
@@ -349,7 +359,7 @@ public class CustomerController extends Controller{
 		 * has creditcard information in the system
 		 * @author Litaf
 		 */
-		private void HandleCheckCustomerCreditCard(){
+		public void HandleCheckCustomerCreditCard(){
 			
 			ErrorAmount.setText("");
 			ErrorDeliveryTimeLabel.setText("");
@@ -376,7 +386,7 @@ public class CustomerController extends Controller{
 			return false;
 
 		}
-		private void Server_HandleCheckCustomerCreditCard(callbackCustomer customer) {
+		public void Server_HandleCheckCustomerCreditCard(callbackCustomer customer) {
 			
 			if(CheckForCreditCard(customer)){
 				JOptionPane.showMessageDialog(GuiScreen, "Customer "+GuiScreen.getCurrentUserName()+
@@ -391,7 +401,7 @@ public class CustomerController extends Controller{
 		/**
 		 * HandlePayButton- create new sale in DB with sale details
 		 */
-		private void HandlePayButton() {
+		public void HandlePayButton() {
 			GuiScreen.cleanScreen();
 			sale.setUserID(GuiScreen.getCurrentUserID());
 			Server.handleMessageFromClient(sale);
@@ -399,7 +409,7 @@ public class CustomerController extends Controller{
 		/**
 		 * HandleCheckFuelOrder- send query for all the customer past purchases
 		 */
-		private void HandleCheckFuelOrder() {
+		public void HandleCheckFuelOrder() {
 			
 			Object[]arr= new Object[1];
 			callbackStringArray orders=new callbackStringArray(MessageType.getHomeFuelOrders);
